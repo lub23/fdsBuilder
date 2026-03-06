@@ -89,30 +89,46 @@ class MainWindow(QMainWindow):
         # ========== 中间面板 - 3D预览 ==========
         center_panel = QWidget()
         center_layout = QVBoxLayout(center_panel)
-        center_layout.setContentsMargins(5, 10, 5, 10)
-        
-        # 3D预览标题
-        preview_header = QHBoxLayout()
+        center_layout.setContentsMargins(5, 5, 5, 5)
+        center_layout.setSpacing(4)
+
+        # 顶部工具栏：标题 + 楼层选择 + 刷新
+        toolbar = QHBoxLayout()
+        toolbar.setSpacing(6)
+
         preview_title = QLabel("🎮 3D预览")
-        preview_title.setStyleSheet("font-size: 16px; font-weight: bold; color: #89b4fa;")
-        preview_header.addWidget(preview_title)
-        preview_header.addStretch()
-        
+        preview_title.setStyleSheet("font-size: 14px; font-weight: bold; color: #89b4fa;")
+        toolbar.addWidget(preview_title)
+
+        toolbar.addWidget(QLabel("│"))  # 分隔
+
+        toolbar.addWidget(QLabel("楼层:"))
+        self.story_checks_container = QHBoxLayout()
+        self.story_checks_container.setSpacing(4)
+        self.story_checks = []
+        toolbar.addLayout(self.story_checks_container)
+
+        toolbar.addStretch()
+
         refresh_btn = QPushButton("🔄 刷新")
+        refresh_btn.setFixedHeight(26)
         refresh_btn.setObjectName("secondaryBtn")
         refresh_btn.clicked.connect(self.update_preview)
-        preview_header.addWidget(refresh_btn)
-        
-        center_layout.addLayout(preview_header)
-        
+        toolbar.addWidget(refresh_btn)
+
+        center_layout.addLayout(toolbar)
+
         # 3D查看器
         self.viewer_3d = Viewer3D()
         center_layout.addWidget(self.viewer_3d)
-        
+
         splitter.addWidget(center_panel)
 
-        self.param_panel.wall_selected.connect(self.viewer_3d.highlight_wall) 
-        self.param_panel.opening_selected.connect(self.viewer_3d.highlight_opening) 
+        self.param_panel.wall_selected.connect(self.viewer_3d.highlight_wall)
+        self.param_panel.opening_selected.connect(self.viewer_3d.highlight_opening)
+
+        # 初始化楼层选择
+        self._rebuild_story_checks()
         
         # ========== 右侧面板 - FDS代码 ==========
         right_panel = QWidget()
@@ -130,6 +146,30 @@ class MainWindow(QMainWindow):
         splitter.setSizes([400, 600, 400])
         
         main_layout.addWidget(splitter)
+    
+    def _rebuild_story_checks(self):
+        for cb in self.story_checks:
+            self.story_checks_container.removeWidget(cb)
+            cb.deleteLater()
+        self.story_checks.clear()
+
+        model = self.param_panel.get_model()
+        self.viewer_3d.visible_stories = set(range(len(model.stories)))
+
+        for i, story in enumerate(model.stories):
+            cb = QCheckBox(story.name)
+            cb.setChecked(True)
+            cb.setStyleSheet("color:#cdd6f4; font-size:12px;")
+            cb.toggled.connect(lambda checked, idx=i: self._toggle_story(idx, checked))
+            self.story_checks_container.addWidget(cb)
+            self.story_checks.append(cb)
+
+    def _toggle_story(self, index, visible):
+        if visible:
+            self.viewer_3d.visible_stories.add(index)
+        else:
+            self.viewer_3d.visible_stories.discard(index)
+        self.update_preview()
     
     def setup_menu(self):
         menubar = self.menuBar()
@@ -257,9 +297,7 @@ class MainWindow(QMainWindow):
     
     def open_config(self):
         file_path, _ = QFileDialog.getOpenFileName(
-            self, "打开配置文件",
-            "",
-            "JSON文件 (*.json);;所有文件 (*)"
+            self, "打开配置文件", "", "JSON文件 (*.json);;所有文件 (*)"
         )
         if file_path:
             try:
@@ -268,6 +306,7 @@ class MainWindow(QMainWindow):
                 model = BuildingModel()
                 model.from_dict(data)
                 self.param_panel.set_model(model)
+                self._rebuild_story_checks()
                 self.update_preview()
                 self.statusBar().showMessage(f"已加载: {file_path}")
             except Exception as e:

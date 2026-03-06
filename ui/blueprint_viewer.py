@@ -9,13 +9,19 @@
 @Version : 1.0
 @Desc  : Blueprint viewer component for building model visualization and dimension extraction
 '''
+import os
 from PySide6.QtWidgets import (
     QWidget, QVBoxLayout, QHBoxLayout, QLabel, QPushButton, QFileDialog,
     QMessageBox, QApplication
 )
 from PySide6.QtCore import Qt, Signal
 from PySide6.QtGui import QPixmap
-from ocr.blueprint_ocr import BlueprintRecognizer, OPENROUTER_API_KEY
+from ocr.blueprint_ocr import BlueprintRecognizer
+from pathlib import Path
+from dotenv import load_dotenv
+env_path = Path(__file__).resolve().parent.parent / ".env"
+load_dotenv(env_path)
+API_KEY = os.getenv("API_KEY")
 # ============================================================
 # 图纸预览组件
 # ============================================================
@@ -124,7 +130,7 @@ class BlueprintViewer(QWidget):
             self.statusBar.showMessage("正在识别...")
             QApplication.processEvents()
             
-            recognizer = BlueprintRecognizer(OPENROUTER_API_KEY)
+            recognizer = BlueprintRecognizer(API_KEY)
             result = recognizer.recognize(self.image_path)
             
             if result:

@@ -268,8 +268,9 @@ class FDSGenerator:
     def generate(self) -> str:
         """生成完整的FDS输入文件"""
         m = self.model
-        L, W, H = m.length, m.width, m.height
-        t = m.wall_thickness
+        L, W, t = m.length, m.width, m.wall_thickness
+        total_h = m.total_height
+        roof_t = m.roof.get("thickness", 0.2)
         
         chid = m.chid.replace(" ", "_").replace(".", "_").replace("-", "_")
         chid = ''.join(c for c in chid if ord(c) < 128)
@@ -290,19 +291,37 @@ class FDSGenerator:
         
         fds += "! ========== 计算域 ==========\n"
         fds += f"&MESH IJK={mesh[0]},{mesh[1]},{mesh[2]}, "
-        fds += f"XB={-L/2-pad:.2f},{L/2+pad:.2f},{-W/2-pad:.2f},{W/2+pad:.2f},0,{H+pad:.2f} /\n\n"
+        fds += f"XB={-L/2-pad:.2f},{L/2+pad:.2f},{-W/2-pad:.2f},{W/2+pad:.2f},0,{total_h+pad:.2f} /\n\n"
         fds += f"&TIME T_END={m.simulation_time:.1f} /\n\n"
         
         # 材料和表面
         fds += self.generate_materials()
         
-        # 建筑结构 - 墙体
-        fds += "! ========== 墙体 ==========\n"
-        for i, wall in enumerate(m.walls):
-            name = wall.get("name", f"wall_{i}")
-            is_ext = "外墙" if wall.get("is_external", False) else "内墙"
-            fds += f"! {name} ({is_ext})\n"
-            fds += self.generate_wall(i)
+        for si, story in enumerate(m.stories):
+            z0 = story.z_bottom
+            slab_t = story.floor_slab.thickness
+            
+            fds += f"\n! ========== {story.name} (z={z0:.2f}) ==========\n"
+            
+            # 楼板
+            fds += f"! -- 楼板 --\n"
+            fds += self.gen_box(
+                -L/2-t/2, L/2+t/2, -W/2-t/2, W/2+t/2,
+                z0 - slab_t, z0, f"FLOOR_{story.name}")
+            
+            # 楼板开洞（用HOLE）
+            for hole in story.floor_slab.openings:
+                hx = hole["x"] - L/2
+                hy = hole["y"] - W/2
+                fds += (f"&HOLE XB={hx:.2f},{hx+hole['length']:.2f},"
+                        f"{hy:.2f},{hy+hole['width']:.2f},"
+                        f"{z0-slab_t-0.01:.2f},{z0+0.01:.2f} /  "
+                        f"! {hole.get('name','洞口')}\n")
+            
+            # 墙体
+            fds += f"! -- 墙体 --\n"
+            for wi, wall in enumerate(story.walls):
+                fds += self.generate_wall(wi, story_index=si)
         
         # 地板
         fds += "\n! ========== 地板 ==========\n"
@@ -310,7 +329,7 @@ class FDSGenerator:
         
         # 屋顶
         fds += "\n! ========== 屋顶 ==========\n"
-        fds += self.gen_box(-L/2-t/2, L/2+t/2, -W/2-t/2, W/2+t/2, H, H+t, "ROOF")
+        fds += self.gen_box(-L/2-t/2, L/2+t/2, -W/2-t/2, W/2+t/2, total_h, total_h + roof_t, "ROOF")
         fds += "\n"
         
         # 热源
@@ -328,7 +347,7 @@ class FDSGenerator:
         
         if m.output.get("devices", True):
             fds += "! ========== 测量点 ==========\n"
-            fds += f"&DEVC XYZ=0,0,{H/2}, QUANTITY='TEMPERATURE', ID='temp_center' /\n\n"
+            fds += f"&DEVC XYZ=0,0,{total_h/2}, QUANTITY='TEMPERATURE', ID='temp_center' /\n\n"
         
         fds += "&TAIL /\n"
         

@@ -1,0 +1,31 @@
+{
+  "chid": "multi_story",
+  "length": 20.0,
+  "width": 15.0,
+  "wall_thickness": 0.24,
+  "stories": [
+    {
+      "name": "1F",
+      "height": 4.0,
+      "walls": [],
+      "openings": [{"wall_index": 0, "type": "door", "position": 0.5, "width": 1.2, "height": 2.1, "z_bottom": 0}],
+      "combustibles": [],
+      "floor_slab": {"thickness": 0.2, "material": "CONCRETE", "openings": []}
+    },
+    {
+      "name": "2F",
+      "height": 3.5,
+      "walls": [],
+      "openings": [],
+      "combustibles": [],
+      "floor_slab": {
+        "thickness": 0.2,
+        "material": "CONCRETE",
+        "openings": [
+          {"x": 8, "y": 6, "length": 3, "width": 3, "name": "楼梯间"}
+        ]
+      }
+    }
+  ],
+  "roof": {"thickness": 0.2, "material": "CONCRETE"}
+}

@@ -8,25 +8,131 @@
 @Desc  : Building model class for FDS generation
 '''
 
+from dataclasses import dataclass, field
+from typing import List, Dict, Optional
+
 from ui.styles import *
 from models.combustibles import CombustibleManager
+
+@dataclass
+class WallData:
+    """墙体"""
+    x1: float = 0
+    y1: float = 0
+    x2: float = 0
+    y2: float = 0
+    thickness: float = 0.24
+    height: float = 3.0      # 该墙实际高度（通常=层高）
+    name: str = ""
+    is_external: bool = False
+    material: str = "CONCRETE"
+
+    def to_dict(self): return self.__dict__.copy()
+
+    @classmethod
+    def from_dict(cls, d): return cls(**d)
+
+@dataclass
+class OpeningData:
+    """开口（门/窗）"""
+    wall_index: int = 0
+    type: str = "door"        # door / window
+    position: float = 0.5     # 沿墙相对位置 0~1
+    width: float = 1.0
+    height: float = 2.0
+    z_bottom: float = 0.0     # 相对于本层地板
+
+    def to_dict(self): return self.__dict__.copy()
+
+    @classmethod
+    def from_dict(cls, d): return cls(**d)
+
+
+@dataclass
+class FloorSlab:
+    """楼板（含开口/洞口）"""
+    thickness: float = 0.2
+    material: str = "CONCRETE"
+    openings: List[Dict] = field(default_factory=list)
+    # 每个开口: {"x": 5, "y": 3, "length": 2, "width": 2, "name": "楼梯间"}
+
+    def to_dict(self):
+        return {"thickness": self.thickness, "material": self.material,
+                "openings": self.openings}
+
+    @classmethod
+    def from_dict(cls, d):
+        return cls(d.get("thickness", 0.2), d.get("material", "CONCRETE"),
+                   d.get("openings", []))
+
+
+@dataclass
+class Story:
+    """单层"""
+    name: str = "1F"
+    height: float = 3.0           # 层高（地板到天花板）
+    walls: List[Dict] = field(default_factory=list)
+    openings: List[Dict] = field(default_factory=list)
+    combustibles: CombustibleManager = field(default_factory=CombustibleManager)
+    floor_slab: FloorSlab = field(default_factory=FloorSlab)   # 本层地板
+    # 顶层的 roof 由 BuildingModel 统一处理
+
+    @property
+    def z_bottom(self) -> float:
+        """由 BuildingModel 计算后注入"""
+        return getattr(self, '_z_bottom', 0.0)
+
+    @z_bottom.setter
+    def z_bottom(self, v):
+        self._z_bottom = v
+
+    @property
+    def z_top(self) -> float:
+        return self.z_bottom + self.height
+
+    def to_dict(self):
+        return {
+            "name": self.name,
+            "height": self.height,
+            "walls": self.walls,
+            "openings": self.openings,
+            "combustibles": self.combustibles.to_list(),
+            "floor_slab": self.floor_slab.to_dict(),
+        }
+
+    @classmethod
+    def from_dict(cls, d):
+        s = cls()
+        s.name = d.get("name", "1F")
+        s.height = d.get("height", 3.0)
+        s.walls = d.get("walls", [])
+        s.openings = d.get("openings", [])
+        s.combustibles = CombustibleManager()
+        s.combustibles.from_list(d.get("combustibles", []))
+        s.floor_slab = FloorSlab.from_dict(d.get("floor_slab", {}))
+        return s
 
 # ============================================================
 # 建筑模型类
 # ============================================================
 class BuildingModel:
-    """建筑模型数据类"""
+    """
+    建筑模型数据类
+    20260305 支持多层建筑，每层单独定义墙体/开口/可燃物，自动计算层高和外墙高度。
+    """
     
     def __init__(self):
-        self.reset()
-    
-    def reset(self):
-        """重置为默认值"""
         self.chid = "building"
         self.length = 20.0
         self.width = 15.0
         self.height = 6.0
         self.wall_thickness = 0.25
+
+        # 多层
+        self.stories: List[Story] = [Story(name="1F", height=3.0)]
+
+        # 屋顶
+        self.roof = {"thickness": 0.2, "material": "CONCRETE"}
         
         self.materials = {
             "walls": "CONCRETE",
@@ -47,48 +153,102 @@ class BuildingModel:
             "ramp_points": [(0, 0.0), (100, 1.0), (500, 1.0)]
         }
         
-        self.domain = {
-            "padding": 5.0,
-            "mesh_cells": [80, 60, 40]
-        }
-        
-        self.simulation_time = 60.0
-        
-        self.output = {
-            "slices": True,
-            "devices": True
-        }
-        self.combustible_mgr = CombustibleManager()
-        # 初始化外墙
-        self._generate_external_walls()
+        # 模拟参数
+        self.simulation_time = 20.0
+        self.domain = {"padding": 5.0, "mesh_cells": [80, 60, 40]}
+        self.output = {"slices": True, "devices": True}
+
+        self.update_z_offsets()
+        self.update_external_walls()
     
-    def _generate_external_walls(self):
-        """根据length/width自动生成外墙"""
-        L, W, H, t = self.length, self.width, self.height, self.wall_thickness
-        
-        self.walls = [
-            {"x1": 0, "y1": 0, "x2": L, "y2": 0, "thickness": t, "height": H, "is_external": True, "name": "south"},
-            {"x1": L, "y1": 0, "x2": L, "y2": W, "thickness": t, "height": H, "is_external": True, "name": "east"},
-            {"x1": L, "y1": W, "x2": 0, "y2": W, "thickness": t, "height": H, "is_external": True, "name": "north"},
-            {"x1": 0, "y1": W, "x2": 0, "y2": 0, "thickness": t, "height": H, "is_external": True, "name": "west"},
-        ]
+    # ── 层管理 ───────────────────────────────────────
+    @property
+    def num_stories(self) -> int:
+        return len(self.stories)
+
+    @property
+    def total_height(self) -> float:
+        return sum(s.height for s in self.stories)
+
+    def update_z_offsets(self):
+        """计算每层的z偏移"""
+        z = 0.0
+        for s in self.stories:
+            s.z_bottom = z
+            z += s.height
+
+    def add_story(self, name: str = None, height: float = 3.0,
+                  copy_from: int = -1) -> Story:
+        """添加一层"""
+        idx = len(self.stories) + 1
+        s = Story(name=name or f"{idx}F", height=height)
+        # 可选：从某层复制墙体布局
+        if 0 <= copy_from < len(self.stories):
+            import copy
+            src = self.stories[copy_from]
+            s.walls = copy.deepcopy(src.walls)
+        self.stories.append(s)
+        self.update_z_offsets()
+        self.update_external_walls()
+        return s
+
+    def remove_story(self, index: int):
+        if len(self.stories) <= 1:
+            return
+        del self.stories[index]
+        self.update_z_offsets()
+
+    def get_story(self, index: int) -> Story:
+        return self.stories[index]
     
+    # ── 外墙（每层都要） ────────────────────────────────
     def update_external_walls(self):
-        """更新外墙尺寸（保留内墙和开口）"""
-        L, W, H, t = self.length, self.width, self.height, self.wall_thickness
-        
-        # 保留内墙
-        internal_walls = [w for w in self.walls if not w.get("is_external", False)]
-        
-        # 重新生成外墙
-        external_walls = [
-            {"x1": 0, "y1": 0, "x2": L, "y2": 0, "thickness": t, "height": H, "is_external": True, "name": "south"},
-            {"x1": L, "y1": 0, "x2": L, "y2": W, "thickness": t, "height": H, "is_external": True, "name": "east"},
-            {"x1": L, "y1": W, "x2": 0, "y2": W, "thickness": t, "height": H, "is_external": True, "name": "north"},
-            {"x1": 0, "y1": W, "x2": 0, "y2": 0, "thickness": t, "height": H, "is_external": True, "name": "west"},
+        """为每层生成外墙"""
+        L, W, t = self.length, self.width, self.wall_thickness
+        ext_walls = [
+            {"name": "南墙", "x1": 0, "y1": 0, "x2": L, "y2": 0,
+             "thickness": t, "is_external": True},
+            {"name": "北墙", "x1": 0, "y1": W, "x2": L, "y2": W,
+             "thickness": t, "is_external": True},
+            {"name": "西墙", "x1": 0, "y1": 0, "x2": 0, "y2": W,
+             "thickness": t, "is_external": True},
+            {"name": "东墙", "x1": L, "y1": 0, "x2": L, "y2": W,
+             "thickness": t, "is_external": True},
         ]
-        
-        self.walls = external_walls + internal_walls
+        for story in self.stories:
+            # 保留内墙，替换外墙
+            internal = [w for w in story.walls if not w.get("is_external")]
+            import copy
+            story.walls = copy.deepcopy(ext_walls) + internal
+            # 每面墙高度=层高
+            for w in story.walls:
+                w["height"] = story.height
+    @property
+    def walls(self):
+        """兼容：返回当前活动层的墙体"""
+        return self.stories[0].walls if self.stories else []
+
+    @walls.setter
+    def walls(self, v):
+        if self.stories:
+            self.stories[0].walls = v
+
+    @property
+    def openings(self):
+        return self.stories[0].openings if self.stories else []
+
+    @openings.setter
+    def openings(self, v):
+        if self.stories:
+            self.stories[0].openings = v
+
+    @property
+    def combustible_mgr(self):
+        return self.stories[0].combustibles if self.stories else CombustibleManager()
+
+    def get_openings_for_wall(self, wall_index, story_index=0):
+        story = self.stories[story_index]
+        return [o for o in story.openings if o["wall_index"] == wall_index]
     
     def add_wall(self, x1, y1, x2, y2, thickness=None, height=None, name=""):
         """添加内墙"""
@@ -121,26 +281,20 @@ class BuildingModel:
         w = self.walls[wall_index]
         return ((w["x2"] - w["x1"])**2 + (w["y2"] - w["y1"])**2)**0.5
     
-    def get_openings_for_wall(self, wall_index):
-        """获取某墙体上的所有开口"""
-        return [o for o in self.openings if o["wall_index"] == wall_index]
-    
+     # ── 序列化 ──────────────────────────────────────────
     def to_dict(self) -> dict:
-        """转换为字典"""
         return {
             "chid": self.chid,
             "length": self.length,
             "width": self.width,
-            "height": self.height,
             "wall_thickness": self.wall_thickness,
+            "stories": [s.to_dict() for s in self.stories],
+            "roof": self.roof,
             "materials": self.materials.copy(),
-            "walls": [w.copy() for w in self.walls],
-            "openings": [o.copy() for o in self.openings],
             "heat_source": self.heat_source.copy(),
             "domain": self.domain.copy(),
             "simulation_time": self.simulation_time,
-            "output": self.output.copy(),
-            "combustibles": self.combustible_mgr.to_list()
+            "output": self.output.copy()
         }
     
     def from_dict(self, data: dict):
@@ -148,63 +302,24 @@ class BuildingModel:
         self.chid = data.get("chid", "building")
         self.length = data.get("length", 20.0)
         self.width = data.get("width", 15.0)
-        self.height = data.get("height", 6.0)
         self.wall_thickness = data.get("wall_thickness", 0.25)
-        self.materials = data.get("materials", self.materials)
-        self.walls = data.get("walls", [])
-        self.openings = data.get("openings", [])
+        # 多层
+        if "stories" in data:
+            self.stories = [Story.from_dict(s) for s in data["stories"]]
+        else:
+            # 兼容旧格式：单层
+            s = Story(name="1F", height=data.get("height", 3.0))
+            s.walls = data.get("walls", [])
+            s.openings = data.get("openings", [])
+            s.combustibles.from_list(data.get("combustibles", []))
+            self.stories = [s]
+        self.roof = data.get("roof", {"thickness": 0.2, "material": "CONCRETE"})
+        self.materials = data.get("materials", {"walls": "CONCRETE", "floor": "CONCRETE", "roof": "CONCRETE"})
         self.heat_source = data.get("heat_source", self.heat_source)
         self.domain = data.get("domain", self.domain)
-        self.simulation_time = data.get("simulation_time", 60.0)
+        self.simulation_time = data.get("simulation_time", 20.0)
         self.output = data.get("output", self.output)
-        self.combustible_mgr.from_list(data.get("combustibles", []))
         
-        # 如果没有墙体数据，自动生成外墙
-        if self.walls:
-            self._identify_external_walls()
-        else:
-            self._generate_external_walls()
-
-    def _identify_external_walls(self):
-        """识别并标记外墙"""
-        L, W = self.length, self.width
-        tolerance = 0.1
-        
-        # 定义外墙边界
-        external_edges = [
-            (0, 0, L, 0, "south"),      # 南
-            (L, 0, L, W, "east"),       # 东
-            (L, W, 0, W, "north"),      # 北
-            (0, W, 0, 0, "west"),       # 西
-        ]
-        
-        matched = [False] * 4
-        
-        for wall in self.walls:
-            x1, y1, x2, y2 = wall["x1"], wall["y1"], wall["x2"], wall["y2"]
-            
-            for i, (ex1, ey1, ex2, ey2, name) in enumerate(external_edges):
-                if matched[i]:
-                    continue
-                # 检查是否匹配（正向或反向）
-                if (abs(x1-ex1)<tolerance and abs(y1-ey1)<tolerance and 
-                    abs(x2-ex2)<tolerance and abs(y2-ey2)<tolerance) or \
-                (abs(x1-ex2)<tolerance and abs(y1-ey2)<tolerance and 
-                    abs(x2-ex1)<tolerance and abs(y2-ey1)<tolerance):
-                    wall["is_external"] = True
-                    wall["name"] = name
-                    matched[i] = True
-                    break
-            else:
-                wall["is_external"] = wall.get("is_external", False)
-        
-        # 补充缺失的外墙
-        for i, (ex1, ey1, ex2, ey2, name) in enumerate(external_edges):
-            if not matched[i]:
-                self.walls.insert(i, {
-                    "x1": ex1, "y1": ey1, "x2": ex2, "y2": ey2,
-                    "thickness": self.wall_thickness,
-                    "height": self.height,
-                    "is_external": True,
-                    "name": name
-                })
+        self.update_z_offsets()
+        if not any(w.get("is_external") for s in self.stories for w in s.walls):
+            self.update_external_walls()
