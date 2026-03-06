@@ -18,9 +18,6 @@ from pathlib import Path
 from dataclasses import dataclass, field, asdict
 from typing import List, Optional
 
-
-OPENROUTER_API_KEY = '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'
-
 # PDF转图片
 try:
     import fitz
