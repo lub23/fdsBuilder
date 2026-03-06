@@ -1,0 +1,17 @@
+[project]
+name = "genfds"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "numpy>=2.4.1",
+    "opencv-python>=4.13.0.90",
+    "paddleocr>=3.4.0",
+    "paddlepaddle>=3.3.0",
+    "pillow>=12.1.0",
+    "pymupdf>=1.26.7",
+    "pyside6>=6.10.1",
+    "pyvista>=0.46.5",
+    "pyvistaqt>=0.11.3",
+]

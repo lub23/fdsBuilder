@@ -1,0 +1,94 @@
+{
+  "length": 29.2,
+  "width": 56.5,
+  "height": 15.0,
+  "walls": [
+    {
+      "x1": 0.0, "y1": 0.0,
+      "x2": 29.2, "y2": 0.0,
+      "thickness": 0.24,
+      "is_external": true,
+      "name": "south_wall"
+    },
+    {
+      "x1": 29.2, "y1": 0.0,
+      "x2": 29.2, "y2": 56.5,
+      "thickness": 0.24,
+      "is_external": true,
+      "name": "east_wall"
+    },
+    {
+      "x1": 29.2, "y1": 56.5,
+      "x2": 0.0, "y2": 56.5,
+      "thickness": 0.24,
+      "is_external": true,
+      "name": "north_wall"
+    },
+    {
+      "x1": 0.0, "y1": 56.5,
+      "x2": 0.0, "y2": 0.0,
+      "thickness": 0.24,
+      "is_external": true,
+      "name": "west_wall"
+    },
+    {
+      "x1": 17.2, "y1": 0.0,
+      "x2": 17.2, "y2": 12.0,
+      "thickness": 0.24,
+      "is_external": false,
+      "name": "warehouse_west"
+    },
+    {
+      "x1": 17.2, "y1": 12.0,
+      "x2": 29.2, "y2": 12.0,
+      "thickness": 0.24,
+      "is_external": false,
+      "name": "warehouse_north"
+    },
+    {
+      "x1": 11.2, "y1": 50.5,
+      "x2": 29.2, "y2": 50.5,
+      "thickness": 0.24,
+      "is_external": false,
+      "name": "equip_room_south"
+    },
+    {
+      "x1": 11.2, "y1": 50.5,
+      "x2": 11.2, "y2": 56.5,
+      "thickness": 0.24,
+      "is_external": false,
+      "name": "equip_room_west"
+    },
+    {
+      "x1": 25.2, "y1": 47.5,
+      "x2": 29.2, "y2": 47.5,
+      "thickness": 0.24,
+      "is_external": false,
+      "name": "niche_south"
+    },
+    {
+      "x1": 25.2, "y1": 47.5,
+      "x2": 25.2, "y2": 50.5,
+      "thickness": 0.24,
+      "is_external": false,
+      "name": "niche_west"
+    }
+  ],
+  "openings": [
+    { "wall_index": 0, "type": "door", "position": 0.35, "width": 0.8, "height": 2.1, "z_bottom": 0.0 },
+    { "wall_index": 0, "type": "door", "position": 0.72, "width": 0.8, "height": 2.1, "z_bottom": 0.0 },
+    { "wall_index": 2, "type": "door", "position": 0.40, "width": 0.8, "height": 2.1, "z_bottom": 0.0 },
+    { "wall_index": 2, "type": "door", "position": 0.70, "width": 0.8, "height": 2.1, "z_bottom": 0.0 },
+    { "wall_index": 3, "type": "window", "position": 0.1, "width": 0.8, "height": 1.5, "z_bottom": 1.0 },
+    { "wall_index": 3, "type": "window", "position": 0.25, "width": 0.8, "height": 1.5, "z_bottom": 1.0 },
+    { "wall_index": 3, "type": "window", "position": 0.4, "width": 0.8, "height": 1.5, "z_bottom": 1.0 },
+    { "wall_index": 3, "type": "window", "position": 0.55, "width": 0.8, "height": 1.5, "z_bottom": 1.0 },
+    { "wall_index": 3, "type": "window", "position": 0.7, "width": 0.8, "height": 1.5, "z_bottom": 1.0 },
+    { "wall_index": 3, "type": "window", "position": 0.85, "width": 0.8, "height": 1.5, "z_bottom": 1.0 },
+    { "wall_index": 5, "type": "door", "position": 0.4, "width": 0.8, "height": 2.1, "z_bottom": 0.0 },
+    { "wall_index": 6, "type": "door", "position": 0.15, "width": 4.0, "height": 4.0, "z_bottom": 0.0 },
+    { "wall_index": 6, "type": "door", "position": 0.65, "width": 4.0, "height": 4.0, "z_bottom": 0.0 },
+    { "wall_index": 6, "type": "door", "position": 0.85, "width": 0.8, "height": 2.1, "z_bottom": 0.0 },
+    { "wall_index": 9, "type": "door", "position": 0.5, "width": 0.8, "height": 2.1, "z_bottom": 0.0 }
+  ]
+}
