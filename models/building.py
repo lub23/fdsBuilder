@@ -7,7 +7,7 @@
 @Version : 2.0
 @Desc  : Building model class for FDS generation
 '''
-
+import copy
 from dataclasses import dataclass, field
 from typing import List, Dict, Optional
 
@@ -125,7 +125,6 @@ class BuildingModel:
         self.chid = "building"
         self.length = 20.0
         self.width = 15.0
-        self.height = 6.0
         self.wall_thickness = 0.25
 
         # 多层
@@ -139,8 +138,6 @@ class BuildingModel:
             "floor": "CONCRETE",
             "roof": "CONCRETE"
         }
-        self.walls = []
-        self.openings = []
         
         self.heat_source = {
             "enabled": False,
@@ -161,6 +158,16 @@ class BuildingModel:
         self.update_z_offsets()
         self.update_external_walls()
     
+    @property
+    def height(self) -> float:
+        return self.total_height
+
+    @height.setter
+    def height(self, v):
+        if self.stories:
+            self.stories[0].height = v
+            self.update_z_offsets()
+
     # ── 层管理 ───────────────────────────────────────
     @property
     def num_stories(self) -> int:
@@ -184,9 +191,9 @@ class BuildingModel:
         s = Story(name=name or f"{idx}F", height=height)
         # 可选：从某层复制墙体布局
         if 0 <= copy_from < len(self.stories):
-            import copy
             src = self.stories[copy_from]
             s.walls = copy.deepcopy(src.walls)
+            s.openings = copy.deepcopy(src.openings)
         self.stories.append(s)
         self.update_z_offsets()
         self.update_external_walls()
@@ -247,8 +254,10 @@ class BuildingModel:
         return self.stories[0].combustibles if self.stories else CombustibleManager()
 
     def get_openings_for_wall(self, wall_index, story_index=0):
-        story = self.stories[story_index]
-        return [o for o in story.openings if o["wall_index"] == wall_index]
+        if story_index < len(self.stories):
+            story = self.stories[story_index]
+            return [o for o in story.openings if o["wall_index"] == wall_index]
+        return []
     
     def add_wall(self, x1, y1, x2, y2, thickness=None, height=None, name=""):
         """添加内墙"""

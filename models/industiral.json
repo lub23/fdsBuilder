@@ -1,0 +1,29 @@
+{
+    "aerospace": {
+        "cn_name": "航空航天设施",
+        "sub_types": {
+            "assembly_workshop": {
+                "cn_name": "总装车间",
+                "description": "",
+                "building": {
+                    "length": { "min": 150, "max": 200, "median": -1, "mean": -1, "unit": "m" },
+                    "width": { "min": 100, "max": 160, "median": -1, "mean": -1, "unit": "m" },
+                    "height": { "min": 30, "max": 35, "median": -1, "mean": -1, "unit": "m" },
+                    "stories": { "min": 2, "max": 4, "median": -1, "mean": -1, "unit": "" }
+                },
+                "doors": {
+                    "width": { "min": 12, "max": 15, "median": -1, "mean": -1, "unit": "m" },
+                    "height": { "min": 40, "max": 46, "median": -1, "mean": -1, "unit": "m" },
+                    "count": { "min": 1, "max": 3, "median": -1, "mean": -1, "unit": "" }
+                },
+                "windows": {
+                    "width": { "min": 2, "max": 4, "median": -1, "mean": -1, "unit": "m" },
+                    "height": { "min": 2, "max": 3, "median": -1, "mean": -1, "unit": "m" },
+                    "count": { "min": 10, "max": 30, "median": -1, "mean": -1, "unit": "" }
+                },
+                "wall_thickness": 0.3,
+                "combustibles": []
+            }
+        }
+    }
+}

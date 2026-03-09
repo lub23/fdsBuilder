@@ -47,9 +47,8 @@ class MainWindow(QMainWindow):
         self.setup_ui()
         self.setup_menu()
         self.setup_toolbar()
-        self.setup_statusbar()
         # 初始更新
-        QTimer.singleShot(100, self.update_preview)
+        QTimer.singleShot(100, lambda: (self.refresh_3d(), self.update_preview()))
     
     def setup_ui(self):
         # 主布局
@@ -72,12 +71,14 @@ class MainWindow(QMainWindow):
         
         # 参数面板
         self.param_panel = ParameterPanel()
-        self.param_panel.parameters_changed.connect(self.update_preview)
+        self.param_panel.parameters_changed.connect(self._on_param_changed)
+        self.param_panel.stories_changed.connect(self._rebuild_story_checks)
         
         self.left_tabs.addTab(self.param_panel, "⚙️ 参数设置")
         
         # 图纸面板
         self.blueprint_panel = BlueprintViewer()
+        self.blueprint_panel.dimensions_extracted.connect(self._apply_ocr_result)
         self.left_tabs.addTab(self.blueprint_panel, "📐 图纸参考")
         
         left_layout.addWidget(self.left_tabs)
@@ -92,15 +93,32 @@ class MainWindow(QMainWindow):
         center_layout.setContentsMargins(5, 5, 5, 5)
         center_layout.setSpacing(4)
 
+        # 3D查看器
+        self.viewer_3d = Viewer3D()
         # 顶部工具栏：标题 + 楼层选择 + 刷新
+        # 顶部工具栏
         toolbar = QHBoxLayout()
         toolbar.setSpacing(6)
 
-        preview_title = QLabel("🎮 3D预览")
-        preview_title.setStyleSheet("font-size: 14px; font-weight: bold; color: #89b4fa;")
-        toolbar.addWidget(preview_title)
+        # 刷新按钮放最左边
+        refresh_btn = QPushButton("🔄 刷新")
+        refresh_btn.setFixedHeight(26)
+        refresh_btn.setStyleSheet(
+            "QPushButton{background:#a6e3a1;color:#1e1e2e;font-weight:bold;"
+            "padding:2px 10px;border-radius:3px}"
+            "QPushButton:hover{background:#94e2d5;color:#1e1e2e}")
+        refresh_btn.clicked.connect(self.refresh_3d)
+        toolbar.addWidget(refresh_btn)
+        reset_view_btn = QPushButton("🎯 重置视角")
+        reset_view_btn.setFixedHeight(26)
+        reset_view_btn.setStyleSheet(
+            "QPushButton{color:#1e1e2e;background:#89b4fa;font-weight:bold;"
+            "padding:2px 8px;border-radius:3px}"
+            "QPushButton:hover{background:#74c7ec}")
+        reset_view_btn.clicked.connect(self.viewer_3d.reset_view)
+        toolbar.addWidget(reset_view_btn)
 
-        toolbar.addWidget(QLabel("│"))  # 分隔
+        toolbar.addWidget(QLabel("│"))
 
         toolbar.addWidget(QLabel("楼层:"))
         self.story_checks_container = QHBoxLayout()
@@ -108,20 +126,16 @@ class MainWindow(QMainWindow):
         self.story_checks = []
         toolbar.addLayout(self.story_checks_container)
 
+        # 屋顶控制
+        self.roof_check = QCheckBox("屋顶")
+        self.roof_check.setChecked(True)
+        self.roof_check.setStyleSheet("color:#cdd6f4; font-size:12px;")
+        self.roof_check.toggled.connect(self._toggle_roof)
+        toolbar.addWidget(self.roof_check)
+
         toolbar.addStretch()
-
-        refresh_btn = QPushButton("🔄 刷新")
-        refresh_btn.setFixedHeight(26)
-        refresh_btn.setObjectName("secondaryBtn")
-        refresh_btn.clicked.connect(self.update_preview)
-        toolbar.addWidget(refresh_btn)
-
         center_layout.addLayout(toolbar)
-
-        # 3D查看器
-        self.viewer_3d = Viewer3D()
         center_layout.addWidget(self.viewer_3d)
-
         splitter.addWidget(center_panel)
 
         self.param_panel.wall_selected.connect(self.viewer_3d.highlight_wall)
@@ -147,6 +161,29 @@ class MainWindow(QMainWindow):
         
         main_layout.addWidget(splitter)
     
+    def _apply_ocr_result(self, data: dict):
+        """将OCR识别结果应用到模型"""
+        try:
+            from models.building import BuildingModel
+            model = BuildingModel()
+            model.from_dict(data)
+            # 确保外墙生成
+            model.update_z_offsets()
+            model.update_external_walls()
+
+            self.param_panel.set_model(model)
+            self._rebuild_story_checks()
+            self._on_param_changed()
+
+            # 重置视角
+            self.viewer_3d._first_render = True
+            self.viewer_3d.update_model(model)
+
+            # 切到参数面板
+            self.left_tabs.setCurrentIndex(0)
+        except Exception as e:
+            QMessageBox.critical(self, "应用失败", f"无法应用识别结果：{str(e)}")
+
     def _rebuild_story_checks(self):
         for cb in self.story_checks:
             self.story_checks_container.removeWidget(cb)
@@ -169,8 +206,21 @@ class MainWindow(QMainWindow):
             self.viewer_3d.visible_stories.add(index)
         else:
             self.viewer_3d.visible_stories.discard(index)
-        self.update_preview()
+        self.refresh_3d()
     
+    def _toggle_roof(self, visible):
+        self.viewer_3d.show_roof = visible
+        self.refresh_3d()
+
+    def refresh_3d(self):
+        """重置视角刷新3D视图"""
+        try:
+            model = self.param_panel.get_model()
+            self.viewer_3d._first_render = True
+            self.viewer_3d.update_model(model)
+        except Exception as e:
+            self.statusBar().showMessage(f"3D错误: {str(e)}")
+
     def setup_menu(self):
         menubar = self.menuBar()
         
@@ -205,13 +255,6 @@ class MainWindow(QMainWindow):
         exit_action.setShortcut(QKeySequence.Quit)
         exit_action.triggered.connect(self.close)
         file_menu.addAction(exit_action)
-        
-        # 视图菜单
-        view_menu = menubar.addMenu("视图")
-        
-        reset_view_action = QAction("重置3D视图", self)
-        reset_view_action.triggered.connect(self.reset_3d_view)
-        view_menu.addAction(reset_view_action)
         
         # 帮助菜单
         help_menu = menubar.addMenu("帮助")
@@ -260,26 +303,22 @@ class MainWindow(QMainWindow):
         export_btn.setStyleSheet("QToolButton { color: #a6e3a1; font-weight: bold; }")
         export_btn.clicked.connect(self.export_fds)
         toolbar.addWidget(export_btn)
-    
-    def setup_statusbar(self):
-        self.statusBar().showMessage("就绪")
-    
+       
     def update_preview(self):
-        """更新3D预览和FDS代码"""
+        """只更新FDS代码和状态栏（不刷新3D）"""
         try:
             model = self.param_panel.get_model()
-            
-            # 更新3D预览
-            self.viewer_3d.update_model(model)
-            
-            # 更新FDS代码
+
             generator = FDSGenerator(model)
             fds_code = generator.generate()
             self.fds_preview.update_code(fds_code)
-            n_w = len(model.walls)
-            n_o = len(model.openings)
-            n_c = len(model.combustible_mgr.items) if hasattr(model, 'combustible_mgr') else 0
-            message = f"墙体:{n_w}  |  开口:{n_o}  |  可燃物:{n_c}  |  模型尺寸: {model.length:.1f}m ×{model.width:.1f}m ×{model.height:.1f}m"
+
+            n_w = sum(len(s.walls) for s in model.stories)
+            n_o = sum(len(s.openings) for s in model.stories)
+            n_c = sum(len(s.combustibles.items) for s in model.stories)
+            message = (f"楼层:{model.num_stories}  |  墙体:{n_w}  |  "
+                    f"开口:{n_o}  |  可燃物:{n_c}  |  "
+                    f"模型: {model.length:.1f}×{model.width:.1f}×{model.total_height:.1f}m")
             self.statusBar().showMessage(message)
         except Exception as e:
             self.statusBar().showMessage(f"错误: {str(e)}")
@@ -351,11 +390,25 @@ class MainWindow(QMainWindow):
             except Exception as e:
                 QMessageBox.critical(self, "错误", f"无法导出FDS文件:\n{str(e)}")
     
-    def reset_3d_view(self):
-        if HAS_PYVISTA:
-            self.viewer_3d.plotter.reset_camera()
-            self.viewer_3d.plotter.camera.elevation = 30
-            self.viewer_3d.plotter.camera.azimuth = 45
+    def _on_param_changed(self):
+        """参数变更：刷新3D（保持视角）+ 更新FDS"""
+        try:
+            model = self.param_panel.get_model()
+            self.viewer_3d.update_model(model)
+            
+            generator = FDSGenerator(model)
+            fds_code = generator.generate()
+            self.fds_preview.update_code(fds_code)
+
+            n_w = sum(len(s.walls) for s in model.stories)
+            n_o = sum(len(s.openings) for s in model.stories)
+            n_c = sum(len(s.combustibles.items) for s in model.stories)
+            message = (f"楼层:{model.num_stories}  |  墙体:{n_w}  |  "
+                    f"开口:{n_o}  |  可燃物:{n_c}  |  "
+                    f"模型: {model.length:.1f}×{model.width:.1f}×{model.total_height:.1f}m")
+            self.statusBar().showMessage(message)
+        except Exception as e:
+            self.statusBar().showMessage(f"错误: {str(e)}")
     
     def show_about(self):
         QMessageBox.about(

@@ -1,0 +1,40 @@
+{
+  "length": 56.5,
+  "width": 29.2,
+  "wall_thickness": 0.24,
+  "stories": [
+    {
+      "name": "1F",
+      "height": 4.5,
+      "walls": [
+        { "x1": 0, "y1": 0, "x2": 56.5, "y2": 0, "thickness": 0.24, "is_external": true, "name": "南外墙" },
+        { "x1": 56.5, "y1": 0, "x2": 56.5, "y2": 29.2, "thickness": 0.24, "is_external": true, "name": "东外墙" },
+        { "x1": 56.5, "y1": 29.2, "x2": 0, "y2": 29.2, "thickness": 0.24, "is_external": true, "name": "北外墙" },
+        { "x1": 0, "y1": 29.2, "x2": 0, "y2": 0, "thickness": 0.24, "is_external": true, "name": "西外墙" },
+        { "x1": 12.0, "y1": 0, "x2": 12.0, "y2": 12.0, "thickness": 0.24, "is_external": false, "name": "仓库东内墙" },
+        { "x1": 0, "y1": 12.0, "x2": 12.0, "y2": 12.0, "thickness": 0.24, "is_external": false, "name": "仓库北内墙" },
+        { "x1": 43.5, "y1": 0, "x2": 43.5, "y2": 4.0, "thickness": 0.24, "is_external": false, "name": "办公区西内墙" },
+        { "x1": 43.5, "y1": 4.0, "x2": 49.5, "y2": 4.0, "thickness": 0.24, "is_external": false, "name": "办公区北内墙" },
+        { "x1": 49.5, "y1": 4.0, "x2": 49.5, "y2": 0, "thickness": 0.24, "is_external": false, "name": "办公区东内墙" },
+        { "x1": 53.5, "y1": 0, "x2": 53.5, "y2": 6.5, "thickness": 0.24, "is_external": false, "name": "设备间西内墙" },
+        { "x1": 53.5, "y1": 6.5, "x2": 56.5, "y2": 6.5, "thickness": 0.24, "is_external": false, "name": "设备间北内墙" }
+      ],
+      "openings": [
+        { "wall_index": 0, "type": "door", "position": 0.05, "width": 1.5, "height": 2.1, "z_bottom": 0 },
+        { "wall_index": 0, "type": "door", "position": 0.15, "width": 1.5, "height": 2.1, "z_bottom": 0 },
+        { "wall_index": 0, "type": "door", "position": 0.25, "width": 1.5, "height": 2.1, "z_bottom": 0 },
+        { "wall_index": 0, "type": "door", "position": 0.35, "width": 1.5, "height": 2.1, "z_bottom": 0 },
+        { "wall_index": 0, "type": "door", "position": 0.45, "width": 1.5, "height": 2.1, "z_bottom": 0 },
+        { "wall_index": 0, "type": "door", "position": 0.85, "width": 1.5, "height": 2.1, "z_bottom": 0 },
+        { "wall_index": 0, "type": "door", "position": 0.95, "width": 1.5, "height": 2.1, "z_bottom": 0 },
+        { "wall_index": 4, "type": "door", "position": 0.3, "width": 1.2, "height": 2.1, "z_bottom": 0 },
+        { "wall_index": 4, "type": "door", "position": 0.7, "width": 1.2, "height": 2.1, "z_bottom": 0 },
+        { "wall_index": 7, "type": "door", "position": 0.5, "width": 1.0, "height": 2.1, "z_bottom": 0 }
+      ],
+      "floor_slab": {
+        "thickness": 0.2,
+        "openings": []
+      }
+    }
+  ]
+}

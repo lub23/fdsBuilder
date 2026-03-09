@@ -40,6 +40,8 @@ class Viewer3D(QWidget):
         self.visible_stories = None  # None = 全部显示
         self.max_dim = 10
         self.cx = self.cy = self.cz = 0
+        self.show_roof = True
+        self._first_render = True
         self.setup_ui()
 
     def setup_ui(self):
@@ -66,7 +68,7 @@ class Viewer3D(QWidget):
 
         self.plotter.clear()
 
-        L, W = model.length, model.width
+        L, W, total_h = model.length, model.width, model.total_height
         t = model.wall_thickness
 
         wall_color = MATERIAL_LIBRARY.get(
@@ -90,6 +92,10 @@ class Viewer3D(QWidget):
                 -L/2 - t/2, L/2 + t/2,
                 -W/2 - t/2, W/2 + t/2,
                 z0 - slab_t, z0))
+            
+            self.plotter.add_mesh(
+                floor_mesh, color=floor_color, opacity=0.7,
+                show_edges=True, edge_color='#45475a')
 
             for hole in story.floor_slab.openings:
                 hx = hole["x"] - L/2
@@ -97,15 +103,11 @@ class Viewer3D(QWidget):
                 hole_box = pv.Box(bounds=(
                     hx, hx + hole["length"],
                     hy, hy + hole["width"],
-                    z0 - slab_t - 0.01, z0 + 0.01))
-                try:
-                    floor_mesh = floor_mesh.boolean_difference(hole_box)
-                except:
-                    pass
+                    z0 - slab_t + 0.01, z0 - 0.01))
+                self.plotter.add_mesh(
+                    hole_box, color='#1e1e2e', opacity=0.9,
+                    show_edges=True, edge_color='#f38ba8', line_width=2)
 
-            self.plotter.add_mesh(
-                floor_mesh, color=floor_color, opacity=0.9,
-                show_edges=True, edge_color='#45475a')
 
             # ── 墙体 ──
             for wall in story.walls:
@@ -141,15 +143,15 @@ class Viewer3D(QWidget):
             self.draw_combustibles(story.combustibles, z0, L, W)
 
         # ── 屋顶 ──
-        total_h = model.total_height
-        roof_t = model.roof.get("thickness", 0.2)
-        roof = pv.Box(bounds=(
-            -L/2 - t/2, L/2 + t/2,
-            -W/2 - t/2, W/2 + t/2,
-            total_h, total_h + roof_t))
-        self.plotter.add_mesh(
-            roof, color=roof_color, opacity=0.7,
-            show_edges=True, edge_color='#45475a')
+        if self.show_roof:
+            roof_t = model.roof.get("thickness", 0.2)
+            roof = pv.Box(bounds=(
+                -L/2 - t/2, L/2 + t/2,
+                -W/2 - t/2, W/2 + t/2,
+                total_h, total_h + roof_t))
+            self.plotter.add_mesh(
+                roof, color=roof_color, opacity=0.7,
+                show_edges=True, edge_color='#45475a')
 
         # ── 热源 ──
         if model.heat_source.get("enabled", False):
@@ -159,8 +161,13 @@ class Viewer3D(QWidget):
         self.draw_origin_marker()
         self.max_dim = max(L, W, total_h)
         self.cx, self.cy, self.cz = 0, 0, total_h / 2
-        self.plotter.reset_camera()
-        self.setup_camera()
+        if self._first_render:
+            self.plotter.reset_camera()
+            self.setup_camera()
+            self._first_render = False
+        else:
+            # 保持当前视角，只重置裁剪范围
+            self.plotter.reset_camera_clipping_range()
 
     def _add_opening(self, opening, story, L, W, t, z0):
         """添加开口显示（多层适配）"""
@@ -225,6 +232,12 @@ class Viewer3D(QWidget):
             pv.Line((ox, oy, 0), (ox, oy, a)), color='blue', line_width=4)
         self.plotter.add_mesh(
             pv.Sphere(radius=a * 0.05, center=(ox, oy, 0)), color='white')
+
+    def reset_view(self):
+        """手动重置视角"""
+        self._first_render = True
+        if self.model:
+            self.update_model(self.model)
 
     def setup_camera(self):
         d = self.max_dim * 2.5
