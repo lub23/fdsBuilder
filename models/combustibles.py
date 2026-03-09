@@ -8,9 +8,6 @@
 @Desc  : Combustible model class for FDS generation
 '''
 
-
-"""可燃物模型与分布生成器"""
-
 import random
 import math
 import uuid

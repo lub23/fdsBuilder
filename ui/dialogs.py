@@ -9,18 +9,19 @@
 @Version : 1.0
 @Desc  : Dialog windows for building model configuration
 '''
-
+from typing import Tuple, Dict
 from PySide6.QtWidgets import (
     QDialog, QVBoxLayout, QFormLayout, QLineEdit, QDoubleSpinBox, QComboBox,
     QLabel, QDialogButtonBox, QTableWidget, QTableWidgetItem, QPushButton,
     QHBoxLayout, QHeaderView, QGroupBox, QSpinBox, QCheckBox, QMessageBox,
-    QGridLayout
+    QGridLayout, QTreeWidget, QTreeWidgetItem, QScrollArea, QWidget
 )
 from PySide6.QtCore import Qt, Signal
 from models.combustibles import (
     CombustibleManager, Combustible, DistributionMethod,
     COMBUSTIBLE_PRESETS
 )
+from models.facility import FacilityManager, WALL_NAMES
 
 # ============================================================
 # 开口编辑对话框
@@ -199,6 +200,7 @@ class WallDialog(QDialog):
             'is_external': self.is_external
         }
 
+
 # ============================================================
 # 热源时间曲线编辑对话框
 # ============================================================
@@ -276,7 +278,6 @@ class RampEditorDialog(QDialog):
             except:
                 pass
         return sorted(points, key=lambda x: x[0])
-
 
 
 class CombustibleDialog(QDialog):
@@ -858,3 +859,290 @@ class BatchWallDialog(QDialog):
 
     def get_data(self):
         return self._result
+
+
+class FacilityDialog(QDialog):
+    """从预设设施库选择 → 微调参数 → 生成等效建筑模型。"""
+
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.setWindowTitle("等效模型生成")
+        self.resize(900, 900)
+        self.result_model = None
+        self._params = None
+
+        from models.facility import FacilityManager
+        self._mgr = FacilityManager()
+        self._init_ui()
+        self._fill_tree()
+
+    # ── UI ────────────────────────────────────────
+
+    def _init_ui(self):
+        root = QHBoxLayout(self)
+        root.setSpacing(6)
+
+        # ── 左：设施树 ──
+        self.tree = QTreeWidget()
+        self.tree.setHeaderLabel("设施类型")
+        self.tree.setMinimumWidth(180)
+        self.tree.setMaximumWidth(220)
+        self.tree.currentItemChanged.connect(self._on_select)
+        root.addWidget(self.tree)
+
+        # ── 右：6列网格 ──
+        right_layout = QVBoxLayout()
+        right_layout.setSpacing(4)
+
+        content = QWidget()
+        g = QGridLayout(content)
+        g.setContentsMargins(6, 6, 6, 6)
+        g.setVerticalSpacing(5)
+        g.setHorizontalSpacing(6)
+        for c in (1, 4):
+            g.setColumnStretch(c, 1)
+
+        self._rng_labels = {}
+        r = 0
+
+        # ── 工具函数 ──
+        def _dsp(lo, hi, dec=1, sfx=" m", step=1.0):
+            s = QDoubleSpinBox()
+            s.setRange(lo, hi); s.setDecimals(dec)
+            s.setSuffix(sfx); s.setSingleStep(step)
+            return s
+
+        def _isp(lo, hi):
+            s = QSpinBox(); s.setRange(lo, hi); return s
+
+        def _rl(key):
+            lbl = QLabel()
+            lbl.setStyleSheet("color:#666;font-size:10px;")
+            self._rng_labels[key] = lbl
+            return lbl
+
+        def _hdr(title, note=""):
+            nonlocal r
+            t = f"<b>{title}</b>"
+            if note:
+                t += f"  <span style='color:#888;font-size:10px'>{note}</span>"
+            g.addWidget(QLabel(t), r, 0, 1, 6)
+            r += 1
+
+        def _row2(l1, w1, r1, l2, w2, r2):
+            nonlocal r
+            g.addWidget(QLabel(l1), r, 0)
+            g.addWidget(w1, r, 1)
+            if r1: g.addWidget(r1, r, 2)
+            g.addWidget(QLabel(l2), r, 3)
+            g.addWidget(w2, r, 4)
+            if r2: g.addWidget(r2, r, 5)
+            r += 1
+
+        def _row1(l1, w1, r1=None):
+            nonlocal r
+            g.addWidget(QLabel(l1), r, 0)
+            g.addWidget(w1, r, 1)
+            if r1: g.addWidget(r1, r, 2)
+            r += 1
+
+        # ══ 建筑 ══
+        _hdr("📐 建筑", "[ ] 为预设参考范围")
+        self.sp_L = _dsp(1, 2000); self.sp_W = _dsp(1, 2000)
+        _row2("长度:", self.sp_L, _rl("length"), "宽度:", self.sp_W, _rl("width"))
+        self.sp_H = _dsp(1, 300); self.sp_N = _isp(1, 30)
+        _row2("总高:", self.sp_H, _rl("height"), "层数:", self.sp_N, _rl("stories"))
+        self.sp_T = _dsp(.05, 5, 2, " m", .05)
+        _row1("墙厚:", self.sp_T)
+
+        # ══ 门 ══
+        _hdr("🚪 门（首层）")
+        self.cb_dwall = QComboBox(); self.cb_dwall.addItems(WALL_NAMES)
+        self.cb_dwall.setCurrentIndex(4)
+        self.sp_dc = _isp(0, 100)
+        _row2("分布:", self.cb_dwall, None, "数量:", self.sp_dc, _rl("door_count"))
+        self.sp_dw = _dsp(.3, 50); self.sp_dh = _dsp(.3, 50)
+        _row2("宽:", self.sp_dw, _rl("door_width"), "高:", self.sp_dh, _rl("door_height"))
+
+        # ══ 窗 ══
+        _hdr("🪟 窗（各层）")
+        self.cb_wwall = QComboBox(); self.cb_wwall.addItems(WALL_NAMES)
+        self.cb_wwall.setCurrentIndex(4)
+        self.sp_wc = _isp(0, 500)
+        _row2("分布:", self.cb_wwall, None, "数量:", self.sp_wc, _rl("window_count"))
+        self.sp_ww = _dsp(.3, 20); self.sp_wh = _dsp(.3, 20)
+        _row2("宽:", self.sp_ww, _rl("window_width"), "高:", self.sp_wh, _rl("window_height"))
+        self.sp_ws = _dsp(0.05, 0.5, 2, " ×层高", 0.05); self.sp_ws.setValue(0.3)
+        _row1("窗台高:", self.sp_ws)
+
+        # ══ 楼梯口 ══
+        _hdr("🪜 楼梯口（2F及以上）")
+        self.sp_sw_n = _isp(0, 10)
+        self.sp_sw_l = _dsp(1, 30, 1, " m", 0.5); self.sp_sw_l.setValue(4.0)
+        self.sp_sw_w = _dsp(1, 20, 1, " m", 0.5); self.sp_sw_w.setValue(3.0)
+        _row2("数量:", self.sp_sw_n, None, "长:", self.sp_sw_l, None)
+        _row1("宽:", self.sp_sw_w)
+
+        # ══ 可燃物 ══
+        _hdr("🪵 可燃物", "★ 表示典型可燃物；其余为通用可燃物")
+        self._comb_checks = {}
+        items = list(COMBUSTIBLE_PRESETS.items())
+        for i in range(0, len(items), 3):
+            chunk = items[i:i + 3]
+            for j, (key, preset) in enumerate(chunk):
+                chk = QCheckBox(preset["name"])
+                sp = QSpinBox(); sp.setRange(0, 200); sp.setValue(0)
+                sp.setSuffix(" 个"); sp.setFixedWidth(68)
+                sp.setEnabled(False)
+                chk.toggled.connect(lambda c, s=sp: s.setEnabled(c))
+                g.addWidget(chk, r, j * 2)
+                g.addWidget(sp, r, j * 2 + 1)
+                self._comb_checks[key] = (chk, sp)
+            r += 1
+
+        self.cb_cdist = QComboBox()
+        self.cb_cdist.addItems([m.value for m in DistributionMethod])
+        self.cb_cfloor = QComboBox(); self.cb_cfloor.addItem("全部楼层")
+        _row2("分布方式:", self.cb_cdist, None, "目标楼层:", self.cb_cfloor, None)
+
+        # ── 滚动区 ──
+        scroll = QScrollArea()
+        scroll.setWidgetResizable(True)
+        scroll.setWidget(content)
+        right_layout.addWidget(scroll, 1)
+
+        # ── 底部 ──
+        self.lbl_desc = QLabel(); self.lbl_desc.setWordWrap(True)
+        right_layout.addWidget(self.lbl_desc)
+
+        self.btn = QPushButton("🏗️ 生成等效模型")
+        self.btn.setEnabled(False)
+        self.btn.clicked.connect(self._on_generate)
+        right_layout.addWidget(self.btn)
+
+        rw = QWidget(); rw.setLayout(right_layout)
+        root.addWidget(rw, 1)
+
+        # ── 信号 ──
+        self.sp_N.valueChanged.connect(self._on_stories_changed)
+
+    # ── 层数联动 ──────────────────────────────────
+
+    def _on_stories_changed(self, n):
+        self._rebuild_floor_combo()
+        if n > 1:
+            self.sp_sw_n.setMinimum(1)
+            if self.sp_sw_n.value() < 1:
+                self.sp_sw_n.setValue(1)
+        else:
+            self.sp_sw_n.setMinimum(0)
+            self.sp_sw_n.setValue(0)
+
+    def _rebuild_floor_combo(self):
+        prev = self.cb_cfloor.currentIndex()
+        self.cb_cfloor.clear()
+        self.cb_cfloor.addItem("全部楼层")
+        for i in range(self.sp_N.value()):
+            self.cb_cfloor.addItem(f"{i + 1}F")
+        if 0 <= prev < self.cb_cfloor.count():
+            self.cb_cfloor.setCurrentIndex(prev)
+
+    # ── 树 ────────────────────────────────────────
+
+    def _fill_tree(self):
+        for ck, cn in self._mgr.categories():
+            cat_item = QTreeWidgetItem([cn])
+            cat_item.setData(0, Qt.UserRole, None)
+            for sk, sn in self._mgr.sub_types(ck):
+                child = QTreeWidgetItem([sn])
+                child.setData(0, Qt.UserRole, (ck, sk))
+                cat_item.addChild(child)
+            self.tree.addTopLevelItem(cat_item)
+        self.tree.expandAll()
+
+    # ── 选中填充 ──────────────────────────────────
+
+    def _on_select(self, cur, _prev):
+        from models.combustibles import COMBUSTIBLE_PRESETS
+        keys = cur.data(0, Qt.UserRole) if cur else None
+        if not keys:
+            self.btn.setEnabled(False); return
+        cat, sub = keys
+        p = self._mgr.default_params(cat, sub)
+        self._params = p
+
+        self.sp_L.setValue(p["length"]);  self.sp_W.setValue(p["width"])
+        self.sp_H.setValue(p["height"]);  self.sp_N.setValue(p["stories"])
+        self.sp_T.setValue(p["wall_thickness"])
+        self.sp_dw.setValue(p["door_width"]);  self.sp_dh.setValue(p["door_height"])
+        self.sp_dc.setValue(p["door_count"]);  self.cb_dwall.setCurrentIndex(4)
+        self.sp_ww.setValue(p["window_width"]); self.sp_wh.setValue(p["window_height"])
+        self.sp_wc.setValue(p["window_count"]); self.cb_wwall.setCurrentIndex(4)
+        self.sp_ws.setValue(p.get("window_sill", 0.3))
+        self.sp_sw_l.setValue(4.0); self.sp_sw_w.setValue(3.0)
+        # 楼梯口：多层时至少1
+        if p["stories"] > 1:
+            self.sp_sw_n.setMinimum(1); self.sp_sw_n.setValue(1)
+        else:
+            self.sp_sw_n.setMinimum(0); self.sp_sw_n.setValue(0)
+
+        # 范围标签
+        ranges = p.get("ranges", {})
+        for key, lbl in self._rng_labels.items():
+            rng = ranges.get(key)
+            if rng:
+                lo, hi = rng
+                if key in ("stories", "door_count", "window_count"):
+                    lbl.setText(f"[{int(lo)}~{int(hi)}]" if lo != hi else f"[{int(lo)}]")
+                else:
+                    lbl.setText(f"[{lo}~{hi}]" if lo != hi else f"[{lo}]")
+            else:
+                lbl.setText("")
+
+        # 可燃物
+        fac_combs = p.get("facility_combustibles", [])
+        for key, (chk, sp) in self._comb_checks.items():
+            is_typ = key in fac_combs
+            name = COMBUSTIBLE_PRESETS[key]["name"]
+            chk.setText(f"★ {name}" if is_typ else f"　{name}")
+            chk.setChecked(is_typ)
+            sp.setEnabled(is_typ)
+            sp.setValue(5 if is_typ else 0)
+
+        self._rebuild_floor_combo()
+        desc = p.get("description", "")
+        self.lbl_desc.setText(
+            f"<b>{p.get('cat_name','')}-{p.get('name','')}</b>"
+            f"{'　' + desc if desc else ''}")
+        self.btn.setEnabled(True)
+
+    # ── 读取 → dict ──────────────────────────────
+
+    def _read_params(self) -> dict:
+        p = dict(self._params) if self._params else {}
+        p.update(
+            length=self.sp_L.value(), width=self.sp_W.value(),
+            height=self.sp_H.value(), stories=self.sp_N.value(),
+            wall_thickness=self.sp_T.value(),
+            door_width=self.sp_dw.value(), door_height=self.sp_dh.value(),
+            door_count=self.sp_dc.value(), door_wall=self.cb_dwall.currentIndex(),
+            window_width=self.sp_ww.value(), window_height=self.sp_wh.value(),
+            window_count=self.sp_wc.value(), window_wall=self.cb_wwall.currentIndex(),
+            window_sill=self.sp_ws.value(),
+            stairwell_count=self.sp_sw_n.value(),
+            stairwell_length=self.sp_sw_l.value(),
+            stairwell_width=self.sp_sw_w.value(),
+        )
+        sel = {}
+        for key, (chk, sp) in self._comb_checks.items():
+            if chk.isChecked() and sp.value() > 0:
+                sel[key] = sp.value()
+        p["combustible_selections"] = sel
+        p["combustible_method"] = self.cb_cdist.currentIndex()
+        p["combustible_floor"] = self.cb_cfloor.currentIndex() - 1
+        return p
+
+    def _on_generate(self):
+        self.result_model = self._mgr.generate_model(self._read_params())
+        self.accept()
+

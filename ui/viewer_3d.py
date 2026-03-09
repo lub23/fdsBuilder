@@ -233,12 +233,6 @@ class Viewer3D(QWidget):
         self.plotter.add_mesh(
             pv.Sphere(radius=a * 0.05, center=(ox, oy, 0)), color='white')
 
-    def reset_view(self):
-        """手动重置视角"""
-        self._first_render = True
-        if self.model:
-            self.update_model(self.model)
-
     def setup_camera(self):
         d = self.max_dim * 2.5
         self.plotter.camera_position = [

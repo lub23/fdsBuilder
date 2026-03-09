@@ -1,0 +1,391 @@
+{
+    "chid": "facility",
+    "length": 175.0,
+    "width": 130.0,
+    "wall_thickness": 0.3,
+    "stories": [
+        {
+            "name": "1F",
+            "height": 10.83,
+            "walls": [
+                {
+                    "name": "南墙",
+                    "x1": 0,
+                    "y1": 0,
+                    "x2": 175.0,
+                    "y2": 0,
+                    "thickness": 0.3,
+                    "is_external": true,
+                    "height": 10.83
+                },
+                {
+                    "name": "北墙",
+                    "x1": 0,
+                    "y1": 130.0,
+                    "x2": 175.0,
+                    "y2": 130.0,
+                    "thickness": 0.3,
+                    "is_external": true,
+                    "height": 10.83
+                },
+                {
+                    "name": "西墙",
+                    "x1": 0,
+                    "y1": 0,
+                    "x2": 0,
+                    "y2": 130.0,
+                    "thickness": 0.3,
+                    "is_external": true,
+                    "height": 10.83
+                },
+                {
+                    "name": "东墙",
+                    "x1": 175.0,
+                    "y1": 0,
+                    "x2": 175.0,
+                    "y2": 130.0,
+                    "thickness": 0.3,
+                    "is_external": true,
+                    "height": 10.83
+                }
+            ],
+            "openings": [
+                {
+                    "wall_index": 0,
+                    "type": "door",
+                    "position": 0.3333,
+                    "width": 13.5,
+                    "height": 10.82,
+                    "z_bottom": 0.0
+                },
+                {
+                    "wall_index": 0,
+                    "type": "door",
+                    "position": 0.6667,
+                    "width": 13.5,
+                    "height": 10.82,
+                    "z_bottom": 0.0
+                },
+                {
+                    "wall_index": 0,
+                    "type": "window",
+                    "position": 0.3333,
+                    "width": 3.0,
+                    "height": 2.5,
+                    "z_bottom": 4.17
+                },
+                {
+                    "wall_index": 0,
+                    "type": "window",
+                    "position": 0.6667,
+                    "width": 3.0,
+                    "height": 2.5,
+                    "z_bottom": 4.17
+                },
+                {
+                    "wall_index": 1,
+                    "type": "window",
+                    "position": 0.3333,
+                    "width": 3.0,
+                    "height": 2.5,
+                    "z_bottom": 4.17
+                },
+                {
+                    "wall_index": 1,
+                    "type": "window",
+                    "position": 0.6667,
+                    "width": 3.0,
+                    "height": 2.5,
+                    "z_bottom": 4.17
+                },
+                {
+                    "wall_index": 2,
+                    "type": "window",
+                    "position": 0.3333,
+                    "width": 3.0,
+                    "height": 2.5,
+                    "z_bottom": 4.17
+                },
+                {
+                    "wall_index": 2,
+                    "type": "window",
+                    "position": 0.6667,
+                    "width": 3.0,
+                    "height": 2.5,
+                    "z_bottom": 4.17
+                },
+                {
+                    "wall_index": 3,
+                    "type": "window",
+                    "position": 0.5,
+                    "width": 3.0,
+                    "height": 2.5,
+                    "z_bottom": 4.17
+                }
+            ],
+            "combustibles": [],
+            "floor_slab": {
+                "thickness": 0.2,
+                "material": "CONCRETE",
+                "openings": []
+            }
+        },
+        {
+            "name": "2F",
+            "height": 10.83,
+            "walls": [
+                {
+                    "name": "南墙",
+                    "x1": 0,
+                    "y1": 0,
+                    "x2": 175.0,
+                    "y2": 0,
+                    "thickness": 0.3,
+                    "is_external": true,
+                    "height": 10.83
+                },
+                {
+                    "name": "北墙",
+                    "x1": 0,
+                    "y1": 130.0,
+                    "x2": 175.0,
+                    "y2": 130.0,
+                    "thickness": 0.3,
+                    "is_external": true,
+                    "height": 10.83
+                },
+                {
+                    "name": "西墙",
+                    "x1": 0,
+                    "y1": 0,
+                    "x2": 0,
+                    "y2": 130.0,
+                    "thickness": 0.3,
+                    "is_external": true,
+                    "height": 10.83
+                },
+                {
+                    "name": "东墙",
+                    "x1": 175.0,
+                    "y1": 0,
+                    "x2": 175.0,
+                    "y2": 130.0,
+                    "thickness": 0.3,
+                    "is_external": true,
+                    "height": 10.83
+                }
+            ],
+            "openings": [
+                {
+                    "wall_index": 0,
+                    "type": "window",
+                    "position": 0.3333,
+                    "width": 3.0,
+                    "height": 2.5,
+                    "z_bottom": 4.17
+                },
+                {
+                    "wall_index": 0,
+                    "type": "window",
+                    "position": 0.6667,
+                    "width": 3.0,
+                    "height": 2.5,
+                    "z_bottom": 4.17
+                },
+                {
+                    "wall_index": 1,
+                    "type": "window",
+                    "position": 0.3333,
+                    "width": 3.0,
+                    "height": 2.5,
+                    "z_bottom": 4.17
+                },
+                {
+                    "wall_index": 1,
+                    "type": "window",
+                    "position": 0.6667,
+                    "width": 3.0,
+                    "height": 2.5,
+                    "z_bottom": 4.17
+                },
+                {
+                    "wall_index": 2,
+                    "type": "window",
+                    "position": 0.3333,
+                    "width": 3.0,
+                    "height": 2.5,
+                    "z_bottom": 4.17
+                },
+                {
+                    "wall_index": 2,
+                    "type": "window",
+                    "position": 0.6667,
+                    "width": 3.0,
+                    "height": 2.5,
+                    "z_bottom": 4.17
+                },
+                {
+                    "wall_index": 3,
+                    "type": "window",
+                    "position": 0.5,
+                    "width": 3.0,
+                    "height": 2.5,
+                    "z_bottom": 4.17
+                }
+            ],
+            "combustibles": [],
+            "floor_slab": {
+                "thickness": 0.2,
+                "material": "CONCRETE",
+                "openings": []
+            }
+        },
+        {
+            "name": "3F",
+            "height": 10.83,
+            "walls": [
+                {
+                    "name": "南墙",
+                    "x1": 0,
+                    "y1": 0,
+                    "x2": 175.0,
+                    "y2": 0,
+                    "thickness": 0.3,
+                    "is_external": true,
+                    "height": 10.83
+                },
+                {
+                    "name": "北墙",
+                    "x1": 0,
+                    "y1": 130.0,
+                    "x2": 175.0,
+                    "y2": 130.0,
+                    "thickness": 0.3,
+                    "is_external": true,
+                    "height": 10.83
+                },
+                {
+                    "name": "西墙",
+                    "x1": 0,
+                    "y1": 0,
+                    "x2": 0,
+                    "y2": 130.0,
+                    "thickness": 0.3,
+                    "is_external": true,
+                    "height": 10.83
+                },
+                {
+                    "name": "东墙",
+                    "x1": 175.0,
+                    "y1": 0,
+                    "x2": 175.0,
+                    "y2": 130.0,
+                    "thickness": 0.3,
+                    "is_external": true,
+                    "height": 10.83
+                }
+            ],
+            "openings": [
+                {
+                    "wall_index": 0,
+                    "type": "window",
+                    "position": 0.3333,
+                    "width": 3.0,
+                    "height": 2.5,
+                    "z_bottom": 4.17
+                },
+                {
+                    "wall_index": 0,
+                    "type": "window",
+                    "position": 0.6667,
+                    "width": 3.0,
+                    "height": 2.5,
+                    "z_bottom": 4.17
+                },
+                {
+                    "wall_index": 1,
+                    "type": "window",
+                    "position": 0.3333,
+                    "width": 3.0,
+                    "height": 2.5,
+                    "z_bottom": 4.17
+                },
+                {
+                    "wall_index": 1,
+                    "type": "window",
+                    "position": 0.6667,
+                    "width": 3.0,
+                    "height": 2.5,
+                    "z_bottom": 4.17
+                },
+                {
+                    "wall_index": 2,
+                    "type": "window",
+                    "position": 0.5,
+                    "width": 3.0,
+                    "height": 2.5,
+                    "z_bottom": 4.17
+                },
+                {
+                    "wall_index": 3,
+                    "type": "window",
+                    "position": 0.5,
+                    "width": 3.0,
+                    "height": 2.5,
+                    "z_bottom": 4.17
+                }
+            ],
+            "combustibles": [],
+            "floor_slab": {
+                "thickness": 0.2,
+                "material": "CONCRETE",
+                "openings": []
+            }
+        }
+    ],
+    "roof": {
+        "thickness": 0.2,
+        "material": "CONCRETE"
+    },
+    "materials": {
+        "walls": "CONCRETE",
+        "floor": "CONCRETE",
+        "roof": "CONCRETE"
+    },
+    "heat_source": {
+        "enabled": false,
+        "location": "north",
+        "distance": 3.0,
+        "width_ratio": 1.5,
+        "height_ratio": 1.0,
+        "radiation_flux": 50.0,
+        "use_ramp": true,
+        "ramp_points": [
+            [
+                0,
+                0.0
+            ],
+            [
+                100,
+                1.0
+            ],
+            [
+                500,
+                1.0
+            ]
+        ]
+    },
+    "domain": {
+        "padding": 5.0,
+        "mesh_cells": [
+            80,
+            60,
+            40
+        ]
+    },
+    "simulation_time": 20.0,
+    "output": {
+        "slices": true,
+        "devices": true
+    }
+}

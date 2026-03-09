@@ -162,7 +162,7 @@ class ParameterPanel(QWidget):
         def mat_combo():
             c = QComboBox()
             c.addItems(materials)
-            c.currentTextChanged.connect(self.on_material_changed)
+            c.currentTextChanged.connect(self.on_param_changed)
             c.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
             c.setMaximumWidth(90)
             return c
@@ -170,7 +170,7 @@ class ParameterPanel(QWidget):
         g.addWidget(QLabel("墙:"), 1, 0)
         self.wall_mat_combo = mat_combo()
         g.addWidget(self.wall_mat_combo, 1, 1)
-        g.addWidget(QLabel("板:"), 1, 2)
+        g.addWidget(QLabel("底:"), 1, 2)
         self.floor_mat_combo = mat_combo()
         g.addWidget(self.floor_mat_combo, 1, 3)
         g.addWidget(QLabel("顶:"), 1, 4)
@@ -179,12 +179,6 @@ class ParameterPanel(QWidget):
 
         grp.content_layout.addLayout(g)
         self.body_layout.addWidget(grp)
-
-    def on_material_changed(self):
-        """材料变更不刷新3D，只同步模型"""
-        if self._syncing:
-            return
-        self.sync_model_from_ui()
 
     # ── 楼层管理 ─────────────────────────────
     def _build_story_section(self):
