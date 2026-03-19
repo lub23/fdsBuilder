@@ -14,8 +14,9 @@ from typing import List, Tuple, Dict, Any
 
 from models.building import BuildingModel, Story, FloorSlab
 from models.combustibles import (
-    CombustibleManager, DistributionMethod, COMBUSTIBLE_PRESETS,
+    CombustibleManager, DistributionMethod
 )
+from models.materials import COMBUSTIBLE_LIBRARY
 
 WALL_NAMES = ["南墙", "北墙", "东墙", "西墙", "均匀分布"]
 
@@ -313,7 +314,7 @@ class FacilityManager:
             if target >= 0 and si != target:
                 continue
             for key, count in selections.items():
-                if count <= 0 or key not in COMBUSTIBLE_PRESETS:
+                if count <= 0 or key not in COMBUSTIBLE_LIBRARY:
                     continue
                 request = count + len(holes) * 3 + 5 if holes else count
                 new_items = story.combustibles.generate(

@@ -1,5 +1,5 @@
 {
-    "chid": "facility",
+    "chid": "Aerospace-Assembly building",
     "length": 175.0,
     "width": 130.0,
     "wall_thickness": 0.3,
@@ -53,17 +53,17 @@
                 {
                     "wall_index": 0,
                     "type": "door",
-                    "position": 0.3333,
+                    "position": 0.5,
                     "width": 13.5,
-                    "height": 10.82,
+                    "height": 10.73,
                     "z_bottom": 0.0
                 },
                 {
-                    "wall_index": 0,
+                    "wall_index": 1,
                     "type": "door",
-                    "position": 0.6667,
+                    "position": 0.5,
                     "width": 13.5,
-                    "height": 10.82,
+                    "height": 10.73,
                     "z_bottom": 0.0
                 },
                 {
@@ -72,7 +72,7 @@
                     "position": 0.3333,
                     "width": 3.0,
                     "height": 2.5,
-                    "z_bottom": 4.17
+                    "z_bottom": 5.42
                 },
                 {
                     "wall_index": 0,
@@ -80,7 +80,7 @@
                     "position": 0.6667,
                     "width": 3.0,
                     "height": 2.5,
-                    "z_bottom": 4.17
+                    "z_bottom": 5.42
                 },
                 {
                     "wall_index": 1,
@@ -88,7 +88,7 @@
                     "position": 0.3333,
                     "width": 3.0,
                     "height": 2.5,
-                    "z_bottom": 4.17
+                    "z_bottom": 5.42
                 },
                 {
                     "wall_index": 1,
@@ -96,7 +96,7 @@
                     "position": 0.6667,
                     "width": 3.0,
                     "height": 2.5,
-                    "z_bottom": 4.17
+                    "z_bottom": 5.42
                 },
                 {
                     "wall_index": 2,
@@ -104,7 +104,7 @@
                     "position": 0.3333,
                     "width": 3.0,
                     "height": 2.5,
-                    "z_bottom": 4.17
+                    "z_bottom": 5.42
                 },
                 {
                     "wall_index": 2,
@@ -112,7 +112,7 @@
                     "position": 0.6667,
                     "width": 3.0,
                     "height": 2.5,
-                    "z_bottom": 4.17
+                    "z_bottom": 5.42
                 },
                 {
                     "wall_index": 3,
@@ -120,7 +120,7 @@
                     "position": 0.5,
                     "width": 3.0,
                     "height": 2.5,
-                    "z_bottom": 4.17
+                    "z_bottom": 5.42
                 }
             ],
             "combustibles": [],
@@ -182,7 +182,7 @@
                     "position": 0.3333,
                     "width": 3.0,
                     "height": 2.5,
-                    "z_bottom": 4.17
+                    "z_bottom": 5.42
                 },
                 {
                     "wall_index": 0,
@@ -190,7 +190,7 @@
                     "position": 0.6667,
                     "width": 3.0,
                     "height": 2.5,
-                    "z_bottom": 4.17
+                    "z_bottom": 5.42
                 },
                 {
                     "wall_index": 1,
@@ -198,7 +198,7 @@
                     "position": 0.3333,
                     "width": 3.0,
                     "height": 2.5,
-                    "z_bottom": 4.17
+                    "z_bottom": 5.42
                 },
                 {
                     "wall_index": 1,
@@ -206,7 +206,7 @@
                     "position": 0.6667,
                     "width": 3.0,
                     "height": 2.5,
-                    "z_bottom": 4.17
+                    "z_bottom": 5.42
                 },
                 {
                     "wall_index": 2,
@@ -214,7 +214,7 @@
                     "position": 0.3333,
                     "width": 3.0,
                     "height": 2.5,
-                    "z_bottom": 4.17
+                    "z_bottom": 5.42
                 },
                 {
                     "wall_index": 2,
@@ -222,7 +222,7 @@
                     "position": 0.6667,
                     "width": 3.0,
                     "height": 2.5,
-                    "z_bottom": 4.17
+                    "z_bottom": 5.42
                 },
                 {
                     "wall_index": 3,
@@ -230,14 +230,1073 @@
                     "position": 0.5,
                     "width": 3.0,
                     "height": 2.5,
-                    "z_bottom": 4.17
+                    "z_bottom": 5.42
                 }
             ],
-            "combustibles": [],
+            "combustibles": [
+                {
+                    "id": "CB_e8292e",
+                    "preset_key": "CARDBOARD_BOX",
+                    "name": "纸箱",
+                    "x": 44.14,
+                    "y": 31.62,
+                    "z": 0,
+                    "length": 0.6,
+                    "width": 0.4,
+                    "height": 0.5,
+                    "hrrpua": 350,
+                    "ignition_temp": 300,
+                    "color": "KHAKI",
+                    "matl": {
+                        "DENSITY": 200,
+                        "CONDUCTIVITY": 0.06,
+                        "SPECIFIC_HEAT": 1.33,
+                        "HEAT_OF_COMBUSTION": 16000,
+                        "REFERENCE_TEMPERATURE": 300
+                    }
+                },
+                {
+                    "id": "CB_ca7360",
+                    "preset_key": "CARDBOARD_BOX",
+                    "name": "纸箱",
+                    "x": 173.77,
+                    "y": 94.02,
+                    "z": 0,
+                    "length": 0.6,
+                    "width": 0.4,
+                    "height": 0.5,
+                    "hrrpua": 350,
+                    "ignition_temp": 300,
+                    "color": "KHAKI",
+                    "matl": {
+                        "DENSITY": 200,
+                        "CONDUCTIVITY": 0.06,
+                        "SPECIFIC_HEAT": 1.33,
+                        "HEAT_OF_COMBUSTION": 16000,
+                        "REFERENCE_TEMPERATURE": 300
+                    }
+                },
+                {
+                    "id": "CB_2665e5",
+                    "preset_key": "CARDBOARD_BOX",
+                    "name": "纸箱",
+                    "x": 8.84,
+                    "y": 125.4,
+                    "z": 0,
+                    "length": 0.6,
+                    "width": 0.4,
+                    "height": 0.5,
+                    "hrrpua": 350,
+                    "ignition_temp": 300,
+                    "color": "KHAKI",
+                    "matl": {
+                        "DENSITY": 200,
+                        "CONDUCTIVITY": 0.06,
+                        "SPECIFIC_HEAT": 1.33,
+                        "HEAT_OF_COMBUSTION": 16000,
+                        "REFERENCE_TEMPERATURE": 300
+                    }
+                },
+                {
+                    "id": "CB_8ba406",
+                    "preset_key": "CURTAIN",
+                    "name": "窗帘(折叠)",
+                    "x": 143.27,
+                    "y": 119.99,
+                    "z": 0,
+                    "length": 0.3,
+                    "width": 1.5,
+                    "height": 2.0,
+                    "hrrpua": 700,
+                    "ignition_temp": 250,
+                    "color": "MAGENTA",
+                    "matl": {
+                        "DENSITY": 80,
+                        "CONDUCTIVITY": 0.1,
+                        "SPECIFIC_HEAT": 1.2,
+                        "HEAT_OF_COMBUSTION": 28000,
+                        "REFERENCE_TEMPERATURE": 250
+                    }
+                },
+                {
+                    "id": "CB_b62893",
+                    "preset_key": "CURTAIN",
+                    "name": "窗帘(折叠)",
+                    "x": 92.18,
+                    "y": 41.45,
+                    "z": 0,
+                    "length": 0.3,
+                    "width": 1.5,
+                    "height": 2.0,
+                    "hrrpua": 700,
+                    "ignition_temp": 250,
+                    "color": "MAGENTA",
+                    "matl": {
+                        "DENSITY": 80,
+                        "CONDUCTIVITY": 0.1,
+                        "SPECIFIC_HEAT": 1.2,
+                        "HEAT_OF_COMBUSTION": 28000,
+                        "REFERENCE_TEMPERATURE": 250
+                    }
+                },
+                {
+                    "id": "CB_5f24ed",
+                    "preset_key": "CURTAIN",
+                    "name": "窗帘(折叠)",
+                    "x": 73.29,
+                    "y": 1.36,
+                    "z": 0,
+                    "length": 0.3,
+                    "width": 1.5,
+                    "height": 2.0,
+                    "hrrpua": 700,
+                    "ignition_temp": 250,
+                    "color": "MAGENTA",
+                    "matl": {
+                        "DENSITY": 80,
+                        "CONDUCTIVITY": 0.1,
+                        "SPECIFIC_HEAT": 1.2,
+                        "HEAT_OF_COMBUSTION": 28000,
+                        "REFERENCE_TEMPERATURE": 250
+                    }
+                },
+                {
+                    "id": "CB_3f2194",
+                    "preset_key": "CURTAIN",
+                    "name": "窗帘(折叠)",
+                    "x": 72.18,
+                    "y": 45.85,
+                    "z": 0,
+                    "length": 0.3,
+                    "width": 1.5,
+                    "height": 2.0,
+                    "hrrpua": 700,
+                    "ignition_temp": 250,
+                    "color": "MAGENTA",
+                    "matl": {
+                        "DENSITY": 80,
+                        "CONDUCTIVITY": 0.1,
+                        "SPECIFIC_HEAT": 1.2,
+                        "HEAT_OF_COMBUSTION": 28000,
+                        "REFERENCE_TEMPERATURE": 250
+                    }
+                },
+                {
+                    "id": "CB_8dc662",
+                    "preset_key": "CURTAIN",
+                    "name": "窗帘(折叠)",
+                    "x": 170.62,
+                    "y": 10.1,
+                    "z": 0,
+                    "length": 0.3,
+                    "width": 1.5,
+                    "height": 2.0,
+                    "hrrpua": 700,
+                    "ignition_temp": 250,
+                    "color": "MAGENTA",
+                    "matl": {
+                        "DENSITY": 80,
+                        "CONDUCTIVITY": 0.1,
+                        "SPECIFIC_HEAT": 1.2,
+                        "HEAT_OF_COMBUSTION": 28000,
+                        "REFERENCE_TEMPERATURE": 250
+                    }
+                },
+                {
+                    "id": "CB_9dab5b",
+                    "preset_key": "INDUSTRIAL_OIL_DRUM",
+                    "name": "工业油品(桶装)",
+                    "x": 31.33,
+                    "y": 126.49,
+                    "z": 0,
+                    "length": 0.6,
+                    "width": 0.6,
+                    "height": 0.9,
+                    "hrrpua": 900,
+                    "ignition_temp": 330,
+                    "color": "GREEN",
+                    "matl": {
+                        "DENSITY": 880,
+                        "CONDUCTIVITY": 0.13,
+                        "SPECIFIC_HEAT": 2.0,
+                        "HEAT_OF_COMBUSTION": 43000,
+                        "REFERENCE_TEMPERATURE": 330
+                    }
+                },
+                {
+                    "id": "CB_4bd298",
+                    "preset_key": "INDUSTRIAL_OIL_DRUM",
+                    "name": "工业油品(桶装)",
+                    "x": 77.12,
+                    "y": 24.1,
+                    "z": 0,
+                    "length": 0.6,
+                    "width": 0.6,
+                    "height": 0.9,
+                    "hrrpua": 900,
+                    "ignition_temp": 330,
+                    "color": "GREEN",
+                    "matl": {
+                        "DENSITY": 880,
+                        "CONDUCTIVITY": 0.13,
+                        "SPECIFIC_HEAT": 2.0,
+                        "HEAT_OF_COMBUSTION": 43000,
+                        "REFERENCE_TEMPERATURE": 330
+                    }
+                },
+                {
+                    "id": "CB_2603b4",
+                    "preset_key": "INDUSTRIAL_OIL_DRUM",
+                    "name": "工业油品(桶装)",
+                    "x": 79.87,
+                    "y": 56.79,
+                    "z": 0,
+                    "length": 0.6,
+                    "width": 0.6,
+                    "height": 0.9,
+                    "hrrpua": 900,
+                    "ignition_temp": 330,
+                    "color": "GREEN",
+                    "matl": {
+                        "DENSITY": 880,
+                        "CONDUCTIVITY": 0.13,
+                        "SPECIFIC_HEAT": 2.0,
+                        "HEAT_OF_COMBUSTION": 43000,
+                        "REFERENCE_TEMPERATURE": 330
+                    }
+                },
+                {
+                    "id": "CB_cea101",
+                    "preset_key": "ORGANIC_SOLVENT_DRUM",
+                    "name": "有机溶剂/清洗剂",
+                    "x": 24.13,
+                    "y": 20.28,
+                    "z": 0,
+                    "length": 0.6,
+                    "width": 0.6,
+                    "height": 0.9,
+                    "hrrpua": 1500,
+                    "ignition_temp": 220,
+                    "color": "PURPLE",
+                    "matl": {
+                        "DENSITY": 790,
+                        "CONDUCTIVITY": 0.16,
+                        "SPECIFIC_HEAT": 2.2,
+                        "HEAT_OF_COMBUSTION": 30000,
+                        "REFERENCE_TEMPERATURE": 220
+                    }
+                },
+                {
+                    "id": "CB_650aa8",
+                    "preset_key": "ORGANIC_SOLVENT_DRUM",
+                    "name": "有机溶剂/清洗剂",
+                    "x": 5.85,
+                    "y": 103.64,
+                    "z": 0,
+                    "length": 0.6,
+                    "width": 0.6,
+                    "height": 0.9,
+                    "hrrpua": 1500,
+                    "ignition_temp": 220,
+                    "color": "PURPLE",
+                    "matl": {
+                        "DENSITY": 790,
+                        "CONDUCTIVITY": 0.16,
+                        "SPECIFIC_HEAT": 2.2,
+                        "HEAT_OF_COMBUSTION": 30000,
+                        "REFERENCE_TEMPERATURE": 220
+                    }
+                },
+                {
+                    "id": "CB_15cad2",
+                    "preset_key": "ORGANIC_SOLVENT_DRUM",
+                    "name": "有机溶剂/清洗剂",
+                    "x": 27.98,
+                    "y": 65.14,
+                    "z": 0,
+                    "length": 0.6,
+                    "width": 0.6,
+                    "height": 0.9,
+                    "hrrpua": 1500,
+                    "ignition_temp": 220,
+                    "color": "PURPLE",
+                    "matl": {
+                        "DENSITY": 790,
+                        "CONDUCTIVITY": 0.16,
+                        "SPECIFIC_HEAT": 2.2,
+                        "HEAT_OF_COMBUSTION": 30000,
+                        "REFERENCE_TEMPERATURE": 220
+                    }
+                },
+                {
+                    "id": "CB_25b603",
+                    "preset_key": "ORGANIC_SOLVENT_DRUM",
+                    "name": "有机溶剂/清洗剂",
+                    "x": 133.03,
+                    "y": 5.72,
+                    "z": 0,
+                    "length": 0.6,
+                    "width": 0.6,
+                    "height": 0.9,
+                    "hrrpua": 1500,
+                    "ignition_temp": 220,
+                    "color": "PURPLE",
+                    "matl": {
+                        "DENSITY": 790,
+                        "CONDUCTIVITY": 0.16,
+                        "SPECIFIC_HEAT": 2.2,
+                        "HEAT_OF_COMBUSTION": 30000,
+                        "REFERENCE_TEMPERATURE": 220
+                    }
+                },
+                {
+                    "id": "CB_3bca2d",
+                    "preset_key": "ORGANIC_SOLVENT_DRUM",
+                    "name": "有机溶剂/清洗剂",
+                    "x": 59.79,
+                    "y": 127.27,
+                    "z": 0,
+                    "length": 0.6,
+                    "width": 0.6,
+                    "height": 0.9,
+                    "hrrpua": 1500,
+                    "ignition_temp": 220,
+                    "color": "PURPLE",
+                    "matl": {
+                        "DENSITY": 790,
+                        "CONDUCTIVITY": 0.16,
+                        "SPECIFIC_HEAT": 2.2,
+                        "HEAT_OF_COMBUSTION": 30000,
+                        "REFERENCE_TEMPERATURE": 220
+                    }
+                },
+                {
+                    "id": "CB_591f92",
+                    "preset_key": "COATING_AGENT_DRUM",
+                    "name": "涂料/稀释剂/表面处理介质",
+                    "x": 24.84,
+                    "y": 5.07,
+                    "z": 0,
+                    "length": 0.6,
+                    "width": 0.6,
+                    "height": 0.9,
+                    "hrrpua": 950,
+                    "ignition_temp": 260,
+                    "color": "ORANGE",
+                    "matl": {
+                        "DENSITY": 950,
+                        "CONDUCTIVITY": 0.18,
+                        "SPECIFIC_HEAT": 1.7,
+                        "HEAT_OF_COMBUSTION": 27000,
+                        "REFERENCE_TEMPERATURE": 260
+                    }
+                },
+                {
+                    "id": "CB_7baa9e",
+                    "preset_key": "COATING_AGENT_DRUM",
+                    "name": "涂料/稀释剂/表面处理介质",
+                    "x": 8.41,
+                    "y": 106.13,
+                    "z": 0,
+                    "length": 0.6,
+                    "width": 0.6,
+                    "height": 0.9,
+                    "hrrpua": 950,
+                    "ignition_temp": 260,
+                    "color": "ORANGE",
+                    "matl": {
+                        "DENSITY": 950,
+                        "CONDUCTIVITY": 0.18,
+                        "SPECIFIC_HEAT": 1.7,
+                        "HEAT_OF_COMBUSTION": 27000,
+                        "REFERENCE_TEMPERATURE": 260
+                    }
+                },
+                {
+                    "id": "CB_7580f1",
+                    "preset_key": "COATING_AGENT_DRUM",
+                    "name": "涂料/稀释剂/表面处理介质",
+                    "x": 129.89,
+                    "y": 84.56,
+                    "z": 0,
+                    "length": 0.6,
+                    "width": 0.6,
+                    "height": 0.9,
+                    "hrrpua": 950,
+                    "ignition_temp": 260,
+                    "color": "ORANGE",
+                    "matl": {
+                        "DENSITY": 950,
+                        "CONDUCTIVITY": 0.18,
+                        "SPECIFIC_HEAT": 1.7,
+                        "HEAT_OF_COMBUSTION": 27000,
+                        "REFERENCE_TEMPERATURE": 260
+                    }
+                },
+                {
+                    "id": "CB_6ddb5c",
+                    "preset_key": "WOOD_PALLET",
+                    "name": "木托盘",
+                    "x": 78.53,
+                    "y": 57.86,
+                    "z": 0,
+                    "length": 1.2,
+                    "width": 1.0,
+                    "height": 0.15,
+                    "hrrpua": 250,
+                    "ignition_temp": 350,
+                    "color": "BROWN",
+                    "matl": {
+                        "DENSITY": 500,
+                        "CONDUCTIVITY": 0.14,
+                        "SPECIFIC_HEAT": 2.85,
+                        "HEAT_OF_COMBUSTION": 18000,
+                        "REFERENCE_TEMPERATURE": 350
+                    }
+                },
+                {
+                    "id": "CB_9ceb99",
+                    "preset_key": "WOOD_PALLET",
+                    "name": "木托盘",
+                    "x": 151.53,
+                    "y": 7.3,
+                    "z": 0,
+                    "length": 1.2,
+                    "width": 1.0,
+                    "height": 0.15,
+                    "hrrpua": 250,
+                    "ignition_temp": 350,
+                    "color": "BROWN",
+                    "matl": {
+                        "DENSITY": 500,
+                        "CONDUCTIVITY": 0.14,
+                        "SPECIFIC_HEAT": 2.85,
+                        "HEAT_OF_COMBUSTION": 18000,
+                        "REFERENCE_TEMPERATURE": 350
+                    }
+                },
+                {
+                    "id": "CB_c0cce3",
+                    "preset_key": "WOOD_PALLET",
+                    "name": "木托盘",
+                    "x": 137.26,
+                    "y": 39.92,
+                    "z": 0,
+                    "length": 1.2,
+                    "width": 1.0,
+                    "height": 0.15,
+                    "hrrpua": 250,
+                    "ignition_temp": 350,
+                    "color": "BROWN",
+                    "matl": {
+                        "DENSITY": 500,
+                        "CONDUCTIVITY": 0.14,
+                        "SPECIFIC_HEAT": 2.85,
+                        "HEAT_OF_COMBUSTION": 18000,
+                        "REFERENCE_TEMPERATURE": 350
+                    }
+                },
+                {
+                    "id": "CB_828f70",
+                    "preset_key": "WOOD_PALLET",
+                    "name": "木托盘",
+                    "x": 58.04,
+                    "y": 82.2,
+                    "z": 0,
+                    "length": 1.2,
+                    "width": 1.0,
+                    "height": 0.15,
+                    "hrrpua": 250,
+                    "ignition_temp": 350,
+                    "color": "BROWN",
+                    "matl": {
+                        "DENSITY": 500,
+                        "CONDUCTIVITY": 0.14,
+                        "SPECIFIC_HEAT": 2.85,
+                        "HEAT_OF_COMBUSTION": 18000,
+                        "REFERENCE_TEMPERATURE": 350
+                    }
+                },
+                {
+                    "id": "CB_20e817",
+                    "preset_key": "WOOD_PALLET",
+                    "name": "木托盘",
+                    "x": 142.36,
+                    "y": 1.53,
+                    "z": 0,
+                    "length": 1.2,
+                    "width": 1.0,
+                    "height": 0.15,
+                    "hrrpua": 250,
+                    "ignition_temp": 350,
+                    "color": "BROWN",
+                    "matl": {
+                        "DENSITY": 500,
+                        "CONDUCTIVITY": 0.14,
+                        "SPECIFIC_HEAT": 2.85,
+                        "HEAT_OF_COMBUSTION": 18000,
+                        "REFERENCE_TEMPERATURE": 350
+                    }
+                },
+                {
+                    "id": "CB_9e05e4",
+                    "preset_key": "PAPER_STACK",
+                    "name": "纸张堆",
+                    "x": 27.26,
+                    "y": 55.51,
+                    "z": 0,
+                    "length": 0.8,
+                    "width": 0.6,
+                    "height": 0.5,
+                    "hrrpua": 300,
+                    "ignition_temp": 240,
+                    "color": "KHAKI",
+                    "matl": {
+                        "DENSITY": 300,
+                        "CONDUCTIVITY": 0.08,
+                        "SPECIFIC_HEAT": 1.34,
+                        "HEAT_OF_COMBUSTION": 16000,
+                        "REFERENCE_TEMPERATURE": 240
+                    }
+                },
+                {
+                    "id": "CB_37e5d5",
+                    "preset_key": "PAPER_STACK",
+                    "name": "纸张堆",
+                    "x": 127.47,
+                    "y": 109.92,
+                    "z": 0,
+                    "length": 0.8,
+                    "width": 0.6,
+                    "height": 0.5,
+                    "hrrpua": 300,
+                    "ignition_temp": 240,
+                    "color": "KHAKI",
+                    "matl": {
+                        "DENSITY": 300,
+                        "CONDUCTIVITY": 0.08,
+                        "SPECIFIC_HEAT": 1.34,
+                        "HEAT_OF_COMBUSTION": 16000,
+                        "REFERENCE_TEMPERATURE": 240
+                    }
+                },
+                {
+                    "id": "CB_df0ef3",
+                    "preset_key": "PAPER_STACK",
+                    "name": "纸张堆",
+                    "x": 127.18,
+                    "y": 121.72,
+                    "z": 0,
+                    "length": 0.8,
+                    "width": 0.6,
+                    "height": 0.5,
+                    "hrrpua": 300,
+                    "ignition_temp": 240,
+                    "color": "KHAKI",
+                    "matl": {
+                        "DENSITY": 300,
+                        "CONDUCTIVITY": 0.08,
+                        "SPECIFIC_HEAT": 1.34,
+                        "HEAT_OF_COMBUSTION": 16000,
+                        "REFERENCE_TEMPERATURE": 240
+                    }
+                },
+                {
+                    "id": "CB_34384e",
+                    "preset_key": "FOAM_PACKAGING",
+                    "name": "泡沫缓冲材料",
+                    "x": 172.66,
+                    "y": 24.67,
+                    "z": 0,
+                    "length": 1.2,
+                    "width": 0.8,
+                    "height": 0.6,
+                    "hrrpua": 1200,
+                    "ignition_temp": 330,
+                    "color": "YELLOW",
+                    "matl": {
+                        "DENSITY": 30,
+                        "CONDUCTIVITY": 0.04,
+                        "SPECIFIC_HEAT": 1.4,
+                        "HEAT_OF_COMBUSTION": 26000,
+                        "REFERENCE_TEMPERATURE": 330
+                    }
+                },
+                {
+                    "id": "CB_852491",
+                    "preset_key": "FOAM_PACKAGING",
+                    "name": "泡沫缓冲材料",
+                    "x": 88.55,
+                    "y": 72.31,
+                    "z": 0,
+                    "length": 1.2,
+                    "width": 0.8,
+                    "height": 0.6,
+                    "hrrpua": 1200,
+                    "ignition_temp": 330,
+                    "color": "YELLOW",
+                    "matl": {
+                        "DENSITY": 30,
+                        "CONDUCTIVITY": 0.04,
+                        "SPECIFIC_HEAT": 1.4,
+                        "HEAT_OF_COMBUSTION": 26000,
+                        "REFERENCE_TEMPERATURE": 330
+                    }
+                },
+                {
+                    "id": "CB_681591",
+                    "preset_key": "OFFICE_COMPOSITE_FURNITURE",
+                    "name": "木塑复合办公家具",
+                    "x": 87.86,
+                    "y": 71.05,
+                    "z": 0,
+                    "length": 1.4,
+                    "width": 0.7,
+                    "height": 0.8,
+                    "hrrpua": 320,
+                    "ignition_temp": 320,
+                    "color": "BROWN",
+                    "matl": {
+                        "DENSITY": 520,
+                        "CONDUCTIVITY": 0.16,
+                        "SPECIFIC_HEAT": 2.1,
+                        "HEAT_OF_COMBUSTION": 19000,
+                        "REFERENCE_TEMPERATURE": 320
+                    }
+                },
+                {
+                    "id": "CB_8ecd80",
+                    "preset_key": "OFFICE_COMPOSITE_FURNITURE",
+                    "name": "木塑复合办公家具",
+                    "x": 98.8,
+                    "y": 79.33,
+                    "z": 0,
+                    "length": 1.4,
+                    "width": 0.7,
+                    "height": 0.8,
+                    "hrrpua": 320,
+                    "ignition_temp": 320,
+                    "color": "BROWN",
+                    "matl": {
+                        "DENSITY": 520,
+                        "CONDUCTIVITY": 0.16,
+                        "SPECIFIC_HEAT": 2.1,
+                        "HEAT_OF_COMBUSTION": 19000,
+                        "REFERENCE_TEMPERATURE": 320
+                    }
+                },
+                {
+                    "id": "CB_656f85",
+                    "preset_key": "UPHOLSTERED_SEAT",
+                    "name": "软包座椅",
+                    "x": 134.02,
+                    "y": 105.51,
+                    "z": 0,
+                    "length": 0.6,
+                    "width": 0.6,
+                    "height": 0.9,
+                    "hrrpua": 550,
+                    "ignition_temp": 280,
+                    "color": "RED",
+                    "matl": {
+                        "DENSITY": 70,
+                        "CONDUCTIVITY": 0.1,
+                        "SPECIFIC_HEAT": 1.4,
+                        "HEAT_OF_COMBUSTION": 25000,
+                        "REFERENCE_TEMPERATURE": 280
+                    }
+                },
+                {
+                    "id": "CB_fbc96a",
+                    "preset_key": "CABLE_BUNDLE",
+                    "name": "电缆线束",
+                    "x": 83.16,
+                    "y": 34.13,
+                    "z": 0,
+                    "length": 1.0,
+                    "width": 0.3,
+                    "height": 0.3,
+                    "hrrpua": 550,
+                    "ignition_temp": 360,
+                    "color": "BLACK",
+                    "matl": {
+                        "DENSITY": 1380,
+                        "CONDUCTIVITY": 0.22,
+                        "SPECIFIC_HEAT": 1.2,
+                        "HEAT_OF_COMBUSTION": 20000,
+                        "REFERENCE_TEMPERATURE": 360
+                    }
+                },
+                {
+                    "id": "CB_a675be",
+                    "preset_key": "CABLE_BUNDLE",
+                    "name": "电缆线束",
+                    "x": 160.58,
+                    "y": 75.35,
+                    "z": 0,
+                    "length": 1.0,
+                    "width": 0.3,
+                    "height": 0.3,
+                    "hrrpua": 550,
+                    "ignition_temp": 360,
+                    "color": "BLACK",
+                    "matl": {
+                        "DENSITY": 1380,
+                        "CONDUCTIVITY": 0.22,
+                        "SPECIFIC_HEAT": 1.2,
+                        "HEAT_OF_COMBUSTION": 20000,
+                        "REFERENCE_TEMPERATURE": 360
+                    }
+                },
+                {
+                    "id": "CB_ff00c5",
+                    "preset_key": "CABLE_BUNDLE",
+                    "name": "电缆线束",
+                    "x": 51.63,
+                    "y": 23.94,
+                    "z": 0,
+                    "length": 1.0,
+                    "width": 0.3,
+                    "height": 0.3,
+                    "hrrpua": 550,
+                    "ignition_temp": 360,
+                    "color": "BLACK",
+                    "matl": {
+                        "DENSITY": 1380,
+                        "CONDUCTIVITY": 0.22,
+                        "SPECIFIC_HEAT": 1.2,
+                        "HEAT_OF_COMBUSTION": 20000,
+                        "REFERENCE_TEMPERATURE": 360
+                    }
+                },
+                {
+                    "id": "CB_1250f4",
+                    "preset_key": "CABLE_BUNDLE",
+                    "name": "电缆线束",
+                    "x": 80.06,
+                    "y": 102.99,
+                    "z": 0,
+                    "length": 1.0,
+                    "width": 0.3,
+                    "height": 0.3,
+                    "hrrpua": 550,
+                    "ignition_temp": 360,
+                    "color": "BLACK",
+                    "matl": {
+                        "DENSITY": 1380,
+                        "CONDUCTIVITY": 0.22,
+                        "SPECIFIC_HEAT": 1.2,
+                        "HEAT_OF_COMBUSTION": 20000,
+                        "REFERENCE_TEMPERATURE": 360
+                    }
+                },
+                {
+                    "id": "CB_9d593d",
+                    "preset_key": "LIGHTWEIGHT_PARTITION",
+                    "name": "轻质隔断/复合墙板/活动地板",
+                    "x": 50.77,
+                    "y": 62.79,
+                    "z": 0,
+                    "length": 1.2,
+                    "width": 0.1,
+                    "height": 2.4,
+                    "hrrpua": 180,
+                    "ignition_temp": 320,
+                    "color": "KHAKI",
+                    "matl": {
+                        "DENSITY": 280,
+                        "CONDUCTIVITY": 0.12,
+                        "SPECIFIC_HEAT": 1.1,
+                        "HEAT_OF_COMBUSTION": 8000,
+                        "REFERENCE_TEMPERATURE": 320
+                    }
+                },
+                {
+                    "id": "CB_1980e0",
+                    "preset_key": "LIGHTWEIGHT_PARTITION",
+                    "name": "轻质隔断/复合墙板/活动地板",
+                    "x": 59.37,
+                    "y": 89.19,
+                    "z": 0,
+                    "length": 1.2,
+                    "width": 0.1,
+                    "height": 2.4,
+                    "hrrpua": 180,
+                    "ignition_temp": 320,
+                    "color": "KHAKI",
+                    "matl": {
+                        "DENSITY": 280,
+                        "CONDUCTIVITY": 0.12,
+                        "SPECIFIC_HEAT": 1.1,
+                        "HEAT_OF_COMBUSTION": 8000,
+                        "REFERENCE_TEMPERATURE": 320
+                    }
+                },
+                {
+                    "id": "CB_d74ba1",
+                    "preset_key": "LIGHTWEIGHT_PARTITION",
+                    "name": "轻质隔断/复合墙板/活动地板",
+                    "x": 39.51,
+                    "y": 44.88,
+                    "z": 0,
+                    "length": 1.2,
+                    "width": 0.1,
+                    "height": 2.4,
+                    "hrrpua": 180,
+                    "ignition_temp": 320,
+                    "color": "KHAKI",
+                    "matl": {
+                        "DENSITY": 280,
+                        "CONDUCTIVITY": 0.12,
+                        "SPECIFIC_HEAT": 1.1,
+                        "HEAT_OF_COMBUSTION": 8000,
+                        "REFERENCE_TEMPERATURE": 320
+                    }
+                },
+                {
+                    "id": "CB_927927",
+                    "preset_key": "BITUMEN_MEMBRANE",
+                    "name": "沥青/高分子防水层",
+                    "x": 56.02,
+                    "y": 128.03,
+                    "z": 0,
+                    "length": 1.0,
+                    "width": 1.0,
+                    "height": 0.01,
+                    "hrrpua": 650,
+                    "ignition_temp": 330,
+                    "color": "BLACK",
+                    "matl": {
+                        "DENSITY": 1200,
+                        "CONDUCTIVITY": 0.17,
+                        "SPECIFIC_HEAT": 1.4,
+                        "HEAT_OF_COMBUSTION": 40000,
+                        "REFERENCE_TEMPERATURE": 330
+                    }
+                },
+                {
+                    "id": "CB_503c51",
+                    "preset_key": "BITUMEN_MEMBRANE",
+                    "name": "沥青/高分子防水层",
+                    "x": 44.69,
+                    "y": 16.35,
+                    "z": 0,
+                    "length": 1.0,
+                    "width": 1.0,
+                    "height": 0.01,
+                    "hrrpua": 650,
+                    "ignition_temp": 330,
+                    "color": "BLACK",
+                    "matl": {
+                        "DENSITY": 1200,
+                        "CONDUCTIVITY": 0.17,
+                        "SPECIFIC_HEAT": 1.4,
+                        "HEAT_OF_COMBUSTION": 40000,
+                        "REFERENCE_TEMPERATURE": 330
+                    }
+                },
+                {
+                    "id": "CB_d44ba7",
+                    "preset_key": "FIBER_INSULATION_LAYER",
+                    "name": "纤维/纸质保温层",
+                    "x": 15.3,
+                    "y": 107.05,
+                    "z": 0,
+                    "length": 1.2,
+                    "width": 0.6,
+                    "height": 0.1,
+                    "hrrpua": 120,
+                    "ignition_temp": 420,
+                    "color": "IVORY",
+                    "matl": {
+                        "DENSITY": 60,
+                        "CONDUCTIVITY": 0.04,
+                        "SPECIFIC_HEAT": 1.0,
+                        "HEAT_OF_COMBUSTION": 6000,
+                        "REFERENCE_TEMPERATURE": 420
+                    }
+                },
+                {
+                    "id": "CB_951682",
+                    "preset_key": "FIBER_INSULATION_LAYER",
+                    "name": "纤维/纸质保温层",
+                    "x": 11.4,
+                    "y": 77.15,
+                    "z": 0,
+                    "length": 1.2,
+                    "width": 0.6,
+                    "height": 0.1,
+                    "hrrpua": 120,
+                    "ignition_temp": 420,
+                    "color": "IVORY",
+                    "matl": {
+                        "DENSITY": 60,
+                        "CONDUCTIVITY": 0.04,
+                        "SPECIFIC_HEAT": 1.0,
+                        "HEAT_OF_COMBUSTION": 6000,
+                        "REFERENCE_TEMPERATURE": 420
+                    }
+                },
+                {
+                    "id": "CB_4c25cf",
+                    "preset_key": "FIBER_INSULATION_LAYER",
+                    "name": "纤维/纸质保温层",
+                    "x": 53.05,
+                    "y": 26.39,
+                    "z": 0,
+                    "length": 1.2,
+                    "width": 0.6,
+                    "height": 0.1,
+                    "hrrpua": 120,
+                    "ignition_temp": 420,
+                    "color": "IVORY",
+                    "matl": {
+                        "DENSITY": 60,
+                        "CONDUCTIVITY": 0.04,
+                        "SPECIFIC_HEAT": 1.0,
+                        "HEAT_OF_COMBUSTION": 6000,
+                        "REFERENCE_TEMPERATURE": 420
+                    }
+                },
+                {
+                    "id": "CB_b81516",
+                    "preset_key": "FIBER_INSULATION_LAYER",
+                    "name": "纤维/纸质保温层",
+                    "x": 18.54,
+                    "y": 1.21,
+                    "z": 0,
+                    "length": 1.2,
+                    "width": 0.6,
+                    "height": 0.1,
+                    "hrrpua": 120,
+                    "ignition_temp": 420,
+                    "color": "IVORY",
+                    "matl": {
+                        "DENSITY": 60,
+                        "CONDUCTIVITY": 0.04,
+                        "SPECIFIC_HEAT": 1.0,
+                        "HEAT_OF_COMBUSTION": 6000,
+                        "REFERENCE_TEMPERATURE": 420
+                    }
+                },
+                {
+                    "id": "CB_22acbb",
+                    "preset_key": "TEMP_TIMBER_WORKS",
+                    "name": "临时木构件/脚手板/模板",
+                    "x": 115.64,
+                    "y": 74.03,
+                    "z": 0,
+                    "length": 1.2,
+                    "width": 0.8,
+                    "height": 0.5,
+                    "hrrpua": 250,
+                    "ignition_temp": 350,
+                    "color": "BROWN",
+                    "matl": {
+                        "DENSITY": 500,
+                        "CONDUCTIVITY": 0.14,
+                        "SPECIFIC_HEAT": 2.85,
+                        "HEAT_OF_COMBUSTION": 18000,
+                        "REFERENCE_TEMPERATURE": 350
+                    }
+                },
+                {
+                    "id": "CB_e51677",
+                    "preset_key": "TEMP_TIMBER_WORKS",
+                    "name": "临时木构件/脚手板/模板",
+                    "x": 150.13,
+                    "y": 65.09,
+                    "z": 0,
+                    "length": 1.2,
+                    "width": 0.8,
+                    "height": 0.5,
+                    "hrrpua": 250,
+                    "ignition_temp": 350,
+                    "color": "BROWN",
+                    "matl": {
+                        "DENSITY": 500,
+                        "CONDUCTIVITY": 0.14,
+                        "SPECIFIC_HEAT": 2.85,
+                        "HEAT_OF_COMBUSTION": 18000,
+                        "REFERENCE_TEMPERATURE": 350
+                    }
+                },
+                {
+                    "id": "CB_62eef7",
+                    "preset_key": "TEMP_TIMBER_WORKS",
+                    "name": "临时木构件/脚手板/模板",
+                    "x": 145.69,
+                    "y": 98.93,
+                    "z": 0,
+                    "length": 1.2,
+                    "width": 0.8,
+                    "height": 0.5,
+                    "hrrpua": 250,
+                    "ignition_temp": 350,
+                    "color": "BROWN",
+                    "matl": {
+                        "DENSITY": 500,
+                        "CONDUCTIVITY": 0.14,
+                        "SPECIFIC_HEAT": 2.85,
+                        "HEAT_OF_COMBUSTION": 18000,
+                        "REFERENCE_TEMPERATURE": 350
+                    }
+                },
+                {
+                    "id": "CB_3b6d8b",
+                    "preset_key": "FRP_RUBBER_PANEL",
+                    "name": "FRP格栅/橡胶防滑板",
+                    "x": 127.75,
+                    "y": 54.86,
+                    "z": 0,
+                    "length": 1.0,
+                    "width": 1.0,
+                    "height": 0.05,
+                    "hrrpua": 500,
+                    "ignition_temp": 360,
+                    "color": "BLUE",
+                    "matl": {
+                        "DENSITY": 1450,
+                        "CONDUCTIVITY": 0.25,
+                        "SPECIFIC_HEAT": 1.2,
+                        "HEAT_OF_COMBUSTION": 20000,
+                        "REFERENCE_TEMPERATURE": 360
+                    }
+                },
+                {
+                    "id": "CB_c39f98",
+                    "preset_key": "FRP_RUBBER_PANEL",
+                    "name": "FRP格栅/橡胶防滑板",
+                    "x": 61.41,
+                    "y": 51.91,
+                    "z": 0,
+                    "length": 1.0,
+                    "width": 1.0,
+                    "height": 0.05,
+                    "hrrpua": 500,
+                    "ignition_temp": 360,
+                    "color": "BLUE",
+                    "matl": {
+                        "DENSITY": 1450,
+                        "CONDUCTIVITY": 0.25,
+                        "SPECIFIC_HEAT": 1.2,
+                        "HEAT_OF_COMBUSTION": 20000,
+                        "REFERENCE_TEMPERATURE": 360
+                    }
+                }
+            ],
             "floor_slab": {
                 "thickness": 0.2,
                 "material": "CONCRETE",
-                "openings": []
+                "openings": [
+                    {
+                        "x": 170.4,
+                        "y": 126.4,
+                        "length": 4.0,
+                        "width": 3.0,
+                        "name": "楼梯间1"
+                    }
+                ]
             }
         },
         {
@@ -292,7 +1351,7 @@
                     "position": 0.3333,
                     "width": 3.0,
                     "height": 2.5,
-                    "z_bottom": 4.17
+                    "z_bottom": 5.42
                 },
                 {
                     "wall_index": 0,
@@ -300,7 +1359,7 @@
                     "position": 0.6667,
                     "width": 3.0,
                     "height": 2.5,
-                    "z_bottom": 4.17
+                    "z_bottom": 5.42
                 },
                 {
                     "wall_index": 1,
@@ -308,7 +1367,7 @@
                     "position": 0.3333,
                     "width": 3.0,
                     "height": 2.5,
-                    "z_bottom": 4.17
+                    "z_bottom": 5.42
                 },
                 {
                     "wall_index": 1,
@@ -316,7 +1375,7 @@
                     "position": 0.6667,
                     "width": 3.0,
                     "height": 2.5,
-                    "z_bottom": 4.17
+                    "z_bottom": 5.42
                 },
                 {
                     "wall_index": 2,
@@ -324,7 +1383,7 @@
                     "position": 0.5,
                     "width": 3.0,
                     "height": 2.5,
-                    "z_bottom": 4.17
+                    "z_bottom": 5.42
                 },
                 {
                     "wall_index": 3,
@@ -332,14 +1391,22 @@
                     "position": 0.5,
                     "width": 3.0,
                     "height": 2.5,
-                    "z_bottom": 4.17
+                    "z_bottom": 5.42
                 }
             ],
             "combustibles": [],
             "floor_slab": {
                 "thickness": 0.2,
                 "material": "CONCRETE",
-                "openings": []
+                "openings": [
+                    {
+                        "x": 170.4,
+                        "y": 126.4,
+                        "length": 4.0,
+                        "width": 3.0,
+                        "name": "楼梯间1"
+                    }
+                ]
             }
         }
     ],
@@ -353,7 +1420,7 @@
         "roof": "CONCRETE"
     },
     "heat_source": {
-        "enabled": false,
+        "enabled": true,
         "location": "north",
         "distance": 3.0,
         "width_ratio": 1.5,

@@ -18,9 +18,9 @@ from PySide6.QtWidgets import (
 )
 from PySide6.QtCore import Qt, Signal
 from models.combustibles import (
-    CombustibleManager, Combustible, DistributionMethod,
-    COMBUSTIBLE_PRESETS
+    CombustibleManager, Combustible, DistributionMethod
 )
+from models.materials import COMBUSTIBLE_LIBRARY
 from models.facility import FacilityManager, WALL_NAMES
 
 # ============================================================
@@ -306,7 +306,7 @@ class CombustibleDialog(QDialog):
         gen_layout = QFormLayout(gen_group)
 
         self.preset_combo = QComboBox()
-        for key, val in COMBUSTIBLE_PRESETS.items():
+        for key, val in COMBUSTIBLE_LIBRARY.items():
             self.preset_combo.addItem(
                 f"{val['name']} ({val['length']}×{val['width']}×{val['height']}m, "
                 f"{val['hrrpua']}kW/m²)", key)
@@ -383,7 +383,7 @@ class CombustibleDialog(QDialog):
             margin=self.margin_spin.value(), seed=seed)
 
         overlaps = self.manager.check_overlaps()
-        msg = f"已生成 {len(new_items)} 个 {COMBUSTIBLE_PRESETS[key]['name']}"
+        msg = f"已生成 {len(new_items)} 个 {COMBUSTIBLE_LIBRARY[key]['name']}"
         if overlaps:
             msg += f"\n⚠ 存在 {len(overlaps)} 对重叠"
         QMessageBox.information(self, "生成完成", msg)
@@ -867,11 +867,9 @@ class FacilityDialog(QDialog):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.setWindowTitle("等效模型生成")
-        self.resize(900, 900)
+        self.resize(950, 900)
         self.result_model = None
         self._params = None
-
-        from models.facility import FacilityManager
         self._mgr = FacilityManager()
         self._init_ui()
         self._fill_tree()
@@ -986,7 +984,7 @@ class FacilityDialog(QDialog):
         # ══ 可燃物 ══
         _hdr("🪵 可燃物", "★ 表示典型可燃物；其余为通用可燃物")
         self._comb_checks = {}
-        items = list(COMBUSTIBLE_PRESETS.items())
+        items = list(COMBUSTIBLE_LIBRARY.items())
         for i in range(0, len(items), 3):
             chunk = items[i:i + 3]
             for j, (key, preset) in enumerate(chunk):
@@ -1063,7 +1061,7 @@ class FacilityDialog(QDialog):
     # ── 选中填充 ──────────────────────────────────
 
     def _on_select(self, cur, _prev):
-        from models.combustibles import COMBUSTIBLE_PRESETS
+        from models.combustibles import COMBUSTIBLE_LIBRARY
         keys = cur.data(0, Qt.UserRole) if cur else None
         if not keys:
             self.btn.setEnabled(False); return
@@ -1103,7 +1101,7 @@ class FacilityDialog(QDialog):
         fac_combs = p.get("facility_combustibles", [])
         for key, (chk, sp) in self._comb_checks.items():
             is_typ = key in fac_combs
-            name = COMBUSTIBLE_PRESETS[key]["name"]
+            name = COMBUSTIBLE_LIBRARY[key]["name"]
             chk.setText(f"★ {name}" if is_typ else f"　{name}")
             chk.setChecked(is_typ)
             sp.setEnabled(is_typ)

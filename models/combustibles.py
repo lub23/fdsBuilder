@@ -14,7 +14,7 @@ import uuid
 from dataclasses import dataclass, field, asdict
 from enum import Enum
 from typing import List, Optional, Tuple
-
+from models.materials import COMBUSTIBLE_LIBRARY
 
 class DistributionMethod(Enum):
     UNIFORM_GRID = "均匀网格"
@@ -26,72 +26,7 @@ class DistributionMethod(Enum):
 
 
 # ── 可燃物模板库 ──────────────────────────────────────────────
-COMBUSTIBLE_PRESETS = {
-    "WOOD_TABLE": {
-        "name": "木桌",
-        "length": 1.2, "width": 0.8, "height": 0.75,
-        "hrrpua": 300, "ignition_temp": 350, "color": "BROWN",
-        "matl": {"DENSITY": 500, "CONDUCTIVITY": 0.14,
-                 "SPECIFIC_HEAT": 2.85, "HEAT_OF_COMBUSTION": 18000,
-                 "REFERENCE_TEMPERATURE": 350},
-    },
-    "WOOD_CHAIR": {
-        "name": "木椅",
-        "length": 0.5, "width": 0.5, "height": 0.9,
-        "hrrpua": 250, "ignition_temp": 350, "color": "BROWN",
-        "matl": {"DENSITY": 450, "CONDUCTIVITY": 0.14,
-                 "SPECIFIC_HEAT": 2.85, "HEAT_OF_COMBUSTION": 18000,
-                 "REFERENCE_TEMPERATURE": 350},
-    },
-    "FABRIC_SOFA": {
-        "name": "布艺沙发",
-        "length": 2.0, "width": 0.9, "height": 0.85,
-        "hrrpua": 500, "ignition_temp": 280, "color": "RED",
-        "matl": {"DENSITY": 100, "CONDUCTIVITY": 0.16,
-                 "SPECIFIC_HEAT": 1.35, "HEAT_OF_COMBUSTION": 25000,
-                 "REFERENCE_TEMPERATURE": 280},
-    },
-    "BOOKSHELF": {
-        "name": "书架(含书)",
-        "length": 1.0, "width": 0.4, "height": 1.8,
-        "hrrpua": 400, "ignition_temp": 340, "color": "SALMON",
-        "matl": {"DENSITY": 650, "CONDUCTIVITY": 0.14,
-                 "SPECIFIC_HEAT": 2.5, "HEAT_OF_COMBUSTION": 16000,
-                 "REFERENCE_TEMPERATURE": 340},
-    },
-    "PLASTIC_BIN": {
-        "name": "塑料垃圾桶",
-        "length": 0.4, "width": 0.4, "height": 0.6,
-        "hrrpua": 600, "ignition_temp": 260, "color": "GRAY",
-        "matl": {"DENSITY": 950, "CONDUCTIVITY": 0.18,
-                 "SPECIFIC_HEAT": 1.67, "HEAT_OF_COMBUSTION": 40000,
-                 "REFERENCE_TEMPERATURE": 260},
-    },
-    "CARDBOARD_BOX": {
-        "name": "纸箱",
-        "length": 0.6, "width": 0.4, "height": 0.5,
-        "hrrpua": 350, "ignition_temp": 300, "color": "KHAKI",
-        "matl": {"DENSITY": 200, "CONDUCTIVITY": 0.06,
-                 "SPECIFIC_HEAT": 1.33, "HEAT_OF_COMBUSTION": 16000,
-                 "REFERENCE_TEMPERATURE": 300},
-    },
-    "MATTRESS": {
-        "name": "床垫",
-        "length": 2.0, "width": 1.5, "height": 0.25,
-        "hrrpua": 450, "ignition_temp": 270, "color": "IVORY",
-        "matl": {"DENSITY": 150, "CONDUCTIVITY": 0.12,
-                 "SPECIFIC_HEAT": 1.5, "HEAT_OF_COMBUSTION": 30000,
-                 "REFERENCE_TEMPERATURE": 270},
-    },
-    "CURTAIN": {
-        "name": "窗帘(折叠)",
-        "length": 0.3, "width": 1.5, "height": 2.0,
-        "hrrpua": 700, "ignition_temp": 250, "color": "MAGENTA",
-        "matl": {"DENSITY": 80, "CONDUCTIVITY": 0.1,
-                 "SPECIFIC_HEAT": 1.2, "HEAT_OF_COMBUSTION": 28000,
-                 "REFERENCE_TEMPERATURE": 250},
-    },
-}
+
 
 
 @dataclass
@@ -120,7 +55,9 @@ class Combustible:
 
     @classmethod
     def from_preset(cls, key: str, x=0, y=0, z=0) -> "Combustible":
-        p = COMBUSTIBLE_PRESETS[key]
+        p = COMBUSTIBLE_LIBRARY.get(key)
+        if not p:
+            raise ValueError(f"Unknown combustible preset: {key}")
         return cls(
             preset_key=key, name=p["name"],
             x=x, y=y, z=z,
@@ -180,7 +117,9 @@ class CombustibleManager:
         if seed is not None:
             random.seed(seed)
 
-        p = COMBUSTIBLE_PRESETS[preset_key]
+        p = COMBUSTIBLE_LIBRARY.get(preset_key)
+        if not p:
+            raise ValueError(f"Unknown combustible preset: {preset_key}")
         obj_l, obj_w = p["length"], p["width"]
 
         # 建筑内部空间边界

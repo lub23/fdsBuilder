@@ -2,7 +2,41 @@
     "Aerospace": {
         "cn_name": "航空航天设施",
         "sub_types": {
-            "General assembly building": {
+            "Launch control center": {
+                "cn_name": "发射控制中心",
+                "description": "",
+                "building": {
+                    "length": { "min": 50, "max": 120, "median": -1, "mean": -1, "unit": "m" },
+                    "width": { "min": 15, "max": 50, "median": -1, "mean": -1, "unit": "m" },
+                    "height": { "min": 8, "max": 12, "median": -1, "mean": -1, "unit": "m" },
+                    "stories": { "min": 2, "max": 4, "median": -1, "mean": -1, "unit": "" }
+                },
+                "doors": {
+                    "width": { "min": 4, "max": 4, "median": -1, "mean": -1, "unit": "m" },
+                    "height": { "min": 4, "max": 4, "median": -1, "mean": -1, "unit": "m" },
+                    "count": { "min": 1, "max": 3, "median": -1, "mean": -1, "unit": "" }
+                },
+                "windows": {
+                    "width": { "min": 0, "max": 0, "median": -1, "mean": -1, "unit": "m" },
+                    "height": { "min": 0, "max": 0, "median": -1, "mean": -1, "unit": "m" },
+                    "count": { "min": 0, "max": 0, "median": -1, "mean": -1, "unit": "" }
+                },
+                "wall_thickness": 0.3,
+                "combustibles": [
+                    "OFFICE_COMPOSITE_FURNITURE",
+                    "UPHOLSTERED_SEAT",
+                    "PAPER_STACK",
+                    "CARDBOARD_BOX",
+                    "ELECTRONICS_CONSOLE",
+                    "CABLE_BUNDLE",
+                    "CARPET_FINISH",
+                    "CURTAIN",
+                    "ACOUSTIC_PANEL",
+                    "LIGHTWEIGHT_PARTITION",
+                    "DISPLAY_PROP_MODEL"
+                ]
+            },
+            "Assembly building": {
                 "cn_name": "总装车间",
                 "description": "",
                 "building": {
@@ -22,20 +56,37 @@
                     "count": { "min": 10, "max": 30, "median": -1, "mean": -1, "unit": "" }
                 },
                 "wall_thickness": 0.3,
-                "combustibles": ["WOOD_TABLE", "WOOD_CHAIR"]
+                "combustibles": [
+                    "BITUMEN_MEMBRANE",
+                    "FIBER_INSULATION_LAYER",
+                    "TEMP_TIMBER_WORKS",
+                    "WOOD_PALLET",
+                    "CARDBOARD_BOX",
+                    "FOAM_PACKAGING",
+                    "FRP_RUBBER_PANEL",
+                    "CABLE_BUNDLE",
+                    "COATING_AGENT_DRUM",
+                    "ORGANIC_SOLVENT_DRUM",
+                    "INDUSTRIAL_OIL_DRUM",
+                    "OFFICE_COMPOSITE_FURNITURE",
+                    "PAPER_STACK",
+                    "CURTAIN",
+                    "LIGHTWEIGHT_PARTITION",
+                    "UPHOLSTERED_SEAT"
+                ]
             },
-            "Assembly building": {
+            "Sub-assembly building": {
                 "cn_name": "部装车间",
                 "description": "",
                 "building": {
-                    "length": { "min": 150, "max": 200, "median": -1, "mean": -1, "unit": "m" },
-                    "width": { "min": 100, "max": 160, "median": -1, "mean": -1, "unit": "m" },
-                    "height": { "min": 30, "max": 35, "median": -1, "mean": -1, "unit": "m" },
-                    "stories": { "min": 2, "max": 4, "median": -1, "mean": -1, "unit": "" }
+                    "length": { "min": 100, "max": 175, "median": -1, "mean": -1, "unit": "m" },
+                    "width": { "min": 30, "max": 100, "median": -1, "mean": -1, "unit": "m" },
+                    "height": { "min": 8, "max": 25, "median": -1, "mean": -1, "unit": "m" },
+                    "stories": { "min": 1, "max": 5, "median": -1, "mean": -1, "unit": "" }
                 },
                 "doors": {
-                    "width": { "min": 12, "max": 15, "median": -1, "mean": -1, "unit": "m" },
-                    "height": { "min": 40, "max": 46, "median": -1, "mean": -1, "unit": "m" },
+                    "width": { "min": 6, "max": 13, "median": -1, "mean": -1, "unit": "m" },
+                    "height": { "min": 9, "max": 15, "median": -1, "mean": -1, "unit": "m" },
                     "count": { "min": 1, "max": 3, "median": -1, "mean": -1, "unit": "" }
                 },
                 "windows": {
@@ -44,7 +95,98 @@
                     "count": { "min": 10, "max": 30, "median": -1, "mean": -1, "unit": "" }
                 },
                 "wall_thickness": 0.3,
-                "combustibles": ["WOOD_TABLE", "CARDBOARD_BOX"]
+                "combustibles": [
+                    "ESD_PACKAGING_MATERIAL",
+                    "AEROSPACE_COMPOSITE_PART",
+                    "ADHESIVE_SEALANT_SET",
+                    "CABLE_BUNDLE",
+                    "ELECTRONICS_CONSOLE",
+                    "ORGANIC_SOLVENT_DRUM",
+                    "INDUSTRIAL_OIL_DRUM",
+                    "OFFICE_COMPOSITE_FURNITURE",
+                    "UPHOLSTERED_SEAT",
+                    "CURTAIN",
+                    "CARDBOARD_BOX",
+                    "FOAM_PACKAGING",
+                    "WOOD_PALLET",
+                    "RUBBER_HOSE_ASSEMBLY",
+                    "RUBBER_POLYMER_PARTS"
+                ]
+            },
+            "Processing plant": {
+                "cn_name": "加工厂房",
+                "description": "",
+                "building": {
+                    "length": { "min": 70, "max": 120, "median": -1, "mean": -1, "unit": "m" },
+                    "width": { "min": 30, "max": 80, "median": -1, "mean": -1, "unit": "m" },
+                    "height": { "min": 6, "max": 20, "median": -1, "mean": -1, "unit": "m" },
+                    "stories": { "min": 1, "max": 3, "median": -1, "mean": -1, "unit": "" }
+                },
+                "doors": {
+                    "width": { "min": 6, "max": 10, "median": -1, "mean": -1, "unit": "m" },
+                    "height": { "min": 10, "max": 15, "median": -1, "mean": -1, "unit": "m" },
+                    "count": { "min": 1, "max": 3, "median": -1, "mean": -1, "unit": "" }
+                },
+                "windows": {
+                    "width": { "min": 0, "max": 0, "median": -1, "mean": -1, "unit": "m" },
+                    "height": { "min": 0, "max": 0, "median": -1, "mean": -1, "unit": "m" },
+                    "count": { "min": 0, "max": 0, "median": -1, "mean": -1, "unit": "" }
+                },
+                "wall_thickness": 0.3,
+                "combustibles": [
+                    "CARDBOARD_BOX",
+                    "FOAM_PACKAGING",
+                    "WOOD_PALLET",
+                    "TEMP_TIMBER_WORKS",
+                    "ADHESIVE_SEALANT_SET",
+                    "PREPREG_MATERIAL",
+                    "COATING_AGENT_DRUM",
+                    "CABLE_BUNDLE",
+                    "ELECTRONICS_CONSOLE",
+                    "ESD_PACKAGING_MATERIAL",
+                    "ORGANIC_SOLVENT_DRUM",
+                    "INDUSTRIAL_OIL_DRUM",
+                    "RUBBER_HOSE_ASSEMBLY",
+                    "OFFICE_COMPOSITE_FURNITURE",
+                    "PAPER_STACK",
+                    "AEROSPACE_COMPOSITE_PART",
+                    "AIRCRAFT_INTERIOR_TRIM",
+                    "DISPLAY_PROP_MODEL"
+                ]
+            },
+            "Launch site": {
+                "cn_name": "发射场",
+                "description": "",
+                "building": {
+                    "length": { "min": 70, "max": 119, "median": -1, "mean": -1, "unit": "m" },
+                    "width": { "min": 60, "max": 99, "median": -1, "mean": -1, "unit": "m" },
+                    "height": { "min": 10, "max": 15, "median": -1, "mean": -1, "unit": "m" },
+                    "stories": { "min": 1, "max": 1, "median": -1, "mean": -1, "unit": "" }
+                },
+                "doors": {
+                    "width": { "min": 6, "max": 10, "median": -1, "mean": -1, "unit": "m" },
+                    "height": { "min": 10, "max": 15, "median": -1, "mean": -1, "unit": "m" },
+                    "count": { "min": 1, "max": 3, "median": -1, "mean": -1, "unit": "" }
+                },
+                "windows": {
+                    "width": { "min": 0, "max": 0, "median": -1, "mean": -1, "unit": "m" },
+                    "height": { "min": 0, "max": 0, "median": -1, "mean": -1, "unit": "m" },
+                    "count": { "min": 0, "max": 0, "median": -1, "mean": -1, "unit": "" }
+                },
+                "wall_thickness": 0.3,
+                "combustibles": [
+                    "CABLE_BUNDLE",
+                    "RUBBER_HOSE_ASSEMBLY",
+                    "INDUSTRIAL_OIL_DRUM",
+                    "ORGANIC_SOLVENT_DRUM",
+                    "WOOD_PALLET",
+                    "CARDBOARD_BOX",
+                    "FOAM_PACKAGING",
+                    "LIQUID_FUEL_DRUM",
+                    "ELECTRONICS_CONSOLE",
+                    "ACOUSTIC_PANEL",
+                    "OFFICE_COMPOSITE_FURNITURE"
+                ]
             }
         }
     },
@@ -52,33 +194,181 @@
         "cn_name": "机场机库",
         "sub_types": {
             "Type 1": {
-                "cn_name": "Ⅰ 大型机库",
+                "cn_name": "小型固定翼与舰载机机库",
                 "description": "",
                 "building": {
-                    "length": { "min": 150, "max": 200, "median": -1, "mean": -1, "unit": "m" },
-                    "width": { "min": 100, "max": 160, "median": -1, "mean": -1, "unit": "m" },
-                    "height": { "min": 30, "max": 35, "median": -1, "mean": -1, "unit": "m" },
-                    "stories": { "min": 2, "max": 4, "median": -1, "mean": -1, "unit": "" }
+                    "length": { "min": 28.96, "max": 28.96, "median": 28.96, "mean": 28.96, "unit": "m" },
+                    "width": { "min": 64.0, "max": 80.0, "median": 72.0, "mean": 72.0, "unit": "m" },
+                    "height": { "min": 9.9, "max": 9.9, "median": 9.9, "mean": 9.9, "unit": "m" },
+                    "stories": { "min": 1, "max": 1, "median": 1, "mean": 1, "unit": "" }
                 },
                 "doors": {
-                    "width": { "min": 12, "max": 15, "median": -1, "mean": -1, "unit": "m" },
-                    "height": { "min": 40, "max": 46, "median": -1, "mean": -1, "unit": "m" },
-                    "count": { "min": 1, "max": 3, "median": -1, "mean": -1, "unit": "" }
+                    "width": { "min": 63.7, "max": 79.1, "median": 71.4, "mean": 71.4, "unit": "m" },
+                    "height": { "min": 7.6, "max": 7.6, "median": 7.6, "mean": 7.6, "unit": "m" },
+                    "count": { "min": 1, "max": 1, "median": 1, "mean": 1, "unit": "" }
                 },
                 "windows": {
-                    "width": { "min": 2, "max": 4, "median": -1, "mean": -1, "unit": "m" },
-                    "height": { "min": 2, "max": 3, "median": -1, "mean": -1, "unit": "m" },
-                    "count": { "min": 10, "max": 30, "median": -1, "mean": -1, "unit": "" }
+                    "width": { "min": 0, "max": 0, "median": -1, "mean": -1, "unit": "m" },
+                    "height": { "min": 0, "max": 0, "median": -1, "mean": -1, "unit": "m" },
+                    "count": { "min": 0, "max": 0, "median": -1, "mean": -1, "unit": "" }
                 },
                 "wall_thickness": 0.3,
-                "combustibles": ["WOOD_TABLE"]
+                "combustibles": [
+                    "SURFACE_COATING_LAYER",
+                    "ADHESIVE_SEALANT_SET",
+                    "AEROSPACE_COMPOSITE_PART",
+                    "AIRCRAFT_INTERIOR_TRIM",
+                    "JET_FUEL_RESIDUE",
+                    "INDUSTRIAL_OIL_DRUM",
+                    "WOOD_PALLET",
+                    "CARDBOARD_BOX",
+                    "FOAM_PACKAGING",
+                    "CABLE_BUNDLE",
+                    "BITUMEN_MEMBRANE",
+                    "FIBER_INSULATION_LAYER",
+                    "LIGHTWEIGHT_PARTITION"
+                ]
+            },
+            "Type 2": {
+                "cn_name": "大型旋翼与倾转机机库",
+                "description": "多模块串联机库，局部可设Doghouse结构，配备6.5 t桥式起重机，主门宽度98.1 m，净高13.4 m",
+                "building": {
+                    "length": { "min": 36.3, "max": 36.3, "median": 36.3, "mean": 36.3, "unit": "m" },
+                    "width": { "min": 99.1, "max": 99.1, "median": 99.1, "mean": 99.1, "unit": "m" },
+                    "height": { "min": 13.4, "max": 13.4, "median": 13.4, "mean": 13.4, "unit": "m" },
+                    "stories": { "min": 1, "max": 2, "median": -1, "mean": -1, "unit": "" }
+                },
+                "doors": {
+                    "width": { "min": 98.1, "max": 98.1, "median": 98.1, "mean": 98.1, "unit": "m" },
+                    "height": { "min": 13.4, "max": 13.4, "median": 13.4, "mean": 13.4, "unit": "m" },
+                    "count": { "min": 1, "max": 1, "median": 1, "mean": 1, "unit": "" }
+                },
+                "windows": {
+                    "width": { "min": 0, "max": 0, "median": -1, "mean": -1, "unit": "m" },
+                    "height": { "min": 0, "max": 0, "median": -1, "mean": -1, "unit": "m" },
+                    "count": { "min": 0, "max": 0, "median": -1, "mean": -1, "unit": "" }
+                },
+                "wall_thickness": 0.3,
+                "combustibles": [
+                    "SURFACE_COATING_LAYER",
+                    "AIRCRAFT_INTERIOR_TRIM",
+                    "AEROSPACE_COMPOSITE_PART",
+                    "CABLE_BUNDLE",
+                    "JET_FUEL_RESIDUE",
+                    "INDUSTRIAL_OIL_DRUM",
+                    "GLYCOL_DEICING_FLUID",
+                    "ORGANIC_SOLVENT_DRUM",
+                    "ADHESIVE_SEALANT_SET",
+                    "WOOD_PALLET",
+                    "CARDBOARD_BOX",
+                    "PLASTIC_PACKAGING",
+                    "FRP_RUBBER_PANEL",
+                    "RUBBER_HOSE_ASSEMBLY",
+                    "BITUMEN_MEMBRANE",
+                    "FIBER_INSULATION_LAYER",
+                    "LIGHTWEIGHT_PARTITION"
+                ]
+            },
+            "Type 3": {
+                "cn_name": "远程巡逻与运输机机库",
+                "description": "陆基长机身机库，通常不设吊车，主门宽度49.4 m，净高15.2 m",
+                "building": {
+                    "length": { "min": 50.3, "max": 50.3, "median": 50.3, "mean": 50.3, "unit": "m" },
+                    "width": { "min": 50.3, "max": 50.3, "median": 50.3, "mean": 50.3, "unit": "m" },
+                    "height": { "min": 15.2, "max": 15.2, "median": 15.2, "mean": 15.2, "unit": "m" },
+                    "stories": { "min": 1, "max": 1, "median": 1, "mean": 1, "unit": "" }
+                },
+                "doors": {
+                    "width": { "min": 49.4, "max": 49.4, "median": 49.4, "mean": 49.4, "unit": "m" },
+                    "height": { "min": 15.2, "max": 15.2, "median": 15.2, "mean": 15.2, "unit": "m" },
+                    "count": { "min": 1, "max": 1, "median": 1, "mean": 1, "unit": "" }
+                },
+                "windows": {
+                    "width": { "min": 0, "max": 0, "median": -1, "mean": -1, "unit": "m" },
+                    "height": { "min": 0, "max": 0, "median": -1, "mean": -1, "unit": "m" },
+                    "count": { "min": 0, "max": 0, "median": -1, "mean": -1, "unit": "" }
+                },
+                "wall_thickness": 0.3,
+                "combustibles": [
+                    "SURFACE_COATING_LAYER",
+                    "AEROSPACE_COMPOSITE_PART",
+                    "AIRCRAFT_INTERIOR_TRIM",
+                    "JET_FUEL_RESIDUE",
+                    "INDUSTRIAL_OIL_DRUM",
+                    "GLYCOL_DEICING_FLUID",
+                    "COATING_AGENT_DRUM",
+                    "ORGANIC_SOLVENT_DRUM",
+                    "ADHESIVE_SEALANT_SET",
+                    "WOOD_PALLET",
+                    "CARDBOARD_BOX",
+                    "FOAM_PACKAGING",
+                    "PLASTIC_PACKAGING",
+                    "TEMP_TIMBER_WORKS",
+                    "FRP_RUBBER_PANEL",
+                    "CABLE_BUNDLE",
+                    "RUBBER_HOSE_ASSEMBLY",
+                    "BITUMEN_MEMBRANE",
+                    "FIBER_INSULATION_LAYER",
+                    "OFFICE_COMPOSITE_FURNITURE",
+                    "PAPER_STACK",
+                    "UPHOLSTERED_SEAT",
+                    "CURTAIN",
+                    "LIGHTWEIGHT_PARTITION"
+                ]
+            },
+            "Type 4": {
+                "cn_name": "大型无人机机库",
+                "description": "独立跨距钢桁架或箱型桁架结构机库，配备4.5 t桥式起重机",
+                "building": {
+                    "length": { "min": 43.0, "max": 43.0, "median": 43.0, "mean": 43.0, "unit": "m" },
+                    "width": { "min": 49.1, "max": 49.1, "median": 49.1, "mean": 49.1, "unit": "m" },
+                    "height": { "min": 9.9, "max": 9.9, "median": 9.9, "mean": 9.9, "unit": "m" },
+                    "stories": { "min": 1, "max": 1, "median": 1, "mean": 1, "unit": "" }
+                },
+                "doors": {
+                    "width": { "min": 48.2, "max": 48.2, "median": 48.2, "mean": 48.2, "unit": "m" },
+                    "height": { "min": 7.6, "max": 7.6, "median": 7.6, "mean": 7.6, "unit": "m" },
+                    "count": { "min": 1, "max": 1, "median": 1, "mean": 1, "unit": "" }
+                },
+                "windows": {
+                    "width": { "min": 0, "max": 0, "median": -1, "mean": -1, "unit": "m" },
+                    "height": { "min": 0, "max": 0, "median": -1, "mean": -1, "unit": "m" },
+                    "count": { "min": 0, "max": 0, "median": -1, "mean": -1, "unit": "" }
+                },
+                "wall_thickness": 0.3,
+                "combustibles": [
+                    "SURFACE_COATING_LAYER",
+                    "AEROSPACE_COMPOSITE_PART",
+                    "AIRCRAFT_INTERIOR_TRIM",
+                    "CABLE_BUNDLE",
+                    "JET_FUEL_RESIDUE",
+                    "INDUSTRIAL_OIL_DRUM",
+                    "GLYCOL_DEICING_FLUID",
+                    "ORGANIC_SOLVENT_DRUM",
+                    "COATING_AGENT_DRUM",
+                    "ADHESIVE_SEALANT_SET",
+                    "WOOD_PALLET",
+                    "CARDBOARD_BOX",
+                    "FOAM_PACKAGING",
+                    "PLASTIC_PACKAGING",
+                    "FRP_RUBBER_PANEL",
+                    "RUBBER_HOSE_ASSEMBLY",
+                    "BITUMEN_MEMBRANE",
+                    "FIBER_INSULATION_LAYER",
+                    "OFFICE_COMPOSITE_FURNITURE",
+                    "PAPER_STACK",
+                    "UPHOLSTERED_SEAT",
+                    "CARPET_FINISH",
+                    "LIGHTWEIGHT_PARTITION",
+                    "DISPLAY_PROP_MODEL"
+                ]
             }
         }
     },
     "Machinery manufacturing": {
         "cn_name": "机械制造设施",
         "sub_types": {
-            "General assembly building": {
+            "Assembly building": {
                 "cn_name": "总装车间",
                 "description": "",
                 "building": {
@@ -98,7 +388,250 @@
                     "count": { "min": 0, "max": 466, "median": 13, "mean": 47.956, "unit": "" }
                 },
                 "wall_thickness": 0.3,
-                "combustibles": ["WOOD_TABLE"]
+                "combustibles": [
+                    "INDUSTRIAL_OIL_DRUM",
+                    "LIQUID_FUEL_DRUM",
+                    "ORGANIC_SOLVENT_DRUM",
+                    "COATING_AGENT_DRUM",
+                    "WOOD_PALLET",
+                    "CARDBOARD_BOX",
+                    "PLASTIC_PACKAGING",
+                    "RUBBER_POLYMER_PARTS",
+                    "FOAM_PACKAGING",
+                    "TEXTILE_ROLL",
+                    "OILY_WASTE_BIN",
+                    "PROCESS_CHEMICAL_CONTAINER"
+                ]
+            },
+            "Sub-assembly building": {
+                "cn_name": "部装车间",
+                "description": "部装车间，用于部件组装加工",
+                "building": {
+                    "length": { "min": 30, "max": 500, "median": 130, "mean": 189.2, "unit": "m" },
+                    "width": { "min": 16, "max": 144, "median": 70, "mean": 83.7, "unit": "m" },
+                    "height": { "min": 3, "max": 13, "median": 7, "mean": 9.1, "unit": "m" },
+                    "stories": { "min": 1, "max": 1, "median": 1, "mean": 1, "unit": "" }
+                },
+                "doors": {
+                    "width": { "min": 0.8, "max": 5, "median": 3, "mean": 2.985, "unit": "m" },
+                    "height": { "min": 2, "max": 6, "median": 4, "mean": 3.477, "unit": "m" },
+                    "count": { "min": 1, "max": 21, "median": 4, "mean": 8.6, "unit": "" }
+                },
+                "windows": {
+                    "width": { "min": 0.3, "max": 9, "median": 1, "mean": 1.16, "unit": "m" },
+                    "height": { "min": 0.4, "max": 7, "median": 1.5, "mean": 1.518, "unit": "m" },
+                    "count": { "min": 0, "max": 330, "median": 33, "mean": 72.05, "unit": "" }
+                },
+                "wall_thickness": 0.3,
+                "combustibles": [
+                    "INDUSTRIAL_OIL_DRUM",
+                    "ORGANIC_SOLVENT_DRUM",
+                    "COATING_AGENT_DRUM",
+                    "COMBUSTIBLE_GAS_CYLINDER",
+                    "WOOD_PALLET",
+                    "CARDBOARD_BOX",
+                    "ELECTRICAL_PLASTIC",
+                    "RUBBER_POLYMER_PARTS",
+                    "FOAM_PACKAGING",
+                    "OILY_WASTE_BIN",
+                    "PROCESS_CHEMICAL_CONTAINER"
+                ]
+            },
+            "Machining workshop": {
+                "cn_name": "机械加工车间",
+                "description": "机械加工车间，用于零部件机械加工作业",
+                "building": {
+                    "length": { "min": 45, "max": 266, "median": 135, "mean": 192.130, "unit": "m" },
+                    "width": { "min": 25, "max": 227, "median": 70, "mean": 108.304, "unit": "m" },
+                    "height": { "min": 4, "max": 14, "median": 7, "mean": 10.174, "unit": "m" },
+                    "stories": { "min": 1, "max": 1, "median": 1, "mean": 1, "unit": "" }
+                },
+                "doors": {
+                    "width": { "min": 0.8, "max": 20, "median": 3, "mean": 3.451, "unit": "m" },
+                    "height": { "min": 2, "max": 10, "median": 4, "mean": 3.572, "unit": "m" },
+                    "count": { "min": 1, "max": 14, "median": 5, "mean": 9.347, "unit": "" }
+                },
+                "windows": {
+                    "width": { "min": 0.2, "max": 5, "median": 1.5, "mean": 1.874, "unit": "m" },
+                    "height": { "min": 0.5, "max": 6, "median": 1.5, "mean": 1.4, "unit": "m" },
+                    "count": { "min": 0, "max": 233, "median": 12.5, "mean": 50.783, "unit": "" }
+                },
+                "wall_thickness": 0.3,
+                "combustibles": [
+                    "INDUSTRIAL_OIL_DRUM",
+                    "ORGANIC_SOLVENT_DRUM",
+                    "COATING_AGENT_DRUM",
+                    "COMBUSTIBLE_GAS_CYLINDER",
+                    "WOOD_PALLET",
+                    "CARDBOARD_BOX",
+                    "PLASTIC_PACKAGING",
+                    "ELECTRICAL_PLASTIC",
+                    "OILY_WASTE_BIN",
+                    "OILY_SLUDGE_CONTAINER",
+                    "METAL_DUST_COLLECTOR"
+                ]
+            }
+        }
+    },
+    "Metallurgical facilities": {
+        "cn_name": "冶金设施",
+        "sub_types": {
+            "Electrolytic plant": {
+                "cn_name": "电解工厂",
+                "description": "电解工厂，包含主电解厂房、连接厂房、中型辅助厂房、大型配套厂房及圆形储罐",
+                "building": {
+                    "length": { "min": 180, "max": 370, "median": 220, "mean": 266, "unit": "m" },
+                    "width": { "min": 10, "max": 25, "median": 20, "mean": 19.75, "unit": "m" },
+                    "height": { "min": 10, "max": 18, "median": 14, "mean": 13.8, "unit": "m" },
+                    "stories": { "min": 1, "max": 1, "median": 1, "mean": 1, "unit": "" }
+                },
+                "doors": {
+                    "width": { "min": -1, "max": -1, "median": -1, "mean": -1, "unit": "m" },
+                    "height": { "min": -1, "max": -1, "median": -1, "mean": -1, "unit": "m" },
+                    "count": { "min": -1, "max": -1, "median": -1, "mean": -1, "unit": "" }
+                },
+                "windows": {
+                    "width": { "min": -1, "max": -1, "median": -1, "mean": -1, "unit": "m" },
+                    "height": { "min": -1, "max": -1, "median": -1, "mean": -1, "unit": "m" },
+                    "count": { "min": -1, "max": -1, "median": -1, "mean": -1, "unit": "" }
+                },
+                "wall_thickness": 0.3,
+                "combustibles": [
+                    "CARBON_MATERIAL_STACK",
+                    "INDUSTRIAL_OIL_DRUM",
+                    "POLYMER_MATERIAL",
+                    "METAL_DUST_COLLECTOR",
+                    "WOOD_PALLET",
+                    "CARDBOARD_BOX",
+                    "WOOD_FURNITURE",
+                    "PAPER_STACK"
+                ]
+            },
+            "Dedicated power plant": {
+                "cn_name": "专用电厂",
+                "description": "专用电厂，包含主厂房、大型辅助厂房、辅助厂房、长条通廊、金属架、烟囱及储罐",
+                "building": {
+                    "length": { "min": 8, "max": 212, "median": 40, "mean": 65.1, "unit": "m" },
+                    "width": { "min": 15, "max": 40, "median": 32, "mean": 31.8, "unit": "m" },
+                    "height": { "min": 8, "max": 110, "median": 25, "mean": 39.7, "unit": "m" },
+                    "stories": { "min": 1, "max": 3, "median": 1, "mean": -1, "unit": "" }
+                },
+                "doors": {
+                    "width": { "min": 0.8, "max": 6, "median": 3, "mean": -1, "unit": "m" },
+                    "height": { "min": 2, "max": 7, "median": 3, "mean": -1, "unit": "m" },
+                    "count": { "min": 2, "max": 5, "median": 4, "mean": -1, "unit": "" }
+                },
+                "windows": {
+                    "width": { "min": 0.5, "max": 4, "median": 1.5, "mean": -1, "unit": "m" },
+                    "height": { "min": 1, "max": 3, "median": 1, "mean": -1, "unit": "m" },
+                    "count": { "min": 5, "max": 15, "median": 9, "mean": -1, "unit": "" }
+                },
+                "wall_thickness": 0.3,
+                "combustibles": [
+                    "COAL_STACK",
+                    "COAL_DUST_HOPPER",
+                    "COMBUSTIBLE_GAS_CYLINDER",
+                    "LIQUID_FUEL_DRUM",
+                    "INDUSTRIAL_OIL_DRUM",
+                    "POLYMER_MATERIAL",
+                    "WOOD_PALLET",
+                    "CARDBOARD_BOX",
+                    "PAPER_STACK",
+                    "TEXTILE_ROLL",
+                    "ORGANIC_SOLVENT_DRUM"
+                ]
+            },
+            "Steel plant": {
+                "cn_name": "钢铁厂",
+                "description": "钢铁厂，包含炼铁炼钢主厂房、熔炼车间、轧钢车间、精整车间、卷材加工车间及辅助厂房",
+                "building": {
+                    "length": { "min": 80, "max": 230, "median": 210, "mean": 175, "unit": "m" },
+                    "width": { "min": 24, "max": 55, "median": 33, "mean": 35.3, "unit": "m" },
+                    "height": { "min": 10, "max": 40, "median": 13.5, "mean": 18.2, "unit": "m" },
+                    "stories": { "min": 1, "max": 3, "median": 1, "mean": -1, "unit": "" }
+                },
+                "doors": {
+                    "width": { "min": 0.8, "max": 10, "median": 5, "mean": -1, "unit": "m" },
+                    "height": { "min": 2, "max": 10, "median": 5, "mean": -1, "unit": "m" },
+                    "count": { "min": 1, "max": 6, "median": 3, "mean": -1, "unit": "" }
+                },
+                "windows": {
+                    "width": { "min": 2, "max": 10, "median": 6, "mean": -1, "unit": "m" },
+                    "height": { "min": 1, "max": 4, "median": 2, "mean": -1, "unit": "m" },
+                    "count": { "min": 0, "max": 60, "median": 30, "mean": -1, "unit": "" }
+                },
+                "wall_thickness": 0.3,
+                "combustibles": [
+                    "INDUSTRIAL_OIL_DRUM",
+                    "COMBUSTIBLE_GAS_CYLINDER",
+                    "COAL_DUST_HOPPER",
+                    "POLYMER_MATERIAL",
+                    "WOOD_PALLET",
+                    "ORGANIC_SOLVENT_DRUM"
+                ]
+            },
+            "Tantalum refinery": {
+                "cn_name": "钽精炼厂",
+                "description": "钽精炼厂，包含多栋厂房建筑",
+                "building": {
+                    "length": { "min": 19, "max": 75, "median": 55, "mean": 49.7, "unit": "m" },
+                    "width": { "min": 13, "max": 37, "median": 30, "mean": 26.7, "unit": "m" },
+                    "height": { "min": 4, "max": 10, "median": 5, "mean": 6.3, "unit": "m" },
+                    "stories": { "min": 1, "max": 1, "median": 1, "mean": 1, "unit": "" }
+                },
+                "doors": {
+                    "width": { "min": 2, "max": 3, "median": 2, "mean": 2.3, "unit": "m" },
+                    "height": { "min": 2, "max": 3, "median": 2, "mean": 2.3, "unit": "m" },
+                    "count": { "min": 0, "max": 6, "median": 3, "mean": 3, "unit": "" }
+                },
+                "windows": {
+                    "width": { "min": 1, "max": 2, "median": 2, "mean": 1.7, "unit": "m" },
+                    "height": { "min": 1, "max": 2, "median": 2, "mean": 1.7, "unit": "m" },
+                    "count": { "min": 6, "max": 16, "median": 7, "mean": 9.7, "unit": "" }
+                },
+                "wall_thickness": 0.3,
+                "combustibles": [
+                    "ORGANIC_SOLVENT_DRUM",
+                    "METAL_DUST_COLLECTOR",
+                    "INDUSTRIAL_OIL_DRUM",
+                    "WOOD_PALLET",
+                    "PAPER_STACK",
+                    "PLASTIC_PACKAGING",
+                    "WOOD_FURNITURE"
+                ]
+            },
+            "Gold Refinery": {
+                "cn_name": "金精炼厂",
+                "description": "金精炼厂",
+                "building": {
+                    "length": { "min": 38, "max": 38, "median": 38, "mean": 38, "unit": "m" },
+                    "width": { "min": 18, "max": 18, "median": 18, "mean": 18, "unit": "m" },
+                    "height": { "min": 10, "max": 10, "median": 10, "mean": 10, "unit": "m" },
+                    "stories": { "min": 1, "max": 1, "median": 1, "mean": 1, "unit": "" }
+                },
+                "doors": {
+                    "width": { "min": 0.8, "max": 0.8, "median": 0.8, "mean": 0.8, "unit": "m" },
+                    "height": { "min": 2, "max": 2, "median": 2, "mean": 2, "unit": "m" },
+                    "count": { "min": 4, "max": 4, "median": 4, "mean": 4, "unit": "" }
+                },
+                "windows": {
+                    "width": { "min": 0.2, "max": 0.2, "median": 0.2, "mean": 0.2, "unit": "m" },
+                    "height": { "min": 1, "max": 1, "median": 1, "mean": 1, "unit": "m" },
+                    "count": { "min": 82, "max": 82, "median": 82, "mean": 82, "unit": "" }
+                },
+                "wall_thickness": 0.3,
+                "combustibles": [
+                    "ORGANIC_SOLVENT_DRUM",
+                    "COATING_AGENT_DRUM",
+                    "METAL_DUST_COLLECTOR",
+                    "POLISHING_PASTE_BIN",
+                    "INDUSTRIAL_OIL_DRUM",
+                    "POLYMER_MATERIAL",
+                    "WOOD_PALLET",
+                    "CARDBOARD_BOX",
+                    "PAPER_STACK",
+                    "WOOD_FURNITURE"
+                ]
             }
         }
     }

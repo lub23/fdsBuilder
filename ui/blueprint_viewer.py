@@ -58,26 +58,6 @@ class BlueprintViewer(QWidget):
         self.image_label.setAcceptDrops(True)
         layout.addWidget(self.image_label)
 
-        # API设置行
-        api_row = QHBoxLayout()
-        api_row.setSpacing(4)
-        api_row.addWidget(QLabel("API Key:"))
-        self.api_key_edit = QLineEdit(API_KEY)
-        self.api_key_edit.setPlaceholderText("OpenRouter API Key")
-        self.api_key_edit.setEchoMode(QLineEdit.Password)
-        api_row.addWidget(self.api_key_edit)
-
-        api_row.addWidget(QLabel("模型:"))
-        self.model_combo = QComboBox()
-        self.model_combo.addItems([
-            "google/gemini-2.5-flash-preview",
-            "anthropic/claude-sonnet-4",
-            "openai/gpt-4o",
-        ])
-        self.model_combo.setEditable(True)
-        api_row.addWidget(self.model_combo)
-        layout.addLayout(api_row)
-
         # 按钮行
         btn_layout = QHBoxLayout()
         btn_layout.setSpacing(4)
@@ -167,14 +147,6 @@ class BlueprintViewer(QWidget):
         if not self.image_path:
             QMessageBox.warning(self, "提示", "请先上传图纸")
             return
-
-        api_key = self.api_key_edit.text().strip()
-        if not api_key:
-            QMessageBox.warning(self, "提示", "请填写API Key")
-            return
-
-        model = self.model_combo.currentText().strip()
-
         # 禁用按钮，显示进度
         self.recognize_btn.setEnabled(False)
         self.recognize_btn.setText("🔄 识别中...")
@@ -183,7 +155,7 @@ class BlueprintViewer(QWidget):
         QApplication.processEvents()
 
         try:
-            recognizer = BlueprintRecognizer(api_key, model)
+            recognizer = BlueprintRecognizer(API_KEY)
             result = recognizer.recognize(self.image_path)
 
             if result:
