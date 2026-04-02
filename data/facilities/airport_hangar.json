@@ -1,0 +1,796 @@
+{
+  "cn_name": "机场机库",
+  "fire_separation": 15.0,
+  "sub_types": {
+    "Type 1": {
+      "cn_name": "小型固定翼与舰载机机库",
+      "offset": {
+        "x": 0,
+        "y": 0
+      },
+      "description": "",
+      "building": {
+        "length": {
+          "min": 28.96,
+          "max": 28.96,
+          "median": 28.96,
+          "mean": 28.96,
+          "unit": "m"
+        },
+        "width": {
+          "min": 64.0,
+          "max": 80.0,
+          "median": 72.0,
+          "mean": 72.0,
+          "unit": "m"
+        },
+        "height": {
+          "min": 9.9,
+          "max": 9.9,
+          "median": 9.9,
+          "mean": 9.9,
+          "unit": "m"
+        },
+        "stories": {
+          "min": 1,
+          "max": 1,
+          "median": 1,
+          "mean": 1,
+          "unit": ""
+        }
+      },
+      "doors": {
+        "width": {
+          "min": 63.7,
+          "max": 79.1,
+          "median": 71.4,
+          "mean": 71.4,
+          "unit": "m"
+        },
+        "height": {
+          "min": 7.6,
+          "max": 7.6,
+          "median": 7.6,
+          "mean": 7.6,
+          "unit": "m"
+        },
+        "count": {
+          "min": 1,
+          "max": 1,
+          "median": 1,
+          "mean": 1,
+          "unit": ""
+        }
+      },
+      "windows": {
+        "width": {
+          "min": 0,
+          "max": 0,
+          "median": -1,
+          "mean": -1,
+          "unit": "m"
+        },
+        "height": {
+          "min": 0,
+          "max": 0,
+          "median": -1,
+          "mean": -1,
+          "unit": "m"
+        },
+        "count": {
+          "min": 0,
+          "max": 0,
+          "median": -1,
+          "mean": -1,
+          "unit": ""
+        }
+      },
+      "wall_thickness": 0.3,
+      "fire_compartments": [
+        {
+          "name": "主停机区",
+          "x_ratio": [
+            0,
+            0.65
+          ],
+          "y_ratio": [
+            0,
+            1
+          ],
+          "wall_thickness": 0.3,
+          "wall_material": "CONCRETE",
+          "openings": [
+            {
+              "wall": "x_max",
+              "type": "door",
+              "position": 0.5,
+              "width": 5.0,
+              "height": 5.0,
+              "z_bottom": 0
+            }
+          ],
+          "combustibles": [
+            {
+              "key": "JET_FUEL_RESIDUE",
+              "count": 4
+            },
+            {
+              "key": "INDUSTRIAL_OIL_DRUM",
+              "count": 2
+            }
+          ],
+          "specialized_components": [
+            {
+              "key": "AIRCRAFT_SMALL",
+              "count": 2
+            }
+          ]
+        },
+        {
+          "name": "维修工具区",
+          "x_ratio": [
+            0.65,
+            1.0
+          ],
+          "y_ratio": [
+            0,
+            0.5
+          ],
+          "wall_thickness": 0.3,
+          "wall_material": "CONCRETE",
+          "openings": [
+            {
+              "wall": "x_min",
+              "type": "door",
+              "position": 0.5,
+              "width": 3.0,
+              "height": 3.5,
+              "z_bottom": 0
+            }
+          ],
+          "combustibles": [
+            {
+              "key": "WOOD_PALLET",
+              "count": 4
+            },
+            {
+              "key": "CABLE_BUNDLE",
+              "count": 3
+            },
+            {
+              "key": "ADHESIVE_SEALANT_SET",
+              "count": 2
+            },
+            {
+              "key": "FOAM_PACKAGING",
+              "count": 2
+            }
+          ],
+          "specialized_components": []
+        },
+        {
+          "name": "备件存储区",
+          "x_ratio": [
+            0.65,
+            1.0
+          ],
+          "y_ratio": [
+            0.5,
+            1.0
+          ],
+          "wall_thickness": 0.3,
+          "wall_material": "CONCRETE",
+          "openings": [],
+          "combustibles": [
+            {
+              "key": "CARDBOARD_BOX",
+              "count": 4
+            },
+            {
+              "key": "LIGHTWEIGHT_PARTITION",
+              "count": 2
+            },
+            {
+              "key": "FIBER_INSULATION_LAYER",
+              "count": 2
+            }
+          ],
+          "specialized_components": []
+        }
+      ],
+      "specialized_components": [
+        {
+          "key": "AIRCRAFT_SMALL",
+          "count": 2,
+          "size_class": "small"
+        }
+      ]
+    },
+    "Type 2": {
+      "cn_name": "大型旋翼与倾转机机库",
+      "offset": {
+        "x": 0,
+        "y": 100
+      },
+      "description": "多模块串联机库，局部可设Doghouse结构，配备6.5 t桥式起重机，主门宽度98.1 m，净高13.4 m",
+      "building": {
+        "length": {
+          "min": 36.3,
+          "max": 36.3,
+          "median": 36.3,
+          "mean": 36.3,
+          "unit": "m"
+        },
+        "width": {
+          "min": 99.1,
+          "max": 99.1,
+          "median": 99.1,
+          "mean": 99.1,
+          "unit": "m"
+        },
+        "height": {
+          "min": 13.4,
+          "max": 13.4,
+          "median": 13.4,
+          "mean": 13.4,
+          "unit": "m"
+        },
+        "stories": {
+          "min": 1,
+          "max": 2,
+          "median": -1,
+          "mean": -1,
+          "unit": ""
+        }
+      },
+      "doors": {
+        "width": {
+          "min": 98.1,
+          "max": 98.1,
+          "median": 98.1,
+          "mean": 98.1,
+          "unit": "m"
+        },
+        "height": {
+          "min": 13.4,
+          "max": 13.4,
+          "median": 13.4,
+          "mean": 13.4,
+          "unit": "m"
+        },
+        "count": {
+          "min": 1,
+          "max": 1,
+          "median": 1,
+          "mean": 1,
+          "unit": ""
+        }
+      },
+      "windows": {
+        "width": {
+          "min": 0,
+          "max": 0,
+          "median": -1,
+          "mean": -1,
+          "unit": "m"
+        },
+        "height": {
+          "min": 0,
+          "max": 0,
+          "median": -1,
+          "mean": -1,
+          "unit": "m"
+        },
+        "count": {
+          "min": 0,
+          "max": 0,
+          "median": -1,
+          "mean": -1,
+          "unit": ""
+        }
+      },
+      "wall_thickness": 0.3,
+      "fire_compartments": [
+        {
+          "name": "主停机区",
+          "x_ratio": [
+            0,
+            0.7
+          ],
+          "y_ratio": [
+            0,
+            1
+          ],
+          "wall_thickness": 0.3,
+          "wall_material": "CONCRETE",
+          "openings": [
+            {
+              "wall": "x_max",
+              "type": "door",
+              "position": 0.5,
+              "width": 6.0,
+              "height": 6.0,
+              "z_bottom": 0
+            }
+          ],
+          "combustibles": [
+            {
+              "key": "JET_FUEL_RESIDUE",
+              "count": 5
+            },
+            {
+              "key": "GLYCOL_DEICING_FLUID",
+              "count": 2
+            },
+            {
+              "key": "INDUSTRIAL_OIL_DRUM",
+              "count": 3
+            }
+          ],
+          "specialized_components": [
+            {
+              "key": "AIRCRAFT_MEDIUM",
+              "count": 1
+            }
+          ]
+        },
+        {
+          "name": "维修辅助区",
+          "x_ratio": [
+            0.7,
+            1.0
+          ],
+          "y_ratio": [
+            0,
+            1
+          ],
+          "wall_thickness": 0.3,
+          "wall_material": "CONCRETE",
+          "openings": [
+            {
+              "wall": "x_min",
+              "type": "door",
+              "position": 0.3,
+              "width": 3.0,
+              "height": 4.0,
+              "z_bottom": 0
+            },
+            {
+              "wall": "x_min",
+              "type": "door",
+              "position": 0.7,
+              "width": 3.0,
+              "height": 4.0,
+              "z_bottom": 0
+            }
+          ],
+          "combustibles": [
+            {
+              "key": "WOOD_PALLET",
+              "count": 5
+            },
+            {
+              "key": "CABLE_BUNDLE",
+              "count": 4
+            },
+            {
+              "key": "ORGANIC_SOLVENT_DRUM",
+              "count": 3
+            },
+            {
+              "key": "CARDBOARD_BOX",
+              "count": 4
+            },
+            {
+              "key": "PLASTIC_PACKAGING",
+              "count": 3
+            }
+          ],
+          "specialized_components": []
+        }
+      ],
+      "specialized_components": [
+        {
+          "key": "AIRCRAFT_MEDIUM",
+          "count": 1,
+          "size_class": "medium"
+        }
+      ]
+    },
+    "Type 3": {
+      "cn_name": "远程巡逻与运输机机库",
+      "offset": {
+        "x": 100,
+        "y": 0
+      },
+      "description": "陆基长机身机库，通常不设吊车，主门宽度49.4 m，净高15.2 m",
+      "building": {
+        "length": {
+          "min": 50.3,
+          "max": 50.3,
+          "median": 50.3,
+          "mean": 50.3,
+          "unit": "m"
+        },
+        "width": {
+          "min": 50.3,
+          "max": 50.3,
+          "median": 50.3,
+          "mean": 50.3,
+          "unit": "m"
+        },
+        "height": {
+          "min": 15.2,
+          "max": 15.2,
+          "median": 15.2,
+          "mean": 15.2,
+          "unit": "m"
+        },
+        "stories": {
+          "min": 1,
+          "max": 1,
+          "median": 1,
+          "mean": 1,
+          "unit": ""
+        }
+      },
+      "doors": {
+        "width": {
+          "min": 49.4,
+          "max": 49.4,
+          "median": 49.4,
+          "mean": 49.4,
+          "unit": "m"
+        },
+        "height": {
+          "min": 15.2,
+          "max": 15.2,
+          "median": 15.2,
+          "mean": 15.2,
+          "unit": "m"
+        },
+        "count": {
+          "min": 1,
+          "max": 1,
+          "median": 1,
+          "mean": 1,
+          "unit": ""
+        }
+      },
+      "windows": {
+        "width": {
+          "min": 0,
+          "max": 0,
+          "median": -1,
+          "mean": -1,
+          "unit": "m"
+        },
+        "height": {
+          "min": 0,
+          "max": 0,
+          "median": -1,
+          "mean": -1,
+          "unit": "m"
+        },
+        "count": {
+          "min": 0,
+          "max": 0,
+          "median": -1,
+          "mean": -1,
+          "unit": ""
+        }
+      },
+      "wall_thickness": 0.3,
+      "fire_compartments": [
+        {
+          "name": "主停机区",
+          "x_ratio": [
+            0,
+            0.75
+          ],
+          "y_ratio": [
+            0,
+            1
+          ],
+          "wall_thickness": 0.3,
+          "wall_material": "CONCRETE",
+          "openings": [
+            {
+              "wall": "x_max",
+              "type": "door",
+              "position": 0.5,
+              "width": 6.0,
+              "height": 8.0,
+              "z_bottom": 0
+            }
+          ],
+          "combustibles": [
+            {
+              "key": "JET_FUEL_RESIDUE",
+              "count": 6
+            },
+            {
+              "key": "GLYCOL_DEICING_FLUID",
+              "count": 3
+            },
+            {
+              "key": "INDUSTRIAL_OIL_DRUM",
+              "count": 4
+            }
+          ],
+          "specialized_components": [
+            {
+              "key": "AIRCRAFT_LARGE",
+              "count": 1
+            }
+          ]
+        },
+        {
+          "name": "辅助服务区",
+          "x_ratio": [
+            0.75,
+            1.0
+          ],
+          "y_ratio": [
+            0,
+            1
+          ],
+          "wall_thickness": 0.3,
+          "wall_material": "CONCRETE",
+          "openings": [
+            {
+              "wall": "x_min",
+              "type": "door",
+              "position": 0.5,
+              "width": 4.0,
+              "height": 5.0,
+              "z_bottom": 0
+            }
+          ],
+          "combustibles": [
+            {
+              "key": "WOOD_PALLET",
+              "count": 6
+            },
+            {
+              "key": "CARDBOARD_BOX",
+              "count": 5
+            },
+            {
+              "key": "FOAM_PACKAGING",
+              "count": 3
+            },
+            {
+              "key": "COATING_AGENT_DRUM",
+              "count": 2
+            },
+            {
+              "key": "ORGANIC_SOLVENT_DRUM",
+              "count": 2
+            },
+            {
+              "key": "CABLE_BUNDLE",
+              "count": 3
+            }
+          ],
+          "specialized_components": []
+        }
+      ],
+      "specialized_components": [
+        {
+          "key": "AIRCRAFT_LARGE",
+          "count": 1,
+          "size_class": "large"
+        }
+      ]
+    },
+    "Type 4": {
+      "cn_name": "大型无人机机库",
+      "offset": {
+        "x": 100,
+        "y": 100
+      },
+      "description": "独立跨距钢桁架或箱型桁架结构机库，配备4.5 t桥式起重机",
+      "building": {
+        "length": {
+          "min": 43.0,
+          "max": 43.0,
+          "median": 43.0,
+          "mean": 43.0,
+          "unit": "m"
+        },
+        "width": {
+          "min": 49.1,
+          "max": 49.1,
+          "median": 49.1,
+          "mean": 49.1,
+          "unit": "m"
+        },
+        "height": {
+          "min": 9.9,
+          "max": 9.9,
+          "median": 9.9,
+          "mean": 9.9,
+          "unit": "m"
+        },
+        "stories": {
+          "min": 1,
+          "max": 1,
+          "median": 1,
+          "mean": 1,
+          "unit": ""
+        }
+      },
+      "doors": {
+        "width": {
+          "min": 48.2,
+          "max": 48.2,
+          "median": 48.2,
+          "mean": 48.2,
+          "unit": "m"
+        },
+        "height": {
+          "min": 7.6,
+          "max": 7.6,
+          "median": 7.6,
+          "mean": 7.6,
+          "unit": "m"
+        },
+        "count": {
+          "min": 1,
+          "max": 1,
+          "median": 1,
+          "mean": 1,
+          "unit": ""
+        }
+      },
+      "windows": {
+        "width": {
+          "min": 0,
+          "max": 0,
+          "median": -1,
+          "mean": -1,
+          "unit": "m"
+        },
+        "height": {
+          "min": 0,
+          "max": 0,
+          "median": -1,
+          "mean": -1,
+          "unit": "m"
+        },
+        "count": {
+          "min": 0,
+          "max": 0,
+          "median": -1,
+          "mean": -1,
+          "unit": ""
+        }
+      },
+      "wall_thickness": 0.3,
+      "fire_compartments": [
+        {
+          "name": "无人机停放区",
+          "x_ratio": [
+            0,
+            0.6
+          ],
+          "y_ratio": [
+            0,
+            1
+          ],
+          "wall_thickness": 0.3,
+          "wall_material": "CONCRETE",
+          "openings": [
+            {
+              "wall": "x_max",
+              "type": "door",
+              "position": 0.5,
+              "width": 4.0,
+              "height": 4.0,
+              "z_bottom": 0
+            }
+          ],
+          "combustibles": [
+            {
+              "key": "JET_FUEL_RESIDUE",
+              "count": 3
+            },
+            {
+              "key": "INDUSTRIAL_OIL_DRUM",
+              "count": 2
+            }
+          ],
+          "specialized_components": [
+            {
+              "key": "AIRCRAFT_SMALL",
+              "count": 3
+            }
+          ]
+        },
+        {
+          "name": "维修检测区",
+          "x_ratio": [
+            0.6,
+            1.0
+          ],
+          "y_ratio": [
+            0,
+            0.5
+          ],
+          "wall_thickness": 0.3,
+          "wall_material": "CONCRETE",
+          "openings": [
+            {
+              "wall": "x_min",
+              "type": "door",
+              "position": 0.5,
+              "width": 3.0,
+              "height": 3.0,
+              "z_bottom": 0
+            }
+          ],
+          "combustibles": [
+            {
+              "key": "CABLE_BUNDLE",
+              "count": 3
+            },
+            {
+              "key": "COATING_AGENT_DRUM",
+              "count": 2
+            },
+            {
+              "key": "ADHESIVE_SEALANT_SET",
+              "count": 2
+            },
+            {
+              "key": "FOAM_PACKAGING",
+              "count": 2
+            }
+          ],
+          "specialized_components": []
+        },
+        {
+          "name": "办公备件区",
+          "x_ratio": [
+            0.6,
+            1.0
+          ],
+          "y_ratio": [
+            0.5,
+            1.0
+          ],
+          "wall_thickness": 0.3,
+          "wall_material": "CONCRETE",
+          "openings": [],
+          "combustibles": [
+            {
+              "key": "OFFICE_COMPOSITE_FURNITURE",
+              "count": 4
+            },
+            {
+              "key": "PAPER_STACK",
+              "count": 3
+            },
+            {
+              "key": "UPHOLSTERED_SEAT",
+              "count": 2
+            },
+            {
+              "key": "CARPET_FINISH",
+              "count": 2
+            }
+          ],
+          "specialized_components": []
+        }
+      ],
+      "specialized_components": [
+        {
+          "key": "AIRCRAFT_SMALL",
+          "count": 3,
+          "size_class": "small"
+        }
+      ]
+    }
+  }
+}

@@ -466,6 +466,7 @@ class MainWindow(QMainWindow):
         b_ymax = b.y_offset + b.width / 2
         return not (
             b_xmin >= a_xmax or b_xmax <= a_xmin or b_ymin >= a_ymax or b_ymax <= a_ymin
+        )
 
     def _refresh_scene_list(self):
         """Sync the scene list widget with current model buildings."""

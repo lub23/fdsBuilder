@@ -1,17 +1,20 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-'''
+"""
 @File  : fds_generator.py
 @Author: Lubber
 @Date  : 2026-02-27
 @Version : 2.0
 @Desc  : FDS file generator for building models
-'''
+"""
+
 import re
 import math
 from models.building import BuildingModel
 from models.materials import MATERIAL_LIBRARY
 from models.combustibles import SPECIALIZED_COMPONENTS, COMBUSTIBLE_LIBRARY
+
+
 # ============================================================
 # FDS生成器
 # ============================================================
@@ -81,7 +84,9 @@ class FDSGenerator:
             surf_id = f"FLOOR_{story.name}"
             if slab_mat in MATERIAL_LIBRARY:
                 thick = MATERIAL_LIBRARY[slab_mat]["THICKNESS"]
-                fds += f"&SURF ID='{surf_id}', MATL_ID='{slab_mat}', THICKNESS={thick} /\n"
+                fds += (
+                    f"&SURF ID='{surf_id}', MATL_ID='{slab_mat}', THICKNESS={thick} /\n"
+                )
 
         return fds + "\n"
 
@@ -170,7 +175,7 @@ class FDSGenerator:
         source_cz = D * math.sin(alpha)
 
         temperature = hs.get("temperature", 800.0)
-        
+
         if hs.get("radiation_flux") and "temperature" not in hs:
             flux_val = hs.get("radiation_flux")
             temperature = 1000.0 if flux_val > 20000 else 800.0
@@ -229,8 +234,12 @@ class FDSGenerator:
                     x1, x2 = min(obst_x1, obst_x2), max(obst_x1, obst_x2)
                     y1, y2 = min(obst_y1, obst_y2), max(obst_y1, obst_y2)
                     fds += self.gen_box(
-                        x1 + ox, x2 + ox, y1 + oy, y2 + oy,
-                        source_cz + z_lo, source_cz + z_hi,
+                        x1 + ox,
+                        x2 + ox,
+                        y1 + oy,
+                        y2 + oy,
+                        source_cz + z_lo,
+                        source_cz + z_hi,
                         "HEAT_SOURCE",
                     )
         else:
@@ -249,8 +258,12 @@ class FDSGenerator:
                     x1, x2 = min(obst_x1, obst_x2), max(obst_x1, obst_x2)
                     y1, y2 = min(obst_y1, obst_y2), max(obst_y1, obst_y2)
                     fds += self.gen_box(
-                        x1 + ox, x2 + ox, y1 + oy, y2 + oy,
-                        source_cz + z_lo, source_cz + z_hi,
+                        x1 + ox,
+                        x2 + ox,
+                        y1 + oy,
+                        y2 + oy,
+                        source_cz + z_lo,
+                        source_cz + z_hi,
                         "HEAT_SOURCE",
                     )
         return fds + "\n"
@@ -308,7 +321,6 @@ class FDSGenerator:
             hs = m.heat_source
             azimuth = hs.get("azimuth", 0)
             distance = hs.get("distance", 3.0)
-            import math
 
             az_rad = math.radians(azimuth)
             dir_x = math.sin(az_rad)
@@ -640,6 +652,7 @@ class FDSGenerator:
                             "WALL",
                         )
         return fds
+
 
 # ============================================================
 # FDS Validation

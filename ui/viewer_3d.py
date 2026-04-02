@@ -1,19 +1,21 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-'''
+"""
 @File  : viewer_3d.py
 @Author: Lubber
 @Date  : 2026-02-27
 @Version : 1.0
 @Desc  : 3D viewer component for building model visualization
-'''
+"""
 
 import math
+
 # 3D可视化
 try:
     import pyvista as pv
     from pyvistaqt import QtInteractor
+
     HAS_PYVISTA = True
 except ImportError:
     HAS_PYVISTA = False
@@ -55,7 +57,7 @@ class Viewer3D(QWidget):
         layout.setContentsMargins(0, 0, 0, 0)
         if HAS_PYVISTA:
             self.plotter = QtInteractor(self)
-            self.plotter.set_background('#1e1e2e')
+            self.plotter.set_background("#1e1e2e")
             self.plotter.add_axes()
             layout.addWidget(self.plotter.interactor)
         else:
@@ -218,8 +220,8 @@ class Viewer3D(QWidget):
                     if actor:
                         self.opening_actors.append((si, actor))
                 # Combustibles
-                self._draw_combustibles_offset(
-                    story.combustibles, z0, L, W, x_off, y_off
+                self.draw_combustibles(
+                    story.combustibles, z_offset=z0, L=L, W=W, x_off=x_off, y_off=y_off
                 )
 
             # Roof
@@ -338,9 +340,14 @@ class Viewer3D(QWidget):
         if not manager.items:
             return
         colors = {
-            "BROWN": "#8B4513", "RED": "#CD5C5C", "SALMON": "#FA8072",
-            "GRAY": "#808080", "KHAKI": "#BDB76B", "IVORY": "#FFFFF0",
-            "MAGENTA": "#FF00FF", "ORANGE": "#FFA500",
+            "BROWN": "#8B4513",
+            "RED": "#CD5C5C",
+            "SALMON": "#FA8072",
+            "GRAY": "#808080",
+            "KHAKI": "#BDB76B",
+            "IVORY": "#FFFFF0",
+            "MAGENTA": "#FF00FF",
+            "ORANGE": "#FFA500",
         }
         # Material-based colors for specialized component parts
         material_colors = {
@@ -372,15 +379,19 @@ class Viewer3D(QWidget):
 
     def draw_origin_marker(self):
         a = max(self.model.length, self.model.width) * 0.1
-        ox, oy = -self.model.length/2, -self.model.width/2
+        ox, oy = -self.model.length / 2, -self.model.width / 2
         self.plotter.add_mesh(
-            pv.Line((ox, oy, 0), (ox + a, oy, 0)), color='red', line_width=4)
+            pv.Line((ox, oy, 0), (ox + a, oy, 0)), color="red", line_width=4
+        )
         self.plotter.add_mesh(
-            pv.Line((ox, oy, 0), (ox, oy + a, 0)), color='green', line_width=4)
+            pv.Line((ox, oy, 0), (ox, oy + a, 0)), color="green", line_width=4
+        )
         self.plotter.add_mesh(
-            pv.Line((ox, oy, 0), (ox, oy, a)), color='blue', line_width=4)
+            pv.Line((ox, oy, 0), (ox, oy, a)), color="blue", line_width=4
+        )
         self.plotter.add_mesh(
-            pv.Sphere(radius=a * 0.05, center=(ox, oy, 0)), color='white')
+            pv.Sphere(radius=a * 0.05, center=(ox, oy, 0)), color="white"
+        )
 
     def setup_camera(self):
         d = self.max_dim * 2.5
@@ -402,15 +413,16 @@ class Viewer3D(QWidget):
                 1 for s, _ in self.wall_actors[:i] if s == si and False
             )
             is_ext = True  # 默认
-            color = MATERIAL_LIBRARY.get(
-                self.model.materials["walls"], {}).get("COLOR", "#808080")
+            color = MATERIAL_LIBRARY.get(self.model.materials["walls"], {}).get(
+                "COLOR", "#808080"
+            )
             actor.prop.color = color
             actor.prop.opacity = 0.8
 
         if 0 <= index < len(self.wall_actors):
             _, actor = self.wall_actors[index]
             if actor:
-                actor.prop.color = '#f97316'
+                actor.prop.color = "#f97316"
                 actor.prop.opacity = 1.0
 
         self.selected_wall = index
@@ -421,13 +433,13 @@ class Viewer3D(QWidget):
             return
         for _, actor in self.opening_actors:
             if actor:
-                actor.prop.color = '#a6e3a1'
+                actor.prop.color = "#a6e3a1"
                 actor.prop.opacity = 0.6
 
         if 0 <= index < len(self.opening_actors):
             _, actor = self.opening_actors[index]
             if actor:
-                actor.prop.color = '#f97316'
+                actor.prop.color = "#f97316"
                 actor.prop.opacity = 1.0
 
         self.selected_opening = index

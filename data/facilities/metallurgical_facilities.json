@@ -1,0 +1,895 @@
+{
+  "cn_name": "冶金设施",
+  "fire_separation": 15.0,
+  "sub_types": {
+    "Electrolytic plant": {
+      "cn_name": "电解工厂",
+      "offset": {
+        "x": 0,
+        "y": 0
+      },
+      "description": "电解工厂，包含主电解厂房、连接厂房、中型辅助厂房、大型配套厂房及圆形储罐",
+      "building": {
+        "length": {
+          "min": 180,
+          "max": 370,
+          "median": 220,
+          "mean": 266,
+          "unit": "m"
+        },
+        "width": {
+          "min": 10,
+          "max": 25,
+          "median": 20,
+          "mean": 19.75,
+          "unit": "m"
+        },
+        "height": {
+          "min": 10,
+          "max": 18,
+          "median": 14,
+          "mean": 13.8,
+          "unit": "m"
+        },
+        "stories": {
+          "min": 1,
+          "max": 1,
+          "median": 1,
+          "mean": 1,
+          "unit": ""
+        }
+      },
+      "doors": {
+        "width": {
+          "min": 3,
+          "max": 6,
+          "median": 4,
+          "mean": 4,
+          "unit": "m"
+        },
+        "height": {
+          "min": 3,
+          "max": 5,
+          "median": 4,
+          "mean": 4,
+          "unit": "m"
+        },
+        "count": {
+          "min": 2,
+          "max": 4,
+          "median": 3,
+          "mean": 3,
+          "unit": ""
+        }
+      },
+      "windows": {
+        "width": {
+          "min": 1,
+          "max": 2,
+          "median": 1.5,
+          "mean": 1.5,
+          "unit": "m"
+        },
+        "height": {
+          "min": 1,
+          "max": 2,
+          "median": 1.5,
+          "mean": 1.5,
+          "unit": "m"
+        },
+        "count": {
+          "min": 4,
+          "max": 10,
+          "median": 6,
+          "mean": 6,
+          "unit": ""
+        }
+      },
+      "wall_thickness": 0.3,
+      "fire_compartments": [
+        {
+          "name": "电解槽作业区",
+          "x_ratio": [
+            0,
+            0.8
+          ],
+          "y_ratio": [
+            0,
+            1
+          ],
+          "wall_thickness": 0.3,
+          "wall_material": "CONCRETE",
+          "openings": [
+            {
+              "wall": "x_max",
+              "type": "door",
+              "position": 0.5,
+              "width": 3.0,
+              "height": 3.5,
+              "z_bottom": 0
+            }
+          ],
+          "combustibles": [
+            {
+              "key": "CARBON_MATERIAL_STACK",
+              "count": 6
+            },
+            {
+              "key": "POLYMER_MATERIAL",
+              "count": 3
+            }
+          ],
+          "specialized_components": [
+            {
+              "key": "ELECTROLYSIS_CELL",
+              "count": 2
+            }
+          ]
+        },
+        {
+          "name": "辅助设备区",
+          "x_ratio": [
+            0.8,
+            1.0
+          ],
+          "y_ratio": [
+            0,
+            1
+          ],
+          "wall_thickness": 0.3,
+          "wall_material": "CONCRETE",
+          "openings": [
+            {
+              "wall": "x_min",
+              "type": "door",
+              "position": 0.5,
+              "width": 2.5,
+              "height": 3.0,
+              "z_bottom": 0
+            }
+          ],
+          "combustibles": [
+            {
+              "key": "INDUSTRIAL_OIL_DRUM",
+              "count": 3
+            },
+            {
+              "key": "METAL_DUST_COLLECTOR",
+              "count": 2
+            },
+            {
+              "key": "WOOD_PALLET",
+              "count": 4
+            },
+            {
+              "key": "CARDBOARD_BOX",
+              "count": 3
+            }
+          ],
+          "specialized_components": []
+        }
+      ],
+      "specialized_components": [
+        {
+          "key": "ELECTROLYSIS_CELL",
+          "count": 2,
+          "size_class": "large"
+        }
+      ]
+    },
+    "Dedicated power plant": {
+      "cn_name": "专用电厂",
+      "offset": {
+        "x": 0,
+        "y": 100
+      },
+      "description": "专用电厂，包含主厂房、大型辅助厂房、辅助厂房、长条通廊、金属架、烟囱及储罐",
+      "building": {
+        "length": {
+          "min": 8,
+          "max": 212,
+          "median": 40,
+          "mean": 65.1,
+          "unit": "m"
+        },
+        "width": {
+          "min": 15,
+          "max": 40,
+          "median": 32,
+          "mean": 31.8,
+          "unit": "m"
+        },
+        "height": {
+          "min": 8,
+          "max": 110,
+          "median": 25,
+          "mean": 39.7,
+          "unit": "m"
+        },
+        "stories": {
+          "min": 1,
+          "max": 3,
+          "median": 1,
+          "mean": -1,
+          "unit": ""
+        }
+      },
+      "doors": {
+        "width": {
+          "min": 0.8,
+          "max": 6,
+          "median": 3,
+          "mean": -1,
+          "unit": "m"
+        },
+        "height": {
+          "min": 2,
+          "max": 7,
+          "median": 3,
+          "mean": -1,
+          "unit": "m"
+        },
+        "count": {
+          "min": 2,
+          "max": 5,
+          "median": 4,
+          "mean": -1,
+          "unit": ""
+        }
+      },
+      "windows": {
+        "width": {
+          "min": 0.5,
+          "max": 4,
+          "median": 1.5,
+          "mean": -1,
+          "unit": "m"
+        },
+        "height": {
+          "min": 1,
+          "max": 3,
+          "median": 1,
+          "mean": -1,
+          "unit": "m"
+        },
+        "count": {
+          "min": 5,
+          "max": 15,
+          "median": 9,
+          "mean": -1,
+          "unit": ""
+        }
+      },
+      "wall_thickness": 0.3,
+      "fire_compartments": [
+        {
+          "name": "锅炉汽轮机区",
+          "x_ratio": [
+            0,
+            0.65
+          ],
+          "y_ratio": [
+            0,
+            1
+          ],
+          "wall_thickness": 0.3,
+          "wall_material": "CONCRETE",
+          "openings": [
+            {
+              "wall": "x_max",
+              "type": "door",
+              "position": 0.5,
+              "width": 4.0,
+              "height": 4.5,
+              "z_bottom": 0
+            }
+          ],
+          "combustibles": [
+            {
+              "key": "COAL_STACK",
+              "count": 4
+            },
+            {
+              "key": "COAL_DUST_HOPPER",
+              "count": 2
+            },
+            {
+              "key": "LIQUID_FUEL_DRUM",
+              "count": 3
+            },
+            {
+              "key": "INDUSTRIAL_OIL_DRUM",
+              "count": 3
+            }
+          ],
+          "specialized_components": []
+        },
+        {
+          "name": "电气控制区",
+          "x_ratio": [
+            0.65,
+            1.0
+          ],
+          "y_ratio": [
+            0,
+            1
+          ],
+          "wall_thickness": 0.3,
+          "wall_material": "CONCRETE",
+          "openings": [
+            {
+              "wall": "x_min",
+              "type": "door",
+              "position": 0.5,
+              "width": 2.0,
+              "height": 3.0,
+              "z_bottom": 0
+            }
+          ],
+          "combustibles": [
+            {
+              "key": "COMBUSTIBLE_GAS_CYLINDER",
+              "count": 2
+            },
+            {
+              "key": "POLYMER_MATERIAL",
+              "count": 2
+            },
+            {
+              "key": "WOOD_PALLET",
+              "count": 3
+            },
+            {
+              "key": "CARDBOARD_BOX",
+              "count": 3
+            },
+            {
+              "key": "PAPER_STACK",
+              "count": 2
+            },
+            {
+              "key": "ORGANIC_SOLVENT_DRUM",
+              "count": 2
+            }
+          ],
+          "specialized_components": []
+        }
+      ],
+      "specialized_components": []
+    },
+    "Steel plant": {
+      "cn_name": "钢铁厂",
+      "offset": {
+        "x": 100,
+        "y": 100
+      },
+      "description": "钢铁厂，包含炼铁炼钢主厂房、熔炼车间、轧钢车间、精整车间、卷材加工车间及辅助厂房",
+      "building": {
+        "length": {
+          "min": 80,
+          "max": 230,
+          "median": 210,
+          "mean": 175,
+          "unit": "m"
+        },
+        "width": {
+          "min": 24,
+          "max": 55,
+          "median": 33,
+          "mean": 35.3,
+          "unit": "m"
+        },
+        "height": {
+          "min": 10,
+          "max": 40,
+          "median": 13.5,
+          "mean": 18.2,
+          "unit": "m"
+        },
+        "stories": {
+          "min": 1,
+          "max": 3,
+          "median": 1,
+          "mean": -1,
+          "unit": ""
+        }
+      },
+      "doors": {
+        "width": {
+          "min": 0.8,
+          "max": 10,
+          "median": 5,
+          "mean": -1,
+          "unit": "m"
+        },
+        "height": {
+          "min": 2,
+          "max": 10,
+          "median": 5,
+          "mean": -1,
+          "unit": "m"
+        },
+        "count": {
+          "min": 1,
+          "max": 6,
+          "median": 3,
+          "mean": -1,
+          "unit": ""
+        }
+      },
+      "windows": {
+        "width": {
+          "min": 2,
+          "max": 10,
+          "median": 6,
+          "mean": -1,
+          "unit": "m"
+        },
+        "height": {
+          "min": 1,
+          "max": 4,
+          "median": 2,
+          "mean": -1,
+          "unit": "m"
+        },
+        "count": {
+          "min": 0,
+          "max": 60,
+          "median": 30,
+          "mean": -1,
+          "unit": ""
+        }
+      },
+      "wall_thickness": 0.3,
+      "fire_compartments": [
+        {
+          "name": "熔炼作业区",
+          "x_ratio": [
+            0,
+            0.6
+          ],
+          "y_ratio": [
+            0,
+            1
+          ],
+          "wall_thickness": 0.3,
+          "wall_material": "CONCRETE",
+          "openings": [
+            {
+              "wall": "x_max",
+              "type": "door",
+              "position": 0.5,
+              "width": 5.0,
+              "height": 5.0,
+              "z_bottom": 0
+            }
+          ],
+          "combustibles": [
+            {
+              "key": "INDUSTRIAL_OIL_DRUM",
+              "count": 4
+            },
+            {
+              "key": "COMBUSTIBLE_GAS_CYLINDER",
+              "count": 3
+            },
+            {
+              "key": "COAL_DUST_HOPPER",
+              "count": 2
+            }
+          ],
+          "specialized_components": []
+        },
+        {
+          "name": "轧钢辅助区",
+          "x_ratio": [
+            0.6,
+            1.0
+          ],
+          "y_ratio": [
+            0,
+            1
+          ],
+          "wall_thickness": 0.3,
+          "wall_material": "CONCRETE",
+          "openings": [
+            {
+              "wall": "x_min",
+              "type": "door",
+              "position": 0.5,
+              "width": 4.0,
+              "height": 4.5,
+              "z_bottom": 0
+            }
+          ],
+          "combustibles": [
+            {
+              "key": "POLYMER_MATERIAL",
+              "count": 3
+            },
+            {
+              "key": "WOOD_PALLET",
+              "count": 4
+            },
+            {
+              "key": "ORGANIC_SOLVENT_DRUM",
+              "count": 2
+            }
+          ],
+          "specialized_components": []
+        }
+      ],
+      "specialized_components": []
+    },
+    "Tantalum refinery": {
+      "cn_name": "钽精炼厂",
+      "offset": {
+        "x": 200,
+        "y": 100
+      },
+      "description": "钽精炼厂，包含多栋厂房建筑",
+      "building": {
+        "length": {
+          "min": 19,
+          "max": 75,
+          "median": 55,
+          "mean": 49.7,
+          "unit": "m"
+        },
+        "width": {
+          "min": 13,
+          "max": 37,
+          "median": 30,
+          "mean": 26.7,
+          "unit": "m"
+        },
+        "height": {
+          "min": 4,
+          "max": 10,
+          "median": 5,
+          "mean": 6.3,
+          "unit": "m"
+        },
+        "stories": {
+          "min": 1,
+          "max": 1,
+          "median": 1,
+          "mean": 1,
+          "unit": ""
+        }
+      },
+      "doors": {
+        "width": {
+          "min": 2,
+          "max": 3,
+          "median": 2,
+          "mean": 2.3,
+          "unit": "m"
+        },
+        "height": {
+          "min": 2,
+          "max": 3,
+          "median": 2,
+          "mean": 2.3,
+          "unit": "m"
+        },
+        "count": {
+          "min": 0,
+          "max": 6,
+          "median": 3,
+          "mean": 3,
+          "unit": ""
+        }
+      },
+      "windows": {
+        "width": {
+          "min": 1,
+          "max": 2,
+          "median": 2,
+          "mean": 1.7,
+          "unit": "m"
+        },
+        "height": {
+          "min": 1,
+          "max": 2,
+          "median": 2,
+          "mean": 1.7,
+          "unit": "m"
+        },
+        "count": {
+          "min": 6,
+          "max": 16,
+          "median": 7,
+          "mean": 9.7,
+          "unit": ""
+        }
+      },
+      "wall_thickness": 0.3,
+      "fire_compartments": [
+        {
+          "name": "精炼作业区",
+          "x_ratio": [
+            0,
+            0.7
+          ],
+          "y_ratio": [
+            0,
+            1
+          ],
+          "wall_thickness": 0.3,
+          "wall_material": "CONCRETE",
+          "openings": [
+            {
+              "wall": "x_max",
+              "type": "door",
+              "position": 0.5,
+              "width": 2.0,
+              "height": 2.5,
+              "z_bottom": 0
+            }
+          ],
+          "combustibles": [
+            {
+              "key": "ORGANIC_SOLVENT_DRUM",
+              "count": 3
+            },
+            {
+              "key": "METAL_DUST_COLLECTOR",
+              "count": 2
+            },
+            {
+              "key": "INDUSTRIAL_OIL_DRUM",
+              "count": 2
+            }
+          ],
+          "specialized_components": [
+            {
+              "key": "ELECTROLYSIS_CELL_MEDIUM",
+              "count": 2
+            }
+          ]
+        },
+        {
+          "name": "存储办公区",
+          "x_ratio": [
+            0.7,
+            1.0
+          ],
+          "y_ratio": [
+            0,
+            1
+          ],
+          "wall_thickness": 0.3,
+          "wall_material": "CONCRETE",
+          "openings": [
+            {
+              "wall": "x_min",
+              "type": "door",
+              "position": 0.5,
+              "width": 1.5,
+              "height": 2.0,
+              "z_bottom": 0
+            }
+          ],
+          "combustibles": [
+            {
+              "key": "WOOD_PALLET",
+              "count": 3
+            },
+            {
+              "key": "PAPER_STACK",
+              "count": 2
+            },
+            {
+              "key": "PLASTIC_PACKAGING",
+              "count": 2
+            },
+            {
+              "key": "WOOD_FURNITURE",
+              "count": 3
+            }
+          ],
+          "specialized_components": []
+        }
+      ],
+      "specialized_components": [
+        {
+          "key": "ELECTROLYSIS_CELL_MEDIUM",
+          "count": 2,
+          "size_class": "medium"
+        }
+      ]
+    },
+    "Gold Refinery": {
+      "cn_name": "金精炼厂",
+      "offset": {
+        "x": 300,
+        "y": 100
+      },
+      "description": "金精炼厂",
+      "building": {
+        "length": {
+          "min": 38,
+          "max": 38,
+          "median": 38,
+          "mean": 38,
+          "unit": "m"
+        },
+        "width": {
+          "min": 18,
+          "max": 18,
+          "median": 18,
+          "mean": 18,
+          "unit": "m"
+        },
+        "height": {
+          "min": 10,
+          "max": 10,
+          "median": 10,
+          "mean": 10,
+          "unit": "m"
+        },
+        "stories": {
+          "min": 1,
+          "max": 1,
+          "median": 1,
+          "mean": 1,
+          "unit": ""
+        }
+      },
+      "doors": {
+        "width": {
+          "min": 0.8,
+          "max": 0.8,
+          "median": 0.8,
+          "mean": 0.8,
+          "unit": "m"
+        },
+        "height": {
+          "min": 2,
+          "max": 2,
+          "median": 2,
+          "mean": 2,
+          "unit": "m"
+        },
+        "count": {
+          "min": 4,
+          "max": 4,
+          "median": 4,
+          "mean": 4,
+          "unit": ""
+        }
+      },
+      "windows": {
+        "width": {
+          "min": 0.2,
+          "max": 0.2,
+          "median": 0.2,
+          "mean": 0.2,
+          "unit": "m"
+        },
+        "height": {
+          "min": 1,
+          "max": 1,
+          "median": 1,
+          "mean": 1,
+          "unit": "m"
+        },
+        "count": {
+          "min": 82,
+          "max": 82,
+          "median": 82,
+          "mean": 82,
+          "unit": ""
+        }
+      },
+      "wall_thickness": 0.3,
+      "fire_compartments": [
+        {
+          "name": "冶炼提纯区",
+          "x_ratio": [
+            0,
+            0.6
+          ],
+          "y_ratio": [
+            0,
+            1
+          ],
+          "wall_thickness": 0.3,
+          "wall_material": "CONCRETE",
+          "openings": [
+            {
+              "wall": "x_max",
+              "type": "door",
+              "position": 0.5,
+              "width": 1.5,
+              "height": 2.0,
+              "z_bottom": 0
+            }
+          ],
+          "combustibles": [
+            {
+              "key": "ORGANIC_SOLVENT_DRUM",
+              "count": 3
+            },
+            {
+              "key": "COATING_AGENT_DRUM",
+              "count": 2
+            },
+            {
+              "key": "METAL_DUST_COLLECTOR",
+              "count": 2
+            },
+            {
+              "key": "POLISHING_PASTE_BIN",
+              "count": 2
+            }
+          ],
+          "specialized_components": [
+            {
+              "key": "ELECTROLYSIS_CELL_MEDIUM",
+              "count": 1
+            }
+          ]
+        },
+        {
+          "name": "存储包装区",
+          "x_ratio": [
+            0.6,
+            1.0
+          ],
+          "y_ratio": [
+            0,
+            1
+          ],
+          "wall_thickness": 0.3,
+          "wall_material": "CONCRETE",
+          "openings": [
+            {
+              "wall": "x_min",
+              "type": "door",
+              "position": 0.5,
+              "width": 1.5,
+              "height": 2.0,
+              "z_bottom": 0
+            }
+          ],
+          "combustibles": [
+            {
+              "key": "INDUSTRIAL_OIL_DRUM",
+              "count": 2
+            },
+            {
+              "key": "POLYMER_MATERIAL",
+              "count": 2
+            },
+            {
+              "key": "WOOD_PALLET",
+              "count": 3
+            },
+            {
+              "key": "CARDBOARD_BOX",
+              "count": 3
+            },
+            {
+              "key": "PAPER_STACK",
+              "count": 2
+            },
+            {
+              "key": "WOOD_FURNITURE",
+              "count": 2
+            }
+          ],
+          "specialized_components": []
+        }
+      ],
+      "specialized_components": [
+        {
+          "key": "ELECTROLYSIS_CELL_MEDIUM",
+          "count": 1,
+          "size_class": "medium"
+        }
+      ]
+    }
+  }
+}

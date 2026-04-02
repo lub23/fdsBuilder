@@ -1,0 +1,575 @@
+{
+  "cn_name": "机械制造设施",
+  "fire_separation": 12.0,
+  "sub_types": {
+    "Assembly building": {
+      "cn_name": "总装车间",
+      "offset": {
+        "x": 0,
+        "y": 0
+      },
+      "description": "",
+      "building": {
+        "length": {
+          "min": 68,
+          "max": 565,
+          "median": 157.5,
+          "mean": 171.652,
+          "unit": "m"
+        },
+        "width": {
+          "min": 16,
+          "max": 292,
+          "median": 86,
+          "mean": 100.717,
+          "unit": "m"
+        },
+        "height": {
+          "min": 5,
+          "max": 21,
+          "median": 8,
+          "mean": 8.674,
+          "unit": "m"
+        },
+        "stories": {
+          "min": 1,
+          "max": 1,
+          "median": 1,
+          "mean": -1,
+          "unit": ""
+        }
+      },
+      "doors": {
+        "width": {
+          "min": 0.8,
+          "max": 20,
+          "median": 4,
+          "mean": 3.948,
+          "unit": "m"
+        },
+        "height": {
+          "min": 2,
+          "max": 20,
+          "median": 5,
+          "mean": 4.558,
+          "unit": "m"
+        },
+        "count": {
+          "min": 0,
+          "max": 35,
+          "median": 5,
+          "mean": 8.609,
+          "unit": ""
+        }
+      },
+      "windows": {
+        "width": {
+          "min": 0.5,
+          "max": 30,
+          "median": 1,
+          "mean": 2.034,
+          "unit": "m"
+        },
+        "height": {
+          "min": 0.25,
+          "max": 6,
+          "median": 1.5,
+          "mean": 1.794,
+          "unit": "m"
+        },
+        "count": {
+          "min": 0,
+          "max": 466,
+          "median": 13,
+          "mean": 47.956,
+          "unit": ""
+        }
+      },
+      "wall_thickness": 0.3,
+      "fire_compartments": [
+        {
+          "name": "总装作业区",
+          "x_ratio": [
+            0,
+            0.7
+          ],
+          "y_ratio": [
+            0,
+            1
+          ],
+          "wall_thickness": 0.3,
+          "wall_material": "CONCRETE",
+          "openings": [
+            {
+              "wall": "x_max",
+              "type": "door",
+              "position": 0.5,
+              "width": 5.0,
+              "height": 5.0,
+              "z_bottom": 0
+            }
+          ],
+          "combustibles": [
+            {
+              "key": "INDUSTRIAL_OIL_DRUM",
+              "count": 4
+            },
+            {
+              "key": "COATING_AGENT_DRUM",
+              "count": 3
+            },
+            {
+              "key": "RUBBER_POLYMER_PARTS",
+              "count": 4
+            },
+            {
+              "key": "OILY_WASTE_BIN",
+              "count": 3
+            }
+          ],
+          "specialized_components": [
+            {
+              "key": "VEHICLE_TRUCK",
+              "count": 1
+            }
+          ]
+        },
+        {
+          "name": "物料存储区",
+          "x_ratio": [
+            0.7,
+            1.0
+          ],
+          "y_ratio": [
+            0,
+            1
+          ],
+          "wall_thickness": 0.3,
+          "wall_material": "CONCRETE",
+          "openings": [
+            {
+              "wall": "x_min",
+              "type": "door",
+              "position": 0.5,
+              "width": 4.0,
+              "height": 4.0,
+              "z_bottom": 0
+            }
+          ],
+          "combustibles": [
+            {
+              "key": "WOOD_PALLET",
+              "count": 8
+            },
+            {
+              "key": "CARDBOARD_BOX",
+              "count": 6
+            },
+            {
+              "key": "PLASTIC_PACKAGING",
+              "count": 4
+            },
+            {
+              "key": "FOAM_PACKAGING",
+              "count": 3
+            },
+            {
+              "key": "TEXTILE_ROLL",
+              "count": 2
+            }
+          ],
+          "specialized_components": []
+        }
+      ],
+      "specialized_components": [
+        {
+          "key": "VEHICLE_TRUCK",
+          "count": 1,
+          "size_class": "medium"
+        }
+      ]
+    },
+    "Sub-assembly building": {
+      "cn_name": "部装车间",
+      "offset": {
+        "x": 0,
+        "y": 100
+      },
+      "description": "部装车间，用于部件组装加工",
+      "building": {
+        "length": {
+          "min": 30,
+          "max": 500,
+          "median": 130,
+          "mean": 189.2,
+          "unit": "m"
+        },
+        "width": {
+          "min": 16,
+          "max": 144,
+          "median": 70,
+          "mean": 83.7,
+          "unit": "m"
+        },
+        "height": {
+          "min": 3,
+          "max": 13,
+          "median": 7,
+          "mean": 9.1,
+          "unit": "m"
+        },
+        "stories": {
+          "min": 1,
+          "max": 1,
+          "median": 1,
+          "mean": 1,
+          "unit": ""
+        }
+      },
+      "doors": {
+        "width": {
+          "min": 0.8,
+          "max": 5,
+          "median": 3,
+          "mean": 2.985,
+          "unit": "m"
+        },
+        "height": {
+          "min": 2,
+          "max": 6,
+          "median": 4,
+          "mean": 3.477,
+          "unit": "m"
+        },
+        "count": {
+          "min": 1,
+          "max": 21,
+          "median": 4,
+          "mean": 8.6,
+          "unit": ""
+        }
+      },
+      "windows": {
+        "width": {
+          "min": 0.3,
+          "max": 9,
+          "median": 1,
+          "mean": 1.16,
+          "unit": "m"
+        },
+        "height": {
+          "min": 0.4,
+          "max": 7,
+          "median": 1.5,
+          "mean": 1.518,
+          "unit": "m"
+        },
+        "count": {
+          "min": 0,
+          "max": 330,
+          "median": 33,
+          "mean": 72.05,
+          "unit": ""
+        }
+      },
+      "wall_thickness": 0.3,
+      "fire_compartments": [
+        {
+          "name": "装配作业区",
+          "x_ratio": [
+            0,
+            0.65
+          ],
+          "y_ratio": [
+            0,
+            1
+          ],
+          "wall_thickness": 0.3,
+          "wall_material": "CONCRETE",
+          "openings": [
+            {
+              "wall": "x_max",
+              "type": "door",
+              "position": 0.5,
+              "width": 3.0,
+              "height": 4.0,
+              "z_bottom": 0
+            }
+          ],
+          "combustibles": [
+            {
+              "key": "INDUSTRIAL_OIL_DRUM",
+              "count": 3
+            },
+            {
+              "key": "ORGANIC_SOLVENT_DRUM",
+              "count": 2
+            },
+            {
+              "key": "COMBUSTIBLE_GAS_CYLINDER",
+              "count": 2
+            },
+            {
+              "key": "ELECTRICAL_PLASTIC",
+              "count": 3
+            },
+            {
+              "key": "OILY_WASTE_BIN",
+              "count": 2
+            }
+          ],
+          "specialized_components": [
+            {
+              "key": "VEHICLE_CAR",
+              "count": 2
+            }
+          ]
+        },
+        {
+          "name": "原料备件区",
+          "x_ratio": [
+            0.65,
+            1.0
+          ],
+          "y_ratio": [
+            0,
+            1
+          ],
+          "wall_thickness": 0.3,
+          "wall_material": "CONCRETE",
+          "openings": [
+            {
+              "wall": "x_min",
+              "type": "door",
+              "position": 0.5,
+              "width": 3.0,
+              "height": 3.5,
+              "z_bottom": 0
+            }
+          ],
+          "combustibles": [
+            {
+              "key": "WOOD_PALLET",
+              "count": 6
+            },
+            {
+              "key": "CARDBOARD_BOX",
+              "count": 5
+            },
+            {
+              "key": "FOAM_PACKAGING",
+              "count": 3
+            },
+            {
+              "key": "COATING_AGENT_DRUM",
+              "count": 2
+            },
+            {
+              "key": "PROCESS_CHEMICAL_CONTAINER",
+              "count": 2
+            }
+          ],
+          "specialized_components": []
+        }
+      ],
+      "specialized_components": [
+        {
+          "key": "VEHICLE_CAR",
+          "count": 2,
+          "size_class": "small"
+        }
+      ]
+    },
+    "Machining workshop": {
+      "cn_name": "机械加工车间",
+      "offset": {
+        "x": 100,
+        "y": 100
+      },
+      "description": "机械加工车间，用于零部件机械加工作业",
+      "building": {
+        "length": {
+          "min": 45,
+          "max": 266,
+          "median": 135,
+          "mean": 192.13,
+          "unit": "m"
+        },
+        "width": {
+          "min": 25,
+          "max": 227,
+          "median": 70,
+          "mean": 108.304,
+          "unit": "m"
+        },
+        "height": {
+          "min": 4,
+          "max": 14,
+          "median": 7,
+          "mean": 10.174,
+          "unit": "m"
+        },
+        "stories": {
+          "min": 1,
+          "max": 1,
+          "median": 1,
+          "mean": 1,
+          "unit": ""
+        }
+      },
+      "doors": {
+        "width": {
+          "min": 0.8,
+          "max": 20,
+          "median": 3,
+          "mean": 3.451,
+          "unit": "m"
+        },
+        "height": {
+          "min": 2,
+          "max": 10,
+          "median": 4,
+          "mean": 3.572,
+          "unit": "m"
+        },
+        "count": {
+          "min": 1,
+          "max": 14,
+          "median": 5,
+          "mean": 9.347,
+          "unit": ""
+        }
+      },
+      "windows": {
+        "width": {
+          "min": 0.2,
+          "max": 5,
+          "median": 1.5,
+          "mean": 1.874,
+          "unit": "m"
+        },
+        "height": {
+          "min": 0.5,
+          "max": 6,
+          "median": 1.5,
+          "mean": 1.4,
+          "unit": "m"
+        },
+        "count": {
+          "min": 0,
+          "max": 233,
+          "median": 12.5,
+          "mean": 50.783,
+          "unit": ""
+        }
+      },
+      "wall_thickness": 0.3,
+      "fire_compartments": [
+        {
+          "name": "机加工区",
+          "x_ratio": [
+            0,
+            0.7
+          ],
+          "y_ratio": [
+            0,
+            1
+          ],
+          "wall_thickness": 0.3,
+          "wall_material": "CONCRETE",
+          "openings": [
+            {
+              "wall": "x_max",
+              "type": "door",
+              "position": 0.5,
+              "width": 3.0,
+              "height": 4.0,
+              "z_bottom": 0
+            }
+          ],
+          "combustibles": [
+            {
+              "key": "INDUSTRIAL_OIL_DRUM",
+              "count": 4
+            },
+            {
+              "key": "ORGANIC_SOLVENT_DRUM",
+              "count": 3
+            },
+            {
+              "key": "COMBUSTIBLE_GAS_CYLINDER",
+              "count": 2
+            },
+            {
+              "key": "OILY_WASTE_BIN",
+              "count": 3
+            },
+            {
+              "key": "OILY_SLUDGE_CONTAINER",
+              "count": 2
+            }
+          ],
+          "specialized_components": [
+            {
+              "key": "VEHICLE_CAR",
+              "count": 1
+            }
+          ]
+        },
+        {
+          "name": "刀具料库区",
+          "x_ratio": [
+            0.7,
+            1.0
+          ],
+          "y_ratio": [
+            0,
+            1
+          ],
+          "wall_thickness": 0.3,
+          "wall_material": "CONCRETE",
+          "openings": [
+            {
+              "wall": "x_min",
+              "type": "door",
+              "position": 0.5,
+              "width": 2.5,
+              "height": 3.0,
+              "z_bottom": 0
+            }
+          ],
+          "combustibles": [
+            {
+              "key": "WOOD_PALLET",
+              "count": 5
+            },
+            {
+              "key": "CARDBOARD_BOX",
+              "count": 4
+            },
+            {
+              "key": "PLASTIC_PACKAGING",
+              "count": 3
+            },
+            {
+              "key": "ELECTRICAL_PLASTIC",
+              "count": 2
+            },
+            {
+              "key": "METAL_DUST_COLLECTOR",
+              "count": 2
+            }
+          ],
+          "specialized_components": []
+        }
+      ],
+      "specialized_components": [
+        {
+          "key": "VEHICLE_CAR",
+          "count": 1,
+          "size_class": "small"
+        }
+      ]
+    }
+  }
+}

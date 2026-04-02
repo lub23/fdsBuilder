@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-'''
+"""
 @File  : facility.py
 @Author: Lubber
 @Date  : 2026-03-09
 @Version : 1.0
 @Desc  : Preset facility data management and equivalent model generation
-'''
+"""
 
 import json, os
 from typing import List, Tuple, Dict, Any
@@ -43,11 +43,21 @@ WALL_NAMES = ["南墙", "北墙", "东墙", "西墙", "均匀分布"]
 
 
 class FacilityManager:
-
     def __init__(self):
-        path = os.path.join(os.path.dirname(__file__), "industrial.json")
-        with open(path, "r", encoding="utf-8") as f:
-            self._data: Dict[str, Any] = json.load(f)
+        import os
+
+        self._data: Dict[str, Any] = {}
+        facilities_dir = os.path.join(
+            os.path.dirname(__file__), "..", "data", "facilities"
+        )
+        for filename in os.listdir(facilities_dir):
+            if filename.endswith(".json") and filename != "__init__.py":
+                with open(
+                    os.path.join(facilities_dir, filename), "r", encoding="utf-8"
+                ) as f:
+                    category_data = json.load(f)
+                    category_key = filename[:-5]
+                    self._data[category_key] = category_data
 
     # ── 查询 ──────────────────────────────────────
 
@@ -90,7 +100,8 @@ class FacilityManager:
 
         rng = {}
         for key, src in [
-            ("length", b["length"]), ("width", b["width"]),
+            ("length", b["length"]),
+            ("width", b["width"]),
             ("height", b["height"]),
             ("stories", b.get("stories", {"min": 1, "max": 1})),
             ("door_width", d.get("width", {"min": 1.2, "max": 1.5})),
@@ -113,13 +124,15 @@ class FacilityManager:
                     all_comb_keys.append(item["key"])
 
         return dict(
-            cat_key=cat, sub_key=sub,
+            cat_key=cat,
+            sub_key=sub,
             cat_name=self._data[cat]["cn_name"],
             name=f.get("cn_name", sub),
             description=f.get("description", ""),
             facility_combustibles=all_comb_keys,
             fire_compartments=fc_defs,
-            length=_r(b["length"]), width=_r(b["width"]),
+            length=_r(b["length"]),
+            width=_r(b["width"]),
             height=_r(b["height"]),
             stories=max(1, int(_r(b.get("stories", {"min": 1, "max": 1})))),
             wall_thickness=f.get("wall_thickness", 0.24),
@@ -554,7 +567,7 @@ class FacilityManager:
                 ):
                     return wi
         return -1
-    
+
     @staticmethod
     def _place_specialized_in_compartment(story, sc_list, fc, wall_t):
         """Place specialized components centered within a compartment."""
@@ -761,7 +774,9 @@ class FacilityManager:
                 zb = max(0.3, min(zb, story.height - h - 0.05))
 
             if wall_mode <= 3:
-                FacilityManager._add_to_wall(story, wall_mode, nf, ow, h, zb, kind, L, W)
+                FacilityManager._add_to_wall(
+                    story, wall_mode, nf, ow, h, zb, kind, L, W
+                )
             else:
                 wlens = [L, L, W, W]
                 perim = sum(wlens)
@@ -774,7 +789,8 @@ class FacilityManager:
                 for wi in range(4):
                     if counts[wi] > 0:
                         FacilityManager._add_to_wall(
-                            story, wi, counts[wi], ow, h, zb, kind, L, W)
+                            story, wi, counts[wi], ow, h, zb, kind, L, W
+                        )
 
     @staticmethod
     def _add_to_wall(story, wi, count, ow, oh, z_bot, kind, L, W):
@@ -874,11 +890,11 @@ class FacilityManager:
         sw_l, sw_w = p.get("stairwell_length", 4.0), p.get("stairwell_width", 3.0)
         for si, story in enumerate(model.stories):
             if si == 0:
-                continue          # 1F 无楼板开洞
+                continue  # 1F 无楼板开洞
             for idx, (x, y) in enumerate(positions):
                 story.floor_slab.openings.append(
-                    dict(x=x, y=y, length=sw_l, width=sw_w,
-                         name=f"楼梯间{idx + 1}"))
+                    dict(x=x, y=y, length=sw_l, width=sw_w, name=f"楼梯间{idx + 1}")
+                )
 
     # ── 可燃物 ────────────────────────────────────
 
@@ -889,7 +905,7 @@ class FacilityManager:
             return
         method_idx = p.get("combustible_method", 0)
         method = list(DistributionMethod)[method_idx]
-        target = p.get("combustible_floor", -1)      # -1 = 全部
+        target = p.get("combustible_floor", -1)  # -1 = 全部
 
         L, W, t = model.length, model.width, model.wall_thickness
 
@@ -911,7 +927,11 @@ class FacilityManager:
     @staticmethod
     def _overlaps_hole(x, y, ol, ow, holes, margin=0.3):
         for h in holes:
-            if not (x + ol <= h["x"] - margin or x >= h["x"] + h["length"] + margin or
-                    y + ow <= h["y"] - margin or y >= h["y"] + h["width"] + margin):
+            if not (
+                x + ol <= h["x"] - margin
+                or x >= h["x"] + h["length"] + margin
+                or y + ow <= h["y"] - margin
+                or y >= h["y"] + h["width"] + margin
+            ):
                 return True
         return False
