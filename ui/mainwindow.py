@@ -466,21 +466,55 @@ class MainWindow(QMainWindow):
         )
         if file_path:
             try:
-                model = self.param_panel.get_model()
-                generator = FDSGenerator(model)
-                fds_code = generator.generate()
+                # 使用Blender/BFDS导出 (如果使用Blender查看器)
+                if self.use_blender_3d and self.blender_client:
+                    self._export_fds_blender(file_path)
+                else:
+                    # 使用原有方式导出
+                    model = self.param_panel.get_model()
+                    generator = FDSGenerator(model)
+                    fds_code = generator.generate()
+                    with open(file_path, "w", encoding="utf-8") as f:
+                        f.write(fds_code)
 
-                with open(file_path, "w", encoding="utf-8") as f:
-                    f.write(fds_code)
-
-                QMessageBox.information(
-                    self,
-                    "导出成功",
-                    f"FDS文件已导出到:\n{file_path}\n\n可以使用FDS进行模拟计算。",
-                )
-                self.statusBar().showMessage(f"已导出: {file_path}")
+                    QMessageBox.information(
+                        self,
+                        "导出成功",
+                        f"FDS文件已导出到:\n{file_path}\n\n可以使用FDS进行模拟计算。",
+                    )
+                    self.statusBar().showMessage(f"已导出: {file_path}")
             except Exception as e:
                 QMessageBox.critical(self, "错误", f"无法导出FDS文件:\n{str(e)}")
+
+    def _export_fds_blender(self, file_path: str):
+        """使用Blender/BFDS导出FDS"""
+        model = self.param_panel.get_model()
+
+        if not self.blender_client:
+            self.blender_client = BlenderClient()
+            self.blender_client.start_server()
+
+        # 加载BFDS startup.blend
+        print("Loading BFDS startup.blend...")
+        self.blender_client.load_startup()
+
+        # 创建建筑
+        print("Creating building...")
+        self.blender_client.create_building(
+            model.length, model.width, model.total_height, model.wall_thickness
+        )
+
+        # 导出
+        print("Exporting FDS...")
+        result = self.blender_client.export_fds(file_path)
+        print(f"Export result: {result}")
+
+        QMessageBox.information(
+            self,
+            "导出成功",
+            f"FDS文件已导出到:\n{file_path}\n\n可以使用FDS进行模拟计算。",
+        )
+        self.statusBar().showMessage(f"已导出: {file_path}")
 
     def _on_param_changed(self):
         """参数变更：刷新3D（保持视角）+ 更新FDS"""
