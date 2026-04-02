@@ -1,28 +1,26 @@
 """
 Blender进程管理客户端
-支持一次性脚本和持续运行模式
+支持一次性脚本执行模式
 """
 
 import subprocess
 import os
-import socket
-import threading
 import time
 
 
 class BlenderClient:
-    """Blender进程管理 - 支持持续运行"""
+    """Blender进程管理 - 每次执行启动新实例"""
 
     BLENDER_PATH = r"D:\Software\Blender 4.5\blender.exe"
     STARTUP_BLEND = r"D:\code\fdsBuilder\bfds-7.0.0\startup.blend"
 
     def __init__(self):
-        self.process = None  # type: subprocess.Popen
-        self.socket_port = None
-        self._server_ready = False
+        self._script_counter = 0
+        self._scripts_dir = os.path.join(os.path.dirname(__file__), "_blender_scripts")
+        os.makedirs(self._scripts_dir, exist_ok=True)
 
     def run_script(self, script: str, timeout: int = 60) -> str:
-        """执行Python脚本，返回stdout (一次性模式)"""
+        """执行Python脚本，返回stdout"""
         import tempfile
 
         with tempfile.NamedTemporaryFile(
@@ -46,9 +44,6 @@ class BlenderClient:
             if result.returncode != 0:
                 raise RuntimeError(f"Blender error: {result.stderr}")
 
-            if result.stderr and "error" in result.stderr.lower():
-                print(f"Blender warning: {result.stderr}")
-
             return result.stdout
         finally:
             try:
@@ -56,57 +51,9 @@ class BlenderClient:
             except:
                 pass
 
-    def start_server(self, port: int = 9876) -> bool:
-        """启动Blender后台模式 (简化实现: 保持进程运行)"""
-        self.socket_port = port
-        self._script_counter = 0
-        self._scripts_dir = os.path.join(os.path.dirname(__file__), "_blender_scripts")
-        os.makedirs(self._scripts_dir, exist_ok=True)
-
-        self.process = subprocess.Popen(
-            [self.BLENDER_PATH, "--background"],
-            stdin=subprocess.PIPE,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-            encoding="utf-8",
-            errors="replace",
-        )
-
-        time.sleep(3)
-        self._server_ready = True
-        print(f"Blender started in background mode")
-        return True
-
     def execute(self, code: str, timeout: int = 30) -> str:
-        """发送代码到Blender执行 (通过临时文件)"""
-        if not self.process or not self._server_ready:
-            raise RuntimeError("Blender not started")
-
-        self._script_counter += 1
-        script_path = os.path.join(
-            self._scripts_dir, f"script_{self._script_counter}.py"
-        )
-
-        with open(script_path, "w", encoding="utf-8") as f:
-            f.write(code)
-
-        args = [self.BLENDER_PATH, "--background", "--python", script_path]
-
-        result = subprocess.run(
-            args,
-            capture_output=True,
-            text=True,
-            timeout=timeout,
-            encoding="utf-8",
-            errors="replace",
-        )
-
-        os.unlink(script_path)
-
-        if result.returncode != 0:
-            return f"ERROR: {result.stderr}"
-
-        return result.stdout
+        """发送代码到Blender执行"""
+        return self.run_script(code, timeout)
 
     def load_startup(self) -> str:
         """加载BFDS startup.blend"""
@@ -166,35 +113,6 @@ except Exception as e:
 '''
         return self.execute(code)
 
-    def render_to_image(self, width: int = 1920, height: int = 1080) -> str:
-        """渲染场景到内存并返回"""
-        code = f"""
-import bpy
-import io
-from PIL import Image
-import bpy.path
-
-bpy.context.scene.render.resolution_x = {width}
-bpy.context.scene.render.resolution_y = {height}
-bpy.context.scene.render.film_transparent = True
-
-# 渲染
-bpy.ops.render.render(scene=bpy.context.scene, write_still=False)
-print("RENDER_DONE")
-"""
-        return self.execute(code)
-
-    def stop(self):
-        """停止Blender服务器"""
-        if self.process:
-            self.process.terminate()
-            try:
-                self.process.wait(timeout=5)
-            except subprocess.TimeoutExpired:
-                self.process.kill()
-            self.process = None
-            self._server_ready = False
-
     def render_scene(self, output_path: str, width: int = 1920, height: int = 1080):
         """渲染场景到文件"""
         script = f'''
@@ -205,18 +123,6 @@ bpy.context.scene.render.resolution_y = {height}
 bpy.ops.render.render(write_still=True)
 '''
         self.run_script(script)
-
-    def export_fds_simple(self, output_path: str):
-        """使用BFDS插件导出FDS (一次性模式)"""
-        script = f'''
-import bpy
-try:
-    bpy.ops.bfds.export_fds(filepath=r"{output_path}")
-    print(f"FDS exported: {output_path}")
-except Exception as e:
-    print(f"BFDS export error: {{e}}")
-'''
-        return self.run_script(script)
 
     def check_addons(self) -> list:
         """检查已安装的插件"""

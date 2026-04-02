@@ -4,7 +4,7 @@ Blender 3D查看器Qt控件
 """
 
 from PySide6.QtWidgets import QWidget, QVBoxLayout, QLabel, QPushButton, QHBoxLayout
-from PySide6.QtCore import Qt, QTimer
+from PySide6.QtCore import Qt, QThread, Signal
 from PySide6.QtGui import QPixmap, QImage
 
 
@@ -52,10 +52,9 @@ class BlenderViewerWidget(QWidget):
         self.status_label.setText("状态: 已连接")
 
     def refresh_view(self):
-        """刷新视图"""
+        """刷新视图 - 每次启动新Blender"""
         if not self.blender_client:
-            self.status_label.setText("状态: 未连接")
-            return
+            self.blender_client = BlenderClient()
 
         self.status_label.setText("状态: 渲染中...")
 
@@ -112,12 +111,15 @@ bpy.ops.object.light_add(type='SUN', location=(10, -10, 20))
 sun = bpy.context.active_object
 sun.data.energy = 3
 
-print("Scene ready")
+# 渲染
+bpy.context.scene.render.filepath = r"D:\\code\\fdsBuilder\\blender_render.png"
+bpy.ops.render.render(write_still=True)
+print("Scene ready and rendered")
 """
-        result = self.blender_client.execute(code)
+        result = self.blender_client.execute(code, timeout=60)
         print(f"Scene build: {result}")
 
-        self.status_label.setText("状态: 已连接")
+        self.status_label.setText("状态: 已连接 (点击刷新)")
 
     def render_and_update(self, model_data: dict):
         """渲染建筑模型"""

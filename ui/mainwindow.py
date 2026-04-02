@@ -208,7 +208,6 @@ class MainWindow(QMainWindow):
         if checked:
             if not self.blender_client:
                 self.blender_client = BlenderClient()
-                self.blender_client.start_server()
                 self.blender_viewer.connect_blender(self.blender_client)
 
             self.viewer_3d.hide()
@@ -492,7 +491,6 @@ class MainWindow(QMainWindow):
 
         if not self.blender_client:
             self.blender_client = BlenderClient()
-            self.blender_client.start_server()
 
         # 加载BFDS startup.blend
         print("Loading BFDS startup.blend...")
