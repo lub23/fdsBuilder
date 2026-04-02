@@ -125,6 +125,49 @@ def main():
     if os.path.exists(output_path):
         print(f"\nRendered image saved: {output_path}")
 
+    # 3. FDS导出测试
+    print("\n=== Testing FDS Export ===")
+    check_script = """
+import bpy
+addons = list(bpy.context.preferences.addons.keys())
+print("INSTALLED_ADDONS:" + ",".join(addons))
+"""
+    result = client.run_script(check_script)
+    print(result)
+
+    # 解析插件列表
+    bfds_available = False
+    addons = []
+    for line in result.split("\n"):
+        if line.startswith("INSTALLED_ADDONS:"):
+            addons = line.split(":", 1)[1].split(",")
+            # BFDS可能是 "bfds" 或 "bl_ext.user_default.bfds"
+            bfds_available = any("bfds" in a.strip().lower() for a in addons)
+            break
+
+    if bfds_available:
+        print("BFDS plugin found! Testing FDS export...")
+        fds_output = os.path.join(os.path.dirname(__file__), "case", "building.fds")
+        os.makedirs(os.path.dirname(fds_output), exist_ok=True)
+
+        # 尝试导出FDS - 使用行格式
+        export_lines = [
+            "import bpy",
+            f"output = r'{fds_output}'",
+            "try:",
+            "    bpy.ops.bfds.export_fds(filepath=output)",
+            "    print('FDS exported:', output)",
+            "except Exception as e:",
+            "    print('BFDS export error:', e)",
+        ]
+        export_script = "\n".join(export_lines)
+
+        result = client.run_script(export_script)
+        print(result)
+    else:
+        print(f"Addons found: {addons}")
+        print("BFDS not detected")
+
     print("\n=== Demo Complete ===")
 
 
