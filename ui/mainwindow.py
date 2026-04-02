@@ -36,19 +36,15 @@ from PySide6.QtCore import Qt, QTimer, QSize
 from PySide6.QtGui import QAction, QKeySequence
 from models.building import BuildingModel
 from models.materials import MATERIAL_LIBRARY
-from generators.fds_generator import FDSGenerator
+from generators.fds_generator import FDSGenerator, validate_fds
 
 from ui.viewer_3d import Viewer3D, HAS_PYVISTA
 from ui.blueprint_viewer import BlueprintViewer
-from ui.param_panel import ParameterPanel
 from ui.fds_preview import FDSPreviewPanel
+from ui.simulation_control_panel import SimulationControlPanel
 from ui.styles import *
 from ocr.blueprint_ocr import *
-from ui.dialogs import FacilityDialog
-
-# Blender viewer
-from bfds_viewer import BlenderClient
-from bfds_viewer.viewer_widget import BlenderViewerWidget
+from ui.facility_panel import FacilityListPanel
 
 
 # ============================================================
@@ -61,17 +57,16 @@ class MainWindow(QMainWindow):
         super().__init__()
         self.setWindowTitle("FDS建筑模型生成器")
         self.setMinimumSize(1400, 900)
-
-        # Blender client
-        self.blender_client = None
-        self.use_blender_3d = False
-
+        self.model = BuildingModel()
         self.setup_ui()
         self.setup_menu()
         self.setup_toolbar()
+        self._refresh_scene_list()
+        self.refresh_3d()
+        self.update_preview()
+        # 同步模拟控制面板
+        self.simulation_control.set_model(self.model)
 
-        # 初始更新
-        QTimer.singleShot(100, lambda: (self.refresh_3d(), self.update_preview()))
 
     def setup_ui(self):
         # 主布局
@@ -89,22 +84,20 @@ class MainWindow(QMainWindow):
         left_layout = QVBoxLayout(left_panel)
         left_layout.setContentsMargins(10, 10, 5, 10)
 
-        # 标签页
-        self.left_tabs = QTabWidget()
-
-        # 参数面板
-        self.param_panel = ParameterPanel()
-        self.param_panel.parameters_changed.connect(self._on_param_changed)
-        self.param_panel.stories_changed.connect(self._rebuild_story_checks)
-
-        self.left_tabs.addTab(self.param_panel, "⚙️ 参数设置")
-
-        # 图纸面板
-        self.blueprint_panel = BlueprintViewer()
-        self.blueprint_panel.dimensions_extracted.connect(self._apply_ocr_result)
-        self.left_tabs.addTab(self.blueprint_panel, "📐 图纸参考")
-
-        left_layout.addWidget(self.left_tabs)
+        # 等效模型生成面板
+        self.facility_panel = FacilityListPanel()
+        self.facility_panel.facility_selected.connect(self._on_facility_selected)
+        self.facility_panel.building_added.connect(self._on_building_added)
+        self.facility_panel.scene_building_removed.connect(
+            self._on_scene_building_removed
+        )
+        self.facility_panel.scene_building_selected.connect(
+            self._on_scene_building_selected
+        )
+        self.facility_panel.scene_building_offset_changed.connect(
+            self._on_scene_building_offset_changed
+        )
+        left_layout.addWidget(self.facility_panel)
 
         left_panel.setMinimumWidth(400)
         left_panel.setMaximumWidth(500)
@@ -143,53 +136,20 @@ class MainWindow(QMainWindow):
         reset_view_btn.clicked.connect(self.viewer_3d.setup_camera)
         toolbar.addWidget(reset_view_btn)
 
-        # Blender 3D toggle
-        self.blender_toggle = QPushButton("Blender 3D")
-        self.blender_toggle.setCheckable(True)
-        self.blender_toggle.setFixedHeight(26)
-        self.blender_toggle.setStyleSheet(
-            "QPushButton{color:#1e1e2e;background:#f9e2af;font-weight:bold;"
-            "padding:2px 8px;border-radius:3px}"
-            "QPushButton:checked{background:#f38ba8;color:#1e1e2e}"
-        )
-        self.blender_toggle.toggled.connect(self._toggle_blender_viewer)
-        toolbar.addWidget(self.blender_toggle)
-
-        toolbar.addWidget(QLabel("│"))
-
-        toolbar.addWidget(QLabel("楼层:"))
-        self.story_checks_container = QHBoxLayout()
-        self.story_checks_container.setSpacing(4)
-        self.story_checks = []
-        toolbar.addLayout(self.story_checks_container)
-
-        # 屋顶控制
-        self.roof_check = QCheckBox("屋顶")
-        self.roof_check.setChecked(True)
-        self.roof_check.setStyleSheet("color:#cdd6f4; font-size:12px;")
-        self.roof_check.toggled.connect(self._toggle_roof)
-        toolbar.addWidget(self.roof_check)
-
         toolbar.addStretch()
         center_layout.addLayout(toolbar)
         center_layout.addWidget(self.viewer_3d)
 
-        # Blender 3D viewer
-        self.blender_viewer = BlenderViewerWidget()
-        center_layout.addWidget(self.blender_viewer)
-
         splitter.addWidget(center_panel)
-
-        self.param_panel.wall_selected.connect(self.viewer_3d.highlight_wall)
-        self.param_panel.opening_selected.connect(self.viewer_3d.highlight_opening)
-
-        # 初始化楼层选择
-        self._rebuild_story_checks()
 
         # ========== 右侧面板 - FDS代码 ==========
         right_panel = QWidget()
         right_layout = QVBoxLayout(right_panel)
         right_layout.setContentsMargins(5, 10, 10, 10)
+
+        self.simulation_control = SimulationControlPanel()
+        self.simulation_control.parameters_changed.connect(self._on_sim_param_changed)
+        right_layout.addWidget(self.simulation_control)
 
         self.fds_preview = FDSPreviewPanel()
         right_layout.addWidget(self.fds_preview)
@@ -203,94 +163,35 @@ class MainWindow(QMainWindow):
 
         main_layout.addWidget(splitter)
 
-    def _toggle_blender_viewer(self, checked: bool):
-        """切换Blender 3D查看器"""
-        if checked:
-            if not self.blender_client:
-                self.blender_client = BlenderClient()
-                self.blender_viewer.connect_blender(self.blender_client)
-
-            self.viewer_3d.hide()
-            self.blender_viewer.show()
-            self.blender_viewer.setVisible(True)
-            self.use_blender_3d = True
-
-            # 更新Blender视图
-            model = self.param_panel.get_model()
-            self.blender_viewer.render_and_update(
-                {
-                    "length": model.length,
-                    "width": model.width,
-                    "height": model.total_height,
-                    "wall_thickness": model.wall_thickness,
-                }
-            )
-        else:
-            self.blender_viewer.hide()
-            self.blender_viewer.setVisible(False)
-            self.viewer_3d.show()
-            self.use_blender_3d = False
-
     def _apply_ocr_result(self, data: dict):
         """将OCR识别结果应用到模型"""
         try:
-            from models.building import BuildingModel
-
-            model = BuildingModel()
-            model.from_dict(data)
+            self.model.from_dict(data)
             # 确保外墙生成
-            model.update_z_offsets()
-            model.update_external_walls()
-
-            self.param_panel.set_model(model)
-            self._rebuild_story_checks()
-            self._on_param_changed()
+            self.model.update_z_offsets()
+            self.model.update_external_walls()
+            self.update_preview()
+            self.refresh_3d()
 
             # 重置视角
             self.viewer_3d._first_render = True
-            self.viewer_3d.update_model(model)
-
-            # 切到参数面板
-            self.left_tabs.setCurrentIndex(0)
+            self.viewer_3d.update_model(self.model)
         except Exception as e:
             QMessageBox.critical(self, "应用失败", f"无法应用识别结果：{str(e)}")
-
-    def _rebuild_story_checks(self):
-        for cb in self.story_checks:
-            self.story_checks_container.removeWidget(cb)
-            cb.deleteLater()
-        self.story_checks.clear()
-
-        model = self.param_panel.get_model()
-        self.viewer_3d.visible_stories = set(range(len(model.stories)))
-
-        for i, story in enumerate(model.stories):
-            cb = QCheckBox(story.name)
-            cb.setChecked(True)
-            cb.setStyleSheet("color:#cdd6f4; font-size:12px;")
-            cb.toggled.connect(lambda checked, idx=i: self._toggle_story(idx, checked))
-            self.story_checks_container.addWidget(cb)
-            self.story_checks.append(cb)
-
-    def _toggle_story(self, index, visible):
-        if visible:
-            self.viewer_3d.visible_stories.add(index)
-        else:
-            self.viewer_3d.visible_stories.discard(index)
-        self.refresh_3d()
-
-    def _toggle_roof(self, visible):
-        self.viewer_3d.show_roof = visible
-        self.refresh_3d()
 
     def refresh_3d(self, first_render=False):
         """刷新3D视图"""
         try:
-            model = self.param_panel.get_model()
+            model = self.model
             self.viewer_3d._first_render = first_render
             self.viewer_3d.update_model(model)
         except Exception as e:
             self.statusBar().showMessage(f"3D错误: {str(e)}")
+    
+    def _on_sim_param_changed(self):
+        """模拟参数变化时更新FDS文本和3D视图"""
+        self.update_preview()
+        self.refresh_3d()
 
     def setup_menu(self):
         menubar = self.menuBar()
@@ -302,11 +203,6 @@ class MainWindow(QMainWindow):
         new_action.setShortcut(QKeySequence.New)
         new_action.triggered.connect(self.new_project)
         file_menu.addAction(new_action)
-
-        act_facility = QAction("等效模型生成(&F)", self)
-        act_facility.setShortcut("Ctrl+F")
-        act_facility.triggered.connect(self._open_facility_dialog)
-        file_menu.addAction(act_facility)
 
         open_action = QAction("打开配置(&O)", self)
         open_action.setShortcut(QKeySequence.Open)
@@ -332,6 +228,17 @@ class MainWindow(QMainWindow):
         exit_action.triggered.connect(self.close)
         file_menu.addAction(exit_action)
 
+        # 设置菜单
+        settings_menu = menubar.addMenu("设置")
+
+        fds_path_action = QAction("设置FDS程序路径", self)
+        fds_path_action.triggered.connect(self.set_fds_path)
+        settings_menu.addAction(fds_path_action)
+
+        smv_path_action = QAction("设置Smokeview程序路径", self)
+        smv_path_action.triggered.connect(self.set_smv_path)
+        settings_menu.addAction(smv_path_action)
+
         # 帮助菜单
         help_menu = menubar.addMenu("帮助")
 
@@ -355,12 +262,6 @@ class MainWindow(QMainWindow):
         new_btn.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
         new_btn.clicked.connect(self.new_project)
         toolbar.addWidget(new_btn)
-
-        act_btn = QToolButton()
-        act_btn.setText("🏛️ 等效模型生成")
-        act_btn.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
-        act_btn.clicked.connect(self._open_facility_dialog)
-        toolbar.addWidget(act_btn)
 
         # 打开
         open_btn = QToolButton()
@@ -389,20 +290,38 @@ class MainWindow(QMainWindow):
     def update_preview(self):
         """更新FDS代码和状态栏"""
         try:
-            model = self.param_panel.get_model()
+            model = self.model
 
             generator = FDSGenerator(model)
             fds_code = generator.generate()
             self.fds_preview.update_code(fds_code)
 
-            n_w = sum(len(s.walls) for s in model.stories)
-            n_o = sum(len(s.openings) for s in model.stories)
-            n_c = sum(len(s.combustibles.items) for s in model.stories)
-            message = (
-                f"楼层:{model.num_stories}  |  墙体:{n_w}  |  "
-                f"开口:{n_o}  |  可燃物:{n_c}  |  "
-                f"模型: {model.length:.1f}×{model.width:.1f}×{model.total_height:.1f}m"
-            )
+            # Validate FDS output
+            warnings = validate_fds(fds_code)
+            if warnings:
+                warn_text = " | ".join(warnings[:3])
+                if len(warnings) > 3:
+                    warn_text += f" (+{len(warnings) - 3})"
+            else:
+                warn_text = ""
+
+            n_bld = len(model.building_group.buildings)
+            n_w = n_o = n_c = 0
+            for b in model.building_group.buildings:
+                for s in b.stories:
+                    n_w += len(s.walls)
+                    n_o += len(s.openings)
+                    n_c += len(s.combustibles.items)
+            if n_bld > 1:
+                message = f"建筑:{n_bld}  |  墙体:{n_w}  |  开口:{n_o}  |  可燃物:{n_c}"
+            else:
+                message = (
+                    f"楼层:{model.num_stories}  |  墙体:{n_w}  |  "
+                    f"开口:{n_o}  |  可燃物:{n_c}  |  "
+                    f"模型: {model.length:.1f}×{model.width:.1f}×{model.total_height:.1f}m"
+                )
+            if warn_text:
+                message += f"  ⚠ {warn_text}"
             self.statusBar().showMessage(message)
         except Exception as e:
             self.statusBar().showMessage(f"错误: {str(e)}")
@@ -415,18 +334,12 @@ class MainWindow(QMainWindow):
             QMessageBox.Yes | QMessageBox.No,
         )
         if reply == QMessageBox.Yes:
-            self.param_panel.set_model(BuildingModel())
+            self.model = BuildingModel()
+            self.simulation_control.set_model(self.model)
+            self._refresh_scene_list()
             self.update_preview()
             self.refresh_3d()
             self.statusBar().showMessage("已创建新项目")
-
-    def _open_facility_dialog(self):
-        dlg = FacilityDialog(self)
-        if dlg.exec() == QDialog.Accepted and dlg.result_model:
-            self.param_panel.set_model(dlg.result_model)
-            self._rebuild_story_checks()
-            self.update_preview()
-            self.refresh_3d(True)
 
     def open_config(self):
         file_path, _ = QFileDialog.getOpenFileName(
@@ -436,10 +349,10 @@ class MainWindow(QMainWindow):
             try:
                 with open(file_path, "r", encoding="utf-8") as f:
                     data = json.load(f)
-                model = BuildingModel()
-                model.from_dict(data)
-                self.param_panel.set_model(model)
-                self._rebuild_story_checks()
+                self.model = BuildingModel()
+                self.model.from_dict(data)
+                self.simulation_control.set_model(self.model)
+                self._refresh_scene_list()
                 self.update_preview()
                 self.refresh_3d(True)
                 self.statusBar().showMessage(f"已加载: {file_path}")
@@ -452,9 +365,8 @@ class MainWindow(QMainWindow):
         )
         if file_path:
             try:
-                model = self.param_panel.get_model()
                 with open(file_path, "w", encoding="utf-8") as f:
-                    json.dump(model.to_dict(), f, indent=4, ensure_ascii=False)
+                    json.dump(self.model.to_dict(), f, indent=4, ensure_ascii=False)
                 self.statusBar().showMessage(f"已保存: {file_path}")
             except Exception as e:
                 QMessageBox.critical(self, "错误", f"无法保存配置文件:\n{str(e)}")
@@ -465,72 +377,146 @@ class MainWindow(QMainWindow):
         )
         if file_path:
             try:
-                # 使用Blender/BFDS导出 (如果使用Blender查看器)
-                if self.use_blender_3d and self.blender_client:
-                    self._export_fds_blender(file_path)
-                else:
-                    # 使用原有方式导出
-                    model = self.param_panel.get_model()
-                    generator = FDSGenerator(model)
-                    fds_code = generator.generate()
-                    with open(file_path, "w", encoding="utf-8") as f:
-                        f.write(fds_code)
+                generator = FDSGenerator(self.model)
+                fds_code = generator.generate()
+                with open(file_path, "w", encoding="utf-8") as f:
+                    f.write(fds_code)
 
-                    QMessageBox.information(
-                        self,
-                        "导出成功",
-                        f"FDS文件已导出到:\n{file_path}\n\n可以使用FDS进行模拟计算。",
-                    )
-                    self.statusBar().showMessage(f"已导出: {file_path}")
+                QMessageBox.information(
+                    self,
+                    "导出成功",
+                    f"FDS文件已导出到:\n{file_path}\n\n可以使用FDS进行模拟计算。",
+                )
+                self.statusBar().showMessage(f"已导出: {file_path}")
             except Exception as e:
                 QMessageBox.critical(self, "错误", f"无法导出FDS文件:\n{str(e)}")
 
-    def _export_fds_blender(self, file_path: str):
-        """使用Blender/BFDS导出FDS"""
-        model = self.param_panel.get_model()
-
-        if not self.blender_client:
-            self.blender_client = BlenderClient()
-
-        # 加载BFDS startup.blend
-        print("Loading BFDS startup.blend...")
-        self.blender_client.load_startup()
-
-        # 创建建筑
-        print("Creating building...")
-        self.blender_client.create_building(
-            model.length, model.width, model.total_height, model.wall_thickness
-        )
-
-        # 导出
-        print("Exporting FDS...")
-        result = self.blender_client.export_fds(file_path)
-        print(f"Export result: {result}")
-
-        QMessageBox.information(
-            self,
-            "导出成功",
-            f"FDS文件已导出到:\n{file_path}\n\n可以使用FDS进行模拟计算。",
-        )
-        self.statusBar().showMessage(f"已导出: {file_path}")
-
-    def _on_param_changed(self):
-        """参数变更：刷新3D（保持视角）+ 更新FDS"""
-        if self.use_blender_3d:
-            model = self.param_panel.get_model()
-            self.blender_viewer.render_and_update(
-                {
-                    "length": model.length,
-                    "width": model.width,
-                    "height": model.total_height,
-                    "wall_thickness": model.wall_thickness,
-                }
-            )
+    def _on_facility_selected(self, model_dict):
+        """处理从设施面板选择的等效模型（替换整个模型，用于一级目标）"""
         try:
+            self.model = BuildingModel()
+            self.model.from_dict(model_dict)
+            self.simulation_control.set_model(self.model)
+            self.model.update_z_offsets()
+            self.model.update_external_walls()
+            self._refresh_scene_list()
+            self.update_preview()
+            self.refresh_3d(True)
+            self.statusBar().showMessage(
+                f"模型已生成 ({len(self.model.building_group.buildings)} 栋建筑)"
+            )
+        except Exception as e:
+            QMessageBox.critical(self, "错误", f"无法应用等效模型: {str(e)}")
+
+    def _on_building_added(self, model_dict):
+        """追加或替换一栋子目标建筑到现有模型"""
+        try:
+            from models.building import Building, BuildingGroup
+            bg_data = model_dict.get("building_group", {})
+            new_buildings = bg_data.get("buildings", [])
+            if not new_buildings:
+                return
+            new_bld = Building.from_dict(new_buildings[0])
+            existing = self.model.building_group.buildings
+            if self._is_default_building(existing):
+                existing[0] = new_bld
+            else:
+                if existing:
+                    max_x_end = max(b.x_offset + b.length / 2 for b in existing)
+                    new_bld.x_offset = max_x_end + 5.0 + new_bld.length / 2
+                else:
+                    new_bld.x_offset = 0.0
+                new_bld.y_offset = 0.0
+                for b in existing:
+                    if self._buildings_overlap(b, new_bld):
+                        new_bld.x_offset = (
+                            b.x_offset + b.length / 2 + 5.0 + new_bld.length / 2
+                        )
+                self.model.building_group.add_building(new_bld)
+            self.model.update_z_offsets()
+            self.model.update_external_walls()
+            self.simulation_control.set_model(self.model)
+            self._refresh_scene_list()
+            self.update_preview()
+            self.refresh_3d(True)
+            self.statusBar().showMessage(
+                f"模型已生成 ({len(self.model.building_group.buildings)} 栋建筑)"
+            )
+        except Exception as e:
+            QMessageBox.critical(self, "错误", f"无法追加建筑: {str(e)}")
+
+        
+    def _is_default_building(self, buildings):
+        """检测是否为默认空建筑（无故事数、无墙）"""
+        if len(buildings) != 1:
+            return False
+        b = buildings[0]
+        return len(b.stories) == 1 and len(b.stories[0].walls) == 0
+
+    @staticmethod
+    def _buildings_overlap(a, b, margin=1.0):
+        """Check if two buildings overlap in XY plane (with margin)."""
+        a_xmin = a.x_offset - a.length / 2 - margin
+        a_xmax = a.x_offset + a.length / 2 + margin
+        a_ymin = a.y_offset - a.width / 2 - margin
+        a_ymax = a.y_offset + a.width / 2 + margin
+        b_xmin = b.x_offset - b.length / 2
+        b_xmax = b.x_offset + b.length / 2
+        b_ymin = b.y_offset - b.width / 2
+        b_ymax = b.y_offset + b.width / 2
+        return not (
+            b_xmin >= a_xmax or b_xmax <= a_xmin or b_ymin >= a_ymax or b_ymax <= a_ymin
+
+    def _refresh_scene_list(self):
+        """Sync the scene list widget with current model buildings."""
+        self.facility_panel.update_scene_list(self.model.building_group.buildings)
+
+    def _on_scene_building_removed(self, index):
+        """Remove a building from the scene by index."""
+        buildings = self.model.building_group.buildings
+        if index < 0 or index >= len(buildings):
+            return
+        if len(buildings) <= 1:
+            QMessageBox.warning(self, "提示", "至少保留一栋建筑")
+            return
+        name = buildings[index].name
+        del buildings[index]
+
+        # Re-sync compat properties from first remaining building
+        if buildings:
+            b0 = buildings[0]
+            self.model.length = b0.length
+            self.model.width = b0.width
+            self.model.wall_thickness = b0.wall_thickness
+            self.model.stories = b0.stories
+            self.model.roof = b0.roof
+            self.model.materials = b0.materials
+
+        self.model.update_z_offsets()
+        self.simulation_control.set_model(self.model)
+        self._refresh_scene_list()
+        self.update_preview()
+        self.refresh_3d(True)
+        self.statusBar().showMessage(f"已删除建筑「{name}」")
+
+    def _on_scene_building_selected(self, index):
+        """Select a building in the scene and highlight in 3D."""
+        buildings = self.model.building_group.buildings
+        if 0 <= index < len(buildings):
+            b = buildings[index]
+            self.statusBar().showMessage(f"已选中建筑 #{index + 1}: {b.name}")
+            # Highlight in 3D
+            self.viewer_3d.highlight_building(index)
+
+    def _on_scene_building_offset_changed(self, index, x_off, y_off):
+        """Handle building offset change from scene panel."""
+        buildings = self.model.building_group.buildings
+        if 0 <= index < len(buildings):
+            buildings[index].x_offset = x_off
+            buildings[index].y_offset = y_off
+            self._refresh_scene_list()
             self.update_preview()
             self.refresh_3d()
-        except Exception as e:
-            self.statusBar().showMessage(f"错误: {str(e)}")
 
     def show_about(self):
         QMessageBox.about(
@@ -579,6 +565,60 @@ class MainWindow(QMainWindow):
         layout.addWidget(close_btn)
 
         dialog.exec()
+    
+    def set_fds_path(self):
+        """设置FDS程序路径"""
+        file_path, _ = QFileDialog.getOpenFileName(
+            self, "选择FDS可执行文件", "", "可执行文件 (*.exe);;所有文件 (*)"
+        )
+        if file_path:
+            # 保存到配置文件
+            self._save_program_path("fds", file_path)
+            QMessageBox.information(self, "设置成功", f"FDS路径已设置为:\n{file_path}")
+
+    def set_smv_path(self):
+        """设置Smokeview程序路径"""
+        file_path, _ = QFileDialog.getOpenFileName(
+            self, "选择Smokeview可执行文件", "", "可执行文件 (*.exe);;所有文件 (*)"
+        )
+        if file_path:
+            self._save_program_path("smokeview", file_path)
+            QMessageBox.information(
+                self, "设置成功", f"Smokeview路径已设置为:\n{file_path}"
+            )
+
+    def _save_program_path(self, program: str, path: str):
+        """保存程序路径到配置文件"""
+        import json
+        import os
+
+        config_dir = os.path.join(os.path.dirname(__file__), "..")
+        config_file = os.path.join(config_dir, "program_paths.json")
+
+        paths = {}
+        if os.path.exists(config_file):
+            with open(config_file, "r") as f:
+                paths = json.load(f)
+
+        paths[program] = path
+
+        with open(config_file, "w") as f:
+            json.dump(paths, f, indent=2)
+
+    @staticmethod
+    def _load_program_path(program: str) -> str:
+        """加载程序路径"""
+        import json
+        import os
+
+        config_dir = os.path.join(os.path.dirname(__file__), "..")
+        config_file = os.path.join(config_dir, "program_paths.json")
+
+        if os.path.exists(config_file):
+            with open(config_file, "r") as f:
+                paths = json.load(f)
+                return paths.get(program, "")
+        return ""
 
     def closeEvent(self, event):
         """关闭窗口时清理资源"""

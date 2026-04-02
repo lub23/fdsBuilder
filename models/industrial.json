@@ -1,6 +1,7 @@
 {
     "Aerospace": {
         "cn_name": "航空航天设施",
+        "fire_separation": 20.0,
         "sub_types": {
             "Launch control center": {
                 "cn_name": "发射控制中心",
@@ -22,22 +23,63 @@
                     "count": { "min": 0, "max": 0, "median": -1, "mean": -1, "unit": "" }
                 },
                 "wall_thickness": 0.3,
-                "combustibles": [
-                    "OFFICE_COMPOSITE_FURNITURE",
-                    "UPHOLSTERED_SEAT",
-                    "PAPER_STACK",
-                    "CARDBOARD_BOX",
-                    "ELECTRONICS_CONSOLE",
-                    "CABLE_BUNDLE",
-                    "CARPET_FINISH",
-                    "CURTAIN",
-                    "ACOUSTIC_PANEL",
-                    "LIGHTWEIGHT_PARTITION",
-                    "DISPLAY_PROP_MODEL"
+                "fire_compartments": [
+                    {
+                        "name": "指挥控制区",
+                        "x_ratio": [0, 0.6],
+                        "y_ratio": [0, 1],
+                        "wall_thickness": 0.3,
+                        "wall_material": "CONCRETE",
+                        "openings": [
+                            {"wall": "x_max", "type": "door", "position": 0.5, "width": 2.0, "height": 2.5, "z_bottom": 0}
+                        ],
+                        "combustibles": [
+                            {"key": "ELECTRONICS_CONSOLE", "count": 6},
+                            {"key": "CABLE_BUNDLE", "count": 4},
+                            {"key": "UPHOLSTERED_SEAT", "count": 8},
+                            {"key": "CARPET_FINISH", "count": 3}
+                        ],
+                        "specialized_components": []
+                    },
+                    {
+                        "name": "设备机房区",
+                        "x_ratio": [0.6, 1.0],
+                        "y_ratio": [0, 0.5],
+                        "wall_thickness": 0.3,
+                        "wall_material": "CONCRETE",
+                        "openings": [
+                            {"wall": "x_min", "type": "door", "position": 0.5, "width": 1.5, "height": 2.5, "z_bottom": 0}
+                        ],
+                        "combustibles": [
+                            {"key": "ELECTRONICS_CONSOLE", "count": 4},
+                            {"key": "CABLE_BUNDLE", "count": 6},
+                            {"key": "ACOUSTIC_PANEL", "count": 2}
+                        ],
+                        "specialized_components": []
+                    },
+                    {
+                        "name": "办公存储区",
+                        "x_ratio": [0.6, 1.0],
+                        "y_ratio": [0.5, 1.0],
+                        "wall_thickness": 0.3,
+                        "wall_material": "CONCRETE",
+                        "openings": [],
+                        "combustibles": [
+                            {"key": "OFFICE_COMPOSITE_FURNITURE", "count": 5},
+                            {"key": "PAPER_STACK", "count": 4},
+                            {"key": "CURTAIN", "count": 2},
+                            {"key": "LIGHTWEIGHT_PARTITION", "count": 2}
+                        ],
+                        "specialized_components": []
+                    }
+                ],
+                "specialized_components": [
+                    {"key": "ROCKET_VEHICLE_SMALL", "count": 1, "size_class": "small"}
                 ]
             },
             "Assembly building": {
                 "cn_name": "总装车间",
+                "offset": { "x": 0, "y": 80 },
                 "description": "",
                 "building": {
                     "length": { "min": 150, "max": 200, "median": -1, "mean": -1, "unit": "m" },
@@ -47,7 +89,7 @@
                 },
                 "doors": {
                     "width": { "min": 12, "max": 15, "median": -1, "mean": -1, "unit": "m" },
-                    "height": { "min": 40, "max": 46, "median": -1, "mean": -1, "unit": "m" },
+                    "height": { "min": 25, "max": 30, "median": -1, "mean": -1, "unit": "m" },
                     "count": { "min": 1, "max": 3, "median": -1, "mean": -1, "unit": "" }
                 },
                 "windows": {
@@ -56,27 +98,65 @@
                     "count": { "min": 10, "max": 30, "median": -1, "mean": -1, "unit": "" }
                 },
                 "wall_thickness": 0.3,
-                "combustibles": [
-                    "BITUMEN_MEMBRANE",
-                    "FIBER_INSULATION_LAYER",
-                    "TEMP_TIMBER_WORKS",
-                    "WOOD_PALLET",
-                    "CARDBOARD_BOX",
-                    "FOAM_PACKAGING",
-                    "FRP_RUBBER_PANEL",
-                    "CABLE_BUNDLE",
-                    "COATING_AGENT_DRUM",
-                    "ORGANIC_SOLVENT_DRUM",
-                    "INDUSTRIAL_OIL_DRUM",
-                    "OFFICE_COMPOSITE_FURNITURE",
-                    "PAPER_STACK",
-                    "CURTAIN",
-                    "LIGHTWEIGHT_PARTITION",
-                    "UPHOLSTERED_SEAT"
+                "fire_compartments": [
+                    {
+                        "name": "总装主厂区",
+                        "x_ratio": [0, 0.7],
+                        "y_ratio": [0, 1],
+                        "wall_thickness": 0.3,
+                        "wall_material": "CONCRETE",
+                        "openings": [
+                            {"wall": "x_max", "type": "door", "position": 0.5, "width": 8.0, "height": 10.0, "z_bottom": 0}
+                        ],
+                        "combustibles": [
+                            {"key": "TEMP_TIMBER_WORKS", "count": 6},
+                            {"key": "CABLE_BUNDLE", "count": 5},
+                            {"key": "FOAM_PACKAGING", "count": 4},
+                            {"key": "CARDBOARD_BOX", "count": 4}
+                        ],
+                        "specialized_components": [
+                            {"key": "ROCKET_VEHICLE_LARGE", "count": 1}
+                        ]
+                    },
+                    {
+                        "name": "部件存储区",
+                        "x_ratio": [0.7, 1.0],
+                        "y_ratio": [0, 0.6],
+                        "wall_thickness": 0.3,
+                        "wall_material": "CONCRETE",
+                        "openings": [
+                            {"wall": "x_min", "type": "door", "position": 0.5, "width": 5.0, "height": 6.0, "z_bottom": 0}
+                        ],
+                        "combustibles": [
+                            {"key": "WOOD_PALLET", "count": 8},
+                            {"key": "CARDBOARD_BOX", "count": 6},
+                            {"key": "FOAM_PACKAGING", "count": 4},
+                            {"key": "COATING_AGENT_DRUM", "count": 3}
+                        ],
+                        "specialized_components": []
+                    },
+                    {
+                        "name": "办公辅助区",
+                        "x_ratio": [0.7, 1.0],
+                        "y_ratio": [0.6, 1.0],
+                        "wall_thickness": 0.3,
+                        "wall_material": "CONCRETE",
+                        "openings": [],
+                        "combustibles": [
+                            {"key": "OFFICE_COMPOSITE_FURNITURE", "count": 6},
+                            {"key": "PAPER_STACK", "count": 4},
+                            {"key": "CURTAIN", "count": 2}
+                        ],
+                        "specialized_components": []
+                    }
+                ],
+                "specialized_components": [
+                    {"key": "ROCKET_VEHICLE_LARGE", "count": 1, "size_class": "large"}
                 ]
             },
             "Sub-assembly building": {
                 "cn_name": "部装车间",
+                "offset": { "x": 150, "y": 150 },
                 "description": "",
                 "building": {
                     "length": { "min": 100, "max": 175, "median": -1, "mean": -1, "unit": "m" },
@@ -95,26 +175,52 @@
                     "count": { "min": 10, "max": 30, "median": -1, "mean": -1, "unit": "" }
                 },
                 "wall_thickness": 0.3,
-                "combustibles": [
-                    "ESD_PACKAGING_MATERIAL",
-                    "AEROSPACE_COMPOSITE_PART",
-                    "ADHESIVE_SEALANT_SET",
-                    "CABLE_BUNDLE",
-                    "ELECTRONICS_CONSOLE",
-                    "ORGANIC_SOLVENT_DRUM",
-                    "INDUSTRIAL_OIL_DRUM",
-                    "OFFICE_COMPOSITE_FURNITURE",
-                    "UPHOLSTERED_SEAT",
-                    "CURTAIN",
-                    "CARDBOARD_BOX",
-                    "FOAM_PACKAGING",
-                    "WOOD_PALLET",
-                    "RUBBER_HOSE_ASSEMBLY",
-                    "RUBBER_POLYMER_PARTS"
+                "fire_compartments": [
+                    {
+                        "name": "部件装配区",
+                        "x_ratio": [0, 0.65],
+                        "y_ratio": [0, 1],
+                        "wall_thickness": 0.3,
+                        "wall_material": "CONCRETE",
+                        "openings": [
+                            {"wall": "x_max", "type": "door", "position": 0.5, "width": 4.0, "height": 5.0, "z_bottom": 0}
+                        ],
+                        "combustibles": [
+                            {"key": "AEROSPACE_COMPOSITE_PART", "count": 6},
+                            {"key": "ADHESIVE_SEALANT_SET", "count": 4},
+                            {"key": "CABLE_BUNDLE", "count": 4},
+                            {"key": "ESD_PACKAGING_MATERIAL", "count": 3}
+                        ],
+                        "specialized_components": [
+                            {"key": "ROCKET_VEHICLE_MEDIUM", "count": 1}
+                        ]
+                    },
+                    {
+                        "name": "化学品存储区",
+                        "x_ratio": [0.65, 1.0],
+                        "y_ratio": [0, 1],
+                        "wall_thickness": 0.3,
+                        "wall_material": "CONCRETE",
+                        "openings": [
+                            {"wall": "x_min", "type": "door", "position": 0.5, "width": 3.0, "height": 4.0, "z_bottom": 0}
+                        ],
+                        "combustibles": [
+                            {"key": "ORGANIC_SOLVENT_DRUM", "count": 4},
+                            {"key": "INDUSTRIAL_OIL_DRUM", "count": 3},
+                            {"key": "WOOD_PALLET", "count": 5},
+                            {"key": "CARDBOARD_BOX", "count": 4},
+                            {"key": "FOAM_PACKAGING", "count": 3}
+                        ],
+                        "specialized_components": []
+                    }
+                ],
+                "specialized_components": [
+                    {"key": "ROCKET_VEHICLE_MEDIUM", "count": 1, "size_class": "medium"}
                 ]
             },
             "Processing plant": {
                 "cn_name": "加工厂房",
+                "offset": { "x": 300, "y": 150 },
                 "description": "",
                 "building": {
                     "length": { "min": 70, "max": 120, "median": -1, "mean": -1, "unit": "m" },
@@ -133,29 +239,52 @@
                     "count": { "min": 0, "max": 0, "median": -1, "mean": -1, "unit": "" }
                 },
                 "wall_thickness": 0.3,
-                "combustibles": [
-                    "CARDBOARD_BOX",
-                    "FOAM_PACKAGING",
-                    "WOOD_PALLET",
-                    "TEMP_TIMBER_WORKS",
-                    "ADHESIVE_SEALANT_SET",
-                    "PREPREG_MATERIAL",
-                    "COATING_AGENT_DRUM",
-                    "CABLE_BUNDLE",
-                    "ELECTRONICS_CONSOLE",
-                    "ESD_PACKAGING_MATERIAL",
-                    "ORGANIC_SOLVENT_DRUM",
-                    "INDUSTRIAL_OIL_DRUM",
-                    "RUBBER_HOSE_ASSEMBLY",
-                    "OFFICE_COMPOSITE_FURNITURE",
-                    "PAPER_STACK",
-                    "AEROSPACE_COMPOSITE_PART",
-                    "AIRCRAFT_INTERIOR_TRIM",
-                    "DISPLAY_PROP_MODEL"
+                "fire_compartments": [
+                    {
+                        "name": "加工作业区",
+                        "x_ratio": [0, 0.7],
+                        "y_ratio": [0, 1],
+                        "wall_thickness": 0.3,
+                        "wall_material": "CONCRETE",
+                        "openings": [
+                            {"wall": "x_max", "type": "door", "position": 0.5, "width": 4.0, "height": 5.0, "z_bottom": 0}
+                        ],
+                        "combustibles": [
+                            {"key": "PREPREG_MATERIAL", "count": 4},
+                            {"key": "AEROSPACE_COMPOSITE_PART", "count": 3},
+                            {"key": "COATING_AGENT_DRUM", "count": 3},
+                            {"key": "CABLE_BUNDLE", "count": 3}
+                        ],
+                        "specialized_components": [
+                            {"key": "ROCKET_VEHICLE_SMALL", "count": 2}
+                        ]
+                    },
+                    {
+                        "name": "原料存储区",
+                        "x_ratio": [0.7, 1.0],
+                        "y_ratio": [0, 1],
+                        "wall_thickness": 0.3,
+                        "wall_material": "CONCRETE",
+                        "openings": [
+                            {"wall": "x_min", "type": "door", "position": 0.5, "width": 3.0, "height": 4.0, "z_bottom": 0}
+                        ],
+                        "combustibles": [
+                            {"key": "CARDBOARD_BOX", "count": 6},
+                            {"key": "FOAM_PACKAGING", "count": 4},
+                            {"key": "WOOD_PALLET", "count": 5},
+                            {"key": "ORGANIC_SOLVENT_DRUM", "count": 3},
+                            {"key": "INDUSTRIAL_OIL_DRUM", "count": 3}
+                        ],
+                        "specialized_components": []
+                    }
+                ],
+                "specialized_components": [
+                    {"key": "ROCKET_VEHICLE_SMALL", "count": 2, "size_class": "small"}
                 ]
             },
             "Launch site": {
                 "cn_name": "发射场",
+                "offset": { "x": 300, "y": 300 },
                 "description": "",
                 "building": {
                     "length": { "min": 70, "max": 119, "median": -1, "mean": -1, "unit": "m" },
@@ -174,27 +303,58 @@
                     "count": { "min": 0, "max": 0, "median": -1, "mean": -1, "unit": "" }
                 },
                 "wall_thickness": 0.3,
-                "combustibles": [
-                    "CABLE_BUNDLE",
-                    "RUBBER_HOSE_ASSEMBLY",
-                    "INDUSTRIAL_OIL_DRUM",
-                    "ORGANIC_SOLVENT_DRUM",
-                    "WOOD_PALLET",
-                    "CARDBOARD_BOX",
-                    "FOAM_PACKAGING",
-                    "LIQUID_FUEL_DRUM",
-                    "ELECTRONICS_CONSOLE",
-                    "ACOUSTIC_PANEL",
-                    "OFFICE_COMPOSITE_FURNITURE"
+                "fire_compartments": [
+                    {
+                        "name": "发射准备区",
+                        "x_ratio": [0, 0.5],
+                        "y_ratio": [0, 1],
+                        "wall_thickness": 0.3,
+                        "wall_material": "CONCRETE",
+                        "openings": [
+                            {"wall": "x_max", "type": "door", "position": 0.5, "width": 6.0, "height": 8.0, "z_bottom": 0}
+                        ],
+                        "combustibles": [
+                            {"key": "LIQUID_FUEL_DRUM", "count": 4},
+                            {"key": "CABLE_BUNDLE", "count": 5},
+                            {"key": "RUBBER_HOSE_ASSEMBLY", "count": 3}
+                        ],
+                        "specialized_components": [
+                            {"key": "ROCKET_VEHICLE_LARGE", "count": 1}
+                        ]
+                    },
+                    {
+                        "name": "设备存储区",
+                        "x_ratio": [0.5, 1.0],
+                        "y_ratio": [0, 1],
+                        "wall_thickness": 0.3,
+                        "wall_material": "CONCRETE",
+                        "openings": [
+                            {"wall": "x_min", "type": "door", "position": 0.5, "width": 4.0, "height": 5.0, "z_bottom": 0}
+                        ],
+                        "combustibles": [
+                            {"key": "INDUSTRIAL_OIL_DRUM", "count": 3},
+                            {"key": "ORGANIC_SOLVENT_DRUM", "count": 2},
+                            {"key": "WOOD_PALLET", "count": 5},
+                            {"key": "CARDBOARD_BOX", "count": 4},
+                            {"key": "FOAM_PACKAGING", "count": 3},
+                            {"key": "ELECTRONICS_CONSOLE", "count": 3}
+                        ],
+                        "specialized_components": []
+                    }
+                ],
+                "specialized_components": [
+                    {"key": "ROCKET_VEHICLE_LARGE", "count": 1, "size_class": "large"}
                 ]
             }
         }
     },
     "Airport hangar": {
         "cn_name": "机场机库",
+        "fire_separation": 15.0,
         "sub_types": {
             "Type 1": {
                 "cn_name": "小型固定翼与舰载机机库",
+                "offset": { "x": 0, "y": 0 },
                 "description": "",
                 "building": {
                     "length": { "min": 28.96, "max": 28.96, "median": 28.96, "mean": 28.96, "unit": "m" },
@@ -213,24 +373,63 @@
                     "count": { "min": 0, "max": 0, "median": -1, "mean": -1, "unit": "" }
                 },
                 "wall_thickness": 0.3,
-                "combustibles": [
-                    "SURFACE_COATING_LAYER",
-                    "ADHESIVE_SEALANT_SET",
-                    "AEROSPACE_COMPOSITE_PART",
-                    "AIRCRAFT_INTERIOR_TRIM",
-                    "JET_FUEL_RESIDUE",
-                    "INDUSTRIAL_OIL_DRUM",
-                    "WOOD_PALLET",
-                    "CARDBOARD_BOX",
-                    "FOAM_PACKAGING",
-                    "CABLE_BUNDLE",
-                    "BITUMEN_MEMBRANE",
-                    "FIBER_INSULATION_LAYER",
-                    "LIGHTWEIGHT_PARTITION"
+                "fire_compartments": [
+                    {
+                        "name": "主停机区",
+                        "x_ratio": [0, 0.65],
+                        "y_ratio": [0, 1],
+                        "wall_thickness": 0.3,
+                        "wall_material": "CONCRETE",
+                        "openings": [
+                            {"wall": "x_max", "type": "door", "position": 0.5, "width": 5.0, "height": 5.0, "z_bottom": 0}
+                        ],
+                        "combustibles": [
+                            {"key": "JET_FUEL_RESIDUE", "count": 4},
+                            {"key": "INDUSTRIAL_OIL_DRUM", "count": 2}
+                        ],
+                        "specialized_components": [
+                            {"key": "AIRCRAFT_SMALL", "count": 2}
+                        ]
+                    },
+                    {
+                        "name": "维修工具区",
+                        "x_ratio": [0.65, 1.0],
+                        "y_ratio": [0, 0.5],
+                        "wall_thickness": 0.3,
+                        "wall_material": "CONCRETE",
+                        "openings": [
+                            {"wall": "x_min", "type": "door", "position": 0.5, "width": 3.0, "height": 3.5, "z_bottom": 0}
+                        ],
+                        "combustibles": [
+                            {"key": "WOOD_PALLET", "count": 4},
+                            {"key": "CABLE_BUNDLE", "count": 3},
+                            {"key": "ADHESIVE_SEALANT_SET", "count": 2},
+                            {"key": "FOAM_PACKAGING", "count": 2}
+                        ],
+                        "specialized_components": []
+                    },
+                    {
+                        "name": "备件存储区",
+                        "x_ratio": [0.65, 1.0],
+                        "y_ratio": [0.5, 1.0],
+                        "wall_thickness": 0.3,
+                        "wall_material": "CONCRETE",
+                        "openings": [],
+                        "combustibles": [
+                            {"key": "CARDBOARD_BOX", "count": 4},
+                            {"key": "LIGHTWEIGHT_PARTITION", "count": 2},
+                            {"key": "FIBER_INSULATION_LAYER", "count": 2}
+                        ],
+                        "specialized_components": []
+                    }
+                ],
+                "specialized_components": [
+                    {"key": "AIRCRAFT_SMALL", "count": 2, "size_class": "small"}
                 ]
             },
             "Type 2": {
                 "cn_name": "大型旋翼与倾转机机库",
+                "offset": { "x": 0, "y": 100 },
                 "description": "多模块串联机库，局部可设Doghouse结构，配备6.5 t桥式起重机，主门宽度98.1 m，净高13.4 m",
                 "building": {
                     "length": { "min": 36.3, "max": 36.3, "median": 36.3, "mean": 36.3, "unit": "m" },
@@ -249,28 +448,52 @@
                     "count": { "min": 0, "max": 0, "median": -1, "mean": -1, "unit": "" }
                 },
                 "wall_thickness": 0.3,
-                "combustibles": [
-                    "SURFACE_COATING_LAYER",
-                    "AIRCRAFT_INTERIOR_TRIM",
-                    "AEROSPACE_COMPOSITE_PART",
-                    "CABLE_BUNDLE",
-                    "JET_FUEL_RESIDUE",
-                    "INDUSTRIAL_OIL_DRUM",
-                    "GLYCOL_DEICING_FLUID",
-                    "ORGANIC_SOLVENT_DRUM",
-                    "ADHESIVE_SEALANT_SET",
-                    "WOOD_PALLET",
-                    "CARDBOARD_BOX",
-                    "PLASTIC_PACKAGING",
-                    "FRP_RUBBER_PANEL",
-                    "RUBBER_HOSE_ASSEMBLY",
-                    "BITUMEN_MEMBRANE",
-                    "FIBER_INSULATION_LAYER",
-                    "LIGHTWEIGHT_PARTITION"
+                "fire_compartments": [
+                    {
+                        "name": "主停机区",
+                        "x_ratio": [0, 0.7],
+                        "y_ratio": [0, 1],
+                        "wall_thickness": 0.3,
+                        "wall_material": "CONCRETE",
+                        "openings": [
+                            {"wall": "x_max", "type": "door", "position": 0.5, "width": 6.0, "height": 6.0, "z_bottom": 0}
+                        ],
+                        "combustibles": [
+                            {"key": "JET_FUEL_RESIDUE", "count": 5},
+                            {"key": "GLYCOL_DEICING_FLUID", "count": 2},
+                            {"key": "INDUSTRIAL_OIL_DRUM", "count": 3}
+                        ],
+                        "specialized_components": [
+                            {"key": "AIRCRAFT_MEDIUM", "count": 1}
+                        ]
+                    },
+                    {
+                        "name": "维修辅助区",
+                        "x_ratio": [0.7, 1.0],
+                        "y_ratio": [0, 1],
+                        "wall_thickness": 0.3,
+                        "wall_material": "CONCRETE",
+                        "openings": [
+                            {"wall": "x_min", "type": "door", "position": 0.3, "width": 3.0, "height": 4.0, "z_bottom": 0},
+                            {"wall": "x_min", "type": "door", "position": 0.7, "width": 3.0, "height": 4.0, "z_bottom": 0}
+                        ],
+                        "combustibles": [
+                            {"key": "WOOD_PALLET", "count": 5},
+                            {"key": "CABLE_BUNDLE", "count": 4},
+                            {"key": "ORGANIC_SOLVENT_DRUM", "count": 3},
+                            {"key": "CARDBOARD_BOX", "count": 4},
+                            {"key": "PLASTIC_PACKAGING", "count": 3}
+                        ],
+                        "specialized_components": []
+                    }
+                ],
+                "specialized_components": [
+                    {"key": "AIRCRAFT_MEDIUM", "count": 1, "size_class": "medium"}
                 ]
             },
             "Type 3": {
                 "cn_name": "远程巡逻与运输机机库",
+                "offset": { "x": 100, "y": 0 },
                 "description": "陆基长机身机库，通常不设吊车，主门宽度49.4 m，净高15.2 m",
                 "building": {
                     "length": { "min": 50.3, "max": 50.3, "median": 50.3, "mean": 50.3, "unit": "m" },
@@ -289,35 +512,52 @@
                     "count": { "min": 0, "max": 0, "median": -1, "mean": -1, "unit": "" }
                 },
                 "wall_thickness": 0.3,
-                "combustibles": [
-                    "SURFACE_COATING_LAYER",
-                    "AEROSPACE_COMPOSITE_PART",
-                    "AIRCRAFT_INTERIOR_TRIM",
-                    "JET_FUEL_RESIDUE",
-                    "INDUSTRIAL_OIL_DRUM",
-                    "GLYCOL_DEICING_FLUID",
-                    "COATING_AGENT_DRUM",
-                    "ORGANIC_SOLVENT_DRUM",
-                    "ADHESIVE_SEALANT_SET",
-                    "WOOD_PALLET",
-                    "CARDBOARD_BOX",
-                    "FOAM_PACKAGING",
-                    "PLASTIC_PACKAGING",
-                    "TEMP_TIMBER_WORKS",
-                    "FRP_RUBBER_PANEL",
-                    "CABLE_BUNDLE",
-                    "RUBBER_HOSE_ASSEMBLY",
-                    "BITUMEN_MEMBRANE",
-                    "FIBER_INSULATION_LAYER",
-                    "OFFICE_COMPOSITE_FURNITURE",
-                    "PAPER_STACK",
-                    "UPHOLSTERED_SEAT",
-                    "CURTAIN",
-                    "LIGHTWEIGHT_PARTITION"
+                "fire_compartments": [
+                    {
+                        "name": "主停机区",
+                        "x_ratio": [0, 0.75],
+                        "y_ratio": [0, 1],
+                        "wall_thickness": 0.3,
+                        "wall_material": "CONCRETE",
+                        "openings": [
+                            {"wall": "x_max", "type": "door", "position": 0.5, "width": 6.0, "height": 8.0, "z_bottom": 0}
+                        ],
+                        "combustibles": [
+                            {"key": "JET_FUEL_RESIDUE", "count": 6},
+                            {"key": "GLYCOL_DEICING_FLUID", "count": 3},
+                            {"key": "INDUSTRIAL_OIL_DRUM", "count": 4}
+                        ],
+                        "specialized_components": [
+                            {"key": "AIRCRAFT_LARGE", "count": 1}
+                        ]
+                    },
+                    {
+                        "name": "辅助服务区",
+                        "x_ratio": [0.75, 1.0],
+                        "y_ratio": [0, 1],
+                        "wall_thickness": 0.3,
+                        "wall_material": "CONCRETE",
+                        "openings": [
+                            {"wall": "x_min", "type": "door", "position": 0.5, "width": 4.0, "height": 5.0, "z_bottom": 0}
+                        ],
+                        "combustibles": [
+                            {"key": "WOOD_PALLET", "count": 6},
+                            {"key": "CARDBOARD_BOX", "count": 5},
+                            {"key": "FOAM_PACKAGING", "count": 3},
+                            {"key": "COATING_AGENT_DRUM", "count": 2},
+                            {"key": "ORGANIC_SOLVENT_DRUM", "count": 2},
+                            {"key": "CABLE_BUNDLE", "count": 3}
+                        ],
+                        "specialized_components": []
+                    }
+                ],
+                "specialized_components": [
+                    {"key": "AIRCRAFT_LARGE", "count": 1, "size_class": "large"}
                 ]
             },
             "Type 4": {
                 "cn_name": "大型无人机机库",
+                "offset": { "x": 100, "y": 100 },
                 "description": "独立跨距钢桁架或箱型桁架结构机库，配备4.5 t桥式起重机",
                 "building": {
                     "length": { "min": 43.0, "max": 43.0, "median": 43.0, "mean": 43.0, "unit": "m" },
@@ -336,40 +576,70 @@
                     "count": { "min": 0, "max": 0, "median": -1, "mean": -1, "unit": "" }
                 },
                 "wall_thickness": 0.3,
-                "combustibles": [
-                    "SURFACE_COATING_LAYER",
-                    "AEROSPACE_COMPOSITE_PART",
-                    "AIRCRAFT_INTERIOR_TRIM",
-                    "CABLE_BUNDLE",
-                    "JET_FUEL_RESIDUE",
-                    "INDUSTRIAL_OIL_DRUM",
-                    "GLYCOL_DEICING_FLUID",
-                    "ORGANIC_SOLVENT_DRUM",
-                    "COATING_AGENT_DRUM",
-                    "ADHESIVE_SEALANT_SET",
-                    "WOOD_PALLET",
-                    "CARDBOARD_BOX",
-                    "FOAM_PACKAGING",
-                    "PLASTIC_PACKAGING",
-                    "FRP_RUBBER_PANEL",
-                    "RUBBER_HOSE_ASSEMBLY",
-                    "BITUMEN_MEMBRANE",
-                    "FIBER_INSULATION_LAYER",
-                    "OFFICE_COMPOSITE_FURNITURE",
-                    "PAPER_STACK",
-                    "UPHOLSTERED_SEAT",
-                    "CARPET_FINISH",
-                    "LIGHTWEIGHT_PARTITION",
-                    "DISPLAY_PROP_MODEL"
+                "fire_compartments": [
+                    {
+                        "name": "无人机停放区",
+                        "x_ratio": [0, 0.6],
+                        "y_ratio": [0, 1],
+                        "wall_thickness": 0.3,
+                        "wall_material": "CONCRETE",
+                        "openings": [
+                            {"wall": "x_max", "type": "door", "position": 0.5, "width": 4.0, "height": 4.0, "z_bottom": 0}
+                        ],
+                        "combustibles": [
+                            {"key": "JET_FUEL_RESIDUE", "count": 3},
+                            {"key": "INDUSTRIAL_OIL_DRUM", "count": 2}
+                        ],
+                        "specialized_components": [
+                            {"key": "AIRCRAFT_SMALL", "count": 3}
+                        ]
+                    },
+                    {
+                        "name": "维修检测区",
+                        "x_ratio": [0.6, 1.0],
+                        "y_ratio": [0, 0.5],
+                        "wall_thickness": 0.3,
+                        "wall_material": "CONCRETE",
+                        "openings": [
+                            {"wall": "x_min", "type": "door", "position": 0.5, "width": 3.0, "height": 3.0, "z_bottom": 0}
+                        ],
+                        "combustibles": [
+                            {"key": "CABLE_BUNDLE", "count": 3},
+                            {"key": "COATING_AGENT_DRUM", "count": 2},
+                            {"key": "ADHESIVE_SEALANT_SET", "count": 2},
+                            {"key": "FOAM_PACKAGING", "count": 2}
+                        ],
+                        "specialized_components": []
+                    },
+                    {
+                        "name": "办公备件区",
+                        "x_ratio": [0.6, 1.0],
+                        "y_ratio": [0.5, 1.0],
+                        "wall_thickness": 0.3,
+                        "wall_material": "CONCRETE",
+                        "openings": [],
+                        "combustibles": [
+                            {"key": "OFFICE_COMPOSITE_FURNITURE", "count": 4},
+                            {"key": "PAPER_STACK", "count": 3},
+                            {"key": "UPHOLSTERED_SEAT", "count": 2},
+                            {"key": "CARPET_FINISH", "count": 2}
+                        ],
+                        "specialized_components": []
+                    }
+                ],
+                "specialized_components": [
+                    {"key": "AIRCRAFT_SMALL", "count": 3, "size_class": "small"}
                 ]
             }
         }
     },
     "Machinery manufacturing": {
         "cn_name": "机械制造设施",
+        "fire_separation": 12.0,
         "sub_types": {
             "Assembly building": {
                 "cn_name": "总装车间",
+                "offset": { "x": 0, "y": 0 },
                 "description": "",
                 "building": {
                     "length": { "min": 68, "max": 565, "median": 157.5, "mean": 171.652, "unit": "m" },
@@ -388,23 +658,52 @@
                     "count": { "min": 0, "max": 466, "median": 13, "mean": 47.956, "unit": "" }
                 },
                 "wall_thickness": 0.3,
-                "combustibles": [
-                    "INDUSTRIAL_OIL_DRUM",
-                    "LIQUID_FUEL_DRUM",
-                    "ORGANIC_SOLVENT_DRUM",
-                    "COATING_AGENT_DRUM",
-                    "WOOD_PALLET",
-                    "CARDBOARD_BOX",
-                    "PLASTIC_PACKAGING",
-                    "RUBBER_POLYMER_PARTS",
-                    "FOAM_PACKAGING",
-                    "TEXTILE_ROLL",
-                    "OILY_WASTE_BIN",
-                    "PROCESS_CHEMICAL_CONTAINER"
+                "fire_compartments": [
+                    {
+                        "name": "总装作业区",
+                        "x_ratio": [0, 0.7],
+                        "y_ratio": [0, 1],
+                        "wall_thickness": 0.3,
+                        "wall_material": "CONCRETE",
+                        "openings": [
+                            {"wall": "x_max", "type": "door", "position": 0.5, "width": 5.0, "height": 5.0, "z_bottom": 0}
+                        ],
+                        "combustibles": [
+                            {"key": "INDUSTRIAL_OIL_DRUM", "count": 4},
+                            {"key": "COATING_AGENT_DRUM", "count": 3},
+                            {"key": "RUBBER_POLYMER_PARTS", "count": 4},
+                            {"key": "OILY_WASTE_BIN", "count": 3}
+                        ],
+                        "specialized_components": [
+                            {"key": "VEHICLE_TRUCK", "count": 1}
+                        ]
+                    },
+                    {
+                        "name": "物料存储区",
+                        "x_ratio": [0.7, 1.0],
+                        "y_ratio": [0, 1],
+                        "wall_thickness": 0.3,
+                        "wall_material": "CONCRETE",
+                        "openings": [
+                            {"wall": "x_min", "type": "door", "position": 0.5, "width": 4.0, "height": 4.0, "z_bottom": 0}
+                        ],
+                        "combustibles": [
+                            {"key": "WOOD_PALLET", "count": 8},
+                            {"key": "CARDBOARD_BOX", "count": 6},
+                            {"key": "PLASTIC_PACKAGING", "count": 4},
+                            {"key": "FOAM_PACKAGING", "count": 3},
+                            {"key": "TEXTILE_ROLL", "count": 2}
+                        ],
+                        "specialized_components": []
+                    }
+                ],
+                "specialized_components": [
+                    {"key": "VEHICLE_TRUCK", "count": 1, "size_class": "medium"}
                 ]
             },
             "Sub-assembly building": {
                 "cn_name": "部装车间",
+                "offset": { "x": 0, "y": 100 },
                 "description": "部装车间，用于部件组装加工",
                 "building": {
                     "length": { "min": 30, "max": 500, "median": 130, "mean": 189.2, "unit": "m" },
@@ -423,22 +722,53 @@
                     "count": { "min": 0, "max": 330, "median": 33, "mean": 72.05, "unit": "" }
                 },
                 "wall_thickness": 0.3,
-                "combustibles": [
-                    "INDUSTRIAL_OIL_DRUM",
-                    "ORGANIC_SOLVENT_DRUM",
-                    "COATING_AGENT_DRUM",
-                    "COMBUSTIBLE_GAS_CYLINDER",
-                    "WOOD_PALLET",
-                    "CARDBOARD_BOX",
-                    "ELECTRICAL_PLASTIC",
-                    "RUBBER_POLYMER_PARTS",
-                    "FOAM_PACKAGING",
-                    "OILY_WASTE_BIN",
-                    "PROCESS_CHEMICAL_CONTAINER"
+                "fire_compartments": [
+                    {
+                        "name": "装配作业区",
+                        "x_ratio": [0, 0.65],
+                        "y_ratio": [0, 1],
+                        "wall_thickness": 0.3,
+                        "wall_material": "CONCRETE",
+                        "openings": [
+                            {"wall": "x_max", "type": "door", "position": 0.5, "width": 3.0, "height": 4.0, "z_bottom": 0}
+                        ],
+                        "combustibles": [
+                            {"key": "INDUSTRIAL_OIL_DRUM", "count": 3},
+                            {"key": "ORGANIC_SOLVENT_DRUM", "count": 2},
+                            {"key": "COMBUSTIBLE_GAS_CYLINDER", "count": 2},
+                            {"key": "ELECTRICAL_PLASTIC", "count": 3},
+                            {"key": "OILY_WASTE_BIN", "count": 2}
+                        ],
+                        "specialized_components": [
+                            {"key": "VEHICLE_CAR", "count": 2}
+                        ]
+                    },
+                    {
+                        "name": "原料备件区",
+                        "x_ratio": [0.65, 1.0],
+                        "y_ratio": [0, 1],
+                        "wall_thickness": 0.3,
+                        "wall_material": "CONCRETE",
+                        "openings": [
+                            {"wall": "x_min", "type": "door", "position": 0.5, "width": 3.0, "height": 3.5, "z_bottom": 0}
+                        ],
+                        "combustibles": [
+                            {"key": "WOOD_PALLET", "count": 6},
+                            {"key": "CARDBOARD_BOX", "count": 5},
+                            {"key": "FOAM_PACKAGING", "count": 3},
+                            {"key": "COATING_AGENT_DRUM", "count": 2},
+                            {"key": "PROCESS_CHEMICAL_CONTAINER", "count": 2}
+                        ],
+                        "specialized_components": []
+                    }
+                ],
+                "specialized_components": [
+                    {"key": "VEHICLE_CAR", "count": 2, "size_class": "small"}
                 ]
             },
             "Machining workshop": {
                 "cn_name": "机械加工车间",
+                "offset": { "x": 100, "y": 100 },
                 "description": "机械加工车间，用于零部件机械加工作业",
                 "building": {
                     "length": { "min": 45, "max": 266, "median": 135, "mean": 192.130, "unit": "m" },
@@ -457,27 +787,59 @@
                     "count": { "min": 0, "max": 233, "median": 12.5, "mean": 50.783, "unit": "" }
                 },
                 "wall_thickness": 0.3,
-                "combustibles": [
-                    "INDUSTRIAL_OIL_DRUM",
-                    "ORGANIC_SOLVENT_DRUM",
-                    "COATING_AGENT_DRUM",
-                    "COMBUSTIBLE_GAS_CYLINDER",
-                    "WOOD_PALLET",
-                    "CARDBOARD_BOX",
-                    "PLASTIC_PACKAGING",
-                    "ELECTRICAL_PLASTIC",
-                    "OILY_WASTE_BIN",
-                    "OILY_SLUDGE_CONTAINER",
-                    "METAL_DUST_COLLECTOR"
+                "fire_compartments": [
+                    {
+                        "name": "机加工区",
+                        "x_ratio": [0, 0.7],
+                        "y_ratio": [0, 1],
+                        "wall_thickness": 0.3,
+                        "wall_material": "CONCRETE",
+                        "openings": [
+                            {"wall": "x_max", "type": "door", "position": 0.5, "width": 3.0, "height": 4.0, "z_bottom": 0}
+                        ],
+                        "combustibles": [
+                            {"key": "INDUSTRIAL_OIL_DRUM", "count": 4},
+                            {"key": "ORGANIC_SOLVENT_DRUM", "count": 3},
+                            {"key": "COMBUSTIBLE_GAS_CYLINDER", "count": 2},
+                            {"key": "OILY_WASTE_BIN", "count": 3},
+                            {"key": "OILY_SLUDGE_CONTAINER", "count": 2}
+                        ],
+                        "specialized_components": [
+                            {"key": "VEHICLE_CAR", "count": 1}
+                        ]
+                    },
+                    {
+                        "name": "刀具料库区",
+                        "x_ratio": [0.7, 1.0],
+                        "y_ratio": [0, 1],
+                        "wall_thickness": 0.3,
+                        "wall_material": "CONCRETE",
+                        "openings": [
+                            {"wall": "x_min", "type": "door", "position": 0.5, "width": 2.5, "height": 3.0, "z_bottom": 0}
+                        ],
+                        "combustibles": [
+                            {"key": "WOOD_PALLET", "count": 5},
+                            {"key": "CARDBOARD_BOX", "count": 4},
+                            {"key": "PLASTIC_PACKAGING", "count": 3},
+                            {"key": "ELECTRICAL_PLASTIC", "count": 2},
+                            {"key": "METAL_DUST_COLLECTOR", "count": 2}
+                        ],
+                        "specialized_components": []
+                    }
+                ],
+                "specialized_components": [
+                    {"key": "VEHICLE_CAR", "count": 1, "size_class": "small"}
                 ]
             }
         }
     },
     "Metallurgical facilities": {
         "cn_name": "冶金设施",
+        "fire_separation": 15.0,
         "sub_types": {
             "Electrolytic plant": {
                 "cn_name": "电解工厂",
+                "offset": { "x": 0, "y": 0 },
                 "description": "电解工厂，包含主电解厂房、连接厂房、中型辅助厂房、大型配套厂房及圆形储罐",
                 "building": {
                     "length": { "min": 180, "max": 370, "median": 220, "mean": 266, "unit": "m" },
@@ -486,29 +848,59 @@
                     "stories": { "min": 1, "max": 1, "median": 1, "mean": 1, "unit": "" }
                 },
                 "doors": {
-                    "width": { "min": -1, "max": -1, "median": -1, "mean": -1, "unit": "m" },
-                    "height": { "min": -1, "max": -1, "median": -1, "mean": -1, "unit": "m" },
-                    "count": { "min": -1, "max": -1, "median": -1, "mean": -1, "unit": "" }
+                    "width": { "min": 3, "max": 6, "median": 4, "mean": 4, "unit": "m" },
+                    "height": { "min": 3, "max": 5, "median": 4, "mean": 4, "unit": "m" },
+                    "count": { "min": 2, "max": 4, "median": 3, "mean": 3, "unit": "" }
                 },
                 "windows": {
-                    "width": { "min": -1, "max": -1, "median": -1, "mean": -1, "unit": "m" },
-                    "height": { "min": -1, "max": -1, "median": -1, "mean": -1, "unit": "m" },
-                    "count": { "min": -1, "max": -1, "median": -1, "mean": -1, "unit": "" }
+                    "width": { "min": 1, "max": 2, "median": 1.5, "mean": 1.5, "unit": "m" },
+                    "height": { "min": 1, "max": 2, "median": 1.5, "mean": 1.5, "unit": "m" },
+                    "count": { "min": 4, "max": 10, "median": 6, "mean": 6, "unit": "" }
                 },
                 "wall_thickness": 0.3,
-                "combustibles": [
-                    "CARBON_MATERIAL_STACK",
-                    "INDUSTRIAL_OIL_DRUM",
-                    "POLYMER_MATERIAL",
-                    "METAL_DUST_COLLECTOR",
-                    "WOOD_PALLET",
-                    "CARDBOARD_BOX",
-                    "WOOD_FURNITURE",
-                    "PAPER_STACK"
+                "fire_compartments": [
+                    {
+                        "name": "电解槽作业区",
+                        "x_ratio": [0, 0.8],
+                        "y_ratio": [0, 1],
+                        "wall_thickness": 0.3,
+                        "wall_material": "CONCRETE",
+                        "openings": [
+                            {"wall": "x_max", "type": "door", "position": 0.5, "width": 3.0, "height": 3.5, "z_bottom": 0}
+                        ],
+                        "combustibles": [
+                            {"key": "CARBON_MATERIAL_STACK", "count": 6},
+                            {"key": "POLYMER_MATERIAL", "count": 3}
+                        ],
+                        "specialized_components": [
+                            {"key": "ELECTROLYSIS_CELL", "count": 2}
+                        ]
+                    },
+                    {
+                        "name": "辅助设备区",
+                        "x_ratio": [0.8, 1.0],
+                        "y_ratio": [0, 1],
+                        "wall_thickness": 0.3,
+                        "wall_material": "CONCRETE",
+                        "openings": [
+                            {"wall": "x_min", "type": "door", "position": 0.5, "width": 2.5, "height": 3.0, "z_bottom": 0}
+                        ],
+                        "combustibles": [
+                            {"key": "INDUSTRIAL_OIL_DRUM", "count": 3},
+                            {"key": "METAL_DUST_COLLECTOR", "count": 2},
+                            {"key": "WOOD_PALLET", "count": 4},
+                            {"key": "CARDBOARD_BOX", "count": 3}
+                        ],
+                        "specialized_components": []
+                    }
+                ],
+                "specialized_components": [
+                    {"key": "ELECTROLYSIS_CELL", "count": 2, "size_class": "large"}
                 ]
             },
             "Dedicated power plant": {
                 "cn_name": "专用电厂",
+                "offset": { "x": 0, "y": 100 },
                 "description": "专用电厂，包含主厂房、大型辅助厂房、辅助厂房、长条通廊、金属架、烟囱及储罐",
                 "building": {
                     "length": { "min": 8, "max": 212, "median": 40, "mean": 65.1, "unit": "m" },
@@ -527,22 +919,49 @@
                     "count": { "min": 5, "max": 15, "median": 9, "mean": -1, "unit": "" }
                 },
                 "wall_thickness": 0.3,
-                "combustibles": [
-                    "COAL_STACK",
-                    "COAL_DUST_HOPPER",
-                    "COMBUSTIBLE_GAS_CYLINDER",
-                    "LIQUID_FUEL_DRUM",
-                    "INDUSTRIAL_OIL_DRUM",
-                    "POLYMER_MATERIAL",
-                    "WOOD_PALLET",
-                    "CARDBOARD_BOX",
-                    "PAPER_STACK",
-                    "TEXTILE_ROLL",
-                    "ORGANIC_SOLVENT_DRUM"
-                ]
+                "fire_compartments": [
+                    {
+                        "name": "锅炉汽轮机区",
+                        "x_ratio": [0, 0.65],
+                        "y_ratio": [0, 1],
+                        "wall_thickness": 0.3,
+                        "wall_material": "CONCRETE",
+                        "openings": [
+                            {"wall": "x_max", "type": "door", "position": 0.5, "width": 4.0, "height": 4.5, "z_bottom": 0}
+                        ],
+                        "combustibles": [
+                            {"key": "COAL_STACK", "count": 4},
+                            {"key": "COAL_DUST_HOPPER", "count": 2},
+                            {"key": "LIQUID_FUEL_DRUM", "count": 3},
+                            {"key": "INDUSTRIAL_OIL_DRUM", "count": 3}
+                        ],
+                        "specialized_components": []
+                    },
+                    {
+                        "name": "电气控制区",
+                        "x_ratio": [0.65, 1.0],
+                        "y_ratio": [0, 1],
+                        "wall_thickness": 0.3,
+                        "wall_material": "CONCRETE",
+                        "openings": [
+                            {"wall": "x_min", "type": "door", "position": 0.5, "width": 2.0, "height": 3.0, "z_bottom": 0}
+                        ],
+                        "combustibles": [
+                            {"key": "COMBUSTIBLE_GAS_CYLINDER", "count": 2},
+                            {"key": "POLYMER_MATERIAL", "count": 2},
+                            {"key": "WOOD_PALLET", "count": 3},
+                            {"key": "CARDBOARD_BOX", "count": 3},
+                            {"key": "PAPER_STACK", "count": 2},
+                            {"key": "ORGANIC_SOLVENT_DRUM", "count": 2}
+                        ],
+                        "specialized_components": []
+                    }
+                ],
+                "specialized_components": []
             },
             "Steel plant": {
                 "cn_name": "钢铁厂",
+                "offset": { "x": 100, "y": 100 },
                 "description": "钢铁厂，包含炼铁炼钢主厂房、熔炼车间、轧钢车间、精整车间、卷材加工车间及辅助厂房",
                 "building": {
                     "length": { "min": 80, "max": 230, "median": 210, "mean": 175, "unit": "m" },
@@ -561,17 +980,45 @@
                     "count": { "min": 0, "max": 60, "median": 30, "mean": -1, "unit": "" }
                 },
                 "wall_thickness": 0.3,
-                "combustibles": [
-                    "INDUSTRIAL_OIL_DRUM",
-                    "COMBUSTIBLE_GAS_CYLINDER",
-                    "COAL_DUST_HOPPER",
-                    "POLYMER_MATERIAL",
-                    "WOOD_PALLET",
-                    "ORGANIC_SOLVENT_DRUM"
-                ]
+                "fire_compartments": [
+                    {
+                        "name": "熔炼作业区",
+                        "x_ratio": [0, 0.6],
+                        "y_ratio": [0, 1],
+                        "wall_thickness": 0.3,
+                        "wall_material": "CONCRETE",
+                        "openings": [
+                            {"wall": "x_max", "type": "door", "position": 0.5, "width": 5.0, "height": 5.0, "z_bottom": 0}
+                        ],
+                        "combustibles": [
+                            {"key": "INDUSTRIAL_OIL_DRUM", "count": 4},
+                            {"key": "COMBUSTIBLE_GAS_CYLINDER", "count": 3},
+                            {"key": "COAL_DUST_HOPPER", "count": 2}
+                        ],
+                        "specialized_components": []
+                    },
+                    {
+                        "name": "轧钢辅助区",
+                        "x_ratio": [0.6, 1.0],
+                        "y_ratio": [0, 1],
+                        "wall_thickness": 0.3,
+                        "wall_material": "CONCRETE",
+                        "openings": [
+                            {"wall": "x_min", "type": "door", "position": 0.5, "width": 4.0, "height": 4.5, "z_bottom": 0}
+                        ],
+                        "combustibles": [
+                            {"key": "POLYMER_MATERIAL", "count": 3},
+                            {"key": "WOOD_PALLET", "count": 4},
+                            {"key": "ORGANIC_SOLVENT_DRUM", "count": 2}
+                        ],
+                        "specialized_components": []
+                    }
+                ],
+                "specialized_components": []
             },
             "Tantalum refinery": {
                 "cn_name": "钽精炼厂",
+                "offset": { "x": 200, "y": 100 },
                 "description": "钽精炼厂，包含多栋厂房建筑",
                 "building": {
                     "length": { "min": 19, "max": 75, "median": 55, "mean": 49.7, "unit": "m" },
@@ -590,18 +1037,50 @@
                     "count": { "min": 6, "max": 16, "median": 7, "mean": 9.7, "unit": "" }
                 },
                 "wall_thickness": 0.3,
-                "combustibles": [
-                    "ORGANIC_SOLVENT_DRUM",
-                    "METAL_DUST_COLLECTOR",
-                    "INDUSTRIAL_OIL_DRUM",
-                    "WOOD_PALLET",
-                    "PAPER_STACK",
-                    "PLASTIC_PACKAGING",
-                    "WOOD_FURNITURE"
+                "fire_compartments": [
+                    {
+                        "name": "精炼作业区",
+                        "x_ratio": [0, 0.7],
+                        "y_ratio": [0, 1],
+                        "wall_thickness": 0.3,
+                        "wall_material": "CONCRETE",
+                        "openings": [
+                            {"wall": "x_max", "type": "door", "position": 0.5, "width": 2.0, "height": 2.5, "z_bottom": 0}
+                        ],
+                        "combustibles": [
+                            {"key": "ORGANIC_SOLVENT_DRUM", "count": 3},
+                            {"key": "METAL_DUST_COLLECTOR", "count": 2},
+                            {"key": "INDUSTRIAL_OIL_DRUM", "count": 2}
+                        ],
+                        "specialized_components": [
+                            {"key": "ELECTROLYSIS_CELL_MEDIUM", "count": 2}
+                        ]
+                    },
+                    {
+                        "name": "存储办公区",
+                        "x_ratio": [0.7, 1.0],
+                        "y_ratio": [0, 1],
+                        "wall_thickness": 0.3,
+                        "wall_material": "CONCRETE",
+                        "openings": [
+                            {"wall": "x_min", "type": "door", "position": 0.5, "width": 1.5, "height": 2.0, "z_bottom": 0}
+                        ],
+                        "combustibles": [
+                            {"key": "WOOD_PALLET", "count": 3},
+                            {"key": "PAPER_STACK", "count": 2},
+                            {"key": "PLASTIC_PACKAGING", "count": 2},
+                            {"key": "WOOD_FURNITURE", "count": 3}
+                        ],
+                        "specialized_components": []
+                    }
+                ],
+                "specialized_components": [
+                    {"key": "ELECTROLYSIS_CELL_MEDIUM", "count": 2, "size_class": "medium"}
                 ]
             },
             "Gold Refinery": {
                 "cn_name": "金精炼厂",
+                "offset": { "x": 300, "y": 100 },
                 "description": "金精炼厂",
                 "building": {
                     "length": { "min": 38, "max": 38, "median": 38, "mean": 38, "unit": "m" },
@@ -620,18 +1099,400 @@
                     "count": { "min": 82, "max": 82, "median": 82, "mean": 82, "unit": "" }
                 },
                 "wall_thickness": 0.3,
-                "combustibles": [
-                    "ORGANIC_SOLVENT_DRUM",
-                    "COATING_AGENT_DRUM",
-                    "METAL_DUST_COLLECTOR",
-                    "POLISHING_PASTE_BIN",
-                    "INDUSTRIAL_OIL_DRUM",
-                    "POLYMER_MATERIAL",
-                    "WOOD_PALLET",
-                    "CARDBOARD_BOX",
-                    "PAPER_STACK",
-                    "WOOD_FURNITURE"
+                "fire_compartments": [
+                    {
+                        "name": "冶炼提纯区",
+                        "x_ratio": [0, 0.6],
+                        "y_ratio": [0, 1],
+                        "wall_thickness": 0.3,
+                        "wall_material": "CONCRETE",
+                        "openings": [
+                            {"wall": "x_max", "type": "door", "position": 0.5, "width": 1.5, "height": 2.0, "z_bottom": 0}
+                        ],
+                        "combustibles": [
+                            {"key": "ORGANIC_SOLVENT_DRUM", "count": 3},
+                            {"key": "COATING_AGENT_DRUM", "count": 2},
+                            {"key": "METAL_DUST_COLLECTOR", "count": 2},
+                            {"key": "POLISHING_PASTE_BIN", "count": 2}
+                        ],
+                        "specialized_components": [
+                            {"key": "ELECTROLYSIS_CELL_MEDIUM", "count": 1}
+                        ]
+                    },
+                    {
+                        "name": "存储包装区",
+                        "x_ratio": [0.6, 1.0],
+                        "y_ratio": [0, 1],
+                        "wall_thickness": 0.3,
+                        "wall_material": "CONCRETE",
+                        "openings": [
+                            {"wall": "x_min", "type": "door", "position": 0.5, "width": 1.5, "height": 2.0, "z_bottom": 0}
+                        ],
+                        "combustibles": [
+                            {"key": "INDUSTRIAL_OIL_DRUM", "count": 2},
+                            {"key": "POLYMER_MATERIAL", "count": 2},
+                            {"key": "WOOD_PALLET", "count": 3},
+                            {"key": "CARDBOARD_BOX", "count": 3},
+                            {"key": "PAPER_STACK", "count": 2},
+                            {"key": "WOOD_FURNITURE", "count": 2}
+                        ],
+                        "specialized_components": []
+                    }
+                ],
+                "specialized_components": [
+                    {"key": "ELECTROLYSIS_CELL_MEDIUM", "count": 1, "size_class": "medium"}
                 ]
+            }
+        }
+    },
+    "Warrick Power Plant": {
+        "cn_name": "Warrick发电厂",
+        "fire_separation": 0.0,
+        "sub_types": {
+            "Main powerhouse": {
+                "cn_name": "主厂房（厂房1）",
+                "description": "电厂主厂房，包含设备检修间、电缆廊道、机组区域等",
+                "offset": { "x": 0, "y": 0 },
+                "rotation": 0,
+                "stairwell": {
+                    "position": "右下角",
+                    "length": 8.0,
+                    "width": 3.0
+                },
+                "building": {
+                    "length": { "min": 212, "max": 212, "median": 212, "mean": 212, "unit": "m" },
+                    "width": { "min": 16, "max": 16, "median": 16, "mean": 16, "unit": "m" },
+                    "height": { "min": 30, "max": 30, "median": 30, "mean": 30, "unit": "m" },
+                    "stories": { "min": 3, "max": 3, "median": 3, "mean": 3, "unit": "" }
+                },
+                "doors": {
+                    "width": { "min": 4, "max": 8, "median": 6, "mean": 6, "unit": "m" },
+                    "height": { "min": 4, "max": 5, "median": 4.5, "mean": 4.5, "unit": "m" },
+                    "count": { "min": 4, "max": 8, "median": 6, "mean": 6, "unit": "" }
+                },
+                "windows": {
+                    "width": { "min": 1, "max": 1, "median": 1, "mean": 1, "unit": "m" },
+                    "height": { "min": 1, "max": 1, "median": 1, "mean": 1, "unit": "m" },
+                    "count": { "min": 30, "max": 40, "median": 35, "mean": 35, "unit": "" }
+                },
+                "wall_thickness": 0.3,
+                "fire_compartments": [
+                    {
+                        "name": "设备检修间",
+                        "x_ratio": [0, 0.1],
+                        "y_ratio": [0, 1],
+                        "wall_thickness": 0.3,
+                        "wall_material": "CONCRETE",
+                        "openings": [
+                            {"wall": "x_max", "type": "door", "position": 0.5, "width": 4.0, "height": 4.5, "z_bottom": 0}
+                        ],
+                        "combustibles": [
+                            {"key": "RUBBER_CONVEYOR_BELT", "count": 4},
+                            {"key": "LIQUID_FUEL_DRUM", "count": 30},
+                            {"key": "CABLE_REEL", "count": 4},
+                            {"key": "COAL_SAMPLE_PILE", "count": 1}
+                        ],
+                        "specialized_components": []
+                    },
+                    {
+                        "name": "检修/电缆廊道",
+                        "x_ratio": [0.1, 0.3],
+                        "y_ratio": [0, 1],
+                        "wall_thickness": 0.3,
+                        "wall_material": "CONCRETE",
+                        "openings": [],
+                        "combustibles": [
+                            {"key": "CABLE_BUNDLE", "count": 4},
+                            {"key": "INDUSTRIAL_OIL_DRUM", "count": 10},
+                            {"key": "RUBBER_CONVEYOR_BELT", "count": 2}
+                        ],
+                        "specialized_components": []
+                    },
+                    {
+                        "name": "机组1",
+                        "x_ratio": [0.3, 0.5],
+                        "y_ratio": [0, 1],
+                        "wall_thickness": 0.3,
+                        "wall_material": "CONCRETE",
+                        "openings": [
+                            {"wall": "x_max", "type": "door", "position": 0.5, "width": 5.0, "height": 5.0, "z_bottom": 0},
+                            {"wall": "x_min", "type": "door", "position": 0.5, "width": 5.0, "height": 5.0, "z_bottom": 0}
+                        ],
+                        "combustibles": [
+                            {"key": "COAL_STACK", "count": 2},
+                            {"key": "COAL_DUST_HOPPER", "count": 1},
+                            {"key": "CONVEYOR_BELT", "count": 2},
+                            {"key": "LUBE_OIL_TANK", "count": 1},
+                            {"key": "HYDRAULIC_OIL_TANK", "count": 2},
+                            {"key": "SEAL_OIL_TANK", "count": 1},
+                            {"key": "IGNITION_OIL_DEVICE", "count": 1}
+                        ],
+                        "specialized_components": [
+                            {"key": "TURBINE_UNIT", "count": 1},
+                            {"key": "BOILER_IGNITION_SYSTEM", "count": 1}
+                        ]
+                    },
+                    {
+                        "name": "2#机组锅炉-汽机岛",
+                        "x_ratio": [0.5, 0.7],
+                        "y_ratio": [0, 1],
+                        "wall_thickness": 0.3,
+                        "wall_material": "CONCRETE",
+                        "openings": [],
+                        "combustibles": [
+                            {"key": "COAL_STACK", "count": 2},
+                            {"key": "COAL_DUST_HOPPER", "count": 1},
+                            {"key": "CONVEYOR_BELT", "count": 2},
+                            {"key": "LUBE_OIL_TANK", "count": 1},
+                            {"key": "HYDRAULIC_OIL_TANK", "count": 2},
+                            {"key": "SEAL_OIL_TANK", "count": 1},
+                            {"key": "IGNITION_OIL_DEVICE", "count": 1}
+                        ],
+                        "specialized_components": [
+                            {"key": "TURBINE_UNIT", "count": 1},
+                            {"key": "BOILER_IGNITION_SYSTEM", "count": 1}
+                        ]
+                    },
+                    {
+                        "name": "3#机组锅炉-汽机岛",
+                        "x_ratio": [0.7, 0.9],
+                        "y_ratio": [0, 1],
+                        "wall_thickness": 0.3,
+                        "wall_material": "CONCRETE",
+                        "openings": [],
+                        "combustibles": [
+                            {"key": "COAL_STACK", "count": 2},
+                            {"key": "COAL_DUST_HOPPER", "count": 1},
+                            {"key": "CONVEYOR_BELT", "count": 2},
+                            {"key": "LUBE_OIL_TANK", "count": 1},
+                            {"key": "HYDRAULIC_OIL_TANK", "count": 2},
+                            {"key": "SEAL_OIL_TANK", "count": 1},
+                            {"key": "IGNITION_OIL_DEVICE", "count": 1}
+                        ],
+                        "specialized_components": [
+                            {"key": "TURBINE_UNIT", "count": 1},
+                            {"key": "BOILER_IGNITION_SYSTEM", "count": 1}
+                        ]
+                    }
+                ],
+                "specialized_components": [
+                    {"key": "COAL_HANDLING_SYSTEM", "count": 1, "size_class": "large"}
+                ]
+            },
+            "Auxiliary building": {
+                "cn_name": "辅助厂房（厂房3）",
+                "description": "电厂辅助厂房，包含电气设备、变压器、电缆桥架等",
+                "offset": { "x": 0, "y": 17.5 },
+                "rotation": 0,
+                "stairwell": {
+                    "position": "右下角",
+                    "length": 6.0,
+                    "width": 2.5
+                },
+                "building": {
+                    "length": { "min": 212, "max": 212, "median": 212, "mean": 212, "unit": "m" },
+                    "width": { "min": 18, "max": 18, "median": 18, "mean": 18, "unit": "m" },
+                    "height": { "min": 8, "max": 8, "median": 8, "mean": 8, "unit": "m" },
+                    "stories": { "min": 2, "max": 2, "median": 2, "mean": 2, "unit": "" }
+                },
+                "doors": {  },
+                "windows": { },
+                "wall_thickness": 0.3,
+                "fire_compartments": [
+                    {
+                        "name": "左段",
+                        "x_ratio": [0, 0.25],
+                        "y_ratio": [0, 1],
+                        "wall_thickness": 0.3,
+                        "wall_material": "CONCRETE",
+                        "openings": [
+                            {"wall": "x_max", "type": "door", "position": 0.5, "width": 3.0, "height": 3.5, "z_bottom": 0}
+                        ],
+                        "combustibles": [
+                            {"key": "HYDRAULIC_OIL_TANK", "count": 1},
+                            {"key": "COAL_STACK", "count": 2},
+                            {"key": "COAL_DUST_HOPPER", "count": 1}
+                        ],
+                        "specialized_components": [
+                            {"key": "TURBINE_UNIT", "count": 1}
+                        ]
+                    },
+                    {
+                        "name": "中左",
+                        "x_ratio": [0.25, 0.35],
+                        "y_ratio": [0, 1],
+                        "wall_thickness": 0.3,
+                        "wall_material": "CONCRETE",
+                        "openings": [],
+                        "combustibles": [
+                            {"key": "SWITCH_CABINET", "count": 8},
+                            {"key": "OIL_CIRCUIT_BREAKER", "count": 4}
+                        ],
+                        "specialized_components": []
+                    },
+                    {
+                        "name": "中右",
+                        "x_ratio": [0.35, 0.65],
+                        "y_ratio": [0, 1],
+                        "wall_thickness": 0.3,
+                        "wall_material": "CONCRETE",
+                        "openings": [],
+                        "combustibles": [
+                            {"key": "CABLE_BUNDLE", "count": 12},
+                            {"key": "SWITCH_CABINET", "count": 14},
+                            {"key": "OIL_TRANSFORMER", "count": 3}
+                        ],
+                        "specialized_components": [
+                            {"key": "TRANSFORMER_STATION", "count": 1}
+                        ]
+                    },
+                    {
+                        "name": "右段",
+                        "x_ratio": [0.65, 1.0],
+                        "y_ratio": [0, 1],
+                        "wall_thickness": 0.3,
+                        "wall_material": "CONCRETE",
+                        "openings": [
+                            {"wall": "x_min", "type": "door", "position": 0.5, "width": 3.0, "height": 3.5, "z_bottom": 0}
+                        ],
+                        "combustibles": [
+                            {"key": "CONVEYOR_BELT", "count": 6},
+                            {"key": "INDUSTRIAL_OIL_DRUM", "count": 40}
+                        ],
+                        "specialized_components": []
+                    }
+                ],
+                "specialized_components": []
+            },
+            "Oil depot": {
+                "cn_name": "油库（厂房17）",
+                "description": "电厂油库，包含柴油储罐、重油储罐、日用油箱等",
+                "offset": { "x": 0, "y": 33 },
+                "rotation": 0,
+                "building": {
+                    "length": { "min": 17, "max": 17, "median": 17, "mean": 17, "unit": "m" },
+                    "width": { "min": 12, "max": 12, "median": 12, "mean": 12, "unit": "m" },
+                    "height": { "min": 8, "max": 8, "median": 8, "mean": 8, "unit": "m" },
+                    "stories": { "min": 2, "max": 2, "median": 2, "mean": 2, "unit": "" }
+                },
+                "doors": {  },
+                "windows": {
+                    "width": { "min": 1, "max": 1.5, "median": 1.2, "mean": 1.2, "unit": "m" },
+                    "height": { "min": 1.2, "max": 1.5, "median": 1.3, "mean": 1.3, "unit": "m" },
+                    "count": { "min": 4, "max": 6, "median": 5, "mean": 5, "unit": "" }
+                },
+                "wall_thickness": 0.3,
+                "fire_compartments": [
+                    {
+                        "name": "左房间（2h）",
+                        "x_ratio": [0, 0.35],
+                        "y_ratio": [0, 1],
+                        "wall_thickness": 0.3,
+                        "wall_material": "CONCRETE",
+                        "openings": [
+                            {"wall": "x_max", "type": "door", "position": 0.5, "width": 2.0, "height": 2.5, "z_bottom": 0}
+                        ],
+                        "combustibles": [
+                            {"key": "DIESEL_TANK", "count": 2},
+                            {"key": "HEAVY_OIL_TANK", "count": 1}
+                        ],
+                        "specialized_components": []
+                    },
+                    {
+                        "name": "中房间（1h）",
+                        "x_ratio": [0.35, 0.65],
+                        "y_ratio": [0, 1],
+                        "wall_thickness": 0.3,
+                        "wall_material": "CONCRETE",
+                        "openings": [],
+                        "combustibles": [
+                            {"key": "DAILY_OIL_TANK", "count": 2},
+                            {"key": "CABLE_REEL", "count": 4}
+                        ],
+                        "specialized_components": []
+                    },
+                    {
+                        "name": "右房间",
+                        "x_ratio": [0.65, 1.0],
+                        "y_ratio": [0, 1],
+                        "wall_thickness": 0.3,
+                        "wall_material": "CONCRETE",
+                        "openings": [
+                            {"wall": "x_min", "type": "door", "position": 0.5, "width": 2.0, "height": 2.5, "z_bottom": 0},
+                            {"wall": "x_max", "type": "door", "position": 0.5, "width": 2.0, "height": 2.5, "z_bottom": 0},
+                            {"wall": "y_max", "type": "door", "position": 0.8, "width": 2.0, "height": 2.5, "z_bottom": 0},
+                            {"wall": "y_max", "type": "door", "position": 0.1, "width": 2.0, "height": 2.5, "z_bottom": 0}
+                        ],
+                        "combustibles": [
+                            {"key": "CONVEYOR_BELT", "count": 3},
+                            {"key": "INDUSTRIAL_OIL_DRUM", "count": 20}
+                        ],
+                        "specialized_components": []
+                    }
+                ],
+                "specialized_components": []
+            }
+        }
+    },
+    "综合工业园区": {
+        "cn_name": "综合工业园区",
+        "fire_separation": 20.0,
+        "sub_types": {
+            "主建筑": {
+                "cn_name": "主建筑",
+                "description": "综合工业园区主建筑",
+                "offset": { "x": 0, "y": 0 },
+                "rotation": 0,
+                "building": {
+                    "length": { "min": 100, "max": 100, "median": 100, "mean": 100, "unit": "m" },
+                    "width": { "min": 50, "max": 50, "median": 50, "mean": 50, "unit": "m" },
+                    "height": { "min": 20, "max": 20, "median": 20, "mean": 20, "unit": "m" },
+                    "stories": { "min": 2, "max": 2, "median": 2, "mean": 2, "unit": "" }
+                },
+                "doors": {
+                    "width": { "min": 3, "max": 3, "median": 3, "mean": 3, "unit": "m" },
+                    "height": { "min": 3, "max": 3, "median": 3, "mean": 3, "unit": "m" },
+                    "count": { "min": 2, "max": 2, "median": 2, "mean": 2, "unit": "" }
+                },
+                "windows": {
+                    "width": { "min": 2, "max": 2, "median": 2, "mean": 2, "unit": "m" },
+                    "height": { "min": 1.5, "max": 1.5, "median": 1.5, "mean": 1.5, "unit": "m" },
+                    "count": { "min": 10, "max": 10, "median": 10, "mean": 10, "unit": "" }
+                },
+                "wall_thickness": 0.3,
+                "fire_compartments": [
+                    {
+                        "name": "主控制区",
+                        "x_ratio": [0, 0.6],
+                        "y_ratio": [0, 1],
+                        "wall_thickness": 0.3,
+                        "wall_material": "CONCRETE",
+                        "openings": [
+                            {"wall": "x_max", "type": "door", "position": 0.5, "width": 3.0, "height": 3.0, "z_bottom": 0}
+                        ],
+                        "combustibles": [
+                            {"key": "CONVEYOR_BELT", "count": 5},
+                            {"key": "INDUSTRIAL_OIL_DRUM", "count": 10}
+                        ],
+                        "specialized_components": []
+                    },
+                    {
+                        "name": "次级区",
+                        "x_ratio": [0.6, 1.0],
+                        "y_ratio": [0, 1],
+                        "wall_thickness": 0.3,
+                        "wall_material": "CONCRETE",
+                        "openings": [
+                            {"wall": "x_min", "type": "door", "position": 0.5, "width": 3.0, "height": 3.0, "z_bottom": 0}
+                        ],
+                        "combustibles": [
+                            {"key": "CONVEYOR_BELT", "count": 3},
+                            {"key": "DAILY_OIL_TANK", "count": 4}
+                        ],
+                        "specialized_components": []
+                    }
+                ],
+                "specialized_components": []
             }
         }
     }

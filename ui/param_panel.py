@@ -22,26 +22,6 @@ from ui.dialogs import (
     WallDialog, OpeningDialog, RampEditorDialog, CombustibleDialog, 
     BatchOpeningDialog, BatchWallDialog
 )
-class CollapsibleGroup(QGroupBox):
-    """可折叠分组框"""
-    def __init__(self, title: str, parent=None):
-        super().__init__(title, parent)
-        self.setCheckable(True)
-        self.setChecked(True)
-        self._content = QWidget()
-        self._content_layout = QVBoxLayout(self._content)
-        self._content_layout.setContentsMargins(0, 0, 0, 0)
-        self._content_layout.setSpacing(4)
-        super_layout = QVBoxLayout(self)
-        super_layout.setContentsMargins(6, 4, 6, 6)
-        super_layout.setSpacing(2)
-        super_layout.addWidget(self._content)
-        self.toggled.connect(self._content.setVisible)
-
-    @property
-    def content_layout(self):
-        return self._content_layout
-
 
 class ParameterPanel(QWidget):
     """参数配置面板"""
@@ -101,8 +81,6 @@ class ParameterPanel(QWidget):
         self._build_wall_section()
         self._build_opening_section()
         self._build_combustible_section()
-        self._build_heat_section()
-        self._build_simulation_section()
 
         self.body_layout.addStretch()
         scroll.setWidget(body)
@@ -387,109 +365,6 @@ class ParameterPanel(QWidget):
         grp.content_layout.addWidget(self.combustible_table)
         self.body_layout.addWidget(grp)
 
-    # ── 热源 ────────────────────────────────────────
-    def _build_heat_section(self):
-        grp = CollapsibleGroup("☀️ 外部热源")
-
-        self.heat_enabled_check = QCheckBox("启用外部热源（面源辐射）")
-        self.heat_enabled_check.stateChanged.connect(self.on_param_changed)
-        self.heat_enabled_check.stateChanged.connect(self._toggle_heat)
-        grp.content_layout.addWidget(self.heat_enabled_check)
-
-        self.heat_options = QWidget()
-        form = QGridLayout(self.heat_options)
-        form.setContentsMargins(0, 2, 0, 0)
-        form.setSpacing(4)
-        form.setColumnStretch(1, 1)
-        form.setColumnStretch(3, 1)
-
-        form.addWidget(QLabel("方位:"), 0, 0)
-        self.heat_location_combo = QComboBox()
-        self.heat_location_combo.addItems(["north", "south", "east", "west"])
-        self.heat_location_combo.currentTextChanged.connect(self.on_param_changed)
-        form.addWidget(self.heat_location_combo, 0, 1)
-
-        form.addWidget(QLabel("距离:"), 0, 2)
-        self.heat_distance_spin = QDoubleSpinBox()
-        self.heat_distance_spin.setRange(0.1, 50)
-        self.heat_distance_spin.setValue(3.0)
-        self.heat_distance_spin.setSuffix(" m")
-        self.heat_distance_spin.valueChanged.connect(self.on_param_changed)
-        form.addWidget(self.heat_distance_spin, 0, 3)
-
-        form.addWidget(QLabel("热通量:"), 1, 0)
-        self.heat_flux_spin = QDoubleSpinBox()
-        self.heat_flux_spin.setRange(1, 1000000)
-        self.heat_flux_spin.setValue(50)
-        self.heat_flux_spin.setSuffix(" kW/m²")
-        self.heat_flux_spin.valueChanged.connect(self.on_param_changed)
-        form.addWidget(self.heat_flux_spin, 1, 1)
-
-        self.heat_use_ramp_check = QCheckBox("时间曲线")
-        self.heat_use_ramp_check.setChecked(True)
-        self.heat_use_ramp_check.stateChanged.connect(self.on_param_changed)
-        form.addWidget(self.heat_use_ramp_check, 1, 2)
-
-        ramp_btn = QPushButton("编辑曲线…")
-        ramp_btn.clicked.connect(self.edit_ramp)
-        form.addWidget(ramp_btn, 1, 3)
-
-        self.heat_options.setVisible(False)
-        grp.content_layout.addWidget(self.heat_options)
-        self.body_layout.addWidget(grp)
-
-    # ── 模拟 + 输出 ─────────────────────────────────
-    def _build_simulation_section(self):
-        grp = CollapsibleGroup("⚙️ 模拟 / 输出")
-        g = QGridLayout()
-        g.setSpacing(4)
-        g.setColumnStretch(1, 1)
-        g.setColumnStretch(3, 1)
-
-        g.addWidget(QLabel("时间:"), 0, 0)
-        self.sim_time_spin = QDoubleSpinBox()
-        self.sim_time_spin.setRange(1, 36000)
-        self.sim_time_spin.setValue(60)
-        self.sim_time_spin.setSuffix(" s")
-        self.sim_time_spin.valueChanged.connect(self.on_param_changed)
-        g.addWidget(self.sim_time_spin, 0, 1)
-
-        g.addWidget(QLabel("边距:"), 0, 2)
-        self.padding_spin = QDoubleSpinBox()
-        self.padding_spin.setRange(0, 50)
-        self.padding_spin.setValue(5)
-        self.padding_spin.setSuffix(" m")
-        self.padding_spin.valueChanged.connect(self.on_param_changed)
-        g.addWidget(self.padding_spin, 0, 3)
-
-        g.addWidget(QLabel("网格:"), 1, 0)
-        mesh_row = QHBoxLayout()
-        mesh_row.setSpacing(2)
-        self.mesh_x_spin = QSpinBox(); self.mesh_x_spin.setRange(10, 500); self.mesh_x_spin.setValue(80)
-        self.mesh_y_spin = QSpinBox(); self.mesh_y_spin.setRange(10, 500); self.mesh_y_spin.setValue(60)
-        self.mesh_z_spin = QSpinBox(); self.mesh_z_spin.setRange(10, 500); self.mesh_z_spin.setValue(40)
-        for s in (self.mesh_x_spin, self.mesh_y_spin, self.mesh_z_spin):
-            s.valueChanged.connect(self.on_param_changed)
-        mesh_row.addWidget(self.mesh_x_spin)
-        mesh_row.addWidget(QLabel("×"))
-        mesh_row.addWidget(self.mesh_y_spin)
-        mesh_row.addWidget(QLabel("×"))
-        mesh_row.addWidget(self.mesh_z_spin)
-        g.addLayout(mesh_row, 1, 1, 1, 3)
-
-        self.output_slices_check = QCheckBox("切片输出")
-        self.output_slices_check.setChecked(True)
-        self.output_slices_check.stateChanged.connect(self.on_param_changed)
-        g.addWidget(self.output_slices_check, 2, 0, 1, 2)
-
-        self.output_devices_check = QCheckBox("测量点输出")
-        self.output_devices_check.setChecked(True)
-        self.output_devices_check.stateChanged.connect(self.on_param_changed)
-        g.addWidget(self.output_devices_check, 2, 2, 1, 2)
-
-        grp.content_layout.addLayout(g)
-        self.body_layout.addWidget(grp)
-
     # ── 辅助 ────────────────────────────────────────
     def _make_table(self, columns, col_widths=None):
         t = QTableWidget()
@@ -763,19 +638,6 @@ class ParameterPanel(QWidget):
         self._auto_table_height(self.wall_table)
 
     # ================================================================
-    #                         热源 / 其他
-    # ================================================================
-    def _toggle_heat(self, state):
-        self.heat_options.setVisible(state == 2)
-
-    def edit_ramp(self):
-        dialog = RampEditorDialog(
-            self, self.model.heat_source.get("ramp_points", []))
-        if dialog.exec() == QDialog.Accepted:
-            self.model.heat_source["ramp_points"] = dialog.get_data()
-            self.on_param_changed()
-
-    # ================================================================
     #                         尺寸变更
     # ================================================================
     def on_dimension_changed(self):
@@ -808,22 +670,6 @@ class ParameterPanel(QWidget):
         m.materials["floor"] = self.floor_mat_combo.currentText()
         m.materials["roof"] = self.roof_mat_combo.currentText()
 
-        m.heat_source["enabled"] = self.heat_enabled_check.isChecked()
-        m.heat_source["location"] = self.heat_location_combo.currentText()
-        m.heat_source["distance"] = self.heat_distance_spin.value()
-        m.heat_source["radiation_flux"] = self.heat_flux_spin.value()
-        m.heat_source["use_ramp"] = self.heat_use_ramp_check.isChecked()
-
-        m.simulation_time = self.sim_time_spin.value()
-        m.domain["padding"] = self.padding_spin.value()
-        m.domain["mesh_cells"] = [
-            self.mesh_x_spin.value(),
-            self.mesh_y_spin.value(),
-            self.mesh_z_spin.value(),
-        ]
-        m.output["slices"] = self.output_slices_check.isChecked()
-        m.output["devices"] = self.output_devices_check.isChecked()
-
     def sync_ui_from_model(self):
         self._syncing = True
         try:
@@ -837,29 +683,12 @@ class ParameterPanel(QWidget):
             self.floor_mat_combo.setCurrentText(m.materials.get("floor", "CONCRETE"))
             self.roof_mat_combo.setCurrentText(m.materials.get("roof", "CONCRETE"))
 
-            self.heat_enabled_check.setChecked(m.heat_source.get("enabled", False))
-            self.heat_location_combo.setCurrentText(m.heat_source.get("location", "north"))
-            self.heat_distance_spin.setValue(m.heat_source.get("distance", 3.0))
-            self.heat_flux_spin.setValue(m.heat_source.get("radiation_flux", 50.0))
-            self.heat_use_ramp_check.setChecked(m.heat_source.get("use_ramp", True))
-
-            self.sim_time_spin.setValue(m.simulation_time)
-            self.padding_spin.setValue(m.domain.get("padding", 5.0))
-            mesh = m.domain.get("mesh_cells", [80, 60, 40])
-            self.mesh_x_spin.setValue(mesh[0])
-            self.mesh_y_spin.setValue(mesh[1])
-            self.mesh_z_spin.setValue(mesh[2])
-
-            self.output_slices_check.setChecked(m.output.get("slices", True))
-            self.output_devices_check.setChecked(m.output.get("devices", True))
-
             # 楼层
             self._current_story_index = 0
             self._refresh_story_combo()
             self.story_height_spin.setValue(self._current_story().height)
 
             self._refresh_story_tables()
-            self._toggle_heat(2 if m.heat_source.get("enabled") else 0)
         finally:
             self._syncing = False
 

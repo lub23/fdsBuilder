@@ -354,3 +354,28 @@ QFrame#separator {
     max-height: 1px;
 }
 """
+# ============================================================
+# 可折叠分组框
+# ============================================================
+from PySide6.QtWidgets import QGroupBox, QWidget, QVBoxLayout
+
+
+class CollapsibleGroup(QGroupBox):
+    """可折叠分组框"""
+    def __init__(self, title: str, parent=None):
+        super().__init__(title, parent)
+        self.setCheckable(True)
+        self.setChecked(True)
+        self._content = QWidget()
+        self._content_layout = QVBoxLayout(self._content)
+        self._content_layout.setContentsMargins(0, 0, 0, 0)
+        self._content_layout.setSpacing(4)
+        super_layout = QVBoxLayout(self)
+        super_layout.setContentsMargins(6, 4, 6, 6)
+        super_layout.setSpacing(2)
+        super_layout.addWidget(self._content)
+        self.toggled.connect(self._content.setVisible)
+
+    @property
+    def content_layout(self):
+        return self._content_layout

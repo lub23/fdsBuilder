@@ -17,6 +17,7 @@ from PySide6.QtWidgets import (
     QGridLayout, QTreeWidget, QTreeWidgetItem, QScrollArea, QWidget
 )
 from PySide6.QtCore import Qt, Signal
+from PySide6.QtGui import QPainter, QColor, QPen, QBrush
 from models.combustibles import (
     CombustibleManager, Combustible, DistributionMethod
 )
@@ -861,286 +862,580 @@ class BatchWallDialog(QDialog):
         return self._result
 
 
-class FacilityDialog(QDialog):
-    """从预设设施库选择 → 微调参数 → 生成等效建筑模型。"""
+class WallOpeningManagerDialog(QDialog):
+    """门窗管理对话框：左侧墙体列表，右侧该墙开口列表"""
 
-    def __init__(self, parent=None):
+    def __init__(self, parent=None, walls=None, openings=None, building_length=20, building_width=15):
         super().__init__(parent)
-        self.setWindowTitle("等效模型生成")
-        self.resize(950, 900)
-        self.result_model = None
-        self._params = None
-        self._mgr = FacilityManager()
-        self._init_ui()
-        self._fill_tree()
+        self.setWindowTitle("门窗管理")
+        self.setMinimumSize(700, 500)
+        self._walls = walls or []
+        self._openings = list(openings or [])
+        self._L = building_length
+        self._W = building_width
+        self._build_ui()
+        self._refresh_wall_list()
 
     # ── UI ────────────────────────────────────────
 
-    def _init_ui(self):
+    def _build_ui(self):
         root = QHBoxLayout(self)
-        root.setSpacing(6)
 
-        # ── 左：设施树 ──
-        self.tree = QTreeWidget()
-        self.tree.setHeaderLabel("设施类型")
-        self.tree.setMinimumWidth(180)
-        self.tree.setMaximumWidth(220)
-        self.tree.currentItemChanged.connect(self._on_select)
-        root.addWidget(self.tree)
+        # Left: wall list
+        left = QVBoxLayout()
+        left.addWidget(QLabel("墙体列表"))
+        self.wall_list = QTableWidget()
+        self.wall_list.setColumnCount(3)
+        self.wall_list.setHorizontalHeaderLabels(["名称", "类型", "长度"])
+        self.wall_list.setSelectionBehavior(QTableWidget.SelectRows)
+        self.wall_list.setSelectionMode(QTableWidget.SingleSelection)
+        self.wall_list.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
+        self.wall_list.currentCellChanged.connect(self._on_wall_selected)
+        left.addWidget(self.wall_list)
+        root.addLayout(left, 1)
+        # Right: openings for selected wall
+        right = QVBoxLayout()
+        right.addWidget(QLabel("该墙开口"))
+        self.opening_table = QTableWidget()
+        self.opening_table.setColumnCount(5)
+        self.opening_table.setHorizontalHeaderLabels(["类型", "位置", "宽度", "高度", "底高"])
+        self.opening_table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
+        right.addWidget(self.opening_table)
 
-        # ── 右：6列网格 ──
-        right_layout = QVBoxLayout()
-        right_layout.setSpacing(4)
+        btn_row = QHBoxLayout()
+        add_btn = QPushButton("添加开口")
+        add_btn.setStyleSheet(
+            "QPushButton{background:#a6e3a1;color:#1e1e2e;font-weight:bold;"
+            "padding:4px 10px;border-radius:3px}")
+        add_btn.clicked.connect(self._add_opening)
+        btn_row.addWidget(add_btn)
 
-        content = QWidget()
-        g = QGridLayout(content)
-        g.setContentsMargins(6, 6, 6, 6)
-        g.setVerticalSpacing(5)
-        g.setHorizontalSpacing(6)
-        for c in (1, 4):
-            g.setColumnStretch(c, 1)
+        edit_btn = QPushButton("编辑")
+        edit_btn.setStyleSheet(
+            "QPushButton{background:#89b4fa;color:#1e1e2e;font-weight:bold;"
+            "padding:4px 10px;border-radius:3px}")
+        edit_btn.clicked.connect(self._edit_opening)
+        btn_row.addWidget(edit_btn)
 
-        self._rng_labels = {}
-        r = 0
+        del_btn = QPushButton("删除")
+        del_btn.setStyleSheet(
+            "QPushButton{background:#f38ba8;color:#1e1e2e;font-weight:bold;"
+            "padding:4px 10px;border-radius:3px}")
+        del_btn.clicked.connect(self._delete_opening)
+        btn_row.addWidget(del_btn)
 
-        # ── 工具函数 ──
-        def _dsp(lo, hi, dec=1, sfx=" m", step=1.0):
-            s = QDoubleSpinBox()
-            s.setRange(lo, hi); s.setDecimals(dec)
-            s.setSuffix(sfx); s.setSingleStep(step)
-            return s
+        right.addLayout(btn_row)
+        root.addLayout(right, 2)
 
-        def _isp(lo, hi):
-            s = QSpinBox(); s.setRange(lo, hi); return s
+        # Bottom OK/Cancel
+        btn_box = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
+        btn_box.accepted.connect(self.accept)
+        btn_box.rejected.connect(self.reject)
+        root.addWidget(btn_box)
 
-        def _rl(key):
-            lbl = QLabel()
-            lbl.setStyleSheet("color:#666;font-size:10px;")
-            self._rng_labels[key] = lbl
-            return lbl
-
-        def _hdr(title, note=""):
-            nonlocal r
-            t = f"<b>{title}</b>"
-            if note:
-                t += f"  <span style='color:#888;font-size:10px'>{note}</span>"
-            g.addWidget(QLabel(t), r, 0, 1, 6)
-            r += 1
-
-        def _row2(l1, w1, r1, l2, w2, r2):
-            nonlocal r
-            g.addWidget(QLabel(l1), r, 0)
-            g.addWidget(w1, r, 1)
-            if r1: g.addWidget(r1, r, 2)
-            g.addWidget(QLabel(l2), r, 3)
-            g.addWidget(w2, r, 4)
-            if r2: g.addWidget(r2, r, 5)
-            r += 1
-
-        def _row1(l1, w1, r1=None):
-            nonlocal r
-            g.addWidget(QLabel(l1), r, 0)
-            g.addWidget(w1, r, 1)
-            if r1: g.addWidget(r1, r, 2)
-            r += 1
-
-        # ══ 建筑 ══
-        _hdr("📐 建筑", "[ ] 为预设参考范围")
-        self.sp_L = _dsp(1, 2000); self.sp_W = _dsp(1, 2000)
-        _row2("长度:", self.sp_L, _rl("length"), "宽度:", self.sp_W, _rl("width"))
-        self.sp_H = _dsp(1, 300); self.sp_N = _isp(1, 30)
-        _row2("总高:", self.sp_H, _rl("height"), "层数:", self.sp_N, _rl("stories"))
-        self.sp_T = _dsp(.05, 5, 2, " m", .05)
-        _row1("墙厚:", self.sp_T)
-
-        # ══ 门 ══
-        _hdr("🚪 门（首层）")
-        self.cb_dwall = QComboBox(); self.cb_dwall.addItems(WALL_NAMES)
-        self.cb_dwall.setCurrentIndex(4)
-        self.sp_dc = _isp(0, 100)
-        _row2("分布:", self.cb_dwall, None, "数量:", self.sp_dc, _rl("door_count"))
-        self.sp_dw = _dsp(.3, 50); self.sp_dh = _dsp(.3, 50)
-        _row2("宽:", self.sp_dw, _rl("door_width"), "高:", self.sp_dh, _rl("door_height"))
-
-        # ══ 窗 ══
-        _hdr("🪟 窗（各层）")
-        self.cb_wwall = QComboBox(); self.cb_wwall.addItems(WALL_NAMES)
-        self.cb_wwall.setCurrentIndex(4)
-        self.sp_wc = _isp(0, 500)
-        _row2("分布:", self.cb_wwall, None, "数量:", self.sp_wc, _rl("window_count"))
-        self.sp_ww = _dsp(.3, 20); self.sp_wh = _dsp(.3, 20)
-        _row2("宽:", self.sp_ww, _rl("window_width"), "高:", self.sp_wh, _rl("window_height"))
-        self.sp_ws = _dsp(0.05, 0.5, 2, " ×层高", 0.05); self.sp_ws.setValue(0.3)
-        _row1("窗台高:", self.sp_ws)
-
-        # ══ 楼梯口 ══
-        _hdr("🪜 楼梯口（2F及以上）")
-        self.sp_sw_n = _isp(0, 10)
-        self.sp_sw_l = _dsp(1, 30, 1, " m", 0.5); self.sp_sw_l.setValue(4.0)
-        self.sp_sw_w = _dsp(1, 20, 1, " m", 0.5); self.sp_sw_w.setValue(3.0)
-        _row2("数量:", self.sp_sw_n, None, "长:", self.sp_sw_l, None)
-        _row1("宽:", self.sp_sw_w)
-
-        # ══ 可燃物 ══
-        _hdr("🪵 可燃物", "★ 表示典型可燃物；其余为通用可燃物")
-        self._comb_checks = {}
-        items = list(COMBUSTIBLE_LIBRARY.items())
-        for i in range(0, len(items), 3):
-            chunk = items[i:i + 3]
-            for j, (key, preset) in enumerate(chunk):
-                chk = QCheckBox(preset["name"])
-                sp = QSpinBox(); sp.setRange(0, 200); sp.setValue(0)
-                sp.setSuffix(" 个"); sp.setFixedWidth(68)
-                sp.setEnabled(False)
-                chk.toggled.connect(lambda c, s=sp: s.setEnabled(c))
-                g.addWidget(chk, r, j * 2)
-                g.addWidget(sp, r, j * 2 + 1)
-                self._comb_checks[key] = (chk, sp)
-            r += 1
-
-        self.cb_cdist = QComboBox()
-        self.cb_cdist.addItems([m.value for m in DistributionMethod])
-        self.cb_cfloor = QComboBox(); self.cb_cfloor.addItem("全部楼层")
-        _row2("分布方式:", self.cb_cdist, None, "目标楼层:", self.cb_cfloor, None)
-
-        # ── 滚动区 ──
-        scroll = QScrollArea()
-        scroll.setWidgetResizable(True)
-        scroll.setWidget(content)
-        right_layout.addWidget(scroll, 1)
-
-        # ── 底部 ──
-        self.lbl_desc = QLabel(); self.lbl_desc.setWordWrap(True)
-        right_layout.addWidget(self.lbl_desc)
-
-        self.btn = QPushButton("🏗️ 生成等效模型")
-        self.btn.setEnabled(False)
-        self.btn.clicked.connect(self._on_generate)
-        right_layout.addWidget(self.btn)
-
-        rw = QWidget(); rw.setLayout(right_layout)
-        root.addWidget(rw, 1)
-
-        # ── 信号 ──
-        self.sp_N.valueChanged.connect(self._on_stories_changed)
-
-    # ── 层数联动 ──────────────────────────────────
-
-    def _on_stories_changed(self, n):
-        self._rebuild_floor_combo()
-        if n > 1:
-            self.sp_sw_n.setMinimum(1)
-            if self.sp_sw_n.value() < 1:
-                self.sp_sw_n.setValue(1)
-        else:
-            self.sp_sw_n.setMinimum(0)
-            self.sp_sw_n.setValue(0)
-
-    def _rebuild_floor_combo(self):
-        prev = self.cb_cfloor.currentIndex()
-        self.cb_cfloor.clear()
-        self.cb_cfloor.addItem("全部楼层")
-        for i in range(self.sp_N.value()):
-            self.cb_cfloor.addItem(f"{i + 1}F")
-        if 0 <= prev < self.cb_cfloor.count():
-            self.cb_cfloor.setCurrentIndex(prev)
-
-    # ── 树 ────────────────────────────────────────
-
-    def _fill_tree(self):
-        for ck, cn in self._mgr.categories():
-            cat_item = QTreeWidgetItem([cn])
-            cat_item.setData(0, Qt.UserRole, None)
-            for sk, sn in self._mgr.sub_types(ck):
-                child = QTreeWidgetItem([sn])
-                child.setData(0, Qt.UserRole, (ck, sk))
-                cat_item.addChild(child)
-            self.tree.addTopLevelItem(cat_item)
-        self.tree.expandAll()
-
-    # ── 选中填充 ──────────────────────────────────
-
-    def _on_select(self, cur, _prev):
-        from models.combustibles import COMBUSTIBLE_LIBRARY
-        keys = cur.data(0, Qt.UserRole) if cur else None
-        if not keys:
-            self.btn.setEnabled(False); return
-        cat, sub = keys
-        p = self._mgr.default_params(cat, sub)
-        self._params = p
-
-        self.sp_L.setValue(p["length"]);  self.sp_W.setValue(p["width"])
-        self.sp_H.setValue(p["height"]);  self.sp_N.setValue(p["stories"])
-        self.sp_T.setValue(p["wall_thickness"])
-        self.sp_dw.setValue(p["door_width"]);  self.sp_dh.setValue(p["door_height"])
-        self.sp_dc.setValue(p["door_count"]);  self.cb_dwall.setCurrentIndex(4)
-        self.sp_ww.setValue(p["window_width"]); self.sp_wh.setValue(p["window_height"])
-        self.sp_wc.setValue(p["window_count"]); self.cb_wwall.setCurrentIndex(4)
-        self.sp_ws.setValue(p.get("window_sill", 0.3))
-        self.sp_sw_l.setValue(4.0); self.sp_sw_w.setValue(3.0)
-        # 楼梯口：多层时至少1
-        if p["stories"] > 1:
-            self.sp_sw_n.setMinimum(1); self.sp_sw_n.setValue(1)
-        else:
-            self.sp_sw_n.setMinimum(0); self.sp_sw_n.setValue(0)
-
-        # 范围标签
-        ranges = p.get("ranges", {})
-        for key, lbl in self._rng_labels.items():
-            rng = ranges.get(key)
-            if rng:
-                lo, hi = rng
-                if key in ("stories", "door_count", "window_count"):
-                    lbl.setText(f"[{int(lo)}~{int(hi)}]" if lo != hi else f"[{int(lo)}]")
-                else:
-                    lbl.setText(f"[{lo}~{hi}]" if lo != hi else f"[{lo}]")
+    def _refresh_wall_list(self):
+        self.wall_list.setRowCount(len(self._walls))
+        for i, w in enumerate(self._walls):
+            name = w.get("name", f"墙{i}")
+            if w.get("is_fire_partition"):
+                wtype = "防火墙"
+            elif w.get("is_external"):
+                wtype = "外墙"
             else:
-                lbl.setText("")
+                wtype = "内墙"
+            wlen = ((w["x2"] - w["x1"])**2 + (w["y2"] - w["y1"])**2)**0.5
+            self.wall_list.setItem(i, 0, QTableWidgetItem(name))
+            self.wall_list.setItem(i, 1, QTableWidgetItem(wtype))
+            self.wall_list.setItem(i, 2, QTableWidgetItem(f"{wlen:.1f}m"))
 
-        # 可燃物
-        fac_combs = p.get("facility_combustibles", [])
-        for key, (chk, sp) in self._comb_checks.items():
-            is_typ = key in fac_combs
-            name = COMBUSTIBLE_LIBRARY[key]["name"]
-            chk.setText(f"★ {name}" if is_typ else f"　{name}")
-            chk.setChecked(is_typ)
-            sp.setEnabled(is_typ)
-            sp.setValue(5 if is_typ else 0)
+    def _on_wall_selected(self, row, col, prev_row, prev_col):
+        if row < 0:
+            self.opening_table.setRowCount(0)
+            return
+        wall_openings = [o for o in self._openings if o.get("wall_index") == row]
+        self.opening_table.setRowCount(len(wall_openings))
+        for i, o in enumerate(wall_openings):
+            self.opening_table.setItem(i, 0, QTableWidgetItem(o.get("type", "door")))
+            self.opening_table.setItem(i, 1, QTableWidgetItem(f"{o.get('position', 0.5):.2f}"))
+            self.opening_table.setItem(i, 2, QTableWidgetItem(f"{o.get('width', 1.0):.1f}"))
+            self.opening_table.setItem(i, 3, QTableWidgetItem(f"{o.get('height', 2.0):.1f}"))
+            self.opening_table.setItem(i, 4, QTableWidgetItem(f"{o.get('z_bottom', 0):.1f}"))
 
-        self._rebuild_floor_combo()
-        desc = p.get("description", "")
-        self.lbl_desc.setText(
-            f"<b>{p.get('cat_name','')}-{p.get('name','')}</b>"
-            f"{'　' + desc if desc else ''}")
-        self.btn.setEnabled(True)
+    def _add_opening(self):
+        wi = self.wall_list.currentRow()
+        if wi < 0:
+            QMessageBox.warning(self, "提示", "请先选择一面墙")
+            return
+        dlg = OpeningDialog(self, opening={"wall_index": wi}, walls=self._walls)
+        if dlg.exec() == QDialog.Accepted:
+            self._openings.append(dlg.get_data())
+            self._on_wall_selected(wi, 0, -1, 0)
 
-    # ── 读取 → dict ──────────────────────────────
+    def _edit_opening(self):
+        wi = self.wall_list.currentRow()
+        oi = self.opening_table.currentRow()
+        if wi < 0 or oi < 0:
+            return
+        wall_openings = [o for o in self._openings if o.get("wall_index") == wi]
+        if oi >= len(wall_openings):
+            return
+        opening = wall_openings[oi]
+        dlg = OpeningDialog(self, opening=opening, walls=self._walls)
+        if dlg.exec() == QDialog.Accepted:
+            new_data = dlg.get_data()
+            # Update in-place
+            idx = self._openings.index(opening)
+            self._openings[idx] = new_data
+            self._on_wall_selected(wi, 0, -1, 0)
 
-    def _read_params(self) -> dict:
-        p = dict(self._params) if self._params else {}
-        p.update(
-            length=self.sp_L.value(), width=self.sp_W.value(),
-            height=self.sp_H.value(), stories=self.sp_N.value(),
-            wall_thickness=self.sp_T.value(),
-            door_width=self.sp_dw.value(), door_height=self.sp_dh.value(),
-            door_count=self.sp_dc.value(), door_wall=self.cb_dwall.currentIndex(),
-            window_width=self.sp_ww.value(), window_height=self.sp_wh.value(),
-            window_count=self.sp_wc.value(), window_wall=self.cb_wwall.currentIndex(),
-            window_sill=self.sp_ws.value(),
-            stairwell_count=self.sp_sw_n.value(),
-            stairwell_length=self.sp_sw_l.value(),
-            stairwell_width=self.sp_sw_w.value(),
-        )
-        sel = {}
-        for key, (chk, sp) in self._comb_checks.items():
-            if chk.isChecked() and sp.value() > 0:
-                sel[key] = sp.value()
-        p["combustible_selections"] = sel
-        p["combustible_method"] = self.cb_cdist.currentIndex()
-        p["combustible_floor"] = self.cb_cfloor.currentIndex() - 1
-        return p
+    def _delete_opening(self):
+        wi = self.wall_list.currentRow()
+        oi = self.opening_table.currentRow()
+        if wi < 0 or oi < 0:
+            return
+        wall_openings = [o for o in self._openings if o.get("wall_index") == wi]
+        if oi < len(wall_openings):
+            self._openings.remove(wall_openings[oi])
+            self._on_wall_selected(wi, 0, -1, 0)
+
+    def get_openings(self):
+        return self._openings
+
+class _CompartmentCanvas(QWidget):
+    """Simple QPainter canvas showing fire compartment boundaries on a floor plan."""
+        # ══ 可燃物 ══
+    COLORS = [
+        QColor("#a6e3a1"), QColor("#89b4fa"), QColor("#f9e2af"),
+        QColor("#cba6f7"), QColor("#f38ba8"), QColor("#94e2d5"),
+        QColor("#fab387"), QColor("#74c7ec"),
+    ]
+
+    def __init__(self, parent, length, width):
+        super().__init__(parent)
+        self._L = length
+        self._W = width
+        self._compartments = []
+        self.setMinimumHeight(160)
+
+    def set_compartments(self, compartments):
+        self._compartments = compartments
+        self.update()
+
+    def paintEvent(self, event):
+        if self._L <= 0 or self._W <= 0:
+            return
+        p = QPainter(self)
+        p.setRenderHint(QPainter.Antialiasing)
+        w, h = self.width() - 20, self.height() - 20
+        scale = min(w / self._L, h / self._W)
+        ox = (self.width() - self._L * scale) / 2
+        oy = (self.height() - self._W * scale) / 2
+
+        # Building outline
+        p.setPen(QPen(QColor("#cdd6f4"), 2))
+        p.setBrush(QBrush(QColor("#313244")))
+        p.drawRect(int(ox), int(oy), int(self._L * scale), int(self._W * scale))
+
+        # Compartments
+        for i, fc in enumerate(self._compartments):
+            color = self.COLORS[i % len(self.COLORS)]
+            color.setAlpha(60)
+            x1 = ox + fc.get("x_min", 0) * scale
+            y1 = oy + fc.get("y_min", 0) * scale
+            x2 = ox + fc.get("x_max", self._L) * scale
+            y2 = oy + fc.get("y_max", self._W) * scale
+            p.setBrush(QBrush(color))
+            p.setPen(QPen(self.COLORS[i % len(self.COLORS)], 2))
+            p.drawRect(int(x1), int(y1), int(x2 - x1), int(y2 - y1))
+            # Label
+            p.setPen(QColor("#cdd6f4"))
+            p.drawText(int(x1 + 4), int(y1 + 14), fc.get("name", f"FC{i+1}"))
+        p.end()
+
+class FireCompartmentDialog(QDialog):
+    """防火分区可视化编辑对话框"""
+    def __init__(self, parent=None, compartments=None, building_length=20,
+                 building_width=15, wall_thickness=0.24):
+        super().__init__(parent)
+        self.setWindowTitle("防火分区编辑")
+        self.setMinimumSize(600, 450)
+        self._L = building_length
+        self._W = building_width
+        self._t = wall_thickness
+        self._compartments = list(compartments or [])
+        self._build_ui()
+        self._refresh_table()
+
+    def _build_ui(self):
+        layout = QVBoxLayout(self)
+        layout.addWidget(QLabel(
+            f"建筑平面: {self._L:.1f} x {self._W:.1f} m — "
+            "拖动分界线或直接编辑XY范围来划分防火分区"))
+        # Floor plan canvas
+        self._canvas = _CompartmentCanvas(self, self._L, self._W)
+        layout.addWidget(self._canvas)
+        # Table of compartments
+        self.table = QTableWidget()
+        self.table.setColumnCount(6)
+        self.table.setHorizontalHeaderLabels([
+            "名称", "X起", "X止", "Y起", "Y止", "防火墙厚度"])
+        self.table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
+        layout.addWidget(self.table)
+        # Buttons
+        btn_row = QHBoxLayout()
+        add_btn = QPushButton("添加分区")
+        add_btn.setStyleSheet(
+            "QPushButton{background:#a6e3a1;color:#1e1e2e;font-weight:bold;"
+            "padding:4px 10px;border-radius:3px}")
+        add_btn.clicked.connect(self._add_compartment)
+        btn_row.addWidget(add_btn)
+        split_x_btn = QPushButton("沿X等分")
+        split_x_btn.setStyleSheet(
+            "QPushButton{background:#89b4fa;color:#1e1e2e;font-weight:bold;"
+            "padding:4px 10px;border-radius:3px}")
+        split_x_btn.clicked.connect(lambda: self._auto_split("x"))
+        btn_row.addWidget(split_x_btn)
+
+        split_y_btn = QPushButton("沿Y等分")
+        split_y_btn.setStyleSheet(
+            "QPushButton{background:#89b4fa;color:#1e1e2e;font-weight:bold;"
+            "padding:4px 10px;border-radius:3px}")
+        split_y_btn.clicked.connect(lambda: self._auto_split("y"))
+        btn_row.addWidget(split_y_btn)
+
+        del_btn = QPushButton("删除选中")
+        del_btn.setStyleSheet(
+            "QPushButton{background:#f38ba8;color:#1e1e2e;font-weight:bold;"
+            "padding:4px 10px;border-radius:3px}")
+        del_btn.clicked.connect(self._delete_compartment)
+        btn_row.addWidget(del_btn)
+
+        layout.addLayout(btn_row)
+
+        # Split count
+        split_row = QHBoxLayout()
+        split_row.addWidget(QLabel("等分数量:"))
+        self.split_count_spin = QSpinBox()
+        self.split_count_spin.setRange(2, 10)
+        self.split_count_spin.setValue(2)
+        split_row.addWidget(self.split_count_spin)
+        split_row.addStretch()
+        layout.addLayout(split_row)
+
+        btn_box = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
+        btn_box.accepted.connect(self._save_and_accept)
+        btn_box.rejected.connect(self.reject)
+        layout.addWidget(btn_box)
+
+    def _refresh_table(self):
+        self.table.setRowCount(len(self._compartments))
+        for i, fc in enumerate(self._compartments):
+            self.table.setItem(i, 0, QTableWidgetItem(fc.get("name", f"分区{i+1}")))
+            self.table.setItem(i, 1, QTableWidgetItem(f"{fc.get('x_min', 0):.1f}"))
+            self.table.setItem(i, 2, QTableWidgetItem(f"{fc.get('x_max', self._L):.1f}"))
+            self.table.setItem(i, 3, QTableWidgetItem(f"{fc.get('y_min', 0):.1f}"))
+            self.table.setItem(i, 4, QTableWidgetItem(f"{fc.get('y_max', self._W):.1f}"))
+            self.table.setItem(i, 5, QTableWidgetItem(f"{fc.get('firewall_thickness', 0.2):.2f}"))
+        self._canvas.set_compartments(self._compartments)
+
+    def _add_compartment(self):
+        idx = len(self._compartments)
+        self._compartments.append({
+            "id": f"FC_{idx}", "name": f"防火分区{idx+1}",
+            "x_min": 0, "x_max": self._L,
+            "y_min": 0, "y_max": self._W,
+            "firewall_thickness": 0.2, "firewall_material": "CONCRETE",
+        })
+        self._refresh_table()
+
+    def _auto_split(self, axis):
+        n = self.split_count_spin.value()
+        self._compartments.clear()
+        for i in range(n):
+            if axis == "x":
+                fc = {
+                    "id": f"FC_{i}", "name": f"防火分区{i+1}",
+                    "x_min": round(i * self._L / n, 2),
+                    "x_max": round((i + 1) * self._L / n, 2),
+                    "y_min": 0, "y_max": self._W,
+                    "firewall_thickness": 0.2, "firewall_material": "CONCRETE",
+                }
+            else:
+                fc = {
+                    "id": f"FC_{i}", "name": f"防火分区{i+1}",
+                    "x_min": 0, "x_max": self._L,
+                    "y_min": round(i * self._W / n, 2),
+                    "y_max": round((i + 1) * self._W / n, 2),
+                    "firewall_thickness": 0.2, "firewall_material": "CONCRETE",
+                }
+            self._compartments.append(fc)
+        self._refresh_table()
+
+    def _delete_compartment(self):
+        row = self.table.currentRow()
+        if 0 <= row < len(self._compartments):
+            del self._compartments[row]
+            self._refresh_table()
+
+    def _save_and_accept(self):
+        # Read back edited values from table
+        for i in range(self.table.rowCount()):
+            if i >= len(self._compartments):
+                break
+            fc = self._compartments[i]
+            try:
+                fc["name"] = self.table.item(i, 0).text()
+                fc["x_min"] = float(self.table.item(i, 1).text())
+                fc["x_max"] = float(self.table.item(i, 2).text())
+                fc["y_min"] = float(self.table.item(i, 3).text())
+                fc["y_max"] = float(self.table.item(i, 4).text())
+                fc["firewall_thickness"] = float(self.table.item(i, 5).text())
+            except (ValueError, AttributeError):
+                pass
+        self.accept()
+    
+    def get_compartments(self):
+        from models.building import FireCompartment
+        return [FireCompartment.from_dict(fc) for fc in self._compartments]
+
+
+
+
+class CategoryGenerateDialog(QDialog):
+    """分类级别生成对话框 - 生成某类别下所有子类型建筑群"""
+
+    def __init__(self, parent=None, facility_manager=None, cat_key: str = ""):
+        super().__init__(parent)
+        self.setWindowTitle("生成一级目标（建筑群）")
+        self.resize(750, 500)
+        self.result_model = None
+        self._mgr = facility_manager or FacilityManager()
+        self._cat_key = cat_key
+        self._sub_params = []  # list of default_params dicts
+        self._init_ui()
+        self._load_data()
+
+    def _init_ui(self):
+        layout = QVBoxLayout(self)
+
+        cat_name = self._mgr._data.get(self._cat_key, {}).get("cn_name", self._cat_key)
+        layout.addWidget(QLabel(f"<b>类别: {cat_name}</b> — 调整各建筑偏移后生成建筑群"))
+
+        # Table: Name, Length, Width, Height, X Offset, Y Offset
+        self.table = QTableWidget()
+        self.table.setColumnCount(6)
+        self.table.setHorizontalHeaderLabels(["名称", "长度(m)", "宽度(m)", "高度(m)", "X偏移(m)", "Y偏移(m)"])
+        self.table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
+        layout.addWidget(self.table)
+
+        # Spacing helper
+        spacing_layout = QHBoxLayout()
+        spacing_layout.addWidget(QLabel("自动间距:"))
+        self.spacing_spin = QDoubleSpinBox()
+        self.spacing_spin.setRange(0, 100)
+        self.spacing_spin.setValue(5.0)
+        self.spacing_spin.setSuffix(" m")
+        spacing_layout.addWidget(self.spacing_spin)
+
+        auto_btn = QPushButton("重新排列")
+        auto_btn.clicked.connect(self._auto_arrange)
+        spacing_layout.addWidget(auto_btn)
+        spacing_layout.addStretch()
+        layout.addLayout(spacing_layout)
+
+        # Buttons
+        btn_box = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
+        btn_box.accepted.connect(self._on_generate)
+        btn_box.rejected.connect(self.reject)
+        layout.addWidget(btn_box)
+
+    def _load_data(self):
+        subs = self._mgr.sub_types(self._cat_key)
+
+        self._sub_params = []
+        for sub_key, sub_name in subs:
+            p = self._mgr.default_params(self._cat_key, sub_key)
+            p["_x_offset"] = 0.0
+            p["_y_offset"] = 0.0
+            self._sub_params.append(p)
+
+        self._auto_arrange()
+        self._fill_table()
+
+    def _fill_table(self):
+        self.table.setRowCount(len(self._sub_params))
+        for i, p in enumerate(self._sub_params):
+            self.table.setItem(i, 0, QTableWidgetItem(p.get("name", "")))
+            self.table.setItem(i, 1, QTableWidgetItem(f"{p['length']:.1f}"))
+            self.table.setItem(i, 2, QTableWidgetItem(f"{p['width']:.1f}"))
+            self.table.setItem(i, 3, QTableWidgetItem(f"{p['height']:.1f}"))
+
+            x_spin = QDoubleSpinBox()
+            x_spin.setRange(-1000, 10000)
+            x_spin.setDecimals(1)
+            x_spin.setValue(p.get("_x_offset", 0.0))
+            self.table.setCellWidget(i, 4, x_spin)
+
+            y_spin = QDoubleSpinBox()
+            y_spin.setRange(-1000, 10000)
+            y_spin.setDecimals(1)
+            y_spin.setValue(p.get("_y_offset", 0.0))
+            self.table.setCellWidget(i, 5, y_spin)
+
+    def _auto_arrange(self):
+        """Auto-arrange buildings using enclosure layout."""
+        from models.building import Building, Story, LayoutMode, compute_layout
+        spacing = self.spacing_spin.value()
+
+        # Build temporary Building objects for layout calculation
+        temp_buildings = []
+        for p in self._sub_params:
+            b = Building(name=p.get("name", ""), length=p["length"], width=p["width"])
+            n_st = max(1, p.get("stories", 1))
+            st_h = round(p["height"] / n_st, 2)
+            b.stories = [Story(name=f"{i+1}F", height=st_h) for i in range(n_st)]
+            b.update_z_offsets()
+            temp_buildings.append(b)
+
+        offsets = compute_layout(temp_buildings, LayoutMode.ENCLOSURE, spacing)
+
+        for i, p in enumerate(self._sub_params):
+            xo, yo = offsets[i] if i < len(offsets) else (0.0, 0.0)
+            p["_x_offset"] = xo
+            p["_y_offset"] = yo
+            x_spin = self.table.cellWidget(i, 4)
+            y_spin = self.table.cellWidget(i, 5)
+            if x_spin:
+                x_spin.setValue(xo)
+            if y_spin:
+                y_spin.setValue(yo)
 
     def _on_generate(self):
-        self.result_model = self._mgr.generate_model(self._read_params())
+        # Read offsets from table
+        building_params = []
+        for i, p in enumerate(self._sub_params):
+            x_spin = self.table.cellWidget(i, 4)
+            y_spin = self.table.cellWidget(i, 5)
+            x_off = x_spin.value() if x_spin else 0.0
+            y_off = y_spin.value() if y_spin else 0.0
+            building_params.append({
+                "params": p,
+                "sub_key": p.get("sub_key", ""),
+                "x_offset": x_off,
+                "y_offset": y_off,
+            })
+
+        self.result_model = self._mgr.generate_group(self._cat_key, building_params)
         self.accept()
 
+class CombustibleSelectionDialog(QDialog):
+    """Combustible selection dialog showing only current sub-target's predefined items."""
+
+    def __init__(self, parent=None, current_selections=None,
+                 current_method=0, facility_combustibles=None,
+                 fire_compartments=None):
+        super().__init__(parent)
+        self.setWindowTitle("可燃物管理")
+        self.setMinimumWidth(520)
+        self._selections = current_selections or {}
+        self._fac_combs = facility_combustibles or []
+        self._fire_compartments = fire_compartments or []
+
+        # Collect compartment names for multi-select
+        self._compartment_names = [fc["name"] for fc in self._fire_compartments]
+
+        # Build item list: only items defined in fire_compartments
+        self._items = []  # list of (key, name, default_count, default_compartments)
+        seen_keys = set()
+        for fi, fc in enumerate(self._fire_compartments):
+            fc_name = fc["name"]
+            for item in fc.get("combustibles", []) + fc.get("specialized_components", []):
+                key = item["key"]
+                count = item.get("count", 1)
+                if key in seen_keys:
+                    # Already added — just append this compartment
+                    for existing in self._items:
+                        if existing[0] == key:
+                            existing[3].add(fc_name)
+                            break
+                else:
+                    seen_keys.add(key)
+                    name = COMBUSTIBLE_LIBRARY.get(key, {}).get("name", key)
+                    self._items.append([key, name, count, {fc_name}])
+
+        layout = QVBoxLayout(self)
+
+        # Header
+        header = QHBoxLayout()
+        header.addWidget(QLabel("名称"))
+        header.addWidget(QLabel("数量"))
+        lbl_fc = QLabel("所属防火分区")
+        lbl_fc.setMinimumWidth(180)
+        header.addWidget(lbl_fc)
+        layout.addLayout(header)
+
+        # Rows
+        self._rows = []  # list of {key, spin, compartment_checks}
+        scroll = QScrollArea()
+        scroll.setWidgetResizable(True)
+        scroll.setFrameShape(QScrollArea.NoFrame)
+        container = QWidget()
+        g = QGridLayout(container)
+        g.setSpacing(4)
+
+        for i, (key, name, default_count, default_fcs) in enumerate(self._items):
+            # Name
+            name_lbl = QLabel(name)
+            name_lbl.setMinimumWidth(120)
+            g.addWidget(name_lbl, i, 0)
+
+            # Count spin
+            sp = QSpinBox()
+            sp.setRange(0, 200)
+            sp.setValue(self._selections.get(key, default_count))
+            sp.setFixedWidth(70)
+            g.addWidget(sp, i, 1)
+
+            # Compartment checkboxes (horizontal)
+            fc_widget = QWidget()
+            fc_layout = QHBoxLayout(fc_widget)
+            fc_layout.setContentsMargins(0, 0, 0, 0)
+            fc_layout.setSpacing(4)
+            fc_checks = {}
+            saved_fcs = self._selections.get(f"{key}__fcs", None)
+            for fc_name in self._compartment_names:
+                cb = QCheckBox(fc_name)
+                if saved_fcs is not None:
+                    cb.setChecked(fc_name in saved_fcs)
+                else:
+                    cb.setChecked(fc_name in default_fcs)
+                fc_layout.addWidget(cb)
+                fc_checks[fc_name] = cb
+            g.addWidget(fc_widget, i, 2)
+
+            self._rows.append({"key": key, "spin": sp, "fc_checks": fc_checks})
+
+        scroll.setWidget(container)
+        layout.addWidget(scroll)
+
+        # Buttons
+        btn_box = QDialogButtonBox(
+            QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
+        btn_box.accepted.connect(self.accept)
+        btn_box.rejected.connect(self.reject)
+        layout.addWidget(btn_box)
+
+    def get_selections(self) -> dict:
+        sel = {}
+        for row in self._rows:
+            key = row["key"]
+            count = row["spin"].value()
+            if count > 0:
+                sel[key] = count
+                # Save compartment assignments
+                fcs = [name for name, cb in row["fc_checks"].items() if cb.isChecked()]
+                sel[f"{key}__fcs"] = fcs
+        return sel
+
+    def get_method(self) -> int:
+        return 0  # No distribution method selection

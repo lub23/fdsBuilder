@@ -8,7 +8,7 @@
 @Version : 1.0
 @Desc  : FDS code preview panel for building model visualization
 '''
-from PySide6.QtWidgets import QWidget, QVBoxLayout, QLabel, QTextEdit, QPushButton, QHBoxLayout, QApplication
+from PySide6.QtWidgets import QWidget, QVBoxLayout, QLabel, QTextEdit
 from PySide6.QtGui import QFont
 
 # ============================================================
@@ -34,22 +34,8 @@ class FDSPreviewPanel(QWidget):
         self.code_edit.setReadOnly(True)
         self.code_edit.setFont(QFont("Consolas", 11))
         layout.addWidget(self.code_edit)
-        
-        # 按钮
-        btn_layout = QHBoxLayout()
-        
-        copy_btn = QPushButton("📋 复制代码")
-        copy_btn.clicked.connect(self.copy_code)
-        btn_layout.addWidget(copy_btn)
-        
-        btn_layout.addStretch()
-        
-        layout.addLayout(btn_layout)
     
     def update_code(self, code: str):
         self.code_edit.setPlainText(code)
     
-    def copy_code(self):
-        clipboard = QApplication.clipboard()
-        clipboard.setText(self.code_edit.toPlainText())
 
