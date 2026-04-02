@@ -1,34 +1,49 @@
+#!/usr/bin/env python3
 """
-Blender场景构建器
-将BuildingModel转换为Blender场景(脚本字符串)
-注意: 此模块不直接导入bpy，只生成脚本字符串供Blender执行
+Blender 3D Viewer Demo
+从预定义建筑创建Blender场景并渲染
 """
 
-import math
+import sys
+import os
+import json
+
+sys.path.insert(0, os.path.dirname(__file__))
+
+from bfds_viewer.blender_client import BlenderClient
+from models.facility import FacilityManager
 
 
-class SceneBuilder:
-    """Blender场景构建器"""
+def main():
+    print("=== Blender 3D Viewer Demo ===")
 
-    def __init__(self):
-        self.model = None
+    # 1. 加载预定义建筑
+    fm = FacilityManager()
 
-    def set_model(self, model):
-        """设置建筑模型"""
-        self.model = model
-        return self
+    cats = fm.categories()
+    if not cats:
+        print("No facilities found")
+        return
 
-    def build_script(self) -> str:
-        """生成构建场景的Python脚本字符串"""
-        if not self.model:
-            raise ValueError("Model not set")
+    cat_key, cat_name = cats[0]
+    subs = fm.sub_types(cat_key)
+    if not subs:
+        print("No sub types found")
+        return
 
-        L = self.model.length
-        W = self.model.width
-        t = self.model.wall_thickness
-        H = self.model.total_height
+    sub_key, sub_name = subs[0]
 
-        script = f"""
+    params = fm.default_params(cat_key, sub_key)
+    model = fm.generate_model(params)
+
+    print(f"Created model: {model.length}x{model.width}x{model.total_height}m")
+    print(f"  Category: {cat_name} / {sub_name}")
+
+    # 2. 使用BlenderClient执行场景构建
+    client = BlenderClient()
+
+    # 构建场景脚本
+    script = f"""
 import bpy
 import math
 
@@ -62,10 +77,10 @@ def create_wall(name, x, y, z, length, width, height, color):
     obj.data.materials.append(mat)
 
 # 建筑参数
-L = {L}
-W = {W}
-t = {t}
-H = {H}
+L = {model.length}
+W = {model.width}
+t = {model.wall_thickness}
+H = {model.total_height}
 
 # 颜色
 wall_color = (0.8, 0.8, 0.8, 1.0)
@@ -94,10 +109,19 @@ sun.data.energy = 3
 
 print(f"Scene built: {{L}}x{{W}}x{{H}}m")
 """
-        return script
 
-    def build(self):
-        """构建场景 (在Blender中执行)"""
-        raise NotImplementedError(
-            "Use build_script() and BlenderClient.run_script() instead"
-        )
+    print("\nBuilding Blender scene...")
+    result = client.run_script(script, timeout=120)
+    print(result)
+
+    # 3. 渲染
+    output_path = os.path.join(os.path.dirname(__file__), "render_demo.png")
+    print(f"\nRendering to {output_path}...")
+    client.render_scene(output_path)
+    print(f"Render complete: {output_path}")
+
+    print("\n=== Demo Complete ===")
+
+
+if __name__ == "__main__":
+    main()

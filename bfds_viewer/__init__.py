@@ -6,4 +6,3 @@ Blender 3D Viewer + FDS Export Module
 __version__ = "0.1.0"
 
 from .blender_client import BlenderClient
-from .scene_builder import SceneBuilder

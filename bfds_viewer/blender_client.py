@@ -33,6 +33,10 @@ class BlenderClient:
         if result.returncode != 0:
             raise RuntimeError(f"Blender error: {result.stderr}")
 
+        # 检查stderr中的警告
+        if result.stderr and "error" in result.stderr.lower():
+            print(f"Blender warning: {result.stderr}")
+
         return result.stdout
 
     def render_scene(self, output_path: str, width: int = 1920, height: int = 1080):
