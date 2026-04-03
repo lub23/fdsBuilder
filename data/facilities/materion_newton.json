@@ -1,0 +1,1074 @@
+{
+  "cn_name": "Materion Electronic Materials - Newton",
+  "fire_separation": 12.0,
+  "sub_types": {
+    "Workshop 1": {
+      "cn_name": "西侧一号厂房",
+      "description": "西侧一号厂房，宽30m，长55m，高4m，主生产区",
+      "offset": {
+        "x": 0,
+        "y": 0
+      },
+      "rotation": 0,
+      "building": {
+        "length": {
+          "min": 55,
+          "max": 55,
+          "median": 55,
+          "mean": 55,
+          "unit": "m"
+        },
+        "width": {
+          "min": 30,
+          "max": 30,
+          "median": 30,
+          "mean": 30,
+          "unit": "m"
+        },
+        "height": {
+          "min": 4,
+          "max": 4,
+          "median": 4,
+          "mean": 4,
+          "unit": "m"
+        },
+        "stories": {
+          "min": 1,
+          "max": 1,
+          "median": 1,
+          "mean": 1,
+          "unit": ""
+        }
+      },
+      "doors": {
+        "width": {
+          "min": 2,
+          "max": 3,
+          "median": 2.5,
+          "mean": 2.5,
+          "unit": "m"
+        },
+        "height": {
+          "min": 2.5,
+          "max": 3,
+          "median": 2.8,
+          "mean": 2.8,
+          "unit": "m"
+        },
+        "count": {
+          "min": 6,
+          "max": 10,
+          "median": 8,
+          "mean": 8,
+          "unit": ""
+        }
+      },
+      "windows": {
+        "width": {
+          "min": 1.5,
+          "max": 1.5,
+          "median": 1.5,
+          "mean": 1.5,
+          "unit": "m"
+        },
+        "height": {
+          "min": 1.5,
+          "max": 1.5,
+          "median": 1.5,
+          "mean": 1.5,
+          "unit": "m"
+        },
+        "count": {
+          "min": 8,
+          "max": 12,
+          "median": 10,
+          "mean": 10,
+          "unit": ""
+        },
+        "z_bottom": 2.5
+      },
+      "wall_thickness": 0.25,
+      "fire_compartments": [
+        {
+          "name": "主生产区",
+          "x_ratio": [0, 1.0],
+          "y_ratio": [0, 1.0],
+          "wall_thickness": 0.25,
+          "wall_material": "CONCRETE",
+          "openings": [
+            {"wall": "x_min", "type": "door", "position": 0.545, "width": 2.0, "height": 2.5, "z_bottom": 0},
+            {"wall": "y_max", "type": "door", "position": 0.5, "width": 2.5, "height": 2.8, "z_bottom": 0}
+          ],
+          "combustibles": [],
+          "specialized_components": []
+        }
+      ],
+      "specialized_components": []
+    },
+    "Workshop 2 - High Level": {
+      "cn_name": "中央二号厂房",
+      "description": "中央二号厂房，宽13m，长9m，高10m，2层，精密加工区",
+      "offset": {
+        "x": 30,
+        "y": 46
+      },
+      "rotation": 0,
+      "building": {
+        "length": {
+          "min": 9,
+          "max": 9,
+          "median": 9,
+          "mean": 9,
+          "unit": "m"
+        },
+        "width": {
+          "min": 13,
+          "max": 13,
+          "median": 13,
+          "mean": 13,
+          "unit": "m"
+        },
+        "height": {
+          "min": 10,
+          "max": 10,
+          "median": 10,
+          "mean": 10,
+          "unit": "m"
+        },
+        "stories": {
+          "min": 2,
+          "max": 2,
+          "median": 2,
+          "mean": 2,
+          "unit": ""
+        }
+      },
+      "doors": {
+        "width": {
+          "min": 1.5,
+          "max": 2,
+          "median": 1.8,
+          "mean": 1.8,
+          "unit": "m"
+        },
+        "height": {
+          "min": 2.1,
+          "max": 2.5,
+          "median": 2.3,
+          "mean": 2.3,
+          "unit": "m"
+        },
+        "count": {
+          "min": 2,
+          "max": 4,
+          "median": 3,
+          "mean": 3,
+          "unit": ""
+        }
+      },
+      "windows": {
+        "width": {
+          "min": 1.5,
+          "max": 1.5,
+          "median": 1.5,
+          "mean": 1.5,
+          "unit": "m"
+        },
+        "height": {
+          "min": 1.5,
+          "max": 1.5,
+          "median": 1.5,
+          "mean": 1.5,
+          "unit": "m"
+        },
+        "count": {
+          "min": 4,
+          "max": 6,
+          "median": 5,
+          "mean": 5,
+          "unit": ""
+        },
+        "z_bottom": 2.5
+      },
+      "wall_thickness": 0.25,
+      "stairwell": {
+        "length": 3,
+        "width": 2.5,
+        "position": "左下角"
+      },
+      "fire_compartments": [
+        {
+          "name": "精密加工区",
+          "x_ratio": [0, 1.0],
+          "y_ratio": [0, 1.0],
+          "wall_thickness": 0.25,
+          "wall_material": "CONCRETE",
+          "openings": [
+            {"wall": "x_min", "type": "door", "position": 0.5, "width": 1.5, "height": 2.1, "z_bottom": 0},
+            {"wall": "y_min", "type": "door", "position": 0.5, "width": 1.5, "height": 2.1, "z_bottom": 0}
+          ],
+          "combustibles": [],
+          "specialized_components": []
+        }
+      ],
+      "specialized_components": []
+    },
+    "Central Core": {
+      "cn_name": "中央楼梯/核心筒",
+      "description": "中央楼梯/核心筒，宽8m，长12m，高10m，连接厂房1、2、3",
+      "offset": {
+        "x": 30,
+        "y": 34
+      },
+      "rotation": 0,
+      "building": {
+        "length": {
+          "min": 12,
+          "max": 12,
+          "median": 12,
+          "mean": 12,
+          "unit": "m"
+        },
+        "width": {
+          "min": 8,
+          "max": 8,
+          "median": 8,
+          "mean": 8,
+          "unit": "m"
+        },
+        "height": {
+          "min": 10,
+          "max": 10,
+          "median": 10,
+          "mean": 10,
+          "unit": "m"
+        },
+        "stories": {
+          "min": 2,
+          "max": 2,
+          "median": 2,
+          "mean": 2,
+          "unit": ""
+        }
+      },
+      "doors": {
+        "width": {
+          "min": 1.5,
+          "max": 2,
+          "median": 1.8,
+          "mean": 1.8,
+          "unit": "m"
+        },
+        "height": {
+          "min": 2.1,
+          "max": 2.5,
+          "median": 2.3,
+          "mean": 2.3,
+          "unit": "m"
+        },
+        "count": {
+          "min": 3,
+          "max": 5,
+          "median": 4,
+          "mean": 4,
+          "unit": ""
+        }
+      },
+      "windows": {
+        "width": {
+          "min": 1.5,
+          "max": 1.5,
+          "median": 1.5,
+          "mean": 1.5,
+          "unit": "m"
+        },
+        "height": {
+          "min": 1.5,
+          "max": 1.5,
+          "median": 1.5,
+          "mean": 1.5,
+          "unit": "m"
+        },
+        "count": {
+          "min": 3,
+          "max": 5,
+          "median": 4,
+          "mean": 4,
+          "unit": ""
+        },
+        "z_bottom": 2.5
+      },
+      "wall_thickness": 0.3,
+      "stairwell": {
+        "length": 3,
+        "width": 2.5,
+        "position": "右下角"
+      },
+      "fire_compartments": [
+        {
+          "name": "核心筒主体",
+          "x_ratio": [0, 1.0],
+          "y_ratio": [0, 1.0],
+          "wall_thickness": 0.3,
+          "wall_material": "CONCRETE",
+          "openings": [],
+          "combustibles": [],
+          "specialized_components": []
+        }
+      ],
+      "specialized_components": [
+        {"key": "STAIRWELL", "count": 1}
+      ]
+    },
+    "Workshop 3": {
+      "cn_name": "东侧三号大厂房",
+      "description": "东侧三号大厂房，主矩形部分宽22m，长35m，高5m",
+      "offset": {
+        "x": 43,
+        "y": 20
+      },
+      "rotation": 0,
+      "building": {
+        "length": {
+          "min": 35,
+          "max": 35,
+          "median": 35,
+          "mean": 35,
+          "unit": "m"
+        },
+        "width": {
+          "min": 22,
+          "max": 22,
+          "median": 22,
+          "mean": 22,
+          "unit": "m"
+        },
+        "height": {
+          "min": 5,
+          "max": 5,
+          "median": 5,
+          "mean": 5,
+          "unit": "m"
+        },
+        "stories": {
+          "min": 1,
+          "max": 1,
+          "median": 1,
+          "mean": 1,
+          "unit": ""
+        }
+      },
+      "doors": {
+        "width": {
+          "min": 2,
+          "max": 4,
+          "median": 3,
+          "mean": 3,
+          "unit": "m"
+        },
+        "height": {
+          "min": 2.5,
+          "max": 4,
+          "median": 3.2,
+          "mean": 3.2,
+          "unit": "m"
+        },
+        "count": {
+          "min": 6,
+          "max": 10,
+          "median": 8,
+          "mean": 8,
+          "unit": ""
+        }
+      },
+      "windows": {
+        "width": {
+          "min": 1.5,
+          "max": 1.5,
+          "median": 1.5,
+          "mean": 1.5,
+          "unit": "m"
+        },
+        "height": {
+          "min": 1.5,
+          "max": 1.5,
+          "median": 1.5,
+          "mean": 1.5,
+          "unit": "m"
+        },
+        "count": {
+          "min": 8,
+          "max": 12,
+          "median": 10,
+          "mean": 10,
+          "unit": ""
+        },
+        "z_bottom": 2.5
+      },
+      "wall_thickness": 0.25,
+      "fire_compartments": [
+        {
+          "name": "北部加工区",
+          "x_ratio": [0, 1.0],
+          "y_ratio": [0.4, 1.0],
+          "wall_thickness": 0.25,
+          "wall_material": "CONCRETE",
+          "openings": [],
+          "combustibles": [],
+          "specialized_components": []
+        },
+        {
+          "name": "南部出货区",
+          "x_ratio": [0, 1.0],
+          "y_ratio": [0, 0.4],
+          "wall_thickness": 0.25,
+          "wall_material": "CONCRETE",
+          "openings": [
+            {"wall": "y_min", "type": "door", "position": 0.33, "width": 3.0, "height": 3.5, "z_bottom": 0},
+            {"wall": "y_min", "type": "door", "position": 0.66, "width": 3.0, "height": 3.5, "z_bottom": 0}
+          ],
+          "combustibles": [],
+          "specialized_components": []
+        }
+      ],
+      "specialized_components": []
+    },
+    "South Auxiliary": {
+      "cn_name": "南部辅助楼",
+      "description": "不规则L型建筑，由(8x12)和(6x26)两个长方体组合，设备间与机房",
+      "offset": {
+        "x": 43,
+        "y": -26
+      },
+      "rotation": 0,
+      "building": {
+        "length": {
+          "min": 26,
+          "max": 26,
+          "median": 26,
+          "mean": 26,
+          "unit": "m"
+        },
+        "width": {
+          "min": 14,
+          "max": 14,
+          "median": 14,
+          "mean": 14,
+          "unit": "m"
+        },
+        "height": {
+          "min": 5,
+          "max": 5,
+          "median": 5,
+          "mean": 5,
+          "unit": "m"
+        },
+        "stories": {
+          "min": 1,
+          "max": 1,
+          "median": 1,
+          "mean": 1,
+          "unit": ""
+        }
+      },
+      "doors": {
+        "width": {
+          "min": 1,
+          "max": 1.5,
+          "median": 1.2,
+          "mean": 1.2,
+          "unit": "m"
+        },
+        "height": {
+          "min": 2.1,
+          "max": 2.5,
+          "median": 2.3,
+          "mean": 2.3,
+          "unit": "m"
+        },
+        "count": {
+          "min": 2,
+          "max": 4,
+          "median": 3,
+          "mean": 3,
+          "unit": ""
+        }
+      },
+      "windows": {
+        "width": {
+          "min": 1,
+          "max": 1.5,
+          "median": 1.2,
+          "mean": 1.2,
+          "unit": "m"
+        },
+        "height": {
+          "min": 1.5,
+          "max": 2,
+          "median": 1.8,
+          "mean": 1.8,
+          "unit": "m"
+        },
+        "count": {
+          "min": 6,
+          "max": 10,
+          "median": 8,
+          "mean": 8,
+          "unit": ""
+        },
+        "z_bottom": 1.0
+      },
+      "wall_thickness": 0.2,
+      "fire_compartments": [
+        {
+          "name": "辅助区主体",
+          "x_ratio": [0, 1.0],
+          "y_ratio": [0, 1.0],
+          "wall_thickness": 0.2,
+          "wall_material": "CONCRETE",
+          "openings": [],
+          "combustibles": [],
+          "specialized_components": []
+        }
+      ],
+      "specialized_components": []
+    },
+    "Workshop 1 - West Vestibule": {
+      "cn_name": "厂房1-西侧入口门斗",
+      "description": "位于厂房1左侧墙体，y=25m处，宽4m，长10m，高3.5m",
+      "offset": {
+        "x": -4,
+        "y": 25
+      },
+      "rotation": 0,
+      "building": {
+        "length": {
+          "min": 10,
+          "max": 10,
+          "median": 10,
+          "mean": 10,
+          "unit": "m"
+        },
+        "width": {
+          "min": 4,
+          "max": 4,
+          "median": 4,
+          "mean": 4,
+          "unit": "m"
+        },
+        "height": {
+          "min": 3.5,
+          "max": 3.5,
+          "median": 3.5,
+          "mean": 3.5,
+          "unit": "m"
+        },
+        "stories": {
+          "min": 1,
+          "max": 1,
+          "median": 1,
+          "mean": 1,
+          "unit": ""
+        }
+      },
+      "doors": {
+        "width": {
+          "min": 1.5,
+          "max": 2,
+          "median": 1.8,
+          "mean": 1.8,
+          "unit": "m"
+        },
+        "height": {
+          "min": 2.5,
+          "max": 3,
+          "median": 2.8,
+          "mean": 2.8,
+          "unit": "m"
+        },
+        "count": {
+          "min": 1,
+          "max": 2,
+          "median": 1.5,
+          "mean": 1.5,
+          "unit": ""
+        }
+      },
+      "windows": {},
+      "wall_thickness": 0.2,
+      "fire_compartments": [
+        {
+          "name": "门斗主体",
+          "x_ratio": [0, 1.0],
+          "y_ratio": [0, 1.0],
+          "wall_thickness": 0.2,
+          "wall_material": "CONCRETE",
+          "openings": [
+            {"wall": "x_min", "type": "door", "position": 0.5, "width": 1.5, "height": 2.5, "z_bottom": 0}
+          ],
+          "combustibles": [],
+          "specialized_components": []
+        }
+      ],
+      "specialized_components": []
+    },
+    "East Storage Wing": {
+      "cn_name": "厂房3-东北独立库房",
+      "description": "位于厂房3右侧的独立库房，宽10m，长18m，高5m",
+      "offset": {
+        "x": 65,
+        "y": 37
+      },
+      "rotation": 0,
+      "building": {
+        "length": {
+          "min": 18,
+          "max": 18,
+          "median": 18,
+          "mean": 18,
+          "unit": "m"
+        },
+        "width": {
+          "min": 10,
+          "max": 10,
+          "median": 10,
+          "mean": 10,
+          "unit": "m"
+        },
+        "height": {
+          "min": 5,
+          "max": 5,
+          "median": 5,
+          "mean": 5,
+          "unit": "m"
+        },
+        "stories": {
+          "min": 1,
+          "max": 1,
+          "median": 1,
+          "mean": 1,
+          "unit": ""
+        }
+      },
+      "doors": {
+        "width": {
+          "min": 2,
+          "max": 3,
+          "median": 2.5,
+          "mean": 2.5,
+          "unit": "m"
+        },
+        "height": {
+          "min": 2.8,
+          "max": 3.5,
+          "median": 3,
+          "mean": 3,
+          "unit": "m"
+        },
+        "count": {
+          "min": 1,
+          "max": 2,
+          "median": 1.5,
+          "mean": 1.5,
+          "unit": ""
+        }
+      },
+      "windows": {
+        "width": {
+          "min": 1.5,
+          "max": 1.5,
+          "median": 1.5,
+          "mean": 1.5,
+          "unit": "m"
+        },
+        "height": {
+          "min": 1.5,
+          "max": 1.5,
+          "median": 1.5,
+          "mean": 1.5,
+          "unit": "m"
+        },
+        "count": {
+          "min": 2,
+          "max": 4,
+          "median": 3,
+          "mean": 3,
+          "unit": ""
+        },
+        "z_bottom": 2.5
+      },
+      "wall_thickness": 0.2,
+      "fire_compartments": [
+        {
+          "name": "独立库房主体",
+          "x_ratio": [0, 1.0],
+          "y_ratio": [0, 1.0],
+          "wall_thickness": 0.2,
+          "wall_material": "CONCRETE",
+          "openings": [
+            {"wall": "y_max", "type": "door", "position": 0.5, "width": 3.0, "height": 3.0, "z_bottom": 0}
+          ],
+          "combustibles": [],
+          "specialized_components": []
+        }
+      ],
+      "specialized_components": []
+    },
+    "Southeast Corner Node": {
+      "cn_name": "厂房3-东南转角凸起",
+      "description": "位于厂房3右下角的转角结构，宽4m，长3m，高4m",
+      "offset": {
+        "x": 65,
+        "y": 20
+      },
+      "rotation": 0,
+      "building": {
+        "length": {
+          "min": 3,
+          "max": 3,
+          "median": 3,
+          "mean": 3,
+          "unit": "m"
+        },
+        "width": {
+          "min": 4,
+          "max": 4,
+          "median": 4,
+          "mean": 4,
+          "unit": "m"
+        },
+        "height": {
+          "min": 4,
+          "max": 4,
+          "median": 4,
+          "mean": 4,
+          "unit": "m"
+        },
+        "stories": {
+          "min": 1,
+          "max": 1,
+          "median": 1,
+          "mean": 1,
+          "unit": ""
+        }
+      },
+      "doors": {
+        "width": {
+          "min": 0.8,
+          "max": 1,
+          "median": 0.9,
+          "mean": 0.9,
+          "unit": "m"
+        },
+        "height": {
+          "min": 2,
+          "max": 2.2,
+          "median": 2.1,
+          "mean": 2.1,
+          "unit": "m"
+        },
+        "count": {
+          "min": 1,
+          "max": 1,
+          "median": 1,
+          "mean": 1,
+          "unit": ""
+        }
+      },
+      "windows": {},
+      "wall_thickness": 0.15,
+      "fire_compartments": [
+        {
+          "name": "转角节点主体",
+          "x_ratio": [0, 1.0],
+          "y_ratio": [0, 1.0],
+          "wall_thickness": 0.15,
+          "wall_material": "CONCRETE",
+          "openings": [
+            {"wall": "y_min", "type": "door", "position": 0.5, "width": 0.8, "height": 2.0, "z_bottom": 0}
+          ],
+          "combustibles": [],
+          "specialized_components": []
+        }
+      ],
+      "specialized_components": []
+    },
+    "Link Corridor": {
+      "cn_name": "连接长廊",
+      "description": "连接主厂区与南部区域的垂直通道，宽6m，长26m，高4m",
+      "offset": {
+        "x": 43,
+        "y": -26
+      },
+      "rotation": 0,
+      "building": {
+        "length": {
+          "min": 26,
+          "max": 26,
+          "median": 26,
+          "mean": 26,
+          "unit": "m"
+        },
+        "width": {
+          "min": 6,
+          "max": 6,
+          "median": 6,
+          "mean": 6,
+          "unit": "m"
+        },
+        "height": {
+          "min": 4,
+          "max": 4,
+          "median": 4,
+          "mean": 4,
+          "unit": "m"
+        },
+        "stories": {
+          "min": 1,
+          "max": 1,
+          "median": 1,
+          "mean": 1,
+          "unit": ""
+        }
+      },
+      "doors": {
+        "width": {
+          "min": 1.5,
+          "max": 2,
+          "median": 1.8,
+          "mean": 1.8,
+          "unit": "m"
+        },
+        "height": {
+          "min": 2.5,
+          "max": 3,
+          "median": 2.8,
+          "mean": 2.8,
+          "unit": "m"
+        },
+        "count": {
+          "min": 2,
+          "max": 4,
+          "median": 3,
+          "mean": 3,
+          "unit": ""
+        }
+      },
+      "windows": {},
+      "wall_thickness": 0.2,
+      "fire_compartments": [
+        {
+          "name": "长廊主体",
+          "x_ratio": [0, 1.0],
+          "y_ratio": [0, 1.0],
+          "wall_thickness": 0.2,
+          "wall_material": "CONCRETE",
+          "openings": [],
+          "combustibles": [],
+          "specialized_components": []
+        }
+      ],
+      "specialized_components": []
+    },
+    "South Block A": {
+      "cn_name": "底层配电室",
+      "description": "位于连接长廊最南端底部，宽8m，长12m，高5m",
+      "offset": {
+        "x": 42,
+        "y": -38
+      },
+      "rotation": 0,
+      "building": {
+        "length": {
+          "min": 12,
+          "max": 12,
+          "median": 12,
+          "mean": 12,
+          "unit": "m"
+        },
+        "width": {
+          "min": 8,
+          "max": 8,
+          "median": 8,
+          "mean": 8,
+          "unit": "m"
+        },
+        "height": {
+          "min": 5,
+          "max": 5,
+          "median": 5,
+          "mean": 5,
+          "unit": "m"
+        },
+        "stories": {
+          "min": 1,
+          "max": 1,
+          "median": 1,
+          "mean": 1,
+          "unit": ""
+        }
+      },
+      "doors": {
+        "width": {
+          "min": 1,
+          "max": 1.5,
+          "median": 1.2,
+          "mean": 1.2,
+          "unit": "m"
+        },
+        "height": {
+          "min": 2.1,
+          "max": 2.5,
+          "median": 2.3,
+          "mean": 2.3,
+          "unit": "m"
+        },
+        "count": {
+          "min": 1,
+          "max": 2,
+          "median": 1.5,
+          "mean": 1.5,
+          "unit": ""
+        }
+      },
+      "windows": {
+        "width": {
+          "min": 1,
+          "max": 1.5,
+          "median": 1.2,
+          "mean": 1.2,
+          "unit": "m"
+        },
+        "height": {
+          "min": 1,
+          "max": 1.5,
+          "median": 1.2,
+          "mean": 1.2,
+          "unit": "m"
+        },
+        "count": {
+          "min": 2,
+          "max": 3,
+          "median": 2.5,
+          "mean": 2.5,
+          "unit": ""
+        },
+        "z_bottom": 1.0
+      },
+      "wall_thickness": 0.2,
+      "fire_compartments": [
+        {
+          "name": "配电室主体",
+          "x_ratio": [0, 1.0],
+          "y_ratio": [0, 1.0],
+          "wall_thickness": 0.2,
+          "wall_material": "CONCRETE",
+          "openings": [],
+          "combustibles": [],
+          "specialized_components": []
+        }
+      ],
+      "specialized_components": []
+    },
+    "South Block B": {
+      "cn_name": "东南泵房",
+      "description": "位于连接长廊中段右侧，宽12m，长8m，高4m",
+      "offset": {
+        "x": 49,
+        "y": -26
+      },
+      "rotation": 0,
+      "building": {
+        "length": {
+          "min": 8,
+          "max": 8,
+          "median": 8,
+          "mean": 8,
+          "unit": "m"
+        },
+        "width": {
+          "min": 12,
+          "max": 12,
+          "median": 12,
+          "mean": 12,
+          "unit": "m"
+        },
+        "height": {
+          "min": 4,
+          "max": 4,
+          "median": 4,
+          "mean": 4,
+          "unit": "m"
+        },
+        "stories": {
+          "min": 1,
+          "max": 1,
+          "median": 1,
+          "mean": 1,
+          "unit": ""
+        }
+      },
+      "doors": {
+        "width": {
+          "min": 1,
+          "max": 1.5,
+          "median": 1.2,
+          "mean": 1.2,
+          "unit": "m"
+        },
+        "height": {
+          "min": 2.1,
+          "max": 2.5,
+          "median": 2.3,
+          "mean": 2.3,
+          "unit": "m"
+        },
+        "count": {
+          "min": 1,
+          "max": 2,
+          "median": 1.5,
+          "mean": 1.5,
+          "unit": ""
+        }
+      },
+      "windows": {
+        "width": {
+          "min": 0.8,
+          "max": 1.2,
+          "median": 1,
+          "mean": 1,
+          "unit": "m"
+        },
+        "height": {
+          "min": 1,
+          "max": 1.5,
+          "median": 1.2,
+          "mean": 1.2,
+          "unit": "m"
+        },
+        "count": {
+          "min": 3,
+          "max": 3,
+          "median": 3,
+          "mean": 3,
+          "unit": ""
+        },
+        "z_bottom": 1.0
+      },
+      "wall_thickness": 0.2,
+      "fire_compartments": [
+        {
+          "name": "泵房主体",
+          "x_ratio": [0, 1.0],
+          "y_ratio": [0, 1.0],
+          "wall_thickness": 0.2,
+          "wall_material": "CONCRETE",
+          "openings": [],
+          "combustibles": [],
+          "specialized_components": []
+        }
+      ],
+      "specialized_components": []
+    }
+  }
+}

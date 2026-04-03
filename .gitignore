@@ -20,3 +20,5 @@ case/
 
 # fds file
 *.fds
+
+*.md

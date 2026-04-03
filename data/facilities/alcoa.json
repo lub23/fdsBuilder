@@ -1,0 +1,852 @@
+{
+  "cn_name": "Alcoa Warrick Operations",
+  "fire_separation": 15.0,
+  "sub_types": {
+    "Bay_A1": {
+      "cn_name": "A1跨单元",
+      "description": "电解铝厂标准窄跨厂房，宽19m，长465m，1层，被中间横向通道分为南北两个分区",
+      "offset": {"x": 0, "y": 0},
+      "rotation": 0,
+      "building": {
+        "length": {"min": 326, "max": 326, "median": 326, "mean": 326, "unit": "m"},
+        "width": {"min": 19, "max": 19, "median": 19, "mean": 19, "unit": "m"},
+        "height": {"min": 15, "max": 20, "median": 18, "mean": 17.5, "unit": "m"},
+        "stories": {"min": 1, "max": 1, "median": 1, "mean": 1, "unit": ""}
+      },
+      "doors": {
+        "width": {"min": 4, "max": 6, "median": 5, "mean": 5, "unit": "m"},
+        "height": {"min": 4, "max": 5, "median": 4.5, "mean": 4.5, "unit": "m"},
+        "count": {"min": 2, "max": 4, "median": 3, "mean": 3, "unit": ""}
+      },
+      "windows": {},
+      "wall_thickness": 0.3,
+      "fire_compartments": [
+        {
+          "name": "A1南分区",
+          "x_ratio": [0, 1.0],
+          "y_ratio": [0, 0.49],
+          "wall_thickness": 0.3,
+          "wall_material": "CONCRETE",
+          "openings": [
+            {"wall": "y_min", "type": "door", "position": 0.5, "width": 5.0, "height": 4.5, "z_bottom": 0}
+          ],
+          "combustibles": [
+            {"key": "PREBAKED_ANODE_BLOCK", "count": 320},
+            {"key": "CATHODE_CARBON_BLOCK", "count": 240}
+          ],
+          "specialized_components": []
+        },
+        {
+          "name": "A1北分区",
+          "x_ratio": [0, 1.0],
+          "y_ratio": [0.51, 1.0],
+          "wall_thickness": 0.3,
+          "wall_material": "CONCRETE",
+          "openings": [
+            {"wall": "y_max", "type": "door", "position": 0.5, "width": 5.0, "height": 4.5, "z_bottom": 0}
+          ],
+          "combustibles": [
+            {"key": "CELL_SIDE_HYDRAULIC_OIL", "count": 10}
+          ],
+          "specialized_components": []
+        }
+      ],
+      "specialized_components": []
+    },
+    "Bay_A2": {
+      "cn_name": "A2跨单元",
+      "description": "电解铝厂标准窄跨厂房，宽19m，长465m",
+      "offset": {"x": 19, "y": 0},
+      "rotation": 0,
+      "building": {
+        "length": {"min": 326, "max": 326, "median": 326, "mean": 326, "unit": "m"},
+        "width": {"min": 19, "max": 19, "median": 19, "mean": 19, "unit": "m"},
+        "height": {"min": 15, "max": 20, "median": 18, "mean": 17.5, "unit": "m"},
+        "stories": {"min": 1, "max": 1, "median": 1, "mean": 1, "unit": ""}
+      },
+      "doors": {
+        "width": {"min": 4, "max": 6, "median": 5, "mean": 5, "unit": "m"},
+        "height": {"min": 4, "max": 5, "median": 4.5, "mean": 4.5, "unit": "m"},
+        "count": {"min": 2, "max": 4, "median": 3, "mean": 3, "unit": ""}
+      },
+      "windows": {},
+      "wall_thickness": 0.3,
+      "fire_compartments": [
+        {
+          "name": "A2南分区",
+          "x_ratio": [0, 1.0],
+          "y_ratio": [0, 0.49],
+          "wall_thickness": 0.3,
+          "wall_material": "CONCRETE",
+          "openings": [
+            {"wall": "y_min", "type": "door", "position": 0.5, "width": 5.0, "height": 4.5, "z_bottom": 0}
+          ],
+          "combustibles": [
+            {"key": "PREBAKED_ANODE_BLOCK", "count": 320},
+            {"key": "CATHODE_CARBON_BLOCK", "count": 240}
+          ],
+          "specialized_components": []
+        },
+        {
+          "name": "A2北分区",
+          "x_ratio": [0, 1.0],
+          "y_ratio": [0.51, 1.0],
+          "wall_thickness": 0.3,
+          "wall_material": "CONCRETE",
+          "openings": [
+            {"wall": "y_max", "type": "door", "position": 0.5, "width": 5.0, "height": 4.5, "z_bottom": 0}
+          ],
+          "combustibles": [
+            {"key": "CELL_SIDE_HYDRAULIC_OIL", "count": 10}
+          ],
+          "specialized_components": []
+        }
+      ],
+      "specialized_components": []
+    },
+    "Bay_A3": {
+      "cn_name": "A3跨单元",
+      "description": "电解铝厂标准窄跨厂房，宽19m，长465m",
+      "offset": {"x": 38, "y": 0},
+      "rotation": 0,
+      "building": {
+        "length": {"min": 326, "max": 326, "median": 326, "mean": 326, "unit": "m"},
+        "width": {"min": 19, "max": 19, "median": 19, "mean": 19, "unit": "m"},
+        "height": {"min": 15, "max": 20, "median": 18, "mean": 17.5, "unit": "m"},
+        "stories": {"min": 1, "max": 1, "median": 1, "mean": 1, "unit": ""}
+      },
+      "doors": {
+        "width": {"min": 4, "max": 6, "median": 5, "mean": 5, "unit": "m"},
+        "height": {"min": 4, "max": 5, "median": 4.5, "mean": 4.5, "unit": "m"},
+        "count": {"min": 2, "max": 4, "median": 3, "mean": 3, "unit": ""}
+      },
+      "windows": {},
+      "wall_thickness": 0.3,
+      "fire_compartments": [
+        {
+          "name": "A3南分区",
+          "x_ratio": [0, 1.0],
+          "y_ratio": [0, 0.49],
+          "wall_thickness": 0.3,
+          "wall_material": "CONCRETE",
+          "openings": [
+            {"wall": "y_min", "type": "door", "position": 0.5, "width": 5.0, "height": 4.5, "z_bottom": 0}
+          ],
+          "combustibles": [
+            {"key": "PREBAKED_ANODE_BLOCK", "count": 320},
+            {"key": "CATHODE_CARBON_BLOCK", "count": 240}
+          ],
+          "specialized_components": []
+        },
+        {
+          "name": "A3北分区",
+          "x_ratio": [0, 1.0],
+          "y_ratio": [0.51, 1.0],
+          "wall_thickness": 0.3,
+          "wall_material": "CONCRETE",
+          "openings": [
+            {"wall": "y_max", "type": "door", "position": 0.5, "width": 5.0, "height": 4.5, "z_bottom": 0}
+          ],
+          "combustibles": [
+            {"key": "CELL_SIDE_HYDRAULIC_OIL", "count": 10}
+          ],
+          "specialized_components": []
+        }
+      ],
+      "specialized_components": []
+    },
+    "Bay_B1": {
+      "cn_name": "B1宽跨单元",
+      "description": "电解铝厂宽跨厂房，含内嵌功能区，宽45m，长465m",
+      "offset": {"x": 57, "y": 0},
+      "rotation": 0,
+      "building": {
+        "length": {"min": 326, "max": 326, "median": 326, "mean": 326, "unit": "m"},
+        "width": {"min": 45, "max": 45, "median": 45, "mean": 45, "unit": "m"},
+        "height": {"min": 15, "max": 20, "median": 18, "mean": 17.5, "unit": "m"},
+        "stories": {"min": 1, "max": 1, "median": 1, "mean": 1, "unit": ""}
+      },
+      "doors": {
+        "width": {"min": 4, "max": 6, "median": 5, "mean": 5, "unit": "m"},
+        "height": {"min": 4, "max": 5, "median": 4.5, "mean": 4.5, "unit": "m"},
+        "count": {"min": 2, "max": 4, "median": 3, "mean": 3, "unit": ""}
+      },
+      "windows": {},
+      "wall_thickness": 0.3,
+      "fire_compartments": [
+        {
+          "name": "B1南分区",
+          "x_ratio": [0, 1.0],
+          "y_ratio": [0, 0.49],
+          "wall_thickness": 0.3,
+          "wall_material": "CONCRETE",
+          "openings": [
+            {"wall": "y_min", "type": "door", "position": 0.5, "width": 5.0, "height": 4.5, "z_bottom": 0}
+          ],
+          "combustibles": [
+            {"key": "PREBAKED_ANODE_BLOCK", "count": 480},
+            {"key": "CATHODE_CARBON_BLOCK", "count": 360}
+          ],
+          "specialized_components": []
+        },
+        {
+          "name": "B1内嵌功能区",
+          "x_ratio": [0, 1.0],
+          "y_ratio": [0.22, 0.32],
+          "wall_thickness": 0.3,
+          "wall_material": "CONCRETE",
+          "openings": [],
+          "combustibles": [],
+          "specialized_components": []
+        },
+        {
+          "name": "B1北分区",
+          "x_ratio": [0, 1.0],
+          "y_ratio": [0.51, 1.0],
+          "wall_thickness": 0.3,
+          "wall_material": "CONCRETE",
+          "openings": [
+            {"wall": "y_max", "type": "door", "position": 0.5, "width": 5.0, "height": 4.5, "z_bottom": 0}
+          ],
+          "combustibles": [],
+          "specialized_components": []
+        }
+      ],
+      "specialized_components": []
+    },
+    "Bay_A4": {
+      "cn_name": "A4跨单元",
+      "description": "电解铝厂标准窄跨厂房，宽19m，长465m",
+      "offset": {"x": 102, "y": 0},
+      "rotation": 0,
+      "building": {
+        "length": {"min": 326, "max": 326, "median": 326, "mean": 326, "unit": "m"},
+        "width": {"min": 19, "max": 19, "median": 19, "mean": 19, "unit": "m"},
+        "height": {"min": 15, "max": 20, "median": 18, "mean": 17.5, "unit": "m"},
+        "stories": {"min": 1, "max": 1, "median": 1, "mean": 1, "unit": ""}
+      },
+      "doors": {
+        "width": {"min": 4, "max": 6, "median": 5, "mean": 5, "unit": "m"},
+        "height": {"min": 4, "max": 5, "median": 4.5, "mean": 4.5, "unit": "m"},
+        "count": {"min": 2, "max": 4, "median": 3, "mean": 3, "unit": ""}
+      },
+      "windows": {},
+      "wall_thickness": 0.3,
+      "fire_compartments": [
+        {
+          "name": "A4南分区",
+          "x_ratio": [0, 1.0],
+          "y_ratio": [0, 0.49],
+          "wall_thickness": 0.3,
+          "wall_material": "CONCRETE",
+          "openings": [
+            {"wall": "y_min", "type": "door", "position": 0.5, "width": 5.0, "height": 4.5, "z_bottom": 0}
+          ],
+          "combustibles": [
+            {"key": "PREBAKED_ANODE_BLOCK", "count": 320},
+            {"key": "CATHODE_CARBON_BLOCK", "count": 240}
+          ],
+          "specialized_components": []
+        },
+        {
+          "name": "A4北分区",
+          "x_ratio": [0, 1.0],
+          "y_ratio": [0.51, 1.0],
+          "wall_thickness": 0.3,
+          "wall_material": "CONCRETE",
+          "openings": [
+            {"wall": "y_max", "type": "door", "position": 0.5, "width": 5.0, "height": 4.5, "z_bottom": 0}
+          ],
+          "combustibles": [
+            {"key": "CELL_SIDE_HYDRAULIC_OIL", "count": 10}
+          ],
+          "specialized_components": []
+        }
+      ],
+      "specialized_components": []
+    },
+    "Bay_A5": {
+      "cn_name": "A5跨单元",
+      "description": "电解铝厂标准窄跨厂房，宽19m，长465m",
+      "offset": {"x": 121, "y": 0},
+      "rotation": 0,
+      "building": {
+        "length": {"min": 326, "max": 326, "median": 326, "mean": 326, "unit": "m"},
+        "width": {"min": 19, "max": 19, "median": 19, "mean": 19, "unit": "m"},
+        "height": {"min": 15, "max": 20, "median": 18, "mean": 17.5, "unit": "m"},
+        "stories": {"min": 1, "max": 1, "median": 1, "mean": 1, "unit": ""}
+      },
+      "doors": {
+        "width": {"min": 4, "max": 6, "median": 5, "mean": 5, "unit": "m"},
+        "height": {"min": 4, "max": 5, "median": 4.5, "mean": 4.5, "unit": "m"},
+        "count": {"min": 2, "max": 4, "median": 3, "mean": 3, "unit": ""}
+      },
+      "windows": {},
+      "wall_thickness": 0.3,
+      "fire_compartments": [
+        {
+          "name": "A5南分区",
+          "x_ratio": [0, 1.0],
+          "y_ratio": [0, 0.49],
+          "wall_thickness": 0.3,
+          "wall_material": "CONCRETE",
+          "openings": [
+            {"wall": "y_min", "type": "door", "position": 0.5, "width": 5.0, "height": 4.5, "z_bottom": 0}
+          ],
+          "combustibles": [
+            {"key": "PREBAKED_ANODE_BLOCK", "count": 320},
+            {"key": "CATHODE_CARBON_BLOCK", "count": 240}
+          ],
+          "specialized_components": []
+        },
+        {
+          "name": "A5北分区",
+          "x_ratio": [0, 1.0],
+          "y_ratio": [0.51, 1.0],
+          "wall_thickness": 0.3,
+          "wall_material": "CONCRETE",
+          "openings": [
+            {"wall": "y_max", "type": "door", "position": 0.5, "width": 5.0, "height": 4.5, "z_bottom": 0}
+          ],
+          "combustibles": [
+            {"key": "CELL_SIDE_HYDRAULIC_OIL", "count": 10}
+          ],
+          "specialized_components": []
+        }
+      ],
+      "specialized_components": []
+    },
+    "Bay_A6": {
+      "cn_name": "A6跨单元",
+      "description": "电解铝厂标准窄跨厂房，宽19m，长465m",
+      "offset": {"x": 140, "y": 0},
+      "rotation": 0,
+      "building": {
+        "length": {"min": 326, "max": 326, "median": 326, "mean": 326, "unit": "m"},
+        "width": {"min": 19, "max": 19, "median": 19, "mean": 19, "unit": "m"},
+        "height": {"min": 15, "max": 20, "median": 18, "mean": 17.5, "unit": "m"},
+        "stories": {"min": 1, "max": 1, "median": 1, "mean": 1, "unit": ""}
+      },
+      "doors": {
+        "width": {"min": 4, "max": 6, "median": 5, "mean": 5, "unit": "m"},
+        "height": {"min": 4, "max": 5, "median": 4.5, "mean": 4.5, "unit": "m"},
+        "count": {"min": 2, "max": 4, "median": 3, "mean": 3, "unit": ""}
+      },
+      "windows": {},
+      "wall_thickness": 0.3,
+      "fire_compartments": [
+        {
+          "name": "A6南分区",
+          "x_ratio": [0, 1.0],
+          "y_ratio": [0, 0.49],
+          "wall_thickness": 0.3,
+          "wall_material": "CONCRETE",
+          "openings": [
+            {"wall": "y_min", "type": "door", "position": 0.5, "width": 5.0, "height": 4.5, "z_bottom": 0}
+          ],
+          "combustibles": [
+            {"key": "PREBAKED_ANODE_BLOCK", "count": 320},
+            {"key": "CATHODE_CARBON_BLOCK", "count": 240}
+          ],
+          "specialized_components": []
+        },
+        {
+          "name": "A6北分区",
+          "x_ratio": [0, 1.0],
+          "y_ratio": [0.51, 1.0],
+          "wall_thickness": 0.3,
+          "wall_material": "CONCRETE",
+          "openings": [
+            {"wall": "y_max", "type": "door", "position": 0.5, "width": 5.0, "height": 4.5, "z_bottom": 0}
+          ],
+          "combustibles": [
+            {"key": "CELL_SIDE_HYDRAULIC_OIL", "count": 10}
+          ],
+          "specialized_components": []
+        }
+      ],
+      "specialized_components": []
+    },
+    "Bay_A7": {
+      "cn_name": "A7跨单元",
+      "description": "电解铝厂标准窄跨厂房，宽19m，长465m",
+      "offset": {"x": 159, "y": 0},
+      "rotation": 0,
+      "building": {
+        "length": {"min": 326, "max": 326, "median": 326, "mean": 326, "unit": "m"},
+        "width": {"min": 19, "max": 19, "median": 19, "mean": 19, "unit": "m"},
+        "height": {"min": 15, "max": 20, "median": 18, "mean": 17.5, "unit": "m"},
+        "stories": {"min": 1, "max": 1, "median": 1, "mean": 1, "unit": ""}
+      },
+      "doors": {
+        "width": {"min": 4, "max": 6, "median": 5, "mean": 5, "unit": "m"},
+        "height": {"min": 4, "max": 5, "median": 4.5, "mean": 4.5, "unit": "m"},
+        "count": {"min": 2, "max": 4, "median": 3, "mean": 3, "unit": ""}
+      },
+      "windows": {},
+      "wall_thickness": 0.3,
+      "fire_compartments": [
+        {
+          "name": "A7南分区",
+          "x_ratio": [0, 1.0],
+          "y_ratio": [0, 0.49],
+          "wall_thickness": 0.3,
+          "wall_material": "CONCRETE",
+          "openings": [
+            {"wall": "y_min", "type": "door", "position": 0.5, "width": 5.0, "height": 4.5, "z_bottom": 0}
+          ],
+          "combustibles": [
+            {"key": "PREBAKED_ANODE_BLOCK", "count": 320},
+            {"key": "CATHODE_CARBON_BLOCK", "count": 240}
+          ],
+          "specialized_components": []
+        },
+        {
+          "name": "A7北分区",
+          "x_ratio": [0, 1.0],
+          "y_ratio": [0.51, 1.0],
+          "wall_thickness": 0.3,
+          "wall_material": "CONCRETE",
+          "openings": [
+            {"wall": "y_max", "type": "door", "position": 0.5, "width": 5.0, "height": 4.5, "z_bottom": 0}
+          ],
+          "combustibles": [
+            {"key": "CELL_SIDE_HYDRAULIC_OIL", "count": 10}
+          ],
+          "specialized_components": []
+        }
+      ],
+      "specialized_components": []
+    },
+    "Bay_A8": {
+      "cn_name": "A8跨单元",
+      "description": "电解铝厂标准窄跨厂房，宽19m，长465m",
+      "offset": {"x": 178, "y": 0},
+      "rotation": 0,
+      "building": {
+        "length": {"min": 326, "max": 326, "median": 326, "mean": 326, "unit": "m"},
+        "width": {"min": 19, "max": 19, "median": 19, "mean": 19, "unit": "m"},
+        "height": {"min": 15, "max": 20, "median": 18, "mean": 17.5, "unit": "m"},
+        "stories": {"min": 1, "max": 1, "median": 1, "mean": 1, "unit": ""}
+      },
+      "doors": {
+        "width": {"min": 4, "max": 6, "median": 5, "mean": 5, "unit": "m"},
+        "height": {"min": 4, "max": 5, "median": 4.5, "mean": 4.5, "unit": "m"},
+        "count": {"min": 2, "max": 4, "median": 3, "mean": 3, "unit": ""}
+      },
+      "windows": {},
+      "wall_thickness": 0.3,
+      "fire_compartments": [
+        {
+          "name": "A8南分区",
+          "x_ratio": [0, 1.0],
+          "y_ratio": [0, 0.49],
+          "wall_thickness": 0.3,
+          "wall_material": "CONCRETE",
+          "openings": [
+            {"wall": "y_min", "type": "door", "position": 0.5, "width": 5.0, "height": 4.5, "z_bottom": 0}
+          ],
+          "combustibles": [
+            {"key": "PREBAKED_ANODE_BLOCK", "count": 320},
+            {"key": "CATHODE_CARBON_BLOCK", "count": 240}
+          ],
+          "specialized_components": []
+        },
+        {
+          "name": "A8北分区",
+          "x_ratio": [0, 1.0],
+          "y_ratio": [0.51, 1.0],
+          "wall_thickness": 0.3,
+          "wall_material": "CONCRETE",
+          "openings": [
+            {"wall": "y_max", "type": "door", "position": 0.5, "width": 5.0, "height": 4.5, "z_bottom": 0}
+          ],
+          "combustibles": [
+            {"key": "CELL_SIDE_HYDRAULIC_OIL", "count": 10}
+          ],
+          "specialized_components": []
+        }
+      ],
+      "specialized_components": []
+    },
+    "Bay_A9": {
+      "cn_name": "A9跨单元",
+      "description": "电解铝厂标准窄跨厂房，宽19m，长465m",
+      "offset": {"x": 197, "y": 0},
+      "rotation": 0,
+      "building": {
+        "length": {"min": 326, "max": 326, "median": 326, "mean": 326, "unit": "m"},
+        "width": {"min": 19, "max": 19, "median": 19, "mean": 19, "unit": "m"},
+        "height": {"min": 15, "max": 20, "median": 18, "mean": 17.5, "unit": "m"},
+        "stories": {"min": 1, "max": 1, "median": 1, "mean": 1, "unit": ""}
+      },
+      "doors": {
+        "width": {"min": 4, "max": 6, "median": 5, "mean": 5, "unit": "m"},
+        "height": {"min": 4, "max": 5, "median": 4.5, "mean": 4.5, "unit": "m"},
+        "count": {"min": 2, "max": 4, "median": 3, "mean": 3, "unit": ""}
+      },
+      "windows": {},
+      "wall_thickness": 0.3,
+      "fire_compartments": [
+        {
+          "name": "A9南分区",
+          "x_ratio": [0, 1.0],
+          "y_ratio": [0, 0.49],
+          "wall_thickness": 0.3,
+          "wall_material": "CONCRETE",
+          "openings": [
+            {"wall": "y_min", "type": "door", "position": 0.5, "width": 5.0, "height": 4.5, "z_bottom": 0}
+          ],
+          "combustibles": [
+            {"key": "PREBAKED_ANODE_BLOCK", "count": 320},
+            {"key": "CATHODE_CARBON_BLOCK", "count": 240}
+          ],
+          "specialized_components": []
+        },
+        {
+          "name": "A9北分区",
+          "x_ratio": [0, 1.0],
+          "y_ratio": [0.51, 1.0],
+          "wall_thickness": 0.3,
+          "wall_material": "CONCRETE",
+          "openings": [
+            {"wall": "y_max", "type": "door", "position": 0.5, "width": 5.0, "height": 4.5, "z_bottom": 0}
+          ],
+          "combustibles": [
+            {"key": "CELL_SIDE_HYDRAULIC_OIL", "count": 10}
+          ],
+          "specialized_components": []
+        }
+      ],
+      "specialized_components": []
+    },
+    "Bay_A10": {
+      "cn_name": "A10跨单元",
+      "description": "电解铝厂标准窄跨厂房，宽19m，长465m",
+      "offset": {"x": 216, "y": 0},
+      "rotation": 0,
+      "building": {
+        "length": {"min": 326, "max": 326, "median": 326, "mean": 326, "unit": "m"},
+        "width": {"min": 19, "max": 19, "median": 19, "mean": 19, "unit": "m"},
+        "height": {"min": 15, "max": 20, "median": 18, "mean": 17.5, "unit": "m"},
+        "stories": {"min": 1, "max": 1, "median": 1, "mean": 1, "unit": ""}
+      },
+      "doors": {
+        "width": {"min": 4, "max": 6, "median": 5, "mean": 5, "unit": "m"},
+        "height": {"min": 4, "max": 5, "median": 4.5, "mean": 4.5, "unit": "m"},
+        "count": {"min": 2, "max": 4, "median": 3, "mean": 3, "unit": ""}
+      },
+      "windows": {},
+      "wall_thickness": 0.3,
+      "fire_compartments": [
+        {
+          "name": "A10南分区",
+          "x_ratio": [0, 1.0],
+          "y_ratio": [0, 0.49],
+          "wall_thickness": 0.3,
+          "wall_material": "CONCRETE",
+          "openings": [
+            {"wall": "y_min", "type": "door", "position": 0.5, "width": 5.0, "height": 4.5, "z_bottom": 0}
+          ],
+          "combustibles": [
+            {"key": "PREBAKED_ANODE_BLOCK", "count": 320},
+            {"key": "CATHODE_CARBON_BLOCK", "count": 240}
+          ],
+          "specialized_components": []
+        },
+        {
+          "name": "A10北分区",
+          "x_ratio": [0, 1.0],
+          "y_ratio": [0.51, 1.0],
+          "wall_thickness": 0.3,
+          "wall_material": "CONCRETE",
+          "openings": [
+            {"wall": "y_max", "type": "door", "position": 0.5, "width": 5.0, "height": 4.5, "z_bottom": 0}
+          ],
+          "combustibles": [
+            {"key": "CELL_SIDE_HYDRAULIC_OIL", "count": 10}
+          ],
+          "specialized_components": []
+        }
+      ],
+      "specialized_components": []
+    },
+    "Bay_B2": {
+      "cn_name": "B2宽跨单元",
+      "description": "电解铝厂宽跨厂房，宽45m，长465m",
+      "offset": {"x": 235, "y": 0},
+      "rotation": 0,
+      "building": {
+        "length": {"min": 326, "max": 326, "median": 326, "mean": 326, "unit": "m"},
+        "width": {"min": 45, "max": 45, "median": 45, "mean": 45, "unit": "m"},
+        "height": {"min": 15, "max": 20, "median": 18, "mean": 17.5, "unit": "m"},
+        "stories": {"min": 1, "max": 1, "median": 1, "mean": 1, "unit": ""}
+      },
+      "doors": {
+        "width": {"min": 4, "max": 6, "median": 5, "mean": 5, "unit": "m"},
+        "height": {"min": 4, "max": 5, "median": 4.5, "mean": 4.5, "unit": "m"},
+        "count": {"min": 2, "max": 4, "median": 3, "mean": 3, "unit": ""}
+      },
+      "windows": {},
+      "wall_thickness": 0.3,
+      "fire_compartments": [
+        {
+          "name": "B2南分区",
+          "x_ratio": [0, 1.0],
+          "y_ratio": [0, 0.49],
+          "wall_thickness": 0.3,
+          "wall_material": "CONCRETE",
+          "openings": [
+            {"wall": "y_min", "type": "door", "position": 0.5, "width": 5.0, "height": 4.5, "z_bottom": 0}
+          ],
+          "combustibles": [
+            {"key": "PREBAKED_ANODE_BLOCK", "count": 480},
+            {"key": "CATHODE_CARBON_BLOCK", "count": 360}
+          ],
+          "specialized_components": []
+        },
+        {
+          "name": "B2北分区",
+          "x_ratio": [0, 1.0],
+          "y_ratio": [0.51, 1.0],
+          "wall_thickness": 0.3,
+          "wall_material": "CONCRETE",
+          "openings": [
+            {"wall": "y_max", "type": "door", "position": 0.5, "width": 5.0, "height": 4.5, "z_bottom": 0}
+          ],
+          "combustibles": [],
+          "specialized_components": []
+        }
+      ],
+      "specialized_components": []
+    },
+    "Bay_A11": {
+      "cn_name": "A11跨单元",
+      "description": "电解铝厂标准窄跨厂房，宽19m，长465m",
+      "offset": {"x": 280, "y": 0},
+      "rotation": 0,
+      "building": {
+        "length": {"min": 326, "max": 326, "median": 326, "mean": 326, "unit": "m"},
+        "width": {"min": 19, "max": 19, "median": 19, "mean": 19, "unit": "m"},
+        "height": {"min": 15, "max": 20, "median": 18, "mean": 17.5, "unit": "m"},
+        "stories": {"min": 1, "max": 1, "median": 1, "mean": 1, "unit": ""}
+      },
+      "doors": {
+        "width": {"min": 4, "max": 6, "median": 5, "mean": 5, "unit": "m"},
+        "height": {"min": 4, "max": 5, "median": 4.5, "mean": 4.5, "unit": "m"},
+        "count": {"min": 2, "max": 4, "median": 3, "mean": 3, "unit": ""}
+      },
+      "windows": {},
+      "wall_thickness": 0.3,
+      "fire_compartments": [
+        {
+          "name": "A11南分区",
+          "x_ratio": [0, 1.0],
+          "y_ratio": [0, 0.49],
+          "wall_thickness": 0.3,
+          "wall_material": "CONCRETE",
+          "openings": [
+            {"wall": "y_min", "type": "door", "position": 0.5, "width": 5.0, "height": 4.5, "z_bottom": 0}
+          ],
+          "combustibles": [
+            {"key": "PREBAKED_ANODE_BLOCK", "count": 320},
+            {"key": "CATHODE_CARBON_BLOCK", "count": 240}
+          ],
+          "specialized_components": []
+        },
+        {
+          "name": "A11北分区",
+          "x_ratio": [0, 1.0],
+          "y_ratio": [0.51, 1.0],
+          "wall_thickness": 0.3,
+          "wall_material": "CONCRETE",
+          "openings": [
+            {"wall": "y_max", "type": "door", "position": 0.5, "width": 5.0, "height": 4.5, "z_bottom": 0}
+          ],
+          "combustibles": [
+            {"key": "CELL_SIDE_HYDRAULIC_OIL", "count": 10}
+          ],
+          "specialized_components": []
+        }
+      ],
+      "specialized_components": []
+    },
+    "Bay_A12": {
+      "cn_name": "A12跨单元",
+      "description": "电解铝厂标准窄跨厂房，宽19m，长465m，东端最末跨单元",
+      "offset": {"x": 299, "y": 0},
+      "rotation": 0,
+      "building": {
+        "length": {"min": 326, "max": 326, "median": 326, "mean": 326, "unit": "m"},
+        "width": {"min": 19, "max": 19, "median": 19, "mean": 19, "unit": "m"},
+        "height": {"min": 15, "max": 20, "median": 18, "mean": 17.5, "unit": "m"},
+        "stories": {"min": 1, "max": 1, "median": 1, "mean": 1, "unit": ""}
+      },
+      "doors": {
+        "width": {"min": 4, "max": 6, "median": 5, "mean": 5, "unit": "m"},
+        "height": {"min": 4, "max": 5, "median": 4.5, "mean": 4.5, "unit": "m"},
+        "count": {"min": 2, "max": 4, "median": 3, "mean": 3, "unit": ""}
+      },
+      "windows": {},
+      "wall_thickness": 0.3,
+      "fire_compartments": [
+        {
+          "name": "A12南分区",
+          "x_ratio": [0, 1.0],
+          "y_ratio": [0, 0.49],
+          "wall_thickness": 0.3,
+          "wall_material": "CONCRETE",
+          "openings": [
+            {"wall": "y_min", "type": "door", "position": 0.5, "width": 5.0, "height": 4.5, "z_bottom": 0}
+          ],
+          "combustibles": [
+            {"key": "PREBAKED_ANODE_BLOCK", "count": 320},
+            {"key": "CATHODE_CARBON_BLOCK", "count": 240}
+          ],
+          "specialized_components": []
+        },
+        {
+          "name": "A12北分区",
+          "x_ratio": [0, 1.0],
+          "y_ratio": [0.51, 1.0],
+          "wall_thickness": 0.3,
+          "wall_material": "CONCRETE",
+          "openings": [
+            {"wall": "y_max", "type": "door", "position": 0.5, "width": 5.0, "height": 4.5, "z_bottom": 0}
+          ],
+          "combustibles": [
+            {"key": "CELL_SIDE_HYDRAULIC_OIL", "count": 10}
+          ],
+          "specialized_components": []
+        }
+      ],
+      "specialized_components": []
+    },
+    "Auxiliary_Annex_West": {
+      "cn_name": "西侧附属综合楼",
+      "description": "位于主厂区西北角，L型建筑，办公/实验室功能",
+      "offset": {"x": -46, "y": 238},
+      "rotation": 0,
+      "building": {
+        "length": {"min": 88, "max": 88, "median": 88, "mean": 88, "unit": "m"},
+        "width": {"min": 46, "max": 46, "median": 46, "mean": 46, "unit": "m"},
+        "height": {"min": 12, "max": 12, "median": 12, "mean": 12, "unit": "m"},
+        "stories": {"min": 3, "max": 3, "median": 3, "mean": 3, "unit": ""}
+      },
+      "doors": {
+        "width": {"min": 1.2, "max": 2, "median": 1.5, "mean": 1.5, "unit": "m"},
+        "height": {"min": 2, "max": 2.5, "median": 2.2, "mean": 2.2, "unit": "m"},
+        "count": {"min": 8, "max": 12, "median": 10, "mean": 10, "unit": ""}
+      },
+      "windows": {
+        "width": {"min": 1.5, "max": 2, "median": 1.8, "mean": 1.8, "unit": "m"},
+        "height": {"min": 1.8, "max": 2.2, "median": 2, "mean": 2, "unit": "m"},
+        "count": {"min": 20, "max": 30, "median": 25, "mean": 25, "unit": ""}
+      },
+      "wall_thickness": 0.25,
+      "fire_compartments": [
+        {
+          "name": "北段分区",
+          "x_ratio": [0, 1.0],
+          "y_ratio": [0.57, 1.0],
+          "wall_thickness": 0.25,
+          "wall_material": "CONCRETE",
+          "openings": [
+            {"wall": "x_min", "type": "door", "position": 0.3, "width": 1.5, "height": 2.2, "z_bottom": 0},
+            {"wall": "x_min", "type": "door", "position": 0.7, "width": 1.5, "height": 2.2, "z_bottom": 0}
+          ],
+          "combustibles": [
+            {"key": "OFFICE_FURNITURE", "count": 20},
+            {"key": "PAPER_ARCHIVE", "count": 15}
+          ],
+          "specialized_components": []
+        },
+        {
+          "name": "南段分区",
+          "x_ratio": [0, 0.7],
+          "y_ratio": [0, 0.57],
+          "wall_thickness": 0.25,
+          "wall_material": "CONCRETE",
+          "openings": [
+            {"wall": "x_min", "type": "door", "position": 0.5, "width": 1.5, "height": 2.2, "z_bottom": 0}
+          ],
+          "combustibles": [
+            {"key": "LAB_EQUIPMENT", "count": 10},
+            {"key": "CHEMICAL_SAMPLE", "count": 30}
+          ],
+          "specialized_components": []
+        }
+      ],
+      "specialized_components": []
+    },
+    "North_Corridor": {
+      "cn_name": "北侧贯通长廊",
+      "description": "贯穿厂房群北侧的东西向长廊，连接各纵向厂房",
+      "offset": {"x": -115, "y": 326},
+      "rotation": 0,
+      "building": {
+        "length": {"min": 580, "max": 580, "median": 580, "mean": 580, "unit": "m"},
+        "width": {"min": 16, "max": 16, "median": 16, "mean": 16, "unit": "m"},
+        "height": {"min": 6, "max": 8, "median": 7, "mean": 7, "unit": "m"},
+        "stories": {"min": 1, "max": 1, "median": 1, "mean": 1, "unit": ""}
+      },
+      "doors": {
+        "width": {"min": 4, "max": 5, "median": 4.5, "mean": 4.5, "unit": "m"},
+        "height": {"min": 4, "max": 5, "median": 4.5, "mean": 4.5, "unit": "m"},
+        "count": {"min": 10, "max": 14, "median": 12, "mean": 12, "unit": ""}
+      },
+      "windows": {},
+      "wall_thickness": 0.3,
+      "fire_compartments": [
+        {
+          "name": "北长廊主体",
+          "x_ratio": [0, 1.0],
+          "y_ratio": [0, 1.0],
+          "wall_thickness": 0.3,
+          "wall_material": "CONCRETE",
+          "openings": [],
+          "combustibles": [{"key": "PIPE_INSULATION", "count": 1}],
+          "specialized_components": []
+        }
+      ],
+      "specialized_components": []
+    },
+    "West_Protrusion": {
+      "cn_name": "西侧突出部",
+      "description": "位于主厂区西侧边缘中段的小型建筑，泵房/变配电间",
+      "offset": {"x": -20, "y": 160},
+      "rotation": 0,
+      "building": {
+        "length": {"min": 8, "max": 8, "median": 8, "mean": 8, "unit": "m"},
+        "width": {"min": 20, "max": 20, "median": 20, "mean": 20, "unit": "m"},
+        "height": {"min": 5, "max": 5, "median": 5, "mean": 5, "unit": "m"},
+        "stories": {"min": 1, "max": 1, "median": 1, "mean": 1, "unit": ""}
+      },
+      "doors": {
+        "width": {"min": 1.5, "max": 2, "median": 1.8, "mean": 1.8, "unit": "m"},
+        "height": {"min": 2, "max": 2.5, "median": 2.2, "mean": 2.2, "unit": "m"},
+        "count": {"min": 1, "max": 2, "median": 1.5, "mean": 1.5, "unit": ""}
+      },
+      "windows": {},
+      "wall_thickness": 0.2,
+      "fire_compartments": [
+        {
+          "name": "设备间",
+          "x_ratio": [0, 1.0],
+          "y_ratio": [0, 1.0],
+          "wall_thickness": 0.2,
+          "wall_material": "CONCRETE",
+          "openings": [
+            {"wall": "x_min", "type": "door", "position": 0.5, "width": 1.8, "height": 2.2, "z_bottom": 0}
+          ],
+          "combustibles": [
+            {"key": "PUMP_EQUIPMENT", "count": 2},
+            {"key": "ELECTRICAL_PANEL", "count": 4}
+          ],
+          "specialized_components": []
+        }
+      ],
+      "specialized_components": []
+    }
+  }
+}

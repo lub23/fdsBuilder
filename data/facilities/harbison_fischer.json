@@ -1,0 +1,339 @@
+{
+  "cn_name": "Harbison Fischer 机械部装区",
+  "fire_separation": 15.0,
+  "sub_types": {
+    "Main_Production_Hall": {
+      "cn_name": "左侧主生产大厅",
+      "description": "设施基准骨架，包含成品库、装配试压区、机加工区",
+      "offset": {"x": 0, "y": 0},
+      "rotation": 0,
+      "building": {
+        "length": {"min": 78, "max": 78, "median": 78, "mean": 78, "unit": "m"},
+        "width": {"min": 210, "max": 210, "median": 210, "mean": 210, "unit": "m"},
+        "height": {"min": 12, "max": 12, "median": 12, "mean": 12, "unit": "m"},
+        "stories": {"min": 1, "max": 1, "median": 1, "mean": 1, "unit": ""}
+      },
+      "doors": { },
+      "windows": {},
+      "wall_thickness": 0.3,
+      "fire_compartments": [
+        {
+          "name": "A-1 成品库/配电区",
+          "x_ratio": [0, 1.0],
+          "y_ratio": [0, 0.333],
+          "wall_thickness": 0.3,
+          "wall_material": "CONCRETE",
+          "openings": [
+            {"wall": "y_min", "type": "door", "position": 0.02, "width": 1.0, "height": 5.0, "z_bottom": 0},
+            {"wall": "y_min", "type": "door", "position": 0.1, "width": 1.0, "height": 5.0, "z_bottom": 0},
+            {"wall": "y_min", "type": "door", "position": 0.12, "width": 1.0, "height": 5.0, "z_bottom": 0},
+            {"wall": "y_min", "type": "door", "position": 0.2, "width": 1.0, "height": 5.0, "z_bottom": 0},
+            {"wall": "y_min", "type": "door", "position": 0.22, "width": 1.0, "height": 5.0, "z_bottom": 0}
+          ],
+          "combustibles": [
+            {"key": "WOODEN_PALLET", "count": 12},
+            {"key": "CARDBOARD_BOX", "count": 10},
+            {"key": "MINERAL_OIL", "count": 4},
+            {"key": "SOLVENT_CLEANER", "count": 2}
+          ],
+          "specialized_components": []
+        },
+        {
+          "name": "E-1 变压配电间",
+          "x_ratio": [0.5, 1.0],
+          "y_ratio": [0, 0.15],
+          "wall_thickness": 0.3,
+          "wall_material": "CONCRETE",
+          "openings": [
+            {"wall": "y_min", "type": "door", "position": 0.55, "width": 3.0, "height": 4.0, "z_bottom": 0},
+            {"wall": "x_min", "type": "door", "position": 0.95, "width": 3.0, "height": 4.0, "z_bottom": 0},
+            {"wall": "x_max", "type": "ribbon_window", "position": 0, "width": 70.0, "height": 0.5, "z_bottom": 10.0, "description": "High-level ventilation/daylight strip"}
+          ],
+          "combustibles": [
+            {"key": "MINERAL_OIL", "count": 4},
+            {"key": "PAINT_SOLVENT", "count": 3},
+            {"key": "CABLE_INSULATION", "count": 4}
+          ],
+          "specialized_components": []
+        },
+        {
+          "name": "E-2 发运办公室",
+          "x_ratio": [0.5, 1.0],
+          "y_ratio": [0.15, 0.2],
+          "wall_thickness": 0.3,
+          "wall_material": "CONCRETE",
+          "openings": [
+            {"wall": "x_min", "type": "door", "position": 0.02, "width": 1, "height": 2.5, "z_bottom": 0},
+            {"wall": "x_max", "type": "door", "position": 0.18, "width": 1, "height": 2.5, "z_bottom": 0}
+          ],
+          "combustibles": [],
+          "specialized_components": []
+        },
+        {
+          "name": "A-2 装配、试压与功能测试",
+          "x_ratio": [0, 1.0],
+          "y_ratio": [0.333, 0.629],
+          "wall_thickness": 0.3,
+          "wall_material": "CONCRETE",
+          "openings": [
+            {"wall": "y_min", "type": "door", "position": 0.4, "width": 3.0, "height": 2.5, "z_bottom": 0},
+            {"wall": "y_min", "type": "door", "position": 0.6, "width": 3.0, "height": 2.5, "z_bottom": 0},
+            {"wall": "x_min", "type": "door", "position": 0.4, "width": 1.0, "height": 2.5, "z_bottom": 0},
+            {"wall": "x_min", "type": "door", "position": 0.45, "width": 1.0, "height": 2.5, "z_bottom": 0},
+            {"wall": "x_min", "type": "door", "position": 0.5, "width": 2.0, "height": 2.5, "z_bottom": 0},
+            {"wall": "x_min", "type": "door", "position": 0.55, "width": 2.0, "height": 2.5, "z_bottom": 0},
+            {"wall": "x_min", "type": "door", "position": 0.6, "width": 2.0, "height": 2.5, "z_bottom": 0}
+
+          ],
+          "combustibles": [
+            {"key": "WOODEN_PALLET", "count": 8},
+            {"key": "CARDBOARD_BOX", "count": 6},
+            {"key": "MINERAL_OIL", "count": 6},
+            {"key": "SOLVENT_CLEANER", "count": 4},
+            {"key": "OILY_RAGS", "count": 4}
+          ],
+          "specialized_components": []
+        },
+        {
+          "name": "A-3 机加工区",
+          "x_ratio": [0.064, 1.0],
+          "y_ratio": [0.629, 1.0],
+          "wall_thickness": 0.3,
+          "wall_material": "CONCRETE",
+          "openings": [
+            {"wall": "y_min", "type": "door", "position": 0.4, "width": 3.0, "height": 2.5, "z_bottom": 0},
+            {"wall": "y_min", "type": "door", "position": 0.6, "width": 3.0, "height": 2.5, "z_bottom": 0},
+            {"wall": "y_max", "type": "door", "position": 0.6, "width": 3.0, "height": 2.5, "z_bottom": 0},
+            {"wall": "x_min", "type": "door", "position": 0.7, "width": 3.0, "height": 2.5, "z_bottom": 0},
+            {"wall": "x_max", "type": "door", "position": 0.65, "width": 3.0, "height": 2.5, "z_bottom": 0},
+            {"wall": "x_max", "type": "door", "position": 0.85, "width": 3.0, "height": 2.5, "z_bottom": 0}
+          ],
+          "combustibles": [
+            {"key": "MINERAL_OIL", "count": 8},
+            {"key": "SOLVENT_CLEANER", "count": 6},
+            {"key": "OILY_RAGS", "count": 4},
+            {"key": "CABLE_INSULATION", "count": 4}
+          ],
+          "specialized_components": []
+        }
+      ],
+      "specialized_components": []
+    },
+    "Incoming_Inspection": {
+      "cn_name": "北侧来料检验区",
+      "description": "位于主厂房最北端，宽54，长45",
+      "offset": {"x": 0, "y": 210},
+      "rotation": 0,
+      "building": {
+        "length": {"min": 54, "max": 54, "median": 54, "mean": 54, "unit": "m"},
+        "width": {"min": 45, "max": 45, "median": 45, "mean": 45, "unit": "m"},
+        "height": {"min": 8, "max": 8, "median": 8, "mean": 8, "unit": "m"},
+        "stories": {"min": 1, "max": 1, "median": 1, "mean": 1, "unit": ""}
+      },
+      "doors": {
+        "width": {"min": 3, "max": 4, "median": 3.5, "mean": 3.5, "unit": "m"},
+        "height": {"min": 4, "max": 5, "median": 4.5, "mean": 4.5, "unit": "m"},
+        "count": {"min": 2, "max": 4, "median": 3, "mean": 3, "unit": ""}
+      },
+      "windows": {},
+      "wall_thickness": 0.25,
+      "fire_compartments": [
+        {
+          "name": "B-1 来料检验区主体",
+          "x_ratio": [0, 1.0],
+          "y_ratio": [0, 1.0],
+          "wall_thickness": 0.25,
+          "wall_material": "CONCRETE",
+          "openings": [
+            {"wall": "x_min", "type": "loading_dock", "position": 0.3, "width": 8.0, "height": 6.0, "z_bottom": 2},
+            {"wall": "x_min", "type": "loading_dock", "position": 0.7, "width": 8.0, "height": 6.0, "z_bottom": 2},
+            {"wall": "x_max", "type": "loading_dock", "position": 0.3, "width": 8.0, "height": 6.0, "z_bottom": 2},
+            {"wall": "x_max", "type": "loading_dock", "position": 0.7, "width": 8.0, "height": 6.0, "z_bottom": 2},
+            {"wall": "y_min", "type": "opening", "position": 0.5, "width": 26.0, "height": 8.0, "z_bottom": 0}
+          ],
+          "combustibles": [
+            {"key": "WOODEN_PALLET", "count": 6},
+            {"key": "CARDBOARD_BOX", "count": 3}
+          ],
+          "specialized_components": []
+        }
+      ],
+      "specialized_components": []
+    },
+    "Material_Surface_Treatment": {
+      "cn_name": "原材料与表面处理区",
+      "description": "位于主厂房右侧，宽35，总长度97 (21+76)",
+      "offset": {"x": 78, "y": 132},
+      "rotation": 0,
+      "building": {
+        "length": {"min": 35, "max": 35, "median": 35, "mean": 35, "unit": "m"},
+        "width": {"min": 97, "max": 97, "median": 97, "mean": 97, "unit": "m"},
+        "height": {"min": 10, "max": 10, "median": 10, "mean": 10, "unit": "m"},
+        "stories": {"min": 1, "max": 1, "median": 1, "mean": 1, "unit": ""}
+      },
+      "doors": {
+        "width": {"min": 2, "max": 4, "median": 3, "mean": 3, "unit": "m"},
+        "height": {"min": 3, "max": 5, "median": 4, "mean": 4, "unit": "m"},
+        "count": {"min": 4, "max": 6, "median": 5, "mean": 5, "unit": ""}
+      },
+      "windows": {
+        "width": {"min": 25, "max": 30, "median": 28, "mean": 28, "unit": "m"},
+        "height": {"min": 0.5, "max": 0.5, "median": 0.5, "mean": 0.5, "unit": "m"},
+        "count": {"min": 1, "max": 1, "median": 1, "mean": 1, "unit": ""}
+      },
+      "wall_thickness": 0.3,
+      "fire_compartments": [
+        {
+          "name": "C-1 原材料仓库",
+          "x_ratio": [0, 1.0],
+          "y_ratio": [0, 0.216],
+          "wall_thickness": 0.3,
+          "wall_material": "CONCRETE",
+          "openings": [
+            {"wall": "y_max", "type": "loading_dock", "position": 0.25, "width": 3.0, "height": 4.0, "z_bottom": 0},
+            {"wall": "y_max", "type": "loading_dock", "position": 0.5, "width": 3.0, "height": 4.0, "z_bottom": 0},
+            {"wall": "y_max", "type": "loading_dock", "position": 0.75, "width": 3.0, "height": 4.0, "z_bottom": 0},
+            {"wall": "x_min", "type": "opening", "position": 0.5, "width": 30.0, "height": 10.0, "z_bottom": 0}
+          ],
+          "combustibles": [
+            {"key": "WOODEN_PALLET", "count": 6},
+            {"key": "CARDBOARD_BOX", "count": 5}
+          ],
+          "specialized_components": []
+        },
+        {
+          "name": "C-2 表面处理/喷涂固化区",
+          "x_ratio": [0, 1.0],
+          "y_ratio": [0.216, 1.0],
+          "wall_thickness": 0.35,
+          "wall_material": "CONCRETE",
+          "openings": [
+            {"wall": "x_min", "type": "opening", "position": 0.5, "width": 30.0, "height": 10.0, "z_bottom": 0},
+            {"wall": "x_max", "type": "ribbon_window", "position": 0.5, "width": 25.0, "height": 0.5, "z_bottom": 8.5, "description": "High-level ventilation/daylight strip"}
+          ],
+          "combustibles": [
+            {"key": "MINERAL_OIL", "count": 8},
+            {"key": "PAINT_SOLVENT", "count": 8},
+            {"key": "SOLVENT_CLEANER", "count": 4},
+            {"key": "OILY_RAGS", "count": 4},
+            {"key": "CABLE_INSULATION", "count": 3}
+          ],
+          "specialized_components": []
+        }
+      ],
+      "specialized_components": []
+    },
+    "Office_Complex": {
+      "cn_name": "办公综合体",
+      "description": "位于主厂房右侧，2层建筑，宽56，长62",
+      "offset": {"x": 78, "y": 70},
+      "rotation": 0,
+      "building": {
+        "length": {"min": 56, "max": 56, "median": 56, "mean": 56, "unit": "m"},
+        "width": {"min": 62, "max": 62, "median": 62, "mean": 62, "unit": "m"},
+        "height": {"min": 6, "max": 6, "median": 6, "mean": 6, "unit": "m"},
+        "stories": {"min": 2, "max": 2, "median": 2, "mean": 2, "unit": ""}
+      },
+      "doors": {
+        "width": {"min": 1.2, "max": 2, "median": 1.5, "mean": 1.5, "unit": "m"},
+        "height": {"min": 2.2, "max": 2.5, "median": 2.35, "mean": 2.35, "unit": "m"},
+        "count": {"min": 12, "max": 16, "median": 14, "mean": 14, "unit": ""}
+      },
+      "windows": {
+        "width": {"min": 2, "max": 3, "median": 2.5, "mean": 2.5, "unit": "m"},
+        "height": {"min": 1.8, "max": 2.2, "median": 2, "mean": 2, "unit": "m"},
+        "count": {"min": 15, "max": 25, "median": 20, "mean": 20, "unit": ""}
+      },
+      "wall_thickness": 0.2,
+      "fire_compartments": [
+        {
+          "name": "D-1 核心办公区",
+          "x_ratio": [0, 0.536],
+          "y_ratio": [0, 1.0],
+          "wall_thickness": 0.2,
+          "wall_material": "CONCRETE",
+          "openings": [
+            {"wall": "y_min", "type": "door", "position": 0.5, "width": 2.0, "height": 2.5, "z_bottom": 0},
+            {"wall": "x_max", "type": "door", "position": 0.5, "width": 2.0, "height": 2.5, "z_bottom": 0}
+          ],
+          "combustibles": [
+            {"key": "OFFICE_FURNITURE", "count": 8}
+          ],
+          "specialized_components": []
+        },
+        {
+          "name": "D-2 右侧小型办公室",
+          "x_ratio": [0.536, 1.0],
+          "y_ratio": [0, 1.0],
+          "wall_thickness": 0.2,
+          "wall_material": "CONCRETE",
+          "openings": [
+            {"wall": "x_max", "type": "ribbon_window", "position": 0.5, "width": 40.0, "height": 0.5, "z_bottom": 10.0, "description": "High-level ventilation/daylight strip"},
+            {"wall": "x_max", "type": "door", "position": 0.5, "width": 2.0, "height": 2.5, "z_bottom": 0}
+          ],
+          "combustibles": [
+            {"key": "OFFICE_FURNITURE", "count": 6},
+            {"key": "CABLE_INSULATION", "count": 2}
+          ],
+          "specialized_components": []
+        }
+      ],
+      "specialized_components": []
+    },
+    "Southeast_Auxiliary": {
+      "cn_name": "东南辅助区",
+      "description": "位于主厂房右下角，含变压配电间和发运办公室",
+      "offset": {"x": 78, "y": 0},
+      "rotation": 0,
+      "building": {
+        "length": {"min": 39, "max": 39, "median": 39, "mean": 39, "unit": "m"},
+        "width": {"min": 42, "max": 42, "median": 42, "mean": 42, "unit": "m"},
+        "height": {"min": 5, "max": 5, "median": 5, "mean": 5, "unit": "m"},
+        "stories": {"min": 1, "max": 1, "median": 1, "mean": 1, "unit": ""}
+      },
+      "doors": {
+        "width": {"min": 1.5, "max": 3, "median": 2, "mean": 2, "unit": "m"},
+        "height": {"min": 2.2, "max": 4, "median": 3, "mean": 3, "unit": "m"},
+        "count": {"min": 3, "max": 5, "median": 4, "mean": 4, "unit": ""}
+      },
+      "windows": {
+        "width": {"min": 25, "max": 30, "median": 28, "mean": 28, "unit": "m"},
+        "height": {"min": 0.5, "max": 0.5, "median": 0.5, "mean": 0.5, "unit": "m"},
+        "count": {"min": 1, "max": 1, "median": 1, "mean": 1, "unit": ""}
+      },
+      "wall_thickness": 0.2,
+      "fire_compartments": [
+        {
+          "name": "E-1 变压配电间",
+          "x_ratio": [0, 1.0],
+          "y_ratio": [0, 0.762],
+          "wall_thickness": 0.2,
+          "wall_material": "CONCRETE",
+          "openings": [
+            {"wall": "y_min", "type": "door", "position": 0.5, "width": 3.0, "height": 4.0, "z_bottom": 0},
+            {"wall": "x_max", "type": "ribbon_window", "position": 0.5, "width": 28.0, "height": 0.5, "z_bottom": 3.0, "description": "High-level ventilation/daylight strip"}
+          ],
+          "combustibles": [
+            {"key": "MINERAL_OIL", "count": 4},
+            {"key": "PAINT_SOLVENT", "count": 3},
+            {"key": "CABLE_INSULATION", "count": 4}
+          ],
+          "specialized_components": []
+        },
+        {
+          "name": "E-2 发运办公室",
+          "x_ratio": [0, 1.0],
+          "y_ratio": [0.762, 1.0],
+          "wall_thickness": 0.2,
+          "wall_material": "CONCRETE",
+          "openings": [
+            {"wall": "y_min", "type": "door", "position": 0.5, "width": 2.0, "height": 2.5, "z_bottom": 0}
+          ],
+          "combustibles": [],
+          "specialized_components": []
+        }
+      ],
+      "specialized_components": []
+    }
+  }
+}

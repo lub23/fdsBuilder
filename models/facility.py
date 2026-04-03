@@ -374,7 +374,7 @@ class FacilityManager:
             compartments.append(fc)
         story.fire_compartments = compartments
 
-        # Step 2: Generate partition walls (deduplicated by position)
+        # Step 2: Generate partition walls (deduplicated by exact position)
         wall_positions = set()  # (x1, y1, x2, y2) rounded
         for fc in compartments:
             # Vertical walls at x_min and x_max (if not at building edge)
@@ -477,23 +477,59 @@ class FacilityManager:
             fc = compartments[i]
             for opening_def in fc_def.get("openings", []):
                 wall_side = opening_def.get("wall", "")
-                # Find the matching partition wall
-                target_wall_idx = FacilityManager._find_partition_wall(
+                # Find the matching partition wall with full extent info
+                wall_result = FacilityManager._find_partition_wall(
                     story.walls, fc, wall_side
                 )
+                if isinstance(wall_result, tuple):
+                    target_wall_idx, is_external, wall_full_start, wall_full_end = (
+                        wall_result
+                    )
+                else:
+                    target_wall_idx, is_external, wall_full_start, wall_full_end = (
+                        wall_result,
+                        False,
+                        0,
+                        1,
+                    )
+
                 if target_wall_idx < 0:
                     continue
                 wall = story.walls[target_wall_idx]
+
+                # Calculate actual wall length
                 wall_len = (
                     (wall["x2"] - wall["x1"]) ** 2 + (wall["y2"] - wall["y1"]) ** 2
                 ) ** 0.5
                 if wall_len < 0.1:
                     continue
+
+                # Calculate position:
+                # - For external walls (building edge): position is relative to full building dimension
+                # - For internal walls (shared): position is relative to the FULL merged wall, not just this compartment's portion
+                user_position = opening_def.get(
+                    "position", 0.0
+                )  # Changed default from 0.5 to 0.0 (start position)
+
+                # Convert user position from [0,1] to actual position on wall
+                actual_position = wall_full_start + user_position * (
+                    wall_full_end - wall_full_start
+                )
+
+                # For door position calculation, we need position along the wall from start
+                # Convert to [0,1] relative to wall length for the opening system
+                position_ratio = (
+                    (actual_position - wall_full_start)
+                    / (wall_full_end - wall_full_start)
+                    if (wall_full_end - wall_full_start) > 0
+                    else 0
+                )
+
                 story.openings.append(
                     dict(
                         wall_index=target_wall_idx,
                         type=opening_def.get("type", "door"),
-                        position=opening_def.get("position", 0.5),
+                        position=position_ratio,
                         width=min(opening_def.get("width", 2.0), wall_len * 0.8),
                         height=min(opening_def.get("height", 2.5), story.height - 0.1),
                         z_bottom=opening_def.get("z_bottom", 0),
@@ -536,37 +572,118 @@ class FacilityManager:
 
     @staticmethod
     def _find_partition_wall(walls, fc, wall_side):
-        """Find wall index matching a compartment boundary side."""
+        """Find wall index matching a compartment boundary side.
+
+        For internal walls, matches both position AND y/x range to ensure
+        the correct wall is found when multiple compartments share same x/y coordinate
+        but have different ranges.
+
+        Returns:
+            tuple: (wall_index, is_external_wall, wall_full_start, wall_full_end)
+        """
         for wi, w in enumerate(walls):
             if not w.get("is_fire_partition") and not w.get("is_external"):
                 continue
             wx1, wy1 = round(w["x1"], 2), round(w["y1"], 2)
             wx2, wy2 = round(w["x2"], 2), round(w["y2"], 2)
+            is_external = w.get("is_external", False)
+
+            # Check if this wall matches BOTH position AND range
+            is_match = False
+
             if wall_side == "x_min":
+                # Match x coordinate AND (for partition walls: y range, for external: any y)
                 if (
                     abs(wx1 - round(fc.x_min, 2)) < 0.05
                     and abs(wx2 - round(fc.x_min, 2)) < 0.05
                 ):
-                    return wi
+                    # For external walls (building edge), don't check y range
+                    if is_external:
+                        is_match = True
+                    else:
+                        # For partition walls, also match y range
+                        if (
+                            abs(wy1 - round(fc.y_min, 2)) < 0.05
+                            and abs(wy2 - round(fc.y_max, 2)) < 0.05
+                        ):
+                            is_match = True
             elif wall_side == "x_max":
                 if (
                     abs(wx1 - round(fc.x_max, 2)) < 0.05
                     and abs(wx2 - round(fc.x_max, 2)) < 0.05
                 ):
-                    return wi
+                    if is_external:
+                        is_match = True
+                    else:
+                        if (
+                            abs(wy1 - round(fc.y_min, 2)) < 0.05
+                            and abs(wy2 - round(fc.y_max, 2)) < 0.05
+                        ):
+                            is_match = True
             elif wall_side == "y_min":
+                # Match y coordinate AND (for partition walls: x range, for external: any x)
                 if (
                     abs(wy1 - round(fc.y_min, 2)) < 0.05
                     and abs(wy2 - round(fc.y_min, 2)) < 0.05
                 ):
-                    return wi
+                    if is_external:
+                        is_match = True
+                    else:
+                        if (
+                            abs(wx1 - round(fc.x_min, 2)) < 0.05
+                            and abs(wx2 - round(fc.x_max, 2)) < 0.05
+                        ):
+                            is_match = True
             elif wall_side == "y_max":
                 if (
                     abs(wy1 - round(fc.y_max, 2)) < 0.05
                     and abs(wy2 - round(fc.y_max, 2)) < 0.05
                 ):
-                    return wi
-        return -1
+                    if is_external:
+                        is_match = True
+                    else:
+                        if (
+                            abs(wx1 - round(fc.x_min, 2)) < 0.05
+                            and abs(wx2 - round(fc.x_max, 2)) < 0.05
+                        ):
+                            is_match = True
+
+            if is_match:
+                if is_external:
+                    return (wi, True, 0, 1)
+                else:
+                    # For partition walls, the wall spans exactly this compartment's range
+                    if wx1 == wx2:  # vertical wall
+                        return (wi, False, wy1, wy2)
+                    else:  # horizontal wall
+                        return (wi, False, wx1, wx2)
+
+        return (-1, False, 0, 1)
+
+    @staticmethod
+    def _find_wall_full_extent(walls, x, y1, x2, y2):
+        """Find the full extent of a wall by merging all collinear walls at same position."""
+        # Find all walls at approximately the same position
+        min_coord = float("inf")
+        max_coord = float("-inf")
+
+        for w in walls:
+            if not w.get("is_fire_partition") and not w.get("is_external"):
+                continue
+            wx1, wy1 = round(w["x1"], 2), round(w["y1"], 2)
+            wx2, wy2 = round(w["x2"], 2), round(w["y2"], 2)
+
+            # Check if this wall is at the same x or y position
+            if abs(wx1 - x) < 0.05 and abs(wx2 - x) < 0.05:
+                # Vertical wall at same x
+                min_coord = min(min_coord, wy1, wy2)
+                max_coord = max(max_coord, wy1, wy2)
+            elif abs(wy1 - y1) < 0.05 and abs(wy2 - y2) < 0.05:
+                # Horizontal wall at same y
+                min_coord = min(min_coord, wx1, wx2)
+                max_coord = max(max_coord, wx1, wx2)
+
+        return (min_coord, max_coord)
 
     @staticmethod
     def _place_specialized_in_compartment(story, sc_list, fc, wall_t):

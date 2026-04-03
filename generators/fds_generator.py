@@ -37,6 +37,13 @@ class FDSGenerator:
                 for cb in story.combustibles.items:
                     if cb.component_key and cb.material_key:
                         component_matls.add(cb.material_key)
+            # Also collect from building specialized_components
+            for sc_info in getattr(b, "specialized_components", []):
+                comp = SPECIALIZED_COMPONENTS.get(sc_info.get("key", ""))
+                if comp:
+                    for part in comp.parts:
+                        if part.material_key:
+                            component_matls.add(part.material_key)
 
         for mat_name in used_materials | component_matls:
             if mat_name in MATERIAL_LIBRARY:
@@ -58,9 +65,15 @@ class FDSGenerator:
         comp_surfs_done = set()
         for mat_key in component_matls:
             surf_id = f"{mat_key}_SURF"
-            if surf_id not in comp_surfs_done and mat_key in MATERIAL_LIBRARY:
-                mat = MATERIAL_LIBRARY[mat_key]
-                fds += f"&SURF ID='{surf_id}', MATL_ID='{mat_key}', THICKNESS={mat['THICKNESS']} /\n"
+            if surf_id in comp_surfs_done:
+                continue
+            # Check MATERIAL_LIBRARY first, then COMBUSTIBLE_LIBRARY
+            mat = MATERIAL_LIBRARY.get(mat_key) or COMBUSTIBLE_LIBRARY.get(mat_key)
+            if mat:
+                thick = mat.get("THICKNESS", 0.1)
+                fds += (
+                    f"&SURF ID='{surf_id}', MATL_ID='{mat_key}', THICKNESS={thick} /\n"
+                )
                 comp_surfs_done.add(surf_id)
         # Also add standard aliases used in component definitions
         for alias in (

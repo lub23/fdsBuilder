@@ -1,0 +1,475 @@
+{
+  "cn_name": "Frymaster Corporation机械总装区",
+  "fire_separation": 15.0,
+  "sub_types": {
+    "Main_Production_Hall": {
+      "cn_name": "核心生产大厅",
+      "description": "设施中部核心，由四个纵向平行的工艺区组成：原材料库、冲压折弯、壳体制造、总装/燃气与电力测试",
+      "offset": {"x": 0, "y": 39},
+      "rotation": 0,
+      "building": {
+        "length": {"min": 109, "max": 109, "median": 109, "mean": 109, "unit": "m"},
+        "width": {"min": 145, "max": 145, "median": 145, "mean": 145, "unit": "m"},
+        "height": {"min": 10, "max": 10, "median": 10, "mean": 10, "unit": "m"},
+        "stories": {"min": 1, "max": 1, "median": 1, "mean": 1, "unit": ""}
+      },
+      "doors": {
+        "width": {"min": 4, "max": 6, "median": 5, "mean": 5, "unit": "m"},
+        "height": {"min": 5, "max": 6, "median": 5.5, "mean": 5.5, "unit": "m"},
+        "count": {"min": 8, "max": 12, "median": 10, "mean": 10, "unit": ""}
+      },
+      "windows": {},
+      "wall_thickness": 0.3,
+      "fire_compartments": [
+        {
+          "name": "A-1 原材料库",
+          "x_ratio": [0, 0.234],
+          "y_ratio": [0, 0.826],
+          "wall_thickness": 0.3,
+          "wall_material": "CONCRETE",
+          "openings": [
+            {"wall": "x_min", "type": "opening", "position": 0.5, "width": 30.0, "height": 6.0, "z_bottom": 2},
+            {"wall": "x_max", "type": "door", "position": 0.5, "width": 5.0, "height": 5.5, "z_bottom": 0}
+          ],
+          "combustibles": [
+            {"key": "WOODEN_PALLET", "count": 8},
+            {"key": "CARDBOARD_BOX", "count": 4}
+          ],
+          "specialized_components": []
+        },
+        {
+          "name": "A-2 冲压折弯",
+          "x_ratio": [0.234, 0.579],
+          "y_ratio": [0, 0.826],
+          "wall_thickness": 0.3,
+          "wall_material": "CONCRETE",
+          "openings": [
+            {"wall": "x_min", "type": "door", "position": 0.5, "width": 5.0, "height": 5.5, "z_bottom": 0},
+            {"wall": "x_max", "type": "door", "position": 0.5, "width": 5.0, "height": 5.5, "z_bottom": 0}
+          ],
+          "combustibles": [
+            {"key": "SOLVENT_CLEANER", "count": 4},
+            {"key": "CABLE_INSULATION", "count": 3}
+          ],
+          "specialized_components": []
+        },
+        {
+          "name": "A-3 壳体制造",
+          "x_ratio": [0.579, 0.855],
+          "y_ratio": [0, 0.826],
+          "wall_thickness": 0.3,
+          "wall_material": "CONCRETE",
+          "openings": [
+            {"wall": "x_min", "type": "door", "position": 0.5, "width": 5.0, "height": 5.5, "z_bottom": 0},
+            {"wall": "x_max", "type": "door", "position": 0.5, "width": 5.0, "height": 5.5, "z_bottom": 0}
+          ],
+          "combustibles": [
+            {"key": "SOLVENT_CLEANER", "count": 4},
+            {"key": "CABLE_INSULATION", "count": 3}
+          ],
+          "specialized_components": []
+        },
+        {
+          "name": "A-4 总装/燃气与电力测试",
+          "x_ratio": [0.855, 1.0],
+          "y_ratio": [0, 1.0],
+          "wall_thickness": 0.35,
+          "wall_material": "CONCRETE",
+          "openings": [
+            {"wall": "x_min", "type": "door", "position": 0.5, "width": 5.0, "height": 5.5, "z_bottom": 0},
+            {"wall": "x_max", "type": "door", "position": 0.8, "width": 2.0, "height": 3.0, "z_bottom": 0}
+          ],
+          "combustibles": [
+            {"key": "EDIBLE_OIL", "count": 9},
+            {"key": "CABLE_INSULATION", "count": 4}
+          ],
+          "specialized_components": [{"key": "GAS_TEST_VENT", "count": 3}]
+        }
+      ],
+      "specialized_components": []
+    },
+    "Office_Area": {
+      "cn_name": "办公区 (B-1)",
+      "description": "北部管理综合体左侧办公区，2层建筑",
+      "offset": {"x": -11, "y": 109},
+      "rotation": 0,
+      "building": {
+        "length": {"min": 31, "max": 31, "median": 31, "mean": 31, "unit": "m"},
+        "width": {"min": 56, "max": 56, "median": 56, "mean": 56, "unit": "m"},
+        "height": {"min": 6, "max": 6, "median": 6, "mean": 6, "unit": "m"},
+        "stories": {"min": 2, "max": 2, "median": 2, "mean": 2, "unit": ""}
+      },
+      "doors": {
+        "width": {"min": 1.2, "max": 2, "median": 1.5, "mean": 1.5, "unit": "m"},
+        "height": {"min": 2.2, "max": 2.5, "median": 2.35, "mean": 2.35, "unit": "m"},
+        "count": {"min": 8, "max": 12, "median": 10, "mean": 10, "unit": ""}
+      },
+      "windows": {
+        "width": {"min": 1.5, "max": 2, "median": 1.8, "mean": 1.8, "unit": "m"},
+        "height": {"min": 1.8, "max": 2.2, "median": 2, "mean": 2, "unit": "m"},
+        "count": {"min": 12, "max": 18, "median": 15, "mean": 15, "unit": ""}
+      },
+      "wall_thickness": 0.2,
+      "fire_compartments": [
+        {
+          "name": "B-1 办公区主体",
+          "x_ratio": [0, 1.0],
+          "y_ratio": [0, 1.0],
+          "wall_thickness": 0.2,
+          "wall_material": "CONCRETE",
+          "openings": [
+            {"wall": "y_max", "type": "door", "position": 0.5, "width": 2.0, "height": 2.5, "z_bottom": 0},
+            {"wall": "y_max", "type": "window", "position": 0.3, "width": 1.5, "height": 1.5, "z_bottom": 3},
+            {"wall": "y_max", "type": "window", "position": 0.7, "width": 1.5, "height": 1.5, "z_bottom": 3}
+          ],
+          "combustibles": [
+            {"key": "OFFICE_FURNITURE", "count": 6},
+            {"key": "CABLE_INSULATION", "count": 3}
+          ],
+          "specialized_components": []
+        }
+      ],
+      "specialized_components": []
+    },
+    "Lab_Tooling_Maintenance": {
+      "cn_name": "实验室/工装维护区 (B-2)",
+      "description": "北部管理综合体右侧，质量/计量实验室和工装维修/备件间",
+      "offset": {"x": 45, "y": 109},
+      "rotation": 0,
+      "building": {
+        "length": {"min": 19, "max": 19, "median": 19, "mean": 19, "unit": "m"},
+        "width": {"min": 120, "max": 120, "median": 120, "mean": 120, "unit": "m"},
+        "height": {"min": 6, "max": 6, "median": 6, "mean": 6, "unit": "m"},
+        "stories": {"min": 1, "max": 1, "median": 1, "mean": 1, "unit": ""}
+      },
+      "doors": {
+        "width": {"min": 1.5, "max": 3, "median": 2, "mean": 2, "unit": "m"},
+        "height": {"min": 2.5, "max": 4, "median": 3, "mean": 3, "unit": "m"},
+        "count": {"min": 8, "max": 12, "median": 10, "mean": 10, "unit": ""}
+      },
+      "windows": {},
+      "wall_thickness": 0.25,
+      "fire_compartments": [
+        {
+          "name": "B-2-1 质量/计量实验室",
+          "x_ratio": [0, 0.3],
+          "y_ratio": [0, 1.0],
+          "wall_thickness": 0.25,
+          "wall_material": "CONCRETE",
+          "openings": [],
+          "combustibles": [],
+          "specialized_components": []
+        },
+        {
+          "name": "B-2-2 工装维修/备件间",
+          "x_ratio": [0.3, 1.0],
+          "y_ratio": [0, 1.0],
+          "wall_thickness": 0.25,
+          "wall_material": "CONCRETE",
+          "openings": [
+            {"wall": "x_min", "type": "door", "position": 0.5, "width": 2.0, "height": 2.5, "z_bottom": 0}
+          ],
+          "combustibles": [
+            {"key": "LUBRICATION_OIL", "count": 6},
+            {"key": "SOLVENT_CLEANER", "count": 2}
+          ],
+          "specialized_components": []
+        }
+      ],
+      "specialized_components": []
+    },
+    "Finished_Goods_Buffer": {
+      "cn_name": "成品缓存区 (C-1)",
+      "description": "南部物流与仓储区左侧，含物流卷帘门",
+      "offset": {"x": 0, "y": 0},
+      "rotation": 0,
+      "building": {
+        "length": {"min": 39, "max": 39, "median": 39, "mean": 39, "unit": "m"},
+        "width": {"min": 84, "max": 84, "median": 84, "mean": 84, "unit": "m"},
+        "height": {"min": 8, "max": 10, "median": 9, "mean": 9, "unit": "m"},
+        "stories": {"min": 1, "max": 1, "median": 1, "mean": 1, "unit": ""}
+      },
+      "doors": {
+        "width": {"min": 3, "max": 5, "median": 4, "mean": 4, "unit": "m"},
+        "height": {"min": 4, "max": 5, "median": 4.5, "mean": 4.5, "unit": "m"},
+        "count": {"min": 4, "max": 6, "median": 5, "mean": 5, "unit": ""}
+      },
+      "windows": {},
+      "wall_thickness": 0.3,
+      "fire_compartments": [
+        {
+          "name": "C-1-1 成品缓存左侧",
+          "x_ratio": [0, 0.643],
+          "y_ratio": [0, 1.0],
+          "wall_thickness": 0.3,
+          "wall_material": "CONCRETE",
+          "openings": [
+            {"wall": "x_min", "type": "door", "position": 0.3, "width": 4.0, "height": 4.5, "z_bottom": 0},
+            {"wall": "x_min", "type": "door", "position": 0.7, "width": 4.0, "height": 4.5, "z_bottom": 0}
+          ],
+          "combustibles": [
+            {"key": "WOODEN_PALLET", "count": 6},
+            {"key": "CARDBOARD_BOX", "count": 6}
+          ],
+          "specialized_components": []
+        },
+        {
+          "name": "C-1-2 成品缓存右侧",
+          "x_ratio": [0.643, 1.0],
+          "y_ratio": [0, 1.0],
+          "wall_thickness": 0.3,
+          "wall_material": "CONCRETE",
+          "openings": [],
+          "combustibles": [
+            {"key": "WOODEN_PALLET", "count": 4},
+            {"key": "CARDBOARD_BOX", "count": 4}
+          ],
+          "specialized_components": []
+        }
+      ],
+      "specialized_components": []
+    },
+    "Final_Inspection_Packaging": {
+      "cn_name": "终检/包装区 (C-2)",
+      "description": "南部物流与仓储区中段",
+      "offset": {"x": 84, "y": 0},
+      "rotation": 0,
+      "building": {
+        "length": {"min": 39, "max": 39, "median": 39, "mean": 39, "unit": "m"},
+        "width": {"min": 37, "max": 37, "median": 37, "mean": 37, "unit": "m"},
+        "height": {"min": 8, "max": 10, "median": 9, "mean": 9, "unit": "m"},
+        "stories": {"min": 1, "max": 1, "median": 1, "mean": 1, "unit": ""}
+      },
+      "doors": {
+        "width": {"min": 2, "max": 4, "median": 3, "mean": 3, "unit": "m"},
+        "height": {"min": 3, "max": 5, "median": 4, "mean": 4, "unit": "m"},
+        "count": {"min": 2, "max": 4, "median": 3, "mean": 3, "unit": ""}
+      },
+      "windows": {},
+      "wall_thickness": 0.3,
+      "fire_compartments": [
+        {
+          "name": "C-2 终检/包装区主体",
+          "x_ratio": [0, 1.0],
+          "y_ratio": [0, 1.0],
+          "wall_thickness": 0.3,
+          "wall_material": "CONCRETE",
+          "openings": [],
+          "combustibles": [
+            {"key": "WOODEN_PALLET", "count": 4},
+            {"key": "CARDBOARD_BOX", "count": 4}
+          ],
+          "specialized_components": []
+        }
+      ],
+      "specialized_components": []
+    },
+    "Powder_Coating_Paint": {
+      "cn_name": "喷粉/喷漆区 (C-3)",
+      "description": "南部物流与仓储区右侧，高度危险防火分区",
+      "offset": {"x": 141, "y": 0},
+      "rotation": 0,
+      "building": {
+        "length": {"min": 39, "max": 39, "median": 39, "mean": 39, "unit": "m"},
+        "width": {"min": 25, "max": 25, "median": 25, "mean": 25, "unit": "m"},
+        "height": {"min": 8, "max": 10, "median": 9, "mean": 9, "unit": "m"},
+        "stories": {"min": 1, "max": 1, "median": 1, "mean": 1, "unit": ""}
+      },
+      "doors": {
+        "width": {"min": 2, "max": 3, "median": 2.5, "mean": 2.5, "unit": "m"},
+        "height": {"min": 3, "max": 4, "median": 3.5, "mean": 3.5, "unit": "m"},
+        "count": {"min": 1, "max": 2, "median": 1.5, "mean": 1.5, "unit": ""}
+      },
+      "windows": {},
+      "wall_thickness": 0.4,
+      "fire_compartments": [
+        {
+          "name": "C-3 喷粉/喷漆区主体",
+          "x_ratio": [0, 1.0],
+          "y_ratio": [0, 1.0],
+          "wall_thickness": 0.4,
+          "wall_material": "CONCRETE",
+          "openings": [
+            {"wall": "x_max", "type": "door", "position": 0.5, "width": 2.5, "height": 3.5, "z_bottom": 0}
+          ],
+          "combustibles": [
+            {"key": "PAINT_SOLVENT", "count": 6}
+          ],
+          "specialized_components": []
+        }
+      ],
+      "specialized_components": []
+    },
+    "Power_Distribution_Room": {
+      "cn_name": "配电间 (D-1)",
+      "description": "南部边缘辅助间配电间",
+      "offset": {"x": 54, "y": -15},
+      "rotation": 0,
+      "building": {
+        "length": {"min": 15, "max": 15, "median": 15, "mean": 15, "unit": "m"},
+        "width": {"min": 13, "max": 13, "median": 13, "mean": 13, "unit": "m"},
+        "height": {"min": 5, "max": 6, "median": 5.5, "mean": 5.5, "unit": "m"},
+        "stories": {"min": 1, "max": 1, "median": 1, "mean": 1, "unit": ""}
+      },
+      "doors": {
+        "width": {"min": 2, "max": 3, "median": 2.5, "mean": 2.5, "unit": "m"},
+        "height": {"min": 3, "max": 4, "median": 3.5, "mean": 3.5, "unit": "m"},
+        "count": {"min": 1, "max": 2, "median": 1.5, "mean": 1.5, "unit": ""}
+      },
+      "windows": {},
+      "wall_thickness": 0.2,
+      "fire_compartments": [
+        {
+          "name": "D-1 配电间主体",
+          "x_ratio": [0, 1.0],
+          "y_ratio": [0, 1.0],
+          "wall_thickness": 0.2,
+          "wall_material": "CONCRETE",
+          "openings": [],
+          "combustibles": [
+            {"key": "CABLE_INSULATION", "count": 2},
+            {"key": "LUBRICATION_OIL", "count": 2}
+          ],
+          "specialized_components": []
+        }
+      ],
+      "specialized_components": []
+    },
+    "Packaging_Line_Storage": {
+      "cn_name": "包装线/附件库 (D-2)",
+      "description": "南部边缘辅助间包装线与附件库",
+      "offset": {"x": 67, "y": -13},
+      "rotation": 0,
+      "building": {
+        "length": {"min": 13, "max": 13, "median": 13, "mean": 13, "unit": "m"},
+        "width": {"min": 37, "max": 37, "median": 37, "mean": 37, "unit": "m"},
+        "height": {"min": 5, "max": 6, "median": 5.5, "mean": 5.5, "unit": "m"},
+        "stories": {"min": 1, "max": 1, "median": 1, "mean": 1, "unit": ""}
+      },
+      "doors": {
+        "width": {"min": 2, "max": 3, "median": 2.5, "mean": 2.5, "unit": "m"},
+        "height": {"min": 3, "max": 4, "median": 3.5, "mean": 3.5, "unit": "m"},
+        "count": {"min": 2, "max": 3, "median": 2.5, "mean": 2.5, "unit": ""}
+      },
+      "windows": {},
+      "wall_thickness": 0.2,
+      "fire_compartments": [
+        {
+          "name": "D-2 包装线/附件库主体",
+          "x_ratio": [0, 1.0],
+          "y_ratio": [0, 1.0],
+          "wall_thickness": 0.2,
+          "wall_material": "CONCRETE",
+          "openings": [],
+          "combustibles": [
+            {"key": "WOODEN_PALLET", "count": 4},
+            {"key": "CARDBOARD_BOX", "count": 4}
+          ],
+          "specialized_components": []
+        }
+      ],
+      "specialized_components": []
+    },
+    "Hazardous_Chemical_Storage": {
+      "cn_name": "危化品间 (D-3)",
+      "description": "南部边缘辅助间危化品储存，高防火墙",
+      "offset": {"x": 104, "y": -13},
+      "rotation": 0,
+      "building": {
+        "length": {"min": 13, "max": 13, "median": 13, "mean": 13, "unit": "m"},
+        "width": {"min": 20, "max": 20, "median": 20, "mean": 20, "unit": "m"},
+        "height": {"min": 5, "max": 6, "median": 5.5, "mean": 5.5, "unit": "m"},
+        "stories": {"min": 1, "max": 1, "median": 1, "mean": 1, "unit": ""}
+      },
+      "doors": {
+        "width": {"min": 1.5, "max": 2, "median": 1.8, "mean": 1.8, "unit": "m"},
+        "height": {"min": 2.2, "max": 2.5, "median": 2.35, "mean": 2.35, "unit": "m"},
+        "count": {"min": 1, "max": 2, "median": 1.5, "mean": 1.5, "unit": ""}
+      },
+      "windows": {},
+      "wall_thickness": 0.4,
+      "fire_compartments": [
+        {
+          "name": "D-3 危化品间主体",
+          "x_ratio": [0, 1.0],
+          "y_ratio": [0, 1.0],
+          "wall_thickness": 0.4,
+          "wall_material": "CONCRETE",
+          "openings": [],
+          "combustibles": [
+            {"key": "PAINT_SOLVENT", "count": 3},
+            {"key": "LUBRICATION_OIL", "count": 2}
+          ],
+          "specialized_components": []
+        }
+      ],
+      "specialized_components": []
+    },
+    "Reception_Guard": {
+      "cn_name": "行政接待/警卫室",
+      "description": "办公区左侧凸起的小块区域",
+      "offset": {"x": -11, "y": 90},
+      "rotation": 0,
+      "building": {
+        "length": {"min": 19, "max": 19, "median": 19, "mean": 19, "unit": "m"},
+        "width": {"min": 24, "max": 24, "median": 24, "mean": 24, "unit": "m"},
+        "height": {"min": 5, "max": 6, "median": 5.5, "mean": 5.5, "unit": "m"},
+        "stories": {"min": 1, "max": 1, "median": 1, "mean": 1, "unit": ""}
+      },
+      "doors": {
+        "width": {"min": 1.2, "max": 1.5, "median": 1.35, "mean": 1.35, "unit": "m"},
+        "height": {"min": 2.2, "max": 2.5, "median": 2.35, "mean": 2.35, "unit": "m"},
+        "count": {"min": 1, "max": 2, "median": 1.5, "mean": 1.5, "unit": ""}
+      },
+      "windows": {},
+      "wall_thickness": 0.2,
+      "fire_compartments": [
+        {
+          "name": "行政接待/警卫室主体",
+          "x_ratio": [0, 1.0],
+          "y_ratio": [0, 1.0],
+          "wall_thickness": 0.2,
+          "wall_material": "CONCRETE",
+          "openings": [
+            {"wall": "y_min", "type": "door", "position": 0.5, "width": 1.5, "height": 2.5, "z_bottom": 0}
+          ],
+          "combustibles": [],
+          "specialized_components": []
+        }
+      ],
+      "specialized_components": []
+    },
+    "Assembly_Repair_Platform": {
+      "cn_name": "总装区检修凸起",
+      "description": "总装区最右端极小的检修凸起",
+      "offset": {"x": 145, "y": 100},
+      "rotation": 0,
+      "building": {
+        "length": {"min": 4, "max": 4, "median": 4, "mean": 4, "unit": "m"},
+        "width": {"min": 16, "max": 16, "median": 16, "mean": 16, "unit": "m"},
+        "height": {"min": 4, "max": 5, "median": 4.5, "mean": 4.5, "unit": "m"},
+        "stories": {"min": 1, "max": 1, "median": 1, "mean": 1, "unit": ""}
+      },
+      "doors": {
+        "width": {"min": 1, "max": 1.5, "median": 1.2, "mean": 1.2, "unit": "m"},
+        "height": {"min": 2, "max": 2.5, "median": 2.2, "mean": 2.2, "unit": "m"},
+        "count": {"min": 1, "max": 1, "median": 1, "mean": 1, "unit": ""}
+      },
+      "windows": {},
+      "wall_thickness": 0.2,
+      "fire_compartments": [
+        {
+          "name": "检修凸起主体",
+          "x_ratio": [0, 1.0],
+          "y_ratio": [0, 1.0],
+          "wall_thickness": 0.2,
+          "wall_material": "CONCRETE",
+          "openings": [],
+          "combustibles": [],
+          "specialized_components": []
+        }
+      ],
+      "specialized_components": []
+    }
+  }
+}
