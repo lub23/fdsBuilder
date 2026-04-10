@@ -357,7 +357,7 @@
       "description": "电厂辅助厂房，包含电气设备、变压器、电缆桥架等",
       "offset": {
         "x": 0,
-        "y": 17.5
+        "y": 17
       },
       "rotation": 0,
       "stairwell": {
@@ -543,7 +543,7 @@
       "description": "电厂油库，包含柴油储罐、重油储罐、日用油箱等",
       "offset": {
         "x": 0,
-        "y": 33
+        "y": 32
       },
       "rotation": 0,
       "building": {
@@ -855,7 +855,7 @@
       "description": "厂用配电设备、变压器室、高低压开关柜",
       "offset": {
         "x": 65,
-        "y": -125
+        "y": -145
       },
       "rotation": 0,
       "building": {
@@ -888,63 +888,20 @@
           "unit": ""
         }
       },
-      "doors": {
-        "width": {
-          "min": 3,
-          "max": 4,
-          "median": 3.5,
-          "mean": 3.5,
-          "unit": "m"
-        },
-        "height": {
-          "min": 3.5,
-          "max": 4,
-          "median": 3.8,
-          "mean": 3.8,
-          "unit": "m"
-        },
-        "count": {
-          "min": 1,
-          "max": 2,
-          "median": 1.5,
-          "mean": 1.5,
-          "unit": ""
-        }
-      },
-      "windows": {
-        "width": {
-          "min": 1,
-          "max": 1.2,
-          "median": 1.1,
-          "mean": 1.1,
-          "unit": "m"
-        },
-        "height": {
-          "min": 1.2,
-          "max": 1.5,
-          "median": 1.35,
-          "mean": 1.35,
-          "unit": "m"
-        },
-        "count": {
-          "min": 4,
-          "max": 6,
-          "median": 5,
-          "mean": 5,
-          "unit": ""
-        }
-      },
+      "doors": {},
+      "windows": {},
       "wall_thickness": 0.3,
       "fire_compartments": [
         {
-          "name": "分区1（上）4h",
+          "name": "分区1（上）",
           "x_ratio": [0, 1.0],
           "y_ratio": [0.6, 1.0],
           "wall_thickness": 0.3,
           "wall_material": "CONCRETE",
           "openings": [
-            {"wall": "x_min", "type": "window", "position": 0.3, "width": 1.0, "height": 1.2, "z_bottom": 2},
-            {"wall": "x_min", "type": "window", "position": 0.7, "width": 1.0, "height": 1.2, "z_bottom": 2}
+            {"wall": "x_min", "type": "window", "position": 0.65, "width": 1.0, "height": 1.2, "z_bottom": 2},
+            {"wall": "x_min", "type": "window", "position": 0.7, "width": 1.0, "height": 1.2, "z_bottom": 2},
+            {"wall": "y_min", "type": "door", "position": 0.6, "width": 1.0, "height": 3, "z_bottom": 0}
           ],
           "combustibles": [
             {"key": "CABLE_BRIDGE", "count": 6},
@@ -955,10 +912,35 @@
         {
           "name": "分区2（中左）2h",
           "x_ratio": [0, 0.6],
-          "y_ratio": [0.3, 0.6],
+          "y_ratio": [0.2, 0.5],
           "wall_thickness": 0.3,
           "wall_material": "CONCRETE",
-          "openings": [],
+          "openings": [
+            {
+              "wall": "x_min",
+              "type": "window",
+              "position": 0.33,
+              "width": 1.0,
+              "height": 1.0,
+              "z_bottom": 1
+            },
+            {
+              "wall": "x_min",
+              "type": "window",
+              "position": 0.4,
+              "width": 1.0,
+              "height": 1.0,
+              "z_bottom": 1
+            },
+            {
+              "wall": "x_max",
+              "type": "door",
+              "position": 0.5,
+              "width": 1.5,
+              "height": 2.5,
+              "z_bottom": 0
+            }
+          ],
           "combustibles": [
             {"key": "OIL_TRANSFORMER", "count": 2},
             {"key": "CABLE_BRIDGE", "count": 4}
@@ -968,10 +950,35 @@
         {
           "name": "分区3（中右）2h",
           "x_ratio": [0.7, 1.0],
-          "y_ratio": [0.3, 0.6],
+          "y_ratio": [0.2, 0.6],
           "wall_thickness": 0.3,
           "wall_material": "CONCRETE",
-          "openings": [],
+          "openings": [
+            {
+              "wall": "x_max",
+              "type": "window",
+              "position": 0.57,
+              "width": 1.5,
+              "height": 1.5,
+              "z_bottom": 1
+            },
+            {
+              "wall": "x_max",
+              "type": "window",
+              "position": 0.5,
+              "width": 1.5,
+              "height": 1.5,
+              "z_bottom": 1
+            },
+            {
+              "wall": "x_min",
+              "type": "door",
+              "position": 0.3,
+              "width": 1.5,
+              "height": 2.5,
+              "z_bottom": 0
+            }
+          ],
           "combustibles": [
             {"key": "OIL_TRANSFORMER", "count": 2},
             {"key": "OIL_CIRCUIT_BREAKER", "count": 4}
@@ -986,8 +993,10 @@
           "wall_material": "CONCRETE",
           "openings": [
             {"wall": "y_min", "type": "door", "position": 0.5, "width": 4.0, "height": 4.0, "z_bottom": 0},
-            {"wall": "x_min", "type": "window", "position": 0.3, "width": 1.0, "height": 1.2, "z_bottom": 2},
-            {"wall": "x_min", "type": "window", "position": 0.7, "width": 1.0, "height": 1.2, "z_bottom": 2}
+            {"wall": "y_max", "type": "door", "position": 0.65, "width": 1.8, "height": 4.0, "z_bottom": 0},
+            {"wall": "x_min", "type": "window", "position": 0.24, "width": 1.0, "height": 1.2, "z_bottom": 2},
+            {"wall": "x_min", "type": "window", "position": 0.17, "width": 1.0, "height": 1.2, "z_bottom": 2},
+            {"wall": "y_min", "type": "door", "position": 0.26, "width": 2.0, "height": 4.0, "z_bottom": 0}
           ],
           "combustibles": [
             {"key": "CABLE_BRIDGE", "count": 6},
@@ -1003,8 +1012,8 @@
       "cn_name": "应急柴油发电机房（厂房5）",
       "description": "应急柴油发电机组、日用油箱",
       "offset": {
-        "x": 83,
-        "y": -125
+        "x": 77,
+        "y": -159
       },
       "rotation": 0,
       "building": {
@@ -1037,52 +1046,8 @@
           "unit": ""
         }
       },
-      "doors": {
-        "width": {
-          "min": 2,
-          "max": 3,
-          "median": 2.5,
-          "mean": 2.5,
-          "unit": "m"
-        },
-        "height": {
-          "min": 2.5,
-          "max": 3,
-          "median": 2.8,
-          "mean": 2.8,
-          "unit": "m"
-        },
-        "count": {
-          "min": 1,
-          "max": 2,
-          "median": 1.5,
-          "mean": 1.5,
-          "unit": ""
-        }
-      },
-      "windows": {
-        "width": {
-          "min": 1,
-          "max": 1.2,
-          "median": 1.1,
-          "mean": 1.1,
-          "unit": "m"
-        },
-        "height": {
-          "min": 1.2,
-          "max": 1.5,
-          "median": 1.35,
-          "mean": 1.35,
-          "unit": "m"
-        },
-        "count": {
-          "min": 6,
-          "max": 10,
-          "median": 8,
-          "mean": 8,
-          "unit": ""
-        }
-      },
+      "doors": { },
+      "windows": {},
       "wall_thickness": 0.2,
       "fire_compartments": [
         {
@@ -1091,7 +1056,16 @@
           "y_ratio": [0, 1.0],
           "wall_thickness": 0.2,
           "wall_material": "CONCRETE",
-          "openings": [],
+          "openings": [
+            {"wall": "x_max", "type": "window", "position": 0.15, "width": 0.5, "height": 1.0, "z_bottom": 1},
+            {"wall": "x_max", "type": "window", "position": 0.22, "width": 0.5, "height": 1.0, "z_bottom": 1},
+            {"wall": "x_max", "type": "window", "position": 0.29, "width": 0.5, "height": 1.0, "z_bottom": 1},
+            {"wall": "x_max", "type": "window", "position": 0.36, "width": 0.5, "height": 1.0, "z_bottom": 1},
+            {"wall": "x_max", "type": "window", "position": 0.6, "width": 0.5, "height": 1.0, "z_bottom": 1},
+            {"wall": "x_max", "type": "window", "position": 0.67, "width": 0.5, "height": 1.0, "z_bottom": 1},
+            {"wall": "x_max", "type": "window", "position": 0.74, "width": 0.5, "height": 1.0, "z_bottom": 1},
+            {"wall": "x_max", "type": "window", "position": 0.81, "width": 0.5, "height": 1.0, "z_bottom": 1}
+          ],
           "combustibles": [
             {"key": "DIESEL_GENERATOR", "count": 1},
             {"key": "DAILY_OIL_TANK", "count": 1},
@@ -1107,8 +1081,8 @@
       "cn_name": "化学水辅助车间（厂房6）",
       "description": "水处理设备、药剂储存、备品库",
       "offset": {
-        "x": 95,
-        "y": -135
+        "x": 100,
+        "y": -151
       },
       "rotation": 0,
       "building": {
@@ -1141,61 +1115,42 @@
           "unit": ""
         }
       },
-      "doors": {
-        "width": {
-          "min": 2,
-          "max": 3,
-          "median": 2.5,
-          "mean": 2.5,
-          "unit": "m"
-        },
-        "height": {
-          "min": 2.5,
-          "max": 3,
-          "median": 2.8,
-          "mean": 2.8,
-          "unit": "m"
-        },
-        "count": {
-          "min": 2,
-          "max": 4,
-          "median": 3,
-          "mean": 3,
-          "unit": ""
-        }
-      },
-      "windows": {
-        "width": {
-          "min": 1,
-          "max": 1.5,
-          "median": 1.2,
-          "mean": 1.2,
-          "unit": "m"
-        },
-        "height": {
-          "min": 1.2,
-          "max": 1.8,
-          "median": 1.5,
-          "mean": 1.5,
-          "unit": "m"
-        },
-        "count": {
-          "min": 8,
-          "max": 12,
-          "median": 10,
-          "mean": 10,
-          "unit": ""
-        }
-      },
+      "doors": {},
+      "windows": {},
       "wall_thickness": 0.3,
       "fire_compartments": [
         {
-          "name": "左区",
-          "x_ratio": [0, 0.33],
-          "y_ratio": [0, 1.0],
+          "name": "底部大分区",
+          "x_ratio": [0, 1.0],
+          "y_ratio": [0, 0.3],
           "wall_thickness": 0.3,
           "wall_material": "CONCRETE",
-          "openings": [],
+          "openings": [
+            {
+              "wall": "x_min",
+              "type": "window",
+              "position": 0.2,
+              "width": 5.0,
+              "height": 5.0,
+              "z_bottom": 1
+            },
+            {
+              "wall": "x_max",
+              "type": "window",
+              "position": 0.1,
+              "width": 5.0,
+              "height": 5.0,
+              "z_bottom": 1
+            },
+            {
+              "wall": "y_max",
+              "type": "door",
+              "position": 0.5,
+              "width": 2.0,
+              "height": 3.0,
+              "z_bottom": 0
+            }
+          ],
           "combustibles": [
             {"key": "CHEMICAL_DRUM", "count": 30},
             {"key": "CABLE_BRIDGE", "count": 2}
@@ -1203,12 +1158,37 @@
           "specialized_components": []
         },
         {
-          "name": "中区",
-          "x_ratio": [0.33, 0.67],
-          "y_ratio": [0, 1.0],
+          "name": "左侧上分区",
+          "x_ratio": [0, 0.65],
+          "y_ratio": [0.4, 0.9],
           "wall_thickness": 0.3,
           "wall_material": "CONCRETE",
-          "openings": [],
+          "openings": [
+            {
+              "wall": "x_min",
+              "type": "window",
+              "position": 0.55,
+              "width": 5.0,
+              "height": 5.0,
+              "z_bottom": 1
+            },
+            {
+              "wall": "x_min",
+              "type": "window",
+              "position": 0.75,
+              "width": 5.0,
+              "height": 5.0,
+              "z_bottom": 1
+            },
+            {
+              "wall": "x_max",
+              "type": "door",
+              "position": 0.7,
+              "width": 1.5,
+              "height": 3.0,
+              "z_bottom": 0
+            }
+          ],
           "combustibles": [
             {"key": "RUBBER_LINED_PIPE", "count": 1},
             {"key": "WOODEN_BOX", "count": 25},
@@ -1217,15 +1197,53 @@
           "specialized_components": []
         },
         {
-          "name": "右区",
-          "x_ratio": [0.67, 1.0],
-          "y_ratio": [0, 1.0],
+          "name": "右侧中分区",
+          "x_ratio": [0.75, 1.0],
+          "y_ratio": [0.3, 0.6],
           "wall_thickness": 0.3,
           "wall_material": "CONCRETE",
-          "openings": [],
+          "openings": [
+            {
+              "wall": "x_min",
+              "type": "door",
+              "position": 0.3,
+              "width": 1.5,
+              "height": 2.5,
+              "z_bottom": 0
+            }
+          ],
           "combustibles": [
-            {"key": "LUBE_OIL_DRUM", "count": 10},
-            {"key": "CABLE_BRIDGE", "count": 2}
+            {"key": "ELECTRICAL_PANEL", "count": 2},
+            {"key": "CABLE_TRAY", "count": 10}
+          ],
+          "specialized_components": []
+        },
+        {
+          "name": "右侧上分区",
+          "x_ratio": [0.75, 1.0],
+          "y_ratio": [0.6, 0.9],
+          "wall_thickness": 0.3,
+          "wall_material": "CONCRETE",
+          "openings": [
+            {
+              "wall": "x_max",
+              "type": "window",
+              "position": 0.75,
+              "width": 5,
+              "height": 5,
+              "z_bottom": 1
+            },
+            {
+              "wall": "x_min",
+              "type": "door",
+              "position": 0.7,
+              "width": 1.5,
+              "height": 2.5,
+              "z_bottom": 0
+            }
+          ],
+          "combustibles": [
+            {"key": "OFFICE_SUPPLIES", "count": 10}
           ],
           "specialized_components": []
         }
@@ -1236,8 +1254,8 @@
       "cn_name": "附属油品/控制间（厂房7）",
       "description": "油品储存、控制室",
       "offset": {
-        "x": 95,
-        "y": -105
+        "x": 100,
+        "y": -132
       },
       "rotation": 0,
       "building": {
@@ -1270,39 +1288,20 @@
           "unit": ""
         }
       },
-      "doors": {
-        "width": {
-          "min": 2,
-          "max": 3,
-          "median": 2.5,
-          "mean": 2.5,
-          "unit": "m"
-        },
-        "height": {
-          "min": 2.5,
-          "max": 3,
-          "median": 2.8,
-          "mean": 2.8,
-          "unit": "m"
-        },
-        "count": {
-          "min": 1,
-          "max": 2,
-          "median": 1.5,
-          "mean": 1.5,
-          "unit": ""
-        }
-      },
+      "doors": {},
       "windows": {},
       "wall_thickness": 0.2,
       "fire_compartments": [
         {
           "name": "油品储存间",
-          "x_ratio": [0, 0.6],
+          "x_ratio": [0, 0.4],
           "y_ratio": [0, 1.0],
           "wall_thickness": 0.2,
           "wall_material": "CONCRETE",
-          "openings": [],
+          "openings": [
+            {"wall":"y_min", "type":"door", "position":0.2, "width":2.0, "height":2.0, "z_bottom":0},
+            {"wall":"y_max", "type":"window", "position":0.8, "width":1.0, "height":1.0, "z_bottom":1.0}
+          ],
           "combustibles": [
             {"key": "DIESEL_DRUM", "count": 20},
             {"key": "LUBE_OIL_DRUM", "count": 15},
@@ -1312,11 +1311,15 @@
         },
         {
           "name": "控制间",
-          "x_ratio": [0.6, 1.0],
+          "x_ratio": [0.4, 1.0],
           "y_ratio": [0, 1.0],
           "wall_thickness": 0.2,
           "wall_material": "CONCRETE",
-          "openings": [],
+          "openings": [
+            {"wall":"y_min", "type":"door", "position":0.5, "width":2.0, "height":2.0, "z_bottom":0},
+            {"wall":"x_max", "type":"door", "position":0.7, "width":3.0, "height":3.0, "z_bottom":0},
+            {"wall":"y_max", "type":"window", "position":0.2, "width":2.0, "height":2.0, "z_bottom":1.0}
+          ],
           "combustibles": [
             {"key": "CONTROL_CABINET", "count": 4},
             {"key": "PAPER_ARCHIVE", "count": 4},
@@ -1331,8 +1334,8 @@
       "cn_name": "工业水泵房/药剂间（厂房8）",
       "description": "工业水泵、药剂储存",
       "offset": {
-        "x": 175,
-        "y": -145
+        "x": 165,
+        "y": -166
       },
       "rotation": 0,
       "building": {
@@ -1365,29 +1368,7 @@
           "unit": ""
         }
       },
-      "doors": {
-        "width": {
-          "min": 2,
-          "max": 3,
-          "median": 2.5,
-          "mean": 2.5,
-          "unit": "m"
-        },
-        "height": {
-          "min": 2.5,
-          "max": 3,
-          "median": 2.8,
-          "mean": 2.8,
-          "unit": "m"
-        },
-        "count": {
-          "min": 1,
-          "max": 2,
-          "median": 1.5,
-          "mean": 1.5,
-          "unit": ""
-        }
-      },
+      "doors": {},
       "windows": {},
       "wall_thickness": 0.3,
       "fire_compartments": [
@@ -1397,7 +1378,12 @@
           "y_ratio": [0, 1.0],
           "wall_thickness": 0.3,
           "wall_material": "CONCRETE",
-          "openings": [],
+          "openings": [
+            {"wall":"x_max", "type":"door", "position":0.55, "width":2.0, "height":3.0, "z_bottom":0},
+            {"wall":"y_min", "type":"door", "position":0.25, "width":1.0, "height":2.0, "z_bottom":0},
+            {"wall":"y_max", "type":"door", "position":0.15, "width":1.0, "height":2.0, "z_bottom":0},
+            {"wall":"y_max", "type":"door", "position":0.35, "width":1.0, "height":2.0, "z_bottom":0}
+          ],
           "combustibles": [
             {"key": "LUBE_OIL_TANK", "count": 2},
             {"key": "CABLE_BRIDGE", "count": 2}
@@ -1410,7 +1396,9 @@
           "y_ratio": [0, 1.0],
           "wall_thickness": 0.3,
           "wall_material": "CONCRETE",
-          "openings": [],
+          "openings": [
+            {"wall":"y_min", "type":"door", "position":0.75, "width":4.0, "height":5.0, "z_bottom":0}
+          ],
           "combustibles": [
             {"key": "CHEMICAL_DRUM", "count": 20},
             {"key": "RUBBER_LINED_PIPE", "count": 1},
@@ -1425,8 +1413,8 @@
       "cn_name": "化学水处理主车间（厂房9）",
       "description": "化学水处理主要设备、加药间",
       "offset": {
-        "x": 175,
-        "y": -100
+        "x": 165,
+        "y": -105.5
       },
       "rotation": 0,
       "building": {
@@ -1459,80 +1447,160 @@
           "unit": ""
         }
       },
-      "doors": {
-        "width": {
-          "min": 3,
-          "max": 4,
-          "median": 3.5,
-          "mean": 3.5,
-          "unit": "m"
-        },
-        "height": {
-          "min": 3.5,
-          "max": 4,
-          "median": 3.8,
-          "mean": 3.8,
-          "unit": "m"
-        },
-        "count": {
-          "min": 2,
-          "max": 3,
-          "median": 2.5,
-          "mean": 2.5,
-          "unit": ""
-        }
-      },
-      "windows": {
-        "width": {
-          "min": 0.8,
-          "max": 1,
-          "median": 0.9,
-          "mean": 0.9,
-          "unit": "m"
-        },
-        "height": {
-          "min": 1,
-          "max": 1.2,
-          "median": 1.1,
-          "mean": 1.1,
-          "unit": "m"
-        },
-        "count": {
-          "min": 10,
-          "max": 15,
-          "median": 12,
-          "mean": 12,
-          "unit": ""
-        }
-      },
+      "doors": {},
+      "windows": {},
       "wall_thickness": 0.3,
       "fire_compartments": [
         {
           "name": "加药间",
-          "x_ratio": [0.55, 0.75],
-          "y_ratio": [0, 0.9],
+          "x_ratio": [0, 0.62],
+          "y_ratio": [0, 0.4],
           "wall_thickness": 0.3,
           "wall_material": "CONCRETE",
-          "openings": [],
+          "openings": [
+            {
+              "wall": "y_min",
+              "type": "door",
+              "position": 0.2,
+              "width": 4.0,
+              "height": 3.0,
+              "z_bottom": 0
+            },
+            {
+              "wall": "x_min",
+              "type": "window",
+              "position": 0.2,
+              "width": 2.0,
+              "height": 2.0,
+              "z_bottom": 1
+            }
+          ],
           "combustibles": [
             {"key": "CHEMICAL_DRUM", "count": 40}
           ],
           "specialized_components": []
         },
         {
-          "name": "主功能区2h",
-          "x_ratio": [0, 1.0],
-          "y_ratio": [0, 0.8],
+          "name": "主功能区",
+          "x_ratio": [0, 0.62],
+          "y_ratio": [0.6, 1.0],
           "wall_thickness": 0.3,
           "wall_material": "CONCRETE",
           "openings": [
-            {"wall": "y_min", "type": "door", "position": 0.5, "width": 4.0, "height": 4.0, "z_bottom": 0}
+            {
+              "wall": "x_min",
+              "type": "door",
+              "position": 0.8,
+              "width": 2.0,
+              "height": 3.0,
+              "z_bottom": 0
+            },
+            {
+              "wall": "x_max",
+              "type": "door",
+              "position": 0.6,
+              "width": 2.0,
+              "height": 3.0,
+              "z_bottom": 0
+            },
+            {
+              "wall": "y_max",
+              "type": "window",
+              "position": 0.3,
+              "width": 3.0,
+              "height": 2.0,
+              "z_bottom": 1
+            }
           ],
           "combustibles": [
             {"key": "CABLE_BRIDGE", "count": 6},
             {"key": "RUBBER_LINED_PIPE", "count": 1},
             {"key": "PAPER_ARCHIVE", "count": 6},
             {"key": "LUBE_OIL_TANK", "count": 2}
+          ],
+          "specialized_components": []
+        },
+        {
+          "name": "右侧下分区",
+          "x_ratio": [0.7, 1.0],
+          "y_ratio": [0, 0.75],
+          "wall_thickness": 0.3,
+          "wall_material": "CONCRETE",
+          "openings": [
+            {
+              "wall": "y_min",
+              "type": "door",
+              "position": 0.8,
+              "width": 2.0,
+              "height": 3.0,
+              "z_bottom": 0
+            },
+            {
+              "wall": "x_max",
+              "type": "window",
+              "position": 0.2,
+              "width": 1.0,
+              "height": 1.0,
+              "z_bottom": 1
+            },
+            {
+              "wall": "x_max",
+              "type": "window",
+              "position": 0.4,
+              "width": 1.0,
+              "height": 1.0,
+              "z_bottom": 1
+            },
+            {
+              "wall": "x_max",
+              "type": "window",
+              "position": 0.6,
+              "width": 1.0,
+              "height": 1.0,
+              "z_bottom": 1
+            },
+            {
+              "wall": "x_max",
+              "type": "window",
+              "position": 0.8,
+              "width": 1.0,
+              "height": 1.0,
+              "z_bottom": 1
+            }
+          ],
+          "combustibles": [
+            {"key": "RUBBER_MATERIAL", "count": 50},
+            {"key": "PLASTIC_SHEETS", "count": 30}
+          ],
+          "specialized_components": []
+        },
+        {
+          "name": "右侧上分区",
+          "x_ratio": [0.7, 1.0],
+          "y_ratio": [0.75, 1.0],
+          "wall_thickness": 0.3,
+          "wall_material": "CONCRETE",
+          "openings": [
+            {
+              "wall": "x_min",
+              "type": "door",
+              "position": 0.8,
+              "width": 1.5,
+              "height": 2.5,
+              "z_bottom": 0
+            },
+            {
+              "wall": "y_max",
+              "type": "window",
+              "position": 0.85,
+              "width": 1.0,
+              "height": 1.0,
+              "z_bottom": 1
+            }
+          ],
+          "combustibles": [
+            {"key": "OFFICE_SUPPLIES", "count": 10},
+            {"key": "PAPER_BOX", "count": 20}
           ],
           "specialized_components": []
         }
@@ -1543,8 +1611,8 @@
       "cn_name": "运行控制室/办公楼（厂房10）",
       "description": "电厂控制室、办公室、资料档案室",
       "offset": {
-        "x": 175,
-        "y": -85
+        "x": 165.5,
+        "y": -67
       },
       "rotation": 0,
       "building": {
@@ -1570,68 +1638,30 @@
           "unit": "m"
         },
         "stories": {
-          "min": 2,
-          "max": 2,
-          "median": 2,
-          "mean": 2,
+          "min": 1,
+          "max": 1,
+          "median": 1,
+          "mean": 1,
           "unit": ""
         }
       },
-      "doors": {
-        "width": {
-          "min": 1.2,
-          "max": 4,
-          "median": 2.5,
-          "mean": 2.5,
-          "unit": "m"
-        },
-        "height": {
-          "min": 2.5,
-          "max": 4,
-          "median": 3,
-          "mean": 3,
-          "unit": "m"
-        },
-        "count": {
-          "min": 8,
-          "max": 12,
-          "median": 10,
-          "mean": 10,
-          "unit": ""
-        }
-      },
-      "windows": {
-        "width": {
-          "min": 1.5,
-          "max": 2,
-          "median": 1.8,
-          "mean": 1.8,
-          "unit": "m"
-        },
-        "height": {
-          "min": 1.8,
-          "max": 2.2,
-          "median": 2,
-          "mean": 2,
-          "unit": "m"
-        },
-        "count": {
-          "min": 20,
-          "max": 30,
-          "median": 25,
-          "mean": 25,
-          "unit": ""
-        }
-      },
+      "doors": { },
+      "windows": {},
       "wall_thickness": 0.25,
       "fire_compartments": [
         {
-          "name": "控制室",
-          "x_ratio": [0, 0.35],
-          "y_ratio": [0, 1.0],
+          "name": "控制室1",
+          "x_ratio": [0, 0.39],
+          "y_ratio": [0, 0.35],
           "wall_thickness": 0.25,
           "wall_material": "CONCRETE",
-          "openings": [],
+          "openings": [
+            {"wall": "x_max", "type": "door", "position": 0.28, "width": 1.5, "height": 2, "z_bottom": 0},
+            {"wall": "x_min", "type": "window", "position": 0.12, "width": 2, "height": 2, "z_bottom": 2},
+            {"wall": "x_min", "type": "door", "position": 0.18, "width": 0.8, "height": 2, "z_bottom": 0},
+            {"wall": "x_min", "type": "door", "position": 0.27, "width": 4, "height": 6, "z_bottom": 0},
+            {"wall": "x_min", "type": "door", "position": 0.5, "width": 13.8, "height": 9, "z_bottom": 0}
+          ],
           "combustibles": [
             {"key": "PAPER_ARCHIVE", "count": 20},
             {"key": "WOODEN_FURNITURE", "count": 16},
@@ -1641,16 +1671,74 @@
           "specialized_components": []
         },
         {
-          "name": "右侧中间大区2h",
-          "x_ratio": [0.45, 1.0],
-          "y_ratio": [0.3, 0.7],
+          "name": "控制室2",
+          "x_ratio": [0, 0.39],
+          "y_ratio": [0.65, 1.0],
           "wall_thickness": 0.25,
           "wall_material": "CONCRETE",
           "openings": [
-            {"wall": "y_max", "type": "window", "position": 0.2, "width": 1.5, "height": 1.8, "z_bottom": 1},
-            {"wall": "y_max", "type": "window", "position": 0.4, "width": 1.5, "height": 1.8, "z_bottom": 1},
-            {"wall": "y_max", "type": "window", "position": 0.6, "width": 1.5, "height": 1.8, "z_bottom": 1},
-            {"wall": "y_max", "type": "window", "position": 0.8, "width": 1.5, "height": 1.8, "z_bottom": 1}
+            {"wall": "x_max", "type": "door", "position": 0.7, "width": 1.5, "height": 2, "z_bottom": 0},
+            {"wall": "x_max", "type": "door", "position": 0.85, "width": 1.5, "height": 2, "z_bottom": 0},
+            {"wall": "x_min", "type": "window", "position": 0.7, "width": 2, "height": 2, "z_bottom": 2},
+            {"wall": "x_min", "type": "window", "position": 0.95, "width": 2, "height": 2, "z_bottom": 2},
+            {"wall": "x_min", "type": "door", "position": 0.82, "width": 4, "height": 6, "z_bottom": 0},
+            {"wall": "y_max", "type": "window", "position": 0.12, "width": 2, "height": 2, "z_bottom": 2},
+            {"wall": "y_max", "type": "window", "position": 0.28, "width": 2, "height": 2, "z_bottom": 2}
+          ],
+          "combustibles": [
+            {"key": "PAPER_ARCHIVE", "count": 20},
+            {"key": "WOODEN_FURNITURE", "count": 16},
+            {"key": "NETWORK_CABLE", "count": 6},
+            {"key": "SERVER_CABINET", "count": 18}
+          ],
+          "specialized_components": []
+        },
+        {
+          "name": "右侧大区1",
+          "x_ratio": [0.45, 1.0],
+          "y_ratio": [0, 0.35],
+          "wall_thickness": 0.25,
+          "wall_material": "CONCRETE",
+          "openings": [
+            {"wall": "x_max", "type": "door", "position": 0.27, "width": 4, "height": 6, "z_bottom": 0},
+            {"wall": "x_min", "type": "door", "position": 0.27, "width": 1.5, "height": 2, "z_bottom": 0}
+          ],
+          "combustibles": [
+            {"key": "DECORATION_MATERIAL", "count": 1},
+            {"key": "NETWORK_CABLE", "count": 4}
+          ],
+          "specialized_components": []
+        },
+        {
+          "name": "右侧大区2",
+          "x_ratio": [0.45, 1.0],
+          "y_ratio": [0.35, 0.7],
+          "wall_thickness": 0.25,
+          "wall_material": "CONCRETE",
+          "openings": [
+            {"wall": "x_min", "type": "door", "position": 0.4, "width": 1.5, "height": 2, "z_bottom": 0},
+            {"wall": "x_min", "type": "door", "position": 0.6, "width": 1.5, "height": 2, "z_bottom": 0},
+            {"wall": "x_max", "type": "window", "position": 0.45, "width": 2, "height": 2, "z_bottom": 1},
+            {"wall": "x_max", "type": "window", "position": 0.55, "width": 2, "height": 2, "z_bottom": 1}
+          ],
+          "combustibles": [
+            {"key": "DECORATION_MATERIAL", "count": 1},
+            {"key": "NETWORK_CABLE", "count": 4}
+          ],
+          "specialized_components": []
+        },
+        {
+          "name": "右侧大区3",
+          "x_ratio": [0.45, 1.0],
+          "y_ratio": [0.7, 1.0],
+          "wall_thickness": 0.25,
+          "wall_material": "CONCRETE",
+          "openings": [
+            {"wall": "y_max", "type": "door", "position": 0.55, "width": 4, "height": 6, "z_bottom": 0},
+            {"wall": "y_max", "type": "window", "position": 0.65, "width": 2, "height": 2, "z_bottom": 2},
+            {"wall": "y_max", "type": "window", "position": 0.85, "width": 2, "height": 2, "z_bottom": 2},
+            {"wall": "x_min", "type": "door", "position": 0.9, "width": 3, "height": 5, "z_bottom": 0},
+            {"wall": "x_min", "type": "door", "position": 0.5, "width": 1.5, "height": 1.8, "z_bottom": 0}
           ],
           "combustibles": [
             {"key": "DECORATION_MATERIAL", "count": 1},
@@ -1665,8 +1753,8 @@
       "cn_name": "门卫室/应急物资库（厂房11）",
       "description": "门卫室、应急物资储存",
       "offset": {
-        "x": 210,
-        "y": -75
+        "x": 192.5,
+        "y": -67
       },
       "rotation": 0,
       "building": {
@@ -1699,29 +1787,7 @@
           "unit": ""
         }
       },
-      "doors": {
-        "width": {
-          "min": 1.2,
-          "max": 2,
-          "median": 1.5,
-          "mean": 1.5,
-          "unit": "m"
-        },
-        "height": {
-          "min": 2,
-          "max": 2.5,
-          "median": 2.2,
-          "mean": 2.2,
-          "unit": "m"
-        },
-        "count": {
-          "min": 2,
-          "max": 4,
-          "median": 3,
-          "mean": 3,
-          "unit": ""
-        }
-      },
+      "doors": {},
       "windows": {},
       "wall_thickness": 0.2,
       "fire_compartments": [
@@ -1731,7 +1797,13 @@
           "y_ratio": [0, 0.5],
           "wall_thickness": 0.2,
           "wall_material": "CONCRETE",
-          "openings": [],
+          "openings": [
+            {"wall": "x_max", "type": "door", "position": 0.45, "width": 1, "height": 2.5, "z_bottom": 0},
+            {"wall": "x_max", "type": "window", "position": 0.3, "width": 1, "height": 1.5, "z_bottom": 1},
+            {"wall": "x_max", "type": "window", "position": 0.15, "width": 1, "height": 1.5, "z_bottom": 1},
+            {"wall": "y_max", "type": "door", "position": 0.6, "width": 1.5, "height": 2.5, "z_bottom": 0},
+            {"wall": "x_min", "type": "window", "position": 0.4, "width": 1, "height": 1.5, "z_bottom": 1}
+          ],
           "combustibles": [
             {"key": "EMERGENCY_SUPPLIES", "count": 12},
             {"key": "DIESEL_DRUM", "count": 10}
@@ -1744,7 +1816,13 @@
           "y_ratio": [0.5, 1.0],
           "wall_thickness": 0.2,
           "wall_material": "CONCRETE",
-          "openings": [],
+          "openings": [
+            {"wall": "x_min", "type": "window", "position": 0.55, "width": 1, "height": 1.5, "z_bottom": 1},
+            {"wall": "x_min", "type": "window", "position": 0.73, "width": 1, "height": 1.5, "z_bottom": 1},
+            {"wall": "x_min", "type": "door", "position": 0.81, "width": 1, "height": 2.5, "z_bottom": 0},
+            {"wall": "x_max", "type": "window", "position": 0.9, "width": 1, "height": 1.5, "z_bottom": 1}
+
+          ],
           "combustibles": [
             {"key": "WOODEN_FURNITURE", "count": 2},
             {"key": "MONITOR_CABLE", "count": 2},
@@ -1759,8 +1837,8 @@
       "cn_name": "危化品/油品储存间（厂房15）",
       "description": "危险化学品及油品储存",
       "offset": {
-        "x": 145,
-        "y": -80
+        "x": 127,
+        "y": -67
       },
       "rotation": 0,
       "building": {
@@ -1793,90 +1871,26 @@
           "unit": ""
         }
       },
-      "doors": {
-        "width": {
-          "min": 2,
-          "max": 3,
-          "median": 2.5,
-          "mean": 2.5,
-          "unit": "m"
-        },
-        "height": {
-          "min": 2.5,
-          "max": 3,
-          "median": 2.8,
-          "mean": 2.8,
-          "unit": "m"
-        },
-        "count": {
-          "min": 1,
-          "max": 2,
-          "median": 1.5,
-          "mean": 1.5,
-          "unit": ""
-        }
-      },
-      "windows": {
-        "width": {
-          "min": 0.8,
-          "max": 1,
-          "median": 0.9,
-          "mean": 0.9,
-          "unit": "m"
-        },
-        "height": {
-          "min": 1,
-          "max": 1.2,
-          "median": 1.1,
-          "mean": 1.1,
-          "unit": "m"
-        },
-        "count": {
-          "min": 3,
-          "max": 4,
-          "median": 3.5,
-          "mean": 3.5,
-          "unit": ""
-        }
-      },
+      "doors": {},
+      "windows": {},
       "wall_thickness": 0.3,
       "fire_compartments": [
         {
-          "name": "油品储存间",
-          "x_ratio": [0, 0.5],
+          "name": "危化品/油品储存间",
+          "x_ratio": [0, 1.0],
           "y_ratio": [0, 1.0],
           "wall_thickness": 0.3,
           "wall_material": "CONCRETE",
-          "openings": [],
+          "openings": [
+            {"wall": "x_max", "type": "door", "position": 0.3, "width": 3.0, "height": 4.0, "z_bottom": 0},
+            {"wall": "y_max", "type": "window", "position": 0.3, "width": 1.0, "height": 1.2, "z_bottom": 2},
+            {"wall": "y_max", "type": "window", "position": 0.7, "width": 1.0, "height": 1.2, "z_bottom": 2},
+            {"wall": "x_min", "type": "window", "position": 0.9, "width": 1.0, "height": 1.2, "z_bottom": 2},
+            {"wall": "y_min", "type": "window", "position": 0.9, "width": 1.0, "height": 1.2, "z_bottom": 2}
+          ],
           "combustibles": [
             {"key": "DIESEL_DRUM", "count": 35},
             {"key": "LUBE_OIL_DRUM", "count": 25}
-          ],
-          "specialized_components": []
-        },
-        {
-          "name": "危化品储存间",
-          "x_ratio": [0.5, 0.8],
-          "y_ratio": [0, 1.0],
-          "wall_thickness": 0.3,
-          "wall_material": "CONCRETE",
-          "openings": [],
-          "combustibles": [
-            {"key": "CHEMICAL_DRUM", "count": 10},
-            {"key": "PLASTIC_CONTAINER", "count": 15}
-          ],
-          "specialized_components": []
-        },
-        {
-          "name": "包装材料区",
-          "x_ratio": [0.8, 1.0],
-          "y_ratio": [0, 1.0],
-          "wall_thickness": 0.3,
-          "wall_material": "CONCRETE",
-          "openings": [],
-          "combustibles": [
-            {"key": "WOODEN_PALLET", "count": 20},
-            {"key": "LIGHTING_CABLE", "count": 2}
           ],
           "specialized_components": []
         }
@@ -1887,8 +1901,8 @@
       "cn_name": "消防水泵房/消防控制室（厂房16）",
       "description": "消防水泵、控制系统",
       "offset": {
-        "x": 145,
-        "y": -60
+        "x": 125.5,
+        "y": -41.5
       },
       "rotation": 0,
       "building": {
@@ -1921,58 +1935,14 @@
           "unit": ""
         }
       },
-      "doors": {
-        "width": {
-          "min": 3,
-          "max": 4,
-          "median": 3.5,
-          "mean": 3.5,
-          "unit": "m"
-        },
-        "height": {
-          "min": 3.5,
-          "max": 4,
-          "median": 3.8,
-          "mean": 3.8,
-          "unit": "m"
-        },
-        "count": {
-          "min": 1,
-          "max": 2,
-          "median": 1.5,
-          "mean": 1.5,
-          "unit": ""
-        }
-      },
-      "windows": {
-        "width": {
-          "min": 2.5,
-          "max": 3,
-          "median": 2.8,
-          "mean": 2.8,
-          "unit": "m"
-        },
-        "height": {
-          "min": 1.5,
-          "max": 2,
-          "median": 1.8,
-          "mean": 1.8,
-          "unit": "m"
-        },
-        "count": {
-          "min": 6,
-          "max": 8,
-          "median": 7,
-          "mean": 7,
-          "unit": ""
-        }
-      },
+      "doors": {},
+      "windows": {},
       "wall_thickness": 0.3,
       "fire_compartments": [
         {
           "name": "楼梯间",
-          "x_ratio": [0, 0.15],
-          "y_ratio": [0, 1.0],
+          "x_ratio": [0, 0.8],
+          "y_ratio": [0.55, 0.8],
           "wall_thickness": 0.3,
           "wall_material": "CONCRETE",
           "openings": [],
@@ -1980,12 +1950,18 @@
           "specialized_components": []
         },
         {
-          "name": "消防水泵房2h",
-          "x_ratio": [0.15, 0.6],
-          "y_ratio": [0, 1.0],
+          "name": "消防水泵房",
+          "x_ratio": [0.8, 1.0],
+          "y_ratio": [0.4, 0.8],
           "wall_thickness": 0.3,
           "wall_material": "CONCRETE",
-          "openings": [],
+          "openings": [
+            {"wall": "x_max", "type": "window", "position": 0.2, "width": 3.0, "height": 3.0, "z_bottom": 1},
+            {"wall": "x_max", "type": "door", "position": 0.6, "width": 4.0, "height": 4, "z_bottom": 0},
+            {"wall": "x_min", "type": "door", "position": 0.15, "width": 1.0, "height": 2.5, "z_bottom": 0},
+            {"wall": "x_min", "type": "door", "position": 0.8, "width": 1.5, "height": 2.5, "z_bottom": 0},
+            {"wall": "y_max", "type": "door", "position": 0.8, "width": 1.0, "height": 2.5, "z_bottom": 0}
+          ],
           "combustibles": [
             {"key": "FIRE_PUMP_CABLE", "count": 4},
             {"key": "LUBE_OIL_TANK", "count": 2},
@@ -1995,12 +1971,14 @@
         },
         {
           "name": "消防控制室",
-          "x_ratio": [0.6, 1.0],
-          "y_ratio": [0, 1.0],
+          "x_ratio": [0, 1.0],
+          "y_ratio": [0.8, 1.0],
           "wall_thickness": 0.3,
           "wall_material": "CONCRETE",
           "openings": [
-            {"wall": "x_max", "type": "door", "position": 0.5, "width": 4.0, "height": 4.0, "z_bottom": 0}
+            {"wall": "y_max", "type": "window", "position": 0.2, "width": 3.0, "height": 3.0, "z_bottom": 1},
+            {"wall": "y_max", "type": "window", "position": 0.5, "width": 3.0, "height": 3.0, "z_bottom": 1},
+            {"wall": "y_max", "type": "window", "position": 0.8, "width": 3.0, "height": 3.0, "z_bottom": 1}
           ],
           "combustibles": [
             {"key": "FIRE_CONTROL_HOST", "count": 4},
@@ -2015,8 +1993,8 @@
       "cn_name": "检修维护车间/备品库（厂房12）",
       "description": "设备检修、备品备件储存",
       "offset": {
-        "x": 175,
-        "y": -35
+        "x": 165,
+        "y": -7.5
       },
       "rotation": 0,
       "building": {
@@ -2049,40 +2027,47 @@
           "unit": ""
         }
       },
-      "doors": {
-        "width": {
-          "min": 2,
-          "max": 3,
-          "median": 2.5,
-          "mean": 2.5,
-          "unit": "m"
-        },
-        "height": {
-          "min": 2.5,
-          "max": 3.5,
-          "median": 3,
-          "mean": 3,
-          "unit": "m"
-        },
-        "count": {
-          "min": 4,
-          "max": 6,
-          "median": 5,
-          "mean": 5,
-          "unit": ""
-        }
-      },
+      "doors": {},
       "windows": {},
       "wall_thickness": 0.3,
       "fire_compartments": [
         {
-          "name": "左侧长条分区2h",
-          "x_ratio": [0, 0.42],
-          "y_ratio": [0, 1.0],
+          "name": "左侧分区1",
+          "x_ratio": [0, 0.41],
+          "y_ratio": [0, 0.68],
           "wall_thickness": 0.3,
           "wall_material": "CONCRETE",
           "openings": [
-            {"wall": "y_min", "type": "door", "position": 0.5, "width": 3.0, "height": 3.0, "z_bottom": 0}
+            {"wall": "x_min", "type": "window", "position": 0.1, "width": 3.0, "height": 3.0, "z_bottom": 1},
+            {"wall": "x_min", "type": "window", "position": 0.2, "width": 3.0, "height": 3.0, "z_bottom": 1},
+            {"wall": "x_min", "type": "window", "position": 0.3, "width": 3.0, "height": 3.0, "z_bottom": 1},
+            {"wall": "x_min", "type": "window", "position": 0.4, "width": 3.0, "height": 3.0, "z_bottom": 1},
+            {"wall": "x_min", "type": "window", "position": 0.5, "width": 3.0, "height": 3.0, "z_bottom": 1},
+            {"wall": "x_min", "type": "window", "position": 0.6, "width": 3.0, "height": 3.0, "z_bottom": 1},
+            {"wall": "x_max", "type": "door", "position": 0.45, "width": 1, "height": 3.0, "z_bottom": 0}
+          ],
+          "combustibles": [
+            {"key": "WOODEN_BOX", "count": 60},
+            {"key": "CABLE_BRIDGE", "count": 4},
+            {"key": "LUBE_OIL_DRUM", "count": 55}
+          ],
+          "specialized_components": []
+        },{
+          "name": "左侧分区2",
+          "x_ratio": [0, 0.41],
+          "y_ratio": [0.68, 1.0],
+          "wall_thickness": 0.3,
+          "wall_material": "CONCRETE",
+          "openings": [
+            {"wall": "x_min", "type": "door", "position": 0.73, "width": 1.0, "height": 3.0, "z_bottom": 0},
+            {"wall": "x_min", "type": "door", "position": 0.85, "width": 1.0, "height": 3.0, "z_bottom": 0},
+            {"wall": "x_max", "type": "door", "position": 0.85, "width": 1.0, "height": 3.0, "z_bottom": 0},
+            {"wall": "y_max", "type": "window", "position": 0.06, "width": 0.8, "height": 1.0, "z_bottom": 1},
+            {"wall": "y_max", "type": "window", "position": 0.12, "width": 0.8, "height": 1.0, "z_bottom": 1},
+            {"wall": "y_max", "type": "window", "position": 0.18, "width": 0.8, "height": 1.0, "z_bottom": 1},
+            {"wall": "y_max", "type": "window", "position": 0.24, "width": 0.8, "height": 1.0, "z_bottom": 1},
+            {"wall": "y_max", "type": "window", "position": 0.30, "width": 0.8, "height": 1.0, "z_bottom": 1},
+            {"wall": "y_max", "type": "window", "position": 0.36, "width": 0.8, "height": 1.0, "z_bottom": 1}
           ],
           "combustibles": [
             {"key": "WOODEN_BOX", "count": 60},
@@ -2093,7 +2078,7 @@
         },
         {
           "name": "交通核/走廊",
-          "x_ratio": [0.42, 0.57],
+          "x_ratio": [0.41, 0.47],
           "y_ratio": [0, 1.0],
           "wall_thickness": 0.3,
           "wall_material": "CONCRETE",
@@ -2102,13 +2087,73 @@
           "specialized_components": []
         },
         {
-          "name": "右侧分区",
-          "x_ratio": [0.57, 1.0],
-          "y_ratio": [0, 1.0],
+          "name": "右侧分区1",
+          "x_ratio": [0.47, 1.0],
+          "y_ratio": [0, 0.21],
           "wall_thickness": 0.3,
           "wall_material": "CONCRETE",
           "openings": [
-            {"wall": "x_max", "type": "door", "position": 0.5, "width": 2.0, "height": 2.5, "z_bottom": 0}
+            {"wall": "y_min", "type": "door", "position": 0.75, "width": 3.0, "height": 2.5, "z_bottom": 0},
+            {"wall": "y_min", "type": "window", "position": 0.5, "width": 0.8, "height": 1.0, "z_bottom": 1},
+            {"wall": "y_min", "type": "window", "position": 0.55, "width": 0.8, "height": 1.0, "z_bottom": 1},
+            {"wall": "y_min", "type": "window", "position": 0.65, "width": 0.8, "height": 1.0, "z_bottom": 1},
+            {"wall": "y_min", "type": "window", "position": 0.9, "width": 0.8, "height": 1.0, "z_bottom": 1},
+            {"wall": "y_max", "type": "door", "position": 0.6, "width": 1.0, "height": 2.5, "z_bottom": 0},
+            {"wall": "x_max", "type": "window", "position": 0.1, "width": 0.8, "height": 1.0, "z_bottom": 1},
+            {"wall": "x_max", "type": "window", "position": 0.18, "width": 0.8, "height": 1.0, "z_bottom": 1},
+            {"wall": "x_max", "type": "window", "position": 0.26, "width": 0.8, "height": 1.0, "z_bottom": 1}
+          ],
+          "combustibles": [
+            {"key": "PAINT_THINNER_DRUM", "count": 80},
+            {"key": "RUBBER_CONVEYOR_BELT", "count": 8},
+            {"key": "CABLE_BRIDGE", "count": 4}
+          ],
+          "specialized_components": []
+        },
+        {
+          "name": "右侧分区2",
+          "x_ratio": [0.47, 1.0],
+          "y_ratio": [0.21, 0.42],
+          "wall_thickness": 0.3,
+          "wall_material": "CONCRETE",
+          "openings": [
+            {"wall": "x_min", "type": "door", "position": 0.32, "width": 2.0, "height": 2.5, "z_bottom": 0},
+            {"wall": "x_max", "type": "window", "position": 0.25, "width": 0.8, "height": 1.0, "z_bottom": 1},
+            {"wall": "x_max", "type": "door", "position": 0.32, "width": 2, "height": 2.5, "z_bottom": 0},
+            {"wall": "x_max", "type": "window", "position": 0.38, "width": 0.8, "height": 1.0, "z_bottom": 1}
+          ],
+          "combustibles": [
+            {"key": "PAINT_THINNER_DRUM", "count": 80},
+            {"key": "RUBBER_CONVEYOR_BELT", "count": 8},
+            {"key": "CABLE_BRIDGE", "count": 4}
+          ],
+          "specialized_components": []
+        },
+        {
+          "name": "右侧分区3",
+          "x_ratio": [0.47, 1.0],
+          "y_ratio": [0.42, 0.58],
+          "wall_thickness": 0.3,
+          "wall_material": "CONCRETE",
+          "openings": [],
+          "combustibles": [
+            {"key": "PAINT_THINNER_DRUM", "count": 80},
+            {"key": "RUBBER_CONVEYOR_BELT", "count": 8},
+            {"key": "CABLE_BRIDGE", "count": 4}
+          ],
+          "specialized_components": []
+        },
+        {
+          "name": "右侧分区1",
+          "x_ratio": [0.47, 1.0],
+          "y_ratio": [0.58, 1.0],
+          "wall_thickness": 0.3,
+          "wall_material": "CONCRETE",
+          "openings": [
+            {"wall": "y_min", "type": "door", "position": 0.5, "width": 1.0, "height": 2.5, "z_bottom": 0},
+            {"wall": "x_min", "type": "door", "position": 0.72, "width": 1.0, "height": 2.5, "z_bottom": 0},
+            {"wall": "x_min", "type": "door", "position": 0.85, "width": 1.0, "height": 2.5, "z_bottom": 0},
+            {"wall": "x_max", "type": "window", "position": 0.72, "width": 0.8, "height": 1.0, "z_bottom": 1}
           ],
           "combustibles": [
             {"key": "PAINT_THINNER_DRUM", "count": 80},
@@ -2124,8 +2169,8 @@
       "cn_name": "行政办公/会议室/接待室（厂房13）",
       "description": "行政办公室、会议室",
       "offset": {
-        "x": 175,
-        "y": 6.5
+        "x": 166,
+        "y": 42.5
       },
       "rotation": 0,
       "building": {
@@ -2151,62 +2196,29 @@
           "unit": "m"
         },
         "stories": {
-          "min": 2,
-          "max": 2,
-          "median": 2,
-          "mean": 2,
-          "unit": ""
-        }
-      },
-      "doors": {
-        "width": {
           "min": 1,
-          "max": 2,
-          "median": 1.2,
-          "mean": 1.2,
-          "unit": "m"
-        },
-        "height": {
-          "min": 2,
-          "max": 2.5,
-          "median": 2.2,
-          "mean": 2.2,
-          "unit": "m"
-        },
-        "count": {
-          "min": 10,
-          "max": 15,
-          "median": 12,
-          "mean": 12,
+          "max": 1,
+          "median": 1,
+          "mean": 1,
           "unit": ""
         }
       },
+      "doors": {},
       "windows": {},
       "wall_thickness": 0.25,
       "fire_compartments": [
         {
           "name": "办公区",
-          "x_ratio": [0, 1.0],
-          "y_ratio": [0, 1.0],
+          "x_ratio": [0, 0.12],
+          "y_ratio": [0.7, 1.0],
           "wall_thickness": 0.25,
           "wall_material": "CONCRETE",
           "openings": [
-            {"wall": "y_max", "type": "window", "position": 0.1, "width": 1.5, "height": 1.8, "z_bottom": 1},
-            {"wall": "y_max", "type": "window", "position": 0.3, "width": 1.5, "height": 1.8, "z_bottom": 1},
-            {"wall": "y_max", "type": "window", "position": 0.5, "width": 1.5, "height": 1.8, "z_bottom": 1},
-            {"wall": "y_max", "type": "window", "position": 0.7, "width": 1.5, "height": 1.8, "z_bottom": 1},
-            {"wall": "y_max", "type": "window", "position": 0.9, "width": 1.5, "height": 1.8, "z_bottom": 1},
-            {"wall": "y_min", "type": "door", "position": 0.4, "width": 0.8, "height": 2.2, "z_bottom": 0},
-            {"wall": "y_min", "type": "window", "position": 0.1, "width": 1.2, "height": 1.5, "z_bottom": 1},
-            {"wall": "y_min", "type": "window", "position": 0.2, "width": 1.2, "height": 1.5, "z_bottom": 1},
-            {"wall": "y_min", "type": "window", "position": 0.3, "width": 1.2, "height": 1.5, "z_bottom": 1},
-            {"wall": "y_min", "type": "window", "position": 0.7, "width": 1.2, "height": 1.5, "z_bottom": 1},
-            {"wall": "y_min", "type": "window", "position": 0.8, "width": 1.2, "height": 1.5, "z_bottom": 1},
-            {"wall": "y_min", "type": "window", "position": 0.9, "width": 1.2, "height": 1.5, "z_bottom": 1},
-            {"wall": "x_min", "type": "window", "position": 0.5, "width": 1.2, "height": 1.5, "z_bottom": 1},
-            {"wall": "x_min", "type": "window", "position": 0.5, "width": 1.2, "height": 1.5, "z_bottom": 3},
-            {"wall": "x_max", "type": "window", "position": 0.5, "width": 1.2, "height": 1.5, "z_bottom": 1},
-            {"wall": "x_max", "type": "window", "position": 0.5, "width": 1.2, "height": 1.5, "z_bottom": 3}
+            {"wall": "x_min", "type": "window", "position": 0.74, "width": 0.8, "height": 1.5, "z_bottom": 1.0},
+            {"wall": "y_min", "type": "door", "position": 0.10, "width": 1, "height": 2, "z_bottom": 0},
+            {"wall": "y_max", "type": "window", "position": 0.03, "width": 0.8, "height": 1.5, "z_bottom": 1},
+            {"wall": "y_max", "type": "window", "position": 0.07, "width": 0.8, "height": 1.5, "z_bottom": 1}
+            
           ],
           "combustibles": [
             {"key": "PAPER_ARCHIVE", "count": 20},
@@ -2219,6 +2231,153 @@
             {"key": "OFFICE_EQUIPMENT", "count": 20}
           ],
           "specialized_components": []
+        },
+        {
+          "name": "办公区",
+          "x_ratio": [0.12, 0.24],
+          "y_ratio": [0.7, 1.0],
+          "wall_thickness": 0.25,
+          "wall_material": "CONCRETE",
+          "openings": [
+            {"wall": "y_min", "type": "door", "position": 0.14, "width": 1, "height": 2, "z_bottom": 0},
+            {"wall": "y_max", "type": "window", "position": 0.16, "width": 0.8, "height": 1.5, "z_bottom": 1}
+          ],
+          "combustibles": [
+          ],
+          "specialized_components": []
+        },
+        {
+          "name": "办公区",
+          "x_ratio": [0.24, 0.36],
+          "y_ratio": [0.7, 1.0],
+          "wall_thickness": 0.25,
+          "wall_material": "CONCRETE",
+          "openings": [
+            {"wall": "y_min", "type": "door", "position": 0.34, "width": 1, "height": 2, "z_bottom": 0},
+            {"wall": "y_max", "type": "window", "position": 0.33, "width": 0.8, "height": 1.5, "z_bottom": 1}
+          ],
+          "combustibles": [
+          ],
+          "specialized_components": []
+        },
+        {
+          "name": "办公区",
+          "x_ratio": [0.36, 0.48],
+          "y_ratio": [0.7, 1.0],
+          "wall_thickness": 0.25,
+          "wall_material": "CONCRETE",
+          "openings": [
+            {"wall": "y_min", "type": "door", "position": 0.38, "width": 1, "height": 2, "z_bottom": 0},
+            {"wall": "y_max", "type": "window", "position": 0.39, "width": 0.8, "height": 1.5, "z_bottom": 1}
+          ],
+          "combustibles": [
+          ],
+          "specialized_components": []
+        },
+        {
+          "name": "办公区",
+          "x_ratio": [0.48, 0.6],
+          "y_ratio": [0.7, 1.0],
+          "wall_thickness": 0.25,
+          "wall_material": "CONCRETE",
+          "openings": [
+            {"wall": "y_min", "type": "door", "position": 0.54, "width": 1, "height": 2, "z_bottom": 0},
+            {"wall": "y_max", "type": "window", "position": 0.51, "width": 0.8, "height": 1.5, "z_bottom": 1}
+          ],
+          "combustibles": [
+          ],
+          "specialized_components": []
+        },
+        {
+          "name": "办公区",
+          "x_ratio": [0.7, 0.85],
+          "y_ratio": [0.7, 1.0],
+          "wall_thickness": 0.25,
+          "wall_material": "CONCRETE",
+          "openings": [
+            {"wall": "y_min", "type": "door", "position": 0.83, "width": 1, "height": 2, "z_bottom": 0},
+            {"wall": "y_max", "type": "window", "position": 0.81, "width": 0.8, "height": 1.5, "z_bottom": 1}
+          ],
+          "combustibles": [
+          ],
+          "specialized_components": []
+        },
+        {
+          "name": "办公区",
+          "x_ratio": [0.85, 1.0],
+          "y_ratio": [0.7, 1.0],
+          "wall_thickness": 0.25,
+          "wall_material": "CONCRETE",
+          "openings": [
+            {"wall": "y_min", "type": "door", "position": 0.95, "width": 1, "height": 2, "z_bottom": 0},
+            {"wall": "y_max", "type": "window", "position": 0.93, "width": 0.8, "height": 1.5, "z_bottom": 1},
+            {"wall": "x_max", "type": "window", "position": 0.9, "width": 0.8, "height": 1.5, "z_bottom": 1},
+            {"wall": "x_max", "type": "window", "position": 0.65, "width": 0.8, "height": 1.5, "z_bottom": 1}
+          ],
+          "combustibles": [
+          ],
+          "specialized_components": []
+        },
+        {
+          "name": "会议室",
+          "x_ratio": [0, 0.1],
+          "y_ratio": [0, 0.6],
+          "wall_thickness": 0.25,
+          "wall_material": "CONCRETE",
+          "openings": [
+            {"wall": "y_max", "type": "door", "position": 0.05, "width": 1, "height": 2, "z_bottom": 0},
+            {"wall": "y_min", "type": "window", "position": 0.08, "width": 0.8, "height": 1.5, "z_bottom": 1},
+            {"wall": "x_min", "type": "window", "position": 0.35, "width": 0.8, "height": 1.5, "z_bottom": 1}
+          ],
+          "combustibles": [
+          ],
+          "specialized_components": []
+        },
+        {
+          "name": "会议室",
+          "x_ratio": [0.1, 0.3],
+          "y_ratio": [0, 0.6],
+          "wall_thickness": 0.25,
+          "wall_material": "CONCRETE",
+          "openings": [
+            {"wall": "y_max", "type": "door", "position": 0.13, "width": 1, "height": 2, "z_bottom": 0},
+            {"wall": "y_min", "type": "window", "position": 0.23, "width": 0.8, "height": 1.5, "z_bottom": 1}
+          ],
+          "combustibles": [
+          ],
+          "specialized_components": []
+        },
+        {
+          "name": "会议室",
+          "x_ratio": [0.3, 0.55],
+          "y_ratio": [0, 0.6],
+          "wall_thickness": 0.25,
+          "wall_material": "CONCRETE",
+          "openings": [
+            {"wall": "y_max", "type": "door", "position": 0.33, "width": 1, "height": 2, "z_bottom": 0},
+            {"wall": "y_min", "type": "window", "position": 0.38, "width": 0.8, "height": 1.5, "z_bottom": 1},
+            {"wall": "y_min", "type": "door", "position": 0.45, "width": 0.8, "height": 2, "z_bottom": 0},
+            {"wall": "y_min", "type": "door", "position": 0.58, "width": 0.8, "height": 2, "z_bottom": 0}
+          ],
+          "combustibles": [
+          ],
+          "specialized_components": []
+        },
+        {
+          "name": "待客室",
+          "x_ratio": [0.7, 1.0],
+          "y_ratio": [0, 0.6],
+          "wall_thickness": 0.25,
+          "wall_material": "CONCRETE",
+          "openings": [
+            {"wall": "x_min", "type": "door", "position": 0.7, "width": 1, "height": 2, "z_bottom": 0},
+            {"wall": "x_max", "type": "window", "position": 0.38, "width": 1, "height": 1.5, "z_bottom": 1},
+            {"wall": "y_min", "type": "window", "position": 0.75, "width": 0.8, "height": 1.5, "z_bottom": 1},
+            {"wall": "y_min", "type": "window", "position": 0.82, "width": 0.8, "height": 1.5, "z_bottom": 1}
+          ],
+          "combustibles": [
+          ],
+          "specialized_components": []
         }
       ],
       "specialized_components": []
@@ -2227,8 +2386,8 @@
       "cn_name": "运行值班/培训/档案管理（厂房14）",
       "description": "值班办公室、培训室、档案室",
       "offset": {
-        "x": 178,
-        "y": 24.5
+        "x": 169,
+        "y": 60.5
       },
       "rotation": 0,
       "building": {
@@ -2254,58 +2413,28 @@
           "unit": "m"
         },
         "stories": {
-          "min": 2,
-          "max": 2,
-          "median": 2,
-          "mean": 2,
-          "unit": ""
-        }
-      },
-      "doors": {
-        "width": {
           "min": 1,
-          "max": 2,
-          "median": 1.5,
-          "mean": 1.5,
-          "unit": "m"
-        },
-        "height": {
-          "min": 2,
-          "max": 2.5,
-          "median": 2.2,
-          "mean": 2.2,
-          "unit": "m"
-        },
-        "count": {
-          "min": 8,
-          "max": 12,
-          "median": 10,
-          "mean": 10,
+          "max": 1,
+          "median": 1,
+          "mean": 1,
           "unit": ""
         }
       },
+      "doors": {},
       "windows": {},
       "wall_thickness": 0.25,
       "fire_compartments": [
         {
-          "name": "值班培训区",
-          "x_ratio": [0, 1.0],
-          "y_ratio": [0, 1.0],
+          "name": "培训区",
+          "x_ratio": [0, 0.5],
+          "y_ratio": [0, 0.65],
           "wall_thickness": 0.25,
           "wall_material": "CONCRETE",
           "openings": [
-            {"wall": "y_max", "type": "window", "position": 0.1, "width": 1.2, "height": 1.5, "z_bottom": 1},
-            {"wall": "y_max", "type": "window", "position": 0.23, "width": 1.2, "height": 1.5, "z_bottom": 1},
-            {"wall": "y_max", "type": "window", "position": 0.36, "width": 1.2, "height": 1.5, "z_bottom": 1},
-            {"wall": "y_max", "type": "window", "position": 0.49, "width": 1.2, "height": 1.5, "z_bottom": 1},
-            {"wall": "y_max", "type": "window", "position": 0.62, "width": 1.2, "height": 1.5, "z_bottom": 1},
-            {"wall": "y_max", "type": "window", "position": 0.75, "width": 1.2, "height": 1.5, "z_bottom": 1},
-            {"wall": "y_max", "type": "window", "position": 0.88, "width": 1.2, "height": 1.5, "z_bottom": 1},
-            {"wall": "y_min", "type": "door", "position": 0.5, "width": 2.52, "height": 2.5, "z_bottom": 0},
-            {"wall": "x_min", "type": "door", "position": 0.6, "width": 2.0, "height": 2.5, "z_bottom": 0},
-            {"wall": "x_min", "type": "window", "position": 0.6, "width": 1.0, "height": 1.2, "z_bottom": 0.5},
-            {"wall": "x_max", "type": "window", "position": 0.5, "width": 1.0, "height": 1.2, "z_bottom": 1},
-            {"wall": "x_max", "type": "window", "position": 0.5, "width": 1.0, "height": 1.2, "z_bottom": 3}
+            {"wall": "x_min", "type": "window", "position": 0.2, "width": 1.0, "height": 1.5, "z_bottom": 1.5},
+            {"wall": "x_min", "type": "door", "position": 0.4, "width": 2.0, "height": 2, "z_bottom": 0},
+            {"wall": "x_min", "type": "window", "position": 0.6, "width": 1.0, "height": 1.5, "z_bottom": 1.5},
+            {"wall": "x_max", "type": "door", "position": 0.8, "width": 1.0, "height": 2, "z_bottom": 0}
           ],
           "combustibles": [
             {"key": "DENSE_ARCHIVE", "count": 8},
@@ -2316,6 +2445,91 @@
             {"key": "RUBBER_PART", "count": 20}
           ],
           "specialized_components": []
+        },
+        {
+          "name": "值班办公室",
+          "x_ratio": [0, 0.2],
+          "y_ratio": [0.8, 1.0],
+          "wall_thickness": 0.25,
+          "wall_material": "CONCRETE",
+          "openings": [
+            {"wall": "x_min", "type": "window", "position": 0.84, "width": 1.0, "height": 1.5, "z_bottom": 1.5},
+            {"wall": "y_min", "type": "door", "position": 0.15, "width": 1.0, "height": 2, "z_bottom": 0},
+            {"wall": "y_max", "type": "window", "position": 0.16, "width": 1.0, "height": 1.5, "z_bottom": 1.5}
+          ],
+          "combustibles": [],
+          "specialized_components": []
+        },
+        {
+          "name": "值班办公室",
+          "x_ratio": [0.2, 0.4],
+          "y_ratio": [0.8, 1.0],
+          "wall_thickness": 0.25,
+          "wall_material": "CONCRETE",
+          "openings": [
+            {"wall": "y_min", "type": "door", "position": 0.22, "width": 1.0, "height": 2, "z_bottom": 0},
+            {"wall": "y_max", "type": "window", "position": 0.35, "width": 1.0, "height": 1.5, "z_bottom": 1.5}
+          ],
+          "combustibles": [
+          ],
+          "specialized_components": []
+        },
+        {
+          "name": "档案室",
+          "x_ratio": [0.4, 0.55],
+          "y_ratio": [0.8, 1.0],
+          "wall_thickness": 0.25,
+          "wall_material": "CONCRETE",
+          "openings": [
+            {"wall": "y_min", "type": "door", "position": 0.5, "width": 1.0, "height": 2, "z_bottom": 0},
+            {"wall": "y_max", "type": "window", "position": 0.48, "width": 1.0, "height": 1.5, "z_bottom": 1.5}
+          ],
+          "combustibles": [
+          ],
+          "specialized_components": []
+        },
+        {
+          "name": "档案室",
+          "x_ratio": [0.55, 0.7],
+          "y_ratio": [0.8, 1.0],
+          "wall_thickness": 0.25,
+          "wall_material": "CONCRETE",
+          "openings": [
+            {"wall": "y_min", "type": "door", "position": 0.58, "width": 1.0, "height": 2, "z_bottom": 0},
+            {"wall": "y_max", "type": "window", "position": 0.64, "width": 1.0, "height": 1.5, "z_bottom": 1.5}
+          ],
+          "combustibles": [
+          ],
+          "specialized_components": []
+        },
+        {
+          "name": "档案室",
+          "x_ratio": [0.7, 0.85],
+          "y_ratio": [0.8, 1.0],
+          "wall_thickness": 0.25,
+          "wall_material": "CONCRETE",
+          "openings": [
+            {"wall": "y_min", "type": "door", "position": 0.82, "width": 1.0, "height": 2, "z_bottom": 0},
+            {"wall": "y_max", "type": "window", "position": 0.73, "width": 1.0, "height": 1.5, "z_bottom": 1.5}
+          ],
+          "combustibles": [
+          ],
+          "specialized_components": []
+        },
+        {
+          "name": "档案室",
+          "x_ratio": [0.85, 1.0],
+          "y_ratio": [0.8, 1.0],
+          "wall_thickness": 0.25,
+          "wall_material": "CONCRETE",
+          "openings": [
+            {"wall": "y_min", "type": "door", "position": 0.88, "width": 1.0, "height": 2, "z_bottom": 0},
+            {"wall": "y_max", "type": "window", "position": 0.90, "width": 1.0, "height": 1.5, "z_bottom": 1.5},
+            {"wall": "x_max", "type": "window", "position": 0.65, "width": 1.0, "height": 1.5, "z_bottom": 1.5}
+          ],
+          "combustibles": [
+          ],
+          "specialized_components": []
         }
       ],
       "specialized_components": []
@@ -2324,8 +2538,8 @@
       "cn_name": "连接走廊",
       "description": "连接厂房13和厂房14的走廊",
       "offset": {
-        "x": 179.26,
-        "y": 14.75
+        "x": 170.26,
+        "y": 50.75
       },
       "rotation": 0,
       "building": {
@@ -2358,29 +2572,7 @@
           "unit": ""
         }
       },
-      "doors": {
-        "width": {
-          "min": 1.5,
-          "max": 2,
-          "median": 1.8,
-          "mean": 1.8,
-          "unit": "m"
-        },
-        "height": {
-          "min": 2.5,
-          "max": 3,
-          "median": 2.8,
-          "mean": 2.8,
-          "unit": "m"
-        },
-        "count": {
-          "min": 2,
-          "max": 4,
-          "median": 3,
-          "mean": 3,
-          "unit": ""
-        }
-      },
+      "doors": {},
       "windows": {},
       "wall_thickness": 0.2,
       "fire_compartments": [
@@ -2391,8 +2583,10 @@
           "wall_thickness": 0.2,
           "wall_material": "CONCRETE",
           "openings": [
-            {"wall": "y_min", "type": "door", "position": 0.4, "width": 1.8, "height": 2.8, "z_bottom": 0},
-            {"wall": "y_max", "type": "door", "position": 0.6, "width": 1.8, "height": 2.8, "z_bottom": 0}
+            {"wall": "x_min", "type": "window", "position": 0.4, "width": 1.0, "height": 2.0, "z_bottom": 1},
+            {"wall": "x_max", "type": "window", "position": 0.6, "width": 1.0, "height": 2.0, "z_bottom": 1},
+            {"wall": "y_min", "type": "door", "position": 0.5, "width": 2.52, "height": 5, "z_bottom": 0},
+            {"wall": "y_max", "type": "door", "position": 0.5, "width": 2.52, "height": 5, "z_bottom": 0}
           ],
           "combustibles": [],
           "specialized_components": []
