@@ -5,6 +5,7 @@
     "Launch control center": {
       "cn_name": "发射控制中心",
       "description": "",
+      "offset": {"x": -50, "y": 80},
       "building": {
         "length": {
           "min": 50,

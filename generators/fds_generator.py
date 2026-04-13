@@ -45,10 +45,23 @@ class FDSGenerator:
                         if part.material_key:
                             component_matls.add(part.material_key)
 
-        for mat_name in used_materials | component_matls:
+        # Also collect materials from COMBUSTIBLE_LIBRARY for MATL definitions
+        all_matl_keys = used_materials | component_matls
+        for mat_name in all_matl_keys:
             if mat_name in MATERIAL_LIBRARY:
                 mat = MATERIAL_LIBRARY[mat_name]
                 fds += f"&MATL ID='{mat_name}', DENSITY={mat['DENSITY']}, CONDUCTIVITY={mat['CONDUCTIVITY']}, SPECIFIC_HEAT={mat['SPECIFIC_HEAT']} /\n"
+            elif mat_name in COMBUSTIBLE_LIBRARY:
+                # Materials from COMBUSTIBLE_LIBRARY need MATL definitions too
+                mat = COMBUSTIBLE_LIBRARY[mat_name]
+                mt = mat.get("matl", {})
+                if mt:
+                    fds += (
+                        f"&MATL ID='{mat_name}',\n"
+                        f"      DENSITY={mt.get('DENSITY', 1000)},\n"
+                        f"      CONDUCTIVITY={mt.get('CONDUCTIVITY', 0.2)},\n"
+                        f"      SPECIFIC_HEAT={mt.get('SPECIFIC_HEAT', 1.0)} /\n"
+                    )
 
         fds += "\n! ========== 表面定义 ==========\n"
         surfaces = {

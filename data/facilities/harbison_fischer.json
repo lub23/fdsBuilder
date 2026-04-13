@@ -5,11 +5,11 @@
     "Main_Production_Hall": {
       "cn_name": "左侧主生产大厅",
       "description": "设施基准骨架，包含成品库、装配试压区、机加工区",
-      "offset": {"x": 0, "y": 0},
+      "offset": {"x": 39, "y": 105},
       "rotation": 0,
       "building": {
-        "length": {"min": 78, "max": 78, "median": 78, "mean": 78, "unit": "m"},
-        "width": {"min": 210, "max": 210, "median": 210, "mean": 210, "unit": "m"},
+        "length": {"min": 210, "max": 210, "median": 210, "mean": 210, "unit": "m"},
+        "width": {"min": 78, "max": 78, "median": 78, "mean": 78, "unit": "m"},
         "height": {"min": 12, "max": 12, "median": 12, "mean": 12, "unit": "m"},
         "stories": {"min": 1, "max": 1, "median": 1, "mean": 1, "unit": ""}
       },
@@ -122,11 +122,11 @@
     "Incoming_Inspection": {
       "cn_name": "北侧来料检验区",
       "description": "位于主厂房最北端，宽54，长45",
-      "offset": {"x": 0, "y": 210},
+      "offset": {"x": 27, "y": 232.5},
       "rotation": 0,
       "building": {
-        "length": {"min": 54, "max": 54, "median": 54, "mean": 54, "unit": "m"},
-        "width": {"min": 45, "max": 45, "median": 45, "mean": 45, "unit": "m"},
+        "length": {"min": 45, "max": 45, "median": 45, "mean": 45, "unit": "m"},
+        "width": {"min": 54, "max": 54, "median": 54, "mean": 54, "unit": "m"},
         "height": {"min": 8, "max": 8, "median": 8, "mean": 8, "unit": "m"},
         "stories": {"min": 1, "max": 1, "median": 1, "mean": 1, "unit": ""}
       },
@@ -163,11 +163,11 @@
     "Material_Surface_Treatment": {
       "cn_name": "原材料与表面处理区",
       "description": "位于主厂房右侧，宽35，总长度97 (21+76)",
-      "offset": {"x": 78, "y": 132},
+      "offset": {"x": 95.5, "y": 180.5},
       "rotation": 0,
       "building": {
-        "length": {"min": 35, "max": 35, "median": 35, "mean": 35, "unit": "m"},
-        "width": {"min": 97, "max": 97, "median": 97, "mean": 97, "unit": "m"},
+        "length": {"min": 97, "max": 97, "median": 97, "mean": 97, "unit": "m"},
+        "width": {"min": 35, "max": 35, "median": 35, "mean": 35, "unit": "m"},
         "height": {"min": 10, "max": 10, "median": 10, "mean": 10, "unit": "m"},
         "stories": {"min": 1, "max": 1, "median": 1, "mean": 1, "unit": ""}
       },
@@ -226,11 +226,11 @@
     "Office_Complex": {
       "cn_name": "办公综合体",
       "description": "位于主厂房右侧，2层建筑，宽56，长62",
-      "offset": {"x": 78, "y": 70},
+      "offset": {"x": 180, "y": 101},
       "rotation": 0,
       "building": {
-        "length": {"min": 56, "max": 56, "median": 56, "mean": 56, "unit": "m"},
-        "width": {"min": 62, "max": 62, "median": 62, "mean": 62, "unit": "m"},
+        "length": {"min": 62, "max": 62, "median": 62, "mean": 62, "unit": "m"},
+        "width": {"min": 56, "max": 56, "median": 56, "mean": 56, "unit": "m"},
         "height": {"min": 6, "max": 6, "median": 6, "mean": 6, "unit": "m"},
         "stories": {"min": 2, "max": 2, "median": 2, "mean": 2, "unit": ""}
       },
@@ -283,11 +283,11 @@
     "Southeast_Auxiliary": {
       "cn_name": "东南辅助区",
       "description": "位于主厂房右下角，含变压配电间和发运办公室",
-      "offset": {"x": 78, "y": 0},
+      "offset": {"x": 97.5, "y": 21},
       "rotation": 0,
       "building": {
-        "length": {"min": 39, "max": 39, "median": 39, "mean": 39, "unit": "m"},
-        "width": {"min": 42, "max": 42, "median": 42, "mean": 42, "unit": "m"},
+        "length": {"min": 42, "max": 42, "median": 42, "mean": 42, "unit": "m"},
+        "width": {"min": 39, "max": 39, "median": 39, "mean": 39, "unit": "m"},
         "height": {"min": 5, "max": 5, "median": 5, "mean": 5, "unit": "m"},
         "stories": {"min": 1, "max": 1, "median": 1, "mean": 1, "unit": ""}
       },
