@@ -331,30 +331,37 @@ class Viewer3D(QWidget):
         return self.plotter.add_mesh(box, color=color, opacity=0.8)
 
     def _draw_firewalls(self, fc: FireCompartment, building: Building, z0, z1):
-        """Draw non-coplanar FC boundaries as red semi-transparent walls."""
+        """Draw non-coplanar FC boundaries as walls (same color as exterior walls)."""
         ox, L, oy, W = building.boundary
         x_min, x_max, y_min, y_max = fc.boundary
         t = fc.firewall_thickness
         if t <= 0:
             return
 
+        fw_color = "#808080"
+        fw_opacity = 0.6
+
         # Only draw non-coplanar boundaries (interior partitions)
         if x_min > 0 and not is_coplanar(fc.boundary, L, W, "x_min"):
             box = pv.Box(bounds=[ox + x_min - t / 2, ox + x_min + t / 2,
                                   oy + y_min, oy + y_max, z0, z1])
-            self.plotter.add_mesh(box, color="red", opacity=0.3)
+            self.plotter.add_mesh(box, color=fw_color, opacity=fw_opacity, show_edges=True,
+                                  edge_color="#45475a", line_width=1)
         if x_max < L and not is_coplanar(fc.boundary, L, W, "x_max"):
             box = pv.Box(bounds=[ox + x_max - t / 2, ox + x_max + t / 2,
                                   oy + y_min, oy + y_max, z0, z1])
-            self.plotter.add_mesh(box, color="red", opacity=0.3)
+            self.plotter.add_mesh(box, color=fw_color, opacity=fw_opacity, show_edges=True,
+                                  edge_color="#45475a", line_width=1)
         if y_min > 0 and not is_coplanar(fc.boundary, L, W, "y_min"):
             box = pv.Box(bounds=[ox + x_min, ox + x_max,
                                   oy + y_min - t / 2, oy + y_min + t / 2, z0, z1])
-            self.plotter.add_mesh(box, color="red", opacity=0.3)
+            self.plotter.add_mesh(box, color=fw_color, opacity=fw_opacity, show_edges=True,
+                                  edge_color="#45475a", line_width=1)
         if y_max < W and not is_coplanar(fc.boundary, L, W, "y_max"):
             box = pv.Box(bounds=[ox + x_min, ox + x_max,
                                   oy + y_max - t / 2, oy + y_max + t / 2, z0, z1])
-            self.plotter.add_mesh(box, color="red", opacity=0.3)
+            self.plotter.add_mesh(box, color=fw_color, opacity=fw_opacity, show_edges=True,
+                                  edge_color="#45475a", line_width=1)
 
     def _draw_roof(self, roof: Roof, ox, L, oy, W, z_top):
         """Draw a roof slab above a story."""
@@ -362,52 +369,108 @@ class Viewer3D(QWidget):
         self.plotter.add_mesh(slab, color="#888888", opacity=0.4)
 
     def _draw_combustibles(self, fc: FireCompartment, ox, oy, z_offset):
-        """Draw combustible items within a fire compartment."""
+        """Draw combustible items within a fire compartment.
+
+        Handles both positioned objects (with x/y/z) and key+count dicts
+        (expanded via grid layout within FC boundary).
+        """
+        from models.materials import COMBUSTIBLE_LIBRARY
+        from models.combustibles import SPECIALIZED_COMPONENTS
+
         colors = {
-            "BROWN": "#8B4513",
-            "RED": "#CD5C5C",
-            "SALMON": "#FA8072",
-            "GRAY": "#808080",
-            "KHAKI": "#BDB76B",
-            "IVORY": "#FFFFF0",
-            "MAGENTA": "#FF00FF",
-            "ORANGE": "#FFA500",
+            "BROWN": "#8B4513", "RED": "#CD5C5C", "SALMON": "#FA8072",
+            "GRAY": "#808080", "KHAKI": "#BDB76B", "IVORY": "#FFFFF0",
+            "MAGENTA": "#FF00FF", "ORANGE": "#FFA500",
         }
         material_colors = {
-            "ALUMINUM": "#c0c0c0",
-            "STEEL": "#4a5568",
-            "JET_FUEL": "#b45309",
-            "SOLID_PROPELLANT": "#dc2626",
-            "GASOLINE": "#f59e0b",
-            "ELECTROLYTE": "#06b6d4",
-            "WOOD": "#92400e",
+            "ALUMINUM": "#c0c0c0", "STEEL": "#4a5568", "JET_FUEL": "#b45309",
+            "SOLID_PROPELLANT": "#dc2626", "GASOLINE": "#f59e0b",
+            "ELECTROLYTE": "#06b6d4", "WOOD": "#92400e",
         }
+
+        fc_xmin, fc_xmax, fc_ymin, fc_ymax = fc.boundary
+        fc_L = fc_xmax - fc_xmin
+        fc_W = fc_ymax - fc_ymin
+
+        # Expand key+count entries into positioned items
+        positioned_items = []
+        item_index = 0
         for cb in fc.combustibles:
-            if isinstance(cb, dict):
-                cb_x = cb.get("x", 0)
-                cb_y = cb.get("y", 0)
-                cb_z = cb.get("z", 0)
-                cb_length = cb.get("length", 1)
-                cb_width = cb.get("width", 1)
-                cb_height = cb.get("height", 1)
-                cb_color = cb.get("color", "BROWN")
-                cb_component_key = cb.get("component_key", None)
-                cb_material_key = cb.get("material_key", None)
+            if isinstance(cb, dict) and "key" in cb and "x" not in cb:
+                # key+count format — expand with grid layout
+                key = cb["key"]
+                count = cb.get("count", 1)
+                cb_def = COMBUSTIBLE_LIBRARY.get(key, {})
+                cb_L = cb_def.get("length", 1.0)
+                cb_W = cb_def.get("width", 0.8)
+                cb_H = cb_def.get("height", 0.5)
+                cb_color = cb_def.get("color", "BROWN")
+                for ci in range(count):
+                    cols = max(1, int(fc_L / (cb_L + 0.5)))
+                    row = item_index // cols
+                    col = item_index % cols
+                    local_x = fc_xmin + 0.5 + col * (cb_L + 0.5)
+                    local_y = fc_ymin + 0.5 + row * (cb_W + 0.5)
+                    if local_x + cb_L > fc_xmax:
+                        local_x = fc_xmax - cb_L - 0.1
+                    if local_y + cb_W > fc_ymax:
+                        local_y = fc_ymax - cb_W - 0.1
+                    positioned_items.append({
+                        "x": local_x, "y": local_y, "z": 0,
+                        "length": cb_L, "width": cb_W, "height": cb_H,
+                        "color": cb_color, "component_key": None, "material_key": None,
+                    })
+                    item_index += 1
+            elif isinstance(cb, dict):
+                # Already positioned dict
+                positioned_items.append(cb)
             else:
-                cb_x = cb.x
-                cb_y = cb.y
-                cb_z = cb.z
-                cb_length = cb.length
-                cb_width = cb.width
-                cb_height = cb.height
-                cb_color = getattr(cb, "color", "BROWN")
-                cb_component_key = getattr(cb, "component_key", None)
-                cb_material_key = getattr(cb, "material_key", None)
+                # Combustible object
+                positioned_items.append({
+                    "x": cb.x, "y": cb.y, "z": cb.z,
+                    "length": cb.length, "width": cb.width, "height": cb.height,
+                    "color": getattr(cb, "color", "BROWN"),
+                    "component_key": getattr(cb, "component_key", None),
+                    "material_key": getattr(cb, "material_key", None),
+                })
+
+        # Expand specialized_components similarly
+        sc_index = 0
+        for sc in fc.specialized_components:
+            if isinstance(sc, dict) and "key" in sc and "x" not in sc:
+                key = sc["key"]
+                count = sc.get("count", 1)
+                comp = SPECIALIZED_COMPONENTS.get(key)
+                if not comp:
+                    continue
+                for ci in range(count):
+                    total_needed = comp.total_length
+                    start_x = fc_xmin + 1.0 + sc_index * (total_needed + 2.0)
+                    center_y = fc_ymin + (fc_W - comp.total_width) / 2
+                    for part in comp.parts:
+                        positioned_items.append({
+                            "x": start_x + part.dx, "y": center_y + part.dy, "z": part.dz,
+                            "length": part.length, "width": part.width, "height": part.height,
+                            "color": "GRAY", "component_key": key,
+                            "material_key": part.material_key,
+                        })
+                    sc_index += 1
+
+        # Draw all positioned items
+        for item in positioned_items:
+            cb_x = item["x"]
+            cb_y = item["y"]
+            cb_z = item.get("z", 0)
+            cb_length = item["length"]
+            cb_width = item["width"]
+            cb_height = item["height"]
+            cb_component_key = item.get("component_key")
+            cb_material_key = item.get("material_key")
 
             if cb_component_key and cb_material_key:
                 color = material_colors.get(cb_material_key, "#CD853F")
             else:
-                color = colors.get(cb_color, "#CD853F")
+                color = colors.get(item.get("color", "BROWN"), "#CD853F")
 
             box = pv.Box(
                 bounds=(

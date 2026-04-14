@@ -401,44 +401,41 @@ class MainWindow(QMainWindow):
             self.simulation_control.set_model(self.model)
             self.model.update_z_offsets()
             self._refresh_scene_list()
+            self.viewer_3d._first_render = True
             self.update_preview()
-            self.refresh_3d(True)
             self.statusBar().showMessage(
                 f"模型已生成 ({len(self.model.buildings)} 栋建筑)"
             )
         except Exception as e:
             QMessageBox.critical(self, "错误", f"无法应用等效模型: {str(e)}")
 
-    def _on_building_added(self, model_dict):
+    def _on_building_added(self, building_obj):
         """追加或替换一栋子目标建筑到现有模型"""
         try:
             from models.building import Building, BuildingGroup
-            bg_data = model_dict.get("building_group", {})
-            new_buildings = bg_data.get("buildings", [])
-            if not new_buildings:
+            # building_obj is a Building instance emitted by FacilityPanel
+            if isinstance(building_obj, Building):
+                new_bld = building_obj
+            elif isinstance(building_obj, dict):
+                # Legacy dict format fallback
+                bg_data = building_obj.get("building_group", building_obj)
+                new_buildings = bg_data.get("buildings", [])
+                if not new_buildings:
+                    return
+                new_bld = Building.from_dict(new_buildings[0])
+            else:
                 return
-            new_bld = Building.from_dict(new_buildings[0])
+
             existing = self.model.buildings
             if self._is_default_building(existing):
                 existing[0] = new_bld
             else:
-                if existing:
-                    max_x_end = max(b.x_offset + b.length / 2 for b in existing)
-                    new_bld.x_offset = max_x_end + 5.0 + new_bld.length / 2
-                else:
-                    new_bld.x_offset = 0.0
-                new_bld.y_offset = 0.0
-                for b in existing:
-                    if self._buildings_overlap(b, new_bld):
-                        new_bld.x_offset = (
-                            b.x_offset + b.length / 2 + 5.0 + new_bld.length / 2
-                        )
                 self.model.add_building(new_bld)
             self.model.update_z_offsets()
             self.simulation_control.set_model(self.model)
             self._refresh_scene_list()
+            self.viewer_3d._first_render = True
             self.update_preview()
-            self.refresh_3d(True)
             self.statusBar().showMessage(
                 f"模型已生成 ({len(self.model.buildings)} 栋建筑)"
             )
