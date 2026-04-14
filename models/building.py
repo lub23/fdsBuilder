@@ -279,6 +279,59 @@ class BuildingGroup:
     domain: dict = field(default_factory=lambda: {"padding": 5.0, "mesh_cells": [80, 60, 40]})
     output: dict = field(default_factory=lambda: {"slices": True, "devices": True})
 
+    # -- convenience properties -----------------------------------------------
+
+    @property
+    def building_group(self) -> BuildingGroup:
+        """Compat: let code that does ``model.building_group`` work when model IS a BuildingGroup."""
+        return self
+
+    @property
+    def total_height(self) -> float:
+        """Max height across all buildings (sum of story heights)."""
+        if not self.buildings:
+            return 0.0
+        return max(sum(s.height for s in b.stories) for b in self.buildings)
+
+    @property
+    def chid(self) -> str:
+        """Derive a CHID from the first building name."""
+        if self.buildings and self.buildings[0].name:
+            return self.buildings[0].name
+        return "building"
+
+    @property
+    def num_stories(self) -> int:
+        """Number of stories in the first building."""
+        if self.buildings:
+            return len(self.buildings[0].stories)
+        return 0
+
+    @property
+    def length(self) -> float:
+        """Length of the first building (compat)."""
+        if self.buildings:
+            return self.buildings[0].length
+        return 0.0
+
+    @property
+    def width(self) -> float:
+        """Width of the first building (compat)."""
+        if self.buildings:
+            return self.buildings[0].width
+        return 0.0
+
+    # -- runtime helpers ------------------------------------------------------
+
+    def update_z_offsets(self) -> None:
+        """Compute cumulative z_bottom for every story in every building."""
+        for b in self.buildings:
+            b.update_z_offsets()
+
+    def add_building(self, building: Building) -> None:
+        """Append a building to the group."""
+        self.buildings.append(building)
+
     # -- serialization --------------------------------------------------------
 
     def to_dict(self) -> dict:

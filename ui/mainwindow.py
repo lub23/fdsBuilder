@@ -34,7 +34,7 @@ from PySide6.QtWidgets import (
 )
 from PySide6.QtCore import Qt, QTimer, QSize
 from PySide6.QtGui import QAction, QKeySequence
-from models.building import BuildingModel
+from models.building import BuildingGroup, Building, Story
 from models.materials import MATERIAL_LIBRARY
 from generators.fds_generator import FDSGenerator, validate_fds
 
@@ -57,7 +57,7 @@ class MainWindow(QMainWindow):
         super().__init__()
         self.setWindowTitle("FDS建筑模型生成器")
         self.setMinimumSize(1400, 900)
-        self.model = BuildingModel()
+        self.model = BuildingGroup(buildings=[Building()])
         self.setup_ui()
         self.setup_menu()
         self.setup_toolbar()
@@ -166,10 +166,9 @@ class MainWindow(QMainWindow):
     def _apply_ocr_result(self, data: dict):
         """将OCR识别结果应用到模型"""
         try:
-            self.model.from_dict(data)
-            # 确保外墙生成
+            self.model = BuildingGroup.from_dict(data)
+            # 确保z偏移计算
             self.model.update_z_offsets()
-            self.model.update_external_walls()
             self.update_preview()
             self.refresh_3d()
 
@@ -292,6 +291,10 @@ class MainWindow(QMainWindow):
         try:
             model = self.model
 
+            # 3D preview
+            self.viewer_3d.update_model(model)
+
+            # FDS preview
             generator = FDSGenerator(model)
             fds_code = generator.generate()
             self.fds_preview.update_code(fds_code)
@@ -305,18 +308,18 @@ class MainWindow(QMainWindow):
             else:
                 warn_text = ""
 
-            n_bld = len(model.building_group.buildings)
-            n_w = n_o = n_c = 0
-            for b in model.building_group.buildings:
+            n_bld = len(model.buildings)
+            n_o = n_c = 0
+            for b in model.buildings:
                 for s in b.stories:
-                    n_w += len(s.walls)
                     n_o += len(s.openings)
-                    n_c += len(s.combustibles.items)
+                    for fc in s.fire_compartments:
+                        n_c += len(fc.combustibles)
             if n_bld > 1:
-                message = f"建筑:{n_bld}  |  墙体:{n_w}  |  开口:{n_o}  |  可燃物:{n_c}"
+                message = f"建筑:{n_bld}  |  开口:{n_o}  |  可燃物:{n_c}"
             else:
                 message = (
-                    f"楼层:{model.num_stories}  |  墙体:{n_w}  |  "
+                    f"楼层:{model.num_stories}  |  "
                     f"开口:{n_o}  |  可燃物:{n_c}  |  "
                     f"模型: {model.length:.1f}×{model.width:.1f}×{model.total_height:.1f}m"
                 )
@@ -334,7 +337,7 @@ class MainWindow(QMainWindow):
             QMessageBox.Yes | QMessageBox.No,
         )
         if reply == QMessageBox.Yes:
-            self.model = BuildingModel()
+            self.model = BuildingGroup(buildings=[Building()])
             self.simulation_control.set_model(self.model)
             self._refresh_scene_list()
             self.update_preview()
@@ -349,8 +352,7 @@ class MainWindow(QMainWindow):
             try:
                 with open(file_path, "r", encoding="utf-8") as f:
                     data = json.load(f)
-                self.model = BuildingModel()
-                self.model.from_dict(data)
+                self.model = BuildingGroup.from_dict(data)
                 self.simulation_control.set_model(self.model)
                 self._refresh_scene_list()
                 self.update_preview()
@@ -365,8 +367,9 @@ class MainWindow(QMainWindow):
         )
         if file_path:
             try:
+                data = {"building_group": self.model.to_dict()}
                 with open(file_path, "w", encoding="utf-8") as f:
-                    json.dump(self.model.to_dict(), f, indent=4, ensure_ascii=False)
+                    json.dump(data, f, indent=4, ensure_ascii=False)
                 self.statusBar().showMessage(f"已保存: {file_path}")
             except Exception as e:
                 QMessageBox.critical(self, "错误", f"无法保存配置文件:\n{str(e)}")
@@ -394,16 +397,14 @@ class MainWindow(QMainWindow):
     def _on_facility_selected(self, model_dict):
         """处理从设施面板选择的等效模型（替换整个模型，用于一级目标）"""
         try:
-            self.model = BuildingModel()
-            self.model.from_dict(model_dict)
+            self.model = BuildingGroup.from_dict(model_dict)
             self.simulation_control.set_model(self.model)
             self.model.update_z_offsets()
-            self.model.update_external_walls()
             self._refresh_scene_list()
             self.update_preview()
             self.refresh_3d(True)
             self.statusBar().showMessage(
-                f"模型已生成 ({len(self.model.building_group.buildings)} 栋建筑)"
+                f"模型已生成 ({len(self.model.buildings)} 栋建筑)"
             )
         except Exception as e:
             QMessageBox.critical(self, "错误", f"无法应用等效模型: {str(e)}")
@@ -417,7 +418,7 @@ class MainWindow(QMainWindow):
             if not new_buildings:
                 return
             new_bld = Building.from_dict(new_buildings[0])
-            existing = self.model.building_group.buildings
+            existing = self.model.buildings
             if self._is_default_building(existing):
                 existing[0] = new_bld
             else:
@@ -432,26 +433,27 @@ class MainWindow(QMainWindow):
                         new_bld.x_offset = (
                             b.x_offset + b.length / 2 + 5.0 + new_bld.length / 2
                         )
-                self.model.building_group.add_building(new_bld)
+                self.model.add_building(new_bld)
             self.model.update_z_offsets()
-            self.model.update_external_walls()
             self.simulation_control.set_model(self.model)
             self._refresh_scene_list()
             self.update_preview()
             self.refresh_3d(True)
             self.statusBar().showMessage(
-                f"模型已生成 ({len(self.model.building_group.buildings)} 栋建筑)"
+                f"模型已生成 ({len(self.model.buildings)} 栋建筑)"
             )
         except Exception as e:
             QMessageBox.critical(self, "错误", f"无法追加建筑: {str(e)}")
 
         
     def _is_default_building(self, buildings):
-        """检测是否为默认空建筑（无故事数、无墙）"""
+        """检测是否为默认空建筑（无楼层或仅一个空楼层）"""
         if len(buildings) != 1:
             return False
         b = buildings[0]
-        return len(b.stories) == 1 and len(b.stories[0].walls) == 0
+        if not b.stories:
+            return True
+        return len(b.stories) == 1 and len(b.stories[0].openings) == 0 and len(b.stories[0].fire_compartments) == 0
 
     @staticmethod
     def _buildings_overlap(a, b, margin=1.0):
@@ -470,11 +472,11 @@ class MainWindow(QMainWindow):
 
     def _refresh_scene_list(self):
         """Sync the scene list widget with current model buildings."""
-        self.facility_panel.update_scene_list(self.model.building_group.buildings)
+        self.facility_panel.update_scene_list(self.model.buildings)
 
     def _on_scene_building_removed(self, index):
         """Remove a building from the scene by index."""
-        buildings = self.model.building_group.buildings
+        buildings = self.model.buildings
         if index < 0 or index >= len(buildings):
             return
         if len(buildings) <= 1:
@@ -482,16 +484,6 @@ class MainWindow(QMainWindow):
             return
         name = buildings[index].name
         del buildings[index]
-
-        # Re-sync compat properties from first remaining building
-        if buildings:
-            b0 = buildings[0]
-            self.model.length = b0.length
-            self.model.width = b0.width
-            self.model.wall_thickness = b0.wall_thickness
-            self.model.stories = b0.stories
-            self.model.roof = b0.roof
-            self.model.materials = b0.materials
 
         self.model.update_z_offsets()
         self.simulation_control.set_model(self.model)
@@ -502,7 +494,7 @@ class MainWindow(QMainWindow):
 
     def _on_scene_building_selected(self, index):
         """Select a building in the scene and highlight in 3D."""
-        buildings = self.model.building_group.buildings
+        buildings = self.model.buildings
         if 0 <= index < len(buildings):
             b = buildings[index]
             self.statusBar().showMessage(f"已选中建筑 #{index + 1}: {b.name}")
@@ -511,7 +503,7 @@ class MainWindow(QMainWindow):
 
     def _on_scene_building_offset_changed(self, index, x_off, y_off):
         """Handle building offset change from scene panel."""
-        buildings = self.model.building_group.buildings
+        buildings = self.model.buildings
         if 0 <= index < len(buildings):
             buildings[index].x_offset = x_off
             buildings[index].y_offset = y_off
