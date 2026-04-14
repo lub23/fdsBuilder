@@ -6,9 +6,9 @@
       "name": "Raw_Material_Storage",
       "cn_name": "原材料仓储区",
       "boundary": [
-        23.5,
+        -5.0,
         57,
-        28.5,
+        5.0,
         47
       ],
       "wall_thickness": 0.3,
@@ -86,9 +86,9 @@
       "name": "Main_Production_Hall",
       "cn_name": "中央主厂房",
       "boundary": [
-        23.5,
+        -18.0,
         83,
-        98.5,
+        75.0,
         47
       ],
       "wall_thickness": 0.3,
@@ -248,9 +248,9 @@
       "name": "Northern_Complex",
       "cn_name": "北部办公与精密区",
       "boundary": [
-        33,
+        15.5,
         35,
-        157.5,
+        122.5,
         70
       ],
       "wall_thickness": 0.25,
@@ -382,9 +382,9 @@
       "name": "Finished_Product_Storage",
       "cn_name": "成品仓储区",
       "boundary": [
-        66,
+        39.0,
         54,
-        27,
+        8.0,
         38
       ],
       "wall_thickness": 0.3,
@@ -462,9 +462,9 @@
       "name": "Right_Functional_Wing",
       "cn_name": "右侧功能翼楼",
       "boundary": [
-        280,
+        210.0,
         140,
-        0,
+        -25.0,
         50
       ],
       "wall_thickness": 0.3,
@@ -751,9 +751,9 @@
       "name": "Southwest_Auxiliary",
       "cn_name": "西南辅助间",
       "boundary": [
-        18,
+        4.0,
         28,
-        -28,
+        -42.5,
         29
       ],
       "wall_thickness": 0.2,
@@ -802,9 +802,9 @@
       "name": "Main_Entrance_Hall",
       "cn_name": "主入口大厅",
       "boundary": [
-        90,
+        82.0,
         16,
-        -50,
+        -58.5,
         17
       ],
       "wall_thickness": 0.2,
@@ -863,9 +863,9 @@
       "name": "Central_South_Auxiliary",
       "cn_name": "中南辅助楼",
       "boundary": [
-        90,
+        76.0,
         28,
-        -30,
+        -42.0,
         24
       ],
       "wall_thickness": 0.2,
@@ -944,9 +944,9 @@
       "name": "Power_Distribution_Room",
       "cn_name": "配电间",
       "boundary": [
-        180,
+        157.0,
         46,
-        -50,
+        -58.5,
         17
       ],
       "wall_thickness": 0.2,

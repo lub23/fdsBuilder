@@ -6,9 +6,9 @@
       "name": "Main_Production_Hall",
       "cn_name": "左侧主生产大厅",
       "boundary": [
-        39,
+        -66.0,
         210,
-        105,
+        66.0,
         78
       ],
       "wall_thickness": 0.3,
@@ -406,9 +406,9 @@
       "name": "Incoming_Inspection",
       "cn_name": "北侧来料检验区",
       "boundary": [
-        27,
+        4.5,
         45,
-        232.5,
+        205.5,
         54
       ],
       "wall_thickness": 0.25,
@@ -506,9 +506,9 @@
       "name": "Material_Surface_Treatment",
       "cn_name": "原材料与表面处理区",
       "boundary": [
-        95.5,
+        47.0,
         97,
-        180.5,
+        163.0,
         35
       ],
       "wall_thickness": 0.3,
@@ -653,9 +653,9 @@
       "name": "Office_Complex",
       "cn_name": "办公综合体",
       "boundary": [
-        180,
+        149.0,
         62,
-        101,
+        73.0,
         56
       ],
       "wall_thickness": 0.2,
@@ -790,9 +790,9 @@
       "name": "Southeast_Auxiliary",
       "cn_name": "东南辅助区",
       "boundary": [
-        97.5,
+        76.5,
         42,
-        21,
+        1.5,
         39
       ],
       "wall_thickness": 0.2,

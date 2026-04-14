@@ -6,9 +6,9 @@
       "name": "Main_Production_Hall",
       "cn_name": "综合制造厂房",
       "boundary": [
-        88,
+        0.0,
         176,
-        75,
+        0.0,
         150
       ],
       "wall_thickness": 0.3,
@@ -696,9 +696,9 @@
       "name": "Office_Area",
       "cn_name": "办公区",
       "boundary": [
-        28.16,
+        0.0,
         56.32,
-        100.5,
+        75.75,
         49.5
       ],
       "wall_thickness": 0.3,
@@ -786,9 +786,9 @@
       "name": "Lab_Tooling_Maintenance",
       "cn_name": "实验室/工装维护区",
       "boundary": [
-        84.48,
+        56.32000000000001,
         56.32,
-        112.5,
+        90.75,
         43.5
       ],
       "wall_thickness": 0.3,

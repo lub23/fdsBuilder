@@ -6,9 +6,9 @@
       "name": "Main Building",
       "cn_name": "Buffalo主厂房",
       "boundary": [
-        9,
+        -10.0,
         38,
-        19,
+        10.0,
         18
       ],
       "wall_thickness": 0.25,
@@ -153,9 +153,9 @@
       "name": "West Loading Platform",
       "cn_name": "西侧装卸平台",
       "boundary": [
-        -1.5,
+        -6.5,
         10,
-        19,
+        17.5,
         3
       ],
       "wall_thickness": 0.2,
@@ -204,9 +204,9 @@
       "name": "South Entrance Vestibule",
       "cn_name": "南侧主入口门斗",
       "boundary": [
-        9,
+        8.6,
         0.8,
-        -0.4,
+        -1.15,
         1.5
       ],
       "wall_thickness": 0.15,

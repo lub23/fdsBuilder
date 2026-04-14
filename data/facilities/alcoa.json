@@ -6,9 +6,9 @@
       "name": "Bay_A1",
       "cn_name": "A1跨单元",
       "boundary": [
-        9.5,
+        0.0,
         19,
-        183,
+        16.0,
         334
       ],
       "wall_thickness": 0.3,
@@ -173,9 +173,9 @@
       "name": "Bay_A2",
       "cn_name": "A2跨单元",
       "boundary": [
-        42.5,
+        33.0,
         19,
-        183,
+        16.0,
         334
       ],
       "wall_thickness": 0.3,
@@ -400,9 +400,9 @@
       "name": "Bay_A3",
       "cn_name": "A3跨单元",
       "boundary": [
-        75,
+        66.0,
         18,
-        222,
+        126.0,
         192
       ],
       "wall_thickness": 0.3,
@@ -497,9 +497,9 @@
       "name": "Bay_B1",
       "cn_name": "B1宽跨单元",
       "boundary": [
-        232.5,
+        0.0,
         465,
-        8,
+        0.0,
         16
       ],
       "wall_thickness": 0.3,
@@ -632,9 +632,9 @@
       "name": "Bay_A4",
       "cn_name": "A4跨单元",
       "boundary": [
-        107.5,
+        98.0,
         19,
-        183,
+        16.0,
         334
       ],
       "wall_thickness": 0.3,
@@ -859,9 +859,9 @@
       "name": "Bay_A5",
       "cn_name": "A5跨单元",
       "boundary": [
-        140.5,
+        131.0,
         19,
-        183,
+        16.0,
         334
       ],
       "wall_thickness": 0.3,
@@ -1086,9 +1086,9 @@
       "name": "Bay_A6",
       "cn_name": "A6跨单元",
       "boundary": [
-        173.5,
+        164.0,
         19,
-        167,
+        16.0,
         302
       ],
       "wall_thickness": 0.3,
@@ -1323,9 +1323,9 @@
       "name": "Bay_A7",
       "cn_name": "A7跨单元",
       "boundary": [
-        206.5,
+        197.0,
         19,
-        167,
+        16.0,
         302
       ],
       "wall_thickness": 0.3,
@@ -1560,9 +1560,9 @@
       "name": "Bay_A8",
       "cn_name": "A8跨单元",
       "boundary": [
-        239.5,
+        230.0,
         19,
-        167,
+        16.0,
         302
       ],
       "wall_thickness": 0.3,
@@ -1797,9 +1797,9 @@
       "name": "Bay_A9",
       "cn_name": "A9跨单元",
       "boundary": [
-        272.5,
+        263.0,
         19,
-        167,
+        16.0,
         302
       ],
       "wall_thickness": 0.3,
@@ -2034,9 +2034,9 @@
       "name": "Bay_A10",
       "cn_name": "A10跨单元",
       "boundary": [
-        336.5,
+        327.0,
         19,
-        167,
+        16.0,
         302
       ],
       "wall_thickness": 0.3,
@@ -2271,9 +2271,9 @@
       "name": "Bay_A11",
       "cn_name": "A11跨单元",
       "boundary": [
-        369.5,
+        360.0,
         19,
-        167,
+        16.0,
         302
       ],
       "wall_thickness": 0.3,
@@ -2508,9 +2508,9 @@
       "name": "Bay_A12",
       "cn_name": "A12跨单元",
       "boundary": [
-        402.5,
+        393.0,
         19,
-        167,
+        16.0,
         302
       ],
       "wall_thickness": 0.3,
@@ -2745,9 +2745,9 @@
       "name": "Bay_A13",
       "cn_name": "A13跨单元",
       "boundary": [
-        435.5,
+        426.0,
         19,
-        167,
+        16.0,
         302
       ],
       "wall_thickness": 0.3,
@@ -2982,9 +2982,9 @@
       "name": "Bay_A14",
       "cn_name": "B2宽跨单元",
       "boundary": [
-        475,
+        465.0,
         20,
-        167,
+        0.0,
         334
       ],
       "wall_thickness": 0.3,
@@ -3125,9 +3125,9 @@
       "name": "Material_storage_building",
       "cn_name": "西侧材料存储区",
       "boundary": [
-        -106,
+        -129.0,
         46,
-        284,
+        250.0,
         68
       ],
       "wall_thickness": 0.25,
@@ -3360,9 +3360,9 @@
       "name": "North_Corridor",
       "cn_name": "北侧贯通长廊",
       "boundary": [
-        175,
+        -115.0,
         580,
-        326,
+        318.0,
         16
       ],
       "wall_thickness": 0.3,
@@ -3495,9 +3495,9 @@
       "name": "Bay_B2",
       "cn_name": "中央横跨长廊",
       "boundary": [
-        207.5,
+        -50.0,
         515,
-        164,
+        160.0,
         8
       ],
       "wall_thickness": 0.2,
