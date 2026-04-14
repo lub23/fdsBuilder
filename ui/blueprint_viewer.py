@@ -28,7 +28,7 @@ API_KEY = os.getenv("API_KEY")
 class BlueprintViewer(QWidget):
     """图纸预览+OCR识别"""
 
-    # 识别完成后发射，携带BuildingModel.from_dict兼容的dict
+    # 识别完成后发射，携带BuildingGroup.from_dict兼容的dict
     dimensions_extracted = Signal(dict)
 
     def __init__(self, parent=None):
