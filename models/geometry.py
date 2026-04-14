@@ -226,3 +226,62 @@ def _find_fc_boundary(story, wall_id: str) -> list[float]:
         return fc.boundary
     # Fallback: no FCs -- return zeros
     return [0, 0, 0, 0]
+
+
+# ============================================================
+# Opening boundary validation
+# ============================================================
+
+def validate_opening_bounds(
+    opening, wall_length: float, story_height: float
+) -> list[str]:
+    """Validate that an opening fits within its wall segment.
+
+    Returns list of error messages (empty = valid).
+    """
+    errors = []
+    w_off, w, h_off, h = opening.boundary
+
+    # Resolve negative offset
+    if w_off < 0:
+        w_off = resolve_negative_offset(w_off, w, wall_length)
+
+    if w_off < -0.001:
+        errors.append(f"Opening w_offset ({w_off:.2f}) is negative")
+    if w_off + w > wall_length + 0.001:
+        errors.append(
+            f"Opening exceeds wall length: w_offset({w_off:.2f}) + width({w:.2f})"
+            f" = {w_off + w:.2f} > wall_length({wall_length:.2f})"
+        )
+    if h_off < -0.001:
+        errors.append(f"Opening h_offset ({h_off:.2f}) is negative")
+    if h_off + h > story_height + 0.001:
+        errors.append(
+            f"Opening exceeds story height: h_offset({h_off:.2f}) + height({h:.2f})"
+            f" = {h_off + h:.2f} > story_height({story_height:.2f})"
+        )
+    return errors
+
+
+def validate_building(building) -> list[str]:
+    """Validate all openings in a building. Returns list of error messages."""
+    errors = []
+
+    for si, story in enumerate(building.stories):
+        # Story-level exterior openings
+        for oi, opening in enumerate(story.openings):
+            wall_len = wall_length_for_building(building.boundary, opening.wall)
+            errs = validate_opening_bounds(opening, wall_len, story.height)
+            for e in errs:
+                errors.append(f"Story {story.name}, exterior opening {oi}: {e}")
+
+        # FC openings
+        for fc in story.fire_compartments:
+            for oi, opening in enumerate(fc.openings):
+                wall_len = wall_length_for_fc(fc.boundary, opening.wall)
+                errs = validate_opening_bounds(opening, wall_len, story.height)
+                for e in errs:
+                    errors.append(
+                        f"Story {story.name}, FC '{fc.name}', opening {oi}: {e}"
+                    )
+    return errors

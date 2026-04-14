@@ -12,6 +12,8 @@ from models.geometry import (
     detect_coplanar_openings,
     resolve_negative_offset,
     opening_to_world_coords,
+    validate_opening_bounds,
+    validate_building,
 )
 
 
@@ -492,3 +494,156 @@ class TestGeometryIntegration:
         assert y2 == pytest.approx(0.0)
         assert z1 == pytest.approx(1.0)
         assert z2 == pytest.approx(2.5)
+
+
+# ============================================================
+# validate_opening_bounds
+# ============================================================
+class TestValidateOpeningBounds:
+    """Validate that an opening fits within its wall segment."""
+
+    def test_valid_opening_no_errors(self):
+        """Opening well within wall returns no errors."""
+        opening = Opening(wall="y_min", type="door", boundary=[2, 3, 0, 2.5])
+        errors = validate_opening_bounds(opening, wall_length=20.0, story_height=4.0)
+        assert errors == []
+
+    def test_opening_flush_with_wall_end(self):
+        """Opening exactly at wall edge is valid (within tolerance)."""
+        opening = Opening(wall="y_min", type="door", boundary=[17, 3, 0, 4])
+        errors = validate_opening_bounds(opening, wall_length=20.0, story_height=4.0)
+        assert errors == []
+
+    def test_opening_exceeds_wall_length(self):
+        """Opening that exceeds wall length returns error."""
+        opening = Opening(wall="y_min", type="door", boundary=[18, 3, 0, 2])
+        errors = validate_opening_bounds(opening, wall_length=20.0, story_height=4.0)
+        assert len(errors) == 1
+        assert "exceeds wall length" in errors[0]
+
+    def test_opening_exceeds_story_height(self):
+        """Opening that exceeds story height returns error."""
+        opening = Opening(wall="y_min", type="window", boundary=[0, 2, 2, 3])
+        errors = validate_opening_bounds(opening, wall_length=20.0, story_height=4.0)
+        assert len(errors) == 1
+        assert "exceeds story height" in errors[0]
+
+    def test_negative_w_offset_resolves_valid(self):
+        """Negative w_offset that resolves to valid position returns no errors."""
+        # resolve: wall_length + w_offset - width = 20 + (-3) - 2 = 15
+        # 15 + 2 = 17 <= 20, so valid
+        opening = Opening(wall="y_min", type="door", boundary=[-3, 2, 0, 2])
+        errors = validate_opening_bounds(opening, wall_length=20.0, story_height=4.0)
+        assert errors == []
+
+    def test_negative_w_offset_resolves_invalid(self):
+        """Negative w_offset that resolves to negative returns error."""
+        # resolve: wall_length + w_offset - width = 5 + (-10) - 3 = -8
+        opening = Opening(wall="y_min", type="door", boundary=[-10, 3, 0, 2])
+        errors = validate_opening_bounds(opening, wall_length=5.0, story_height=4.0)
+        assert any("w_offset" in e and "negative" in e for e in errors)
+
+    def test_negative_h_offset(self):
+        """Negative h_offset returns error."""
+        opening = Opening(wall="y_min", type="window", boundary=[0, 2, -1, 2])
+        errors = validate_opening_bounds(opening, wall_length=20.0, story_height=4.0)
+        assert len(errors) == 1
+        assert "h_offset" in errors[0] and "negative" in errors[0]
+
+    def test_multiple_errors(self):
+        """Opening that exceeds both wall and story returns two errors."""
+        opening = Opening(wall="y_min", type="door", boundary=[19, 3, 3, 3])
+        errors = validate_opening_bounds(opening, wall_length=20.0, story_height=4.0)
+        assert len(errors) == 2
+
+
+# ============================================================
+# validate_building
+# ============================================================
+class TestValidateBuilding:
+    """Validate all openings across stories and fire compartments."""
+
+    def test_valid_building_no_errors(self):
+        """A building with all valid openings returns no errors."""
+        fc = FireCompartment(
+            name="FC-A",
+            boundary=[0, 10, 0, 10],
+            openings=[Opening(wall="x_min", type="door", boundary=[1, 2, 0, 2])],
+        )
+        story = Story(
+            name="1F",
+            height=4.0,
+            openings=[Opening(wall="y_min", type="window", boundary=[2, 3, 1, 1.5])],
+            fire_compartments=[fc],
+        )
+        building = Building(
+            name="test",
+            boundary=[0, 20, 0, 10],
+            stories=[story],
+        )
+        building.update_z_offsets()
+        errors = validate_building(building)
+        assert errors == []
+
+    def test_catches_exterior_opening_error(self):
+        """Detects exterior opening that exceeds wall length."""
+        story = Story(
+            name="1F",
+            height=4.0,
+            openings=[Opening(wall="y_min", type="door", boundary=[18, 5, 0, 2])],
+        )
+        building = Building(
+            name="test",
+            boundary=[0, 20, 0, 10],
+            stories=[story],
+        )
+        building.update_z_offsets()
+        errors = validate_building(building)
+        assert len(errors) == 1
+        assert "Story 1F" in errors[0]
+        assert "exterior opening 0" in errors[0]
+
+    def test_catches_fc_opening_error(self):
+        """Detects FC opening that exceeds wall length."""
+        fc = FireCompartment(
+            name="FC-A",
+            boundary=[0, 5, 0, 5],
+            openings=[Opening(wall="x_min", type="door", boundary=[3, 4, 0, 2])],
+        )
+        story = Story(
+            name="2F",
+            height=3.0,
+            fire_compartments=[fc],
+        )
+        building = Building(
+            name="test",
+            boundary=[0, 20, 0, 10],
+            stories=[story],
+        )
+        building.update_z_offsets()
+        errors = validate_building(building)
+        assert len(errors) == 1
+        assert "FC 'FC-A'" in errors[0]
+
+    def test_catches_errors_across_stories(self):
+        """Detects errors in multiple stories."""
+        story1 = Story(
+            name="1F",
+            height=3.0,
+            openings=[Opening(wall="y_min", type="door", boundary=[19, 5, 0, 2])],
+        )
+        story2 = Story(
+            name="2F",
+            height=3.0,
+            openings=[Opening(wall="x_min", type="window", boundary=[0, 2, 2, 3])],
+        )
+        building = Building(
+            name="test",
+            boundary=[0, 20, 0, 10],
+            stories=[story1, story2],
+        )
+        building.update_z_offsets()
+        errors = validate_building(building)
+        assert len(errors) == 2
+        assert any("Story 1F" in e for e in errors)
+        assert any("Story 2F" in e for e in errors)

@@ -35,6 +35,7 @@ from PySide6.QtWidgets import (
     QHeaderView,
 )
 from PySide6.QtCore import Qt, Signal
+from PySide6.QtGui import QFont, QColor, QBrush
 from models.facility import FacilityManager
 from models.building import Building, BuildingGroup, Story
 from ui.styles import CollapsibleGroup
@@ -351,16 +352,37 @@ class FacilityListPanel(QWidget):
     # ==================================================
 
     def _populate_tree(self):
-        """Populate the facility tree from FacilityManager.facilities dict."""
+        """Populate the facility tree with two root groups: equivalent and specialized."""
         self.facility_tree.clear()
+
+        # Create two root-level group nodes
+        equiv_root = QTreeWidgetItem(["\u7b49\u6548\u6a21\u578b"])
+        spec_root = QTreeWidgetItem(["\u7279\u5f02\u6a21\u578b"])
+
+        # Style root nodes: bold font and distinct color
+        bold_font = QFont()
+        bold_font.setBold(True)
+        bold_font.setPointSize(bold_font.pointSize() + 1)
+        equiv_color = QBrush(QColor("#a6e3a1"))  # green
+        spec_color = QBrush(QColor("#f9e2af"))   # yellow
+
+        for root_item, color in [(equiv_root, equiv_color), (spec_root, spec_color)]:
+            root_item.setFont(0, bold_font)
+            root_item.setForeground(0, color)
+            # Root group nodes carry no actionable data
+            root_item.setData(0, Qt.UserRole, {"node": "group"})
+
         for name, data in self.facility_manager.facilities.items():
             ftype = data["type"]  # "equivalent" / "specialized"
-            label = f"{data['cn_name']}  [{'等效' if ftype == 'equivalent' else '特异'}]"
-            category_item = QTreeWidgetItem([label])
+            parent_root = equiv_root if ftype == "equivalent" else spec_root
+
+            # Facility-level node
+            category_item = QTreeWidgetItem([data["cn_name"]])
             category_item.setData(
                 0, Qt.UserRole, {"facility": name, "type": ftype, "node": "facility"}
             )
 
+            # Building-level leaf nodes
             for building in data["buildings"]:
                 child_label = building.get("cn_name", building["name"])
                 child = QTreeWidgetItem([child_label])
@@ -376,7 +398,10 @@ class FacilityListPanel(QWidget):
                 )
                 category_item.addChild(child)
 
-            self.facility_tree.addTopLevelItem(category_item)
+            parent_root.addChild(category_item)
+
+        self.facility_tree.addTopLevelItem(equiv_root)
+        self.facility_tree.addTopLevelItem(spec_root)
         self.facility_tree.expandAll()
 
     # Alias for backward compatibility
@@ -389,6 +414,11 @@ class FacilityListPanel(QWidget):
             return
 
         node = data.get("node", "")
+
+        # Group root nodes ("等效模型" / "特异模型") are not actionable
+        if node == "group":
+            return
+
         facility_name = data["facility"]
         ftype = data["type"]
 
