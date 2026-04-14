@@ -5,8 +5,9 @@
 @File  : facility_panel.py
 @Author: Lubber
 @Date  : 2026-03-19
-@Version : 2.0
-@Desc  : Panel with inline parameter editing, facility selection, and scene management
+@Version : 3.0
+@Desc  : Panel with inline parameter editing, facility selection, and scene management.
+         Updated for new FacilityManager API with equivalent/specialized model types.
 """
 
 from PySide6.QtWidgets import (
@@ -34,9 +35,12 @@ from PySide6.QtWidgets import (
     QHeaderView,
 )
 from PySide6.QtCore import Qt, Signal
-from models.facility import FacilityManager, WALL_NAMES
+from models.facility import FacilityManager
+from models.building import Building, BuildingGroup, Story
 from ui.styles import CollapsibleGroup
 
+# Wall name choices for door/window distribution (kept locally)
+WALL_NAMES = ["南墙", "北墙", "东墙", "西墙", "均匀分布"]
 
 # Alias for backwards compatibility within this file
 CollapsibleSection = CollapsibleGroup
@@ -46,7 +50,7 @@ class FacilityListPanel(QWidget):
     """Left sidebar: facility tree + inline params + scene list."""
 
     facility_selected = Signal(dict)  # replace entire model (category generation)
-    building_added = Signal(dict)  # append one building
+    building_added = Signal(object)  # append one Building object
     scene_building_removed = Signal(int)  # remove building by index
     scene_building_selected = Signal(int)  # select building for editing
     scene_building_offset_changed = Signal(int, float, float)  # index, x, y
@@ -67,18 +71,18 @@ class FacilityListPanel(QWidget):
             "QTreeWidget{font-size:15px;} QTableWidget{font-size:15px;}"
         )
         self.setup_ui()
-        self.load_facilities()
+        self._populate_tree()
 
-    # ══════════════════════════════════════════════
+    # ==================================================
     # UI Setup
-    # ══════════════════════════════════════════════
+    # ==================================================
 
     def setup_ui(self):
         outer = QVBoxLayout(self)
         outer.setContentsMargins(0, 0, 0, 0)
         outer.setSpacing(0)
 
-        # ── 1. Facility tree ──
+        # -- 1. Facility tree --
         sec_tree = CollapsibleSection("设施类型")
         self.facility_tree = QTreeWidget()
         self.facility_tree.setHeaderHidden(True)
@@ -97,7 +101,7 @@ class FacilityListPanel(QWidget):
         sec_tree.content_layout.addWidget(self.desc_label)
         outer.addWidget(sec_tree)
 
-        # ── 2. Building params ──
+        # -- 2. Building params --
         sec_bld = CollapsibleSection("建筑参数")
         g = QGridLayout()
         g.setSpacing(3)
@@ -175,9 +179,24 @@ class FacilityListPanel(QWidget):
         g.addWidget(self.sp_Y_offset, r, 5)
 
         sec_bld.content_layout.addLayout(g)
+
+        # Collect param spinboxes and range labels into dicts for easy access
+        self._param_spinboxes = {
+            "length": self.sp_L,
+            "width": self.sp_W,
+            "height": self.sp_H,
+            "stories": self.sp_N,
+        }
+        self._range_labels = {
+            "length": self.rng_L,
+            "width": self.rng_W,
+            "height": self.rng_H,
+            "stories": self.rng_N,
+        }
+
         outer.addWidget(sec_bld)
 
-        # ── 3. Door+Window merged with QTabWidget ──
+        # -- 3. Door+Window merged with QTabWidget --
         sec_door_win = CollapsibleSection("门窗设置")
 
         self._door_win_tabs = QTabWidget()
@@ -254,7 +273,7 @@ class FacilityListPanel(QWidget):
         sec_door_win.content_layout.addWidget(self._door_win_tabs)
         outer.addWidget(sec_door_win)
 
-        # ── 7. Combustible button ──
+        # -- 7. Combustible button --
         self.combustible_btn = QPushButton("可燃物管理…")
         self.combustible_btn.setFixedHeight(34)
         self.combustible_btn.setStyleSheet(
@@ -266,7 +285,7 @@ class FacilityListPanel(QWidget):
         self.combustible_btn.clicked.connect(self._open_combustible_dialog)
         outer.addWidget(self.combustible_btn)
 
-        # ── Action buttons ──
+        # -- Action buttons --
         btn_layout = QHBoxLayout()
         btn_layout.setSpacing(4)
 
@@ -282,7 +301,7 @@ class FacilityListPanel(QWidget):
         self.generate_btn.clicked.connect(self._on_generate)
         btn_layout.addWidget(self.generate_btn)
 
-        self.generate_category_btn = QPushButton("生成一级目标")
+        self.generate_category_btn = QPushButton("生成设施全部建筑")
         self.generate_category_btn.setEnabled(False)
         self.generate_category_btn.setFixedHeight(34)
         self.generate_category_btn.setStyleSheet(
@@ -296,7 +315,7 @@ class FacilityListPanel(QWidget):
 
         outer.addLayout(btn_layout)
 
-        # ── 8. Scene object list ──
+        # -- 8. Scene object list --
         sec_scene = CollapsibleSection("场景目标列表")
         self.scene_table = QTableWidget()
         self.scene_table.setColumnCount(5)
@@ -305,7 +324,7 @@ class FacilityListPanel(QWidget):
         self.scene_table.horizontalHeader().setSectionResizeMode(
             1, QHeaderView.ResizeToContents
         )
-        self.scene_table.setColumnWidth(2, 180)  # 位置列固定180px
+        self.scene_table.setColumnWidth(2, 180)  # position column fixed 180px
         self.scene_table.horizontalHeader().setSectionResizeMode(
             3, QHeaderView.ResizeToContents
         )
@@ -327,100 +346,175 @@ class FacilityListPanel(QWidget):
 
         outer.addWidget(sec_scene)
 
-    # ══════════════════════════════════════════════
+    # ==================================================
     # Facility tree
-    # ══════════════════════════════════════════════
+    # ==================================================
 
-    def load_facilities(self):
+    def _populate_tree(self):
+        """Populate the facility tree from FacilityManager.facilities dict."""
         self.facility_tree.clear()
-        for cat_key, cat_name in self.facility_manager.categories():
-            cat_item = QTreeWidgetItem(self.facility_tree, [cat_name])
-            cat_item.setData(0, Qt.UserRole, {"type": "category", "key": cat_key})
-            for sub_key, sub_name in self.facility_manager.sub_types(cat_key):
-                child = QTreeWidgetItem(cat_item, [sub_name])
+        for name, data in self.facility_manager.facilities.items():
+            ftype = data["type"]  # "equivalent" / "specialized"
+            label = f"{data['cn_name']}  [{'等效' if ftype == 'equivalent' else '特异'}]"
+            category_item = QTreeWidgetItem([label])
+            category_item.setData(
+                0, Qt.UserRole, {"facility": name, "type": ftype, "node": "facility"}
+            )
+
+            for building in data["buildings"]:
+                child_label = building.get("cn_name", building["name"])
+                child = QTreeWidgetItem([child_label])
                 child.setData(
                     0,
                     Qt.UserRole,
-                    {"type": "facility", "category": cat_key, "sub_type": sub_key},
+                    {
+                        "facility": name,
+                        "building": building["name"],
+                        "type": ftype,
+                        "node": "building",
+                    },
                 )
+                category_item.addChild(child)
+
+            self.facility_tree.addTopLevelItem(category_item)
         self.facility_tree.expandAll()
+
+    # Alias for backward compatibility
+    def load_facilities(self):
+        self._populate_tree()
 
     def _on_tree_clicked(self, item, column):
         data = item.data(0, Qt.UserRole)
         if not data:
             return
 
-        if data.get("type") == "facility":
-            self._fill_params_from_preset(data["category"], data["sub_type"])
+        node = data.get("node", "")
+        facility_name = data["facility"]
+        ftype = data["type"]
+
+        if node == "building":
+            # A specific building was selected
+            building_name = data["building"]
+            self.selected_facility_data = data
+
+            if ftype == "equivalent":
+                self._show_equivalent_params(facility_name, building_name)
+            else:
+                self._show_specialized_params(facility_name, building_name)
+
             self.generate_btn.setEnabled(True)
             self.generate_category_btn.setEnabled(False)
             self.combustible_btn.setEnabled(True)
-            self.selected_facility_data = data
-        elif data.get("type") == "category":
-            cat_key = data["key"]
-            cat_name = self.facility_manager._data[cat_key]["cn_name"]
-            subs = self.facility_manager.sub_types(cat_key)
+
+        elif node == "facility":
+            # A facility-level node was selected
+            cn_name = self.facility_manager.facilities[facility_name]["cn_name"]
+            buildings = self.facility_manager.facilities[facility_name]["buildings"]
+            type_label = "等效模型" if ftype == "equivalent" else "特异模型"
             self.desc_label.setText(
-                f"{cat_name} — 共 {len(subs)} 个子类型\n"
-                "点击「生成一级目标」可生成该类别下所有建筑"
+                f"{cn_name} ({type_label}) — 共 {len(buildings)} 个建筑\n"
+                "点击「生成设施全部建筑」可生成该设施下所有建筑"
             )
             self.generate_btn.setEnabled(False)
             self.generate_category_btn.setEnabled(True)
             self.combustible_btn.setEnabled(False)
             self.selected_facility_data = data
 
-    def _fill_params_from_preset(self, cat_key, sub_key):
-        """Fill inline param controls from facility preset."""
-        p = self.facility_manager.default_params(cat_key, sub_key)
-        self._params = p
+    # ==================================================
+    # Parameter display for equivalent models
+    # ==================================================
+
+    def _show_equivalent_params(self, facility_name, building_name):
+        """Fill inline param controls from equivalent model default params."""
+        params = self.facility_manager.default_params(facility_name, building_name)
+        ranges = params.get("ranges", {})
+        self._params = {
+            "facility": facility_name,
+            "building": building_name,
+            "type": "equivalent",
+        }
         self._syncing = True
         try:
-            self.sp_L.setValue(p["length"])
-            self.sp_W.setValue(p["width"])
-            self.sp_H.setValue(p["height"])
-            self.sp_N.setValue(p["stories"])
-            self.sp_T.setValue(p["wall_thickness"])
+            for field_name in ["length", "width", "height", "stories"]:
+                spinbox = self._param_spinboxes[field_name]
+                spinbox.setEnabled(True)
+                r = ranges.get(field_name, [0, 0])
+                spinbox.setMinimum(r[0])
+                spinbox.setMaximum(r[1])
+                spinbox.setValue(params[field_name])
+                lo, hi = r[0], r[1]
+                if lo == hi:
+                    self._range_labels[field_name].setText("")
+                elif field_name == "stories":
+                    self._range_labels[field_name].setText(
+                        f"({int(lo)}~{int(hi)})"
+                    )
+                else:
+                    self._range_labels[field_name].setText(
+                        f"({lo:.1f}~{hi:.1f})"
+                    )
+                self._range_labels[field_name].setVisible(True)
+
+            # Wall thickness and offsets remain editable
+            self.sp_T.setEnabled(True)
+            bdata = self.facility_manager.get_building_data(facility_name, building_name)
+            self.sp_T.setValue(bdata.get("wall_thickness", 0.24))
             self.sp_X_offset.setValue(0.0)
             self.sp_Y_offset.setValue(0.0)
-            self.sp_dw.setValue(p["door_width"])
-            self.sp_dh.setValue(p["door_height"])
-            self.sp_dc.setValue(p["door_count"])
-            self.cb_dwall.setCurrentIndex(4)
-            self.sp_ww.setValue(p["window_width"])
-            self.sp_wh.setValue(p["window_height"])
-            self.sp_wc.setValue(p["window_count"])
-            self.cb_wwall.setCurrentIndex(4)
 
-            # Update range labels from preset ranges
-            rng = p.get("ranges", {})
-
-            def _fmt(key, is_int=False):
-                lo, hi = rng.get(key, (0, 0))
-                if lo == hi:
-                    return ""
-                if is_int:
-                    return f"({int(lo)}~{int(hi)})"
-                return f"({lo:.1f}~{hi:.1f})"
-
-            self.rng_L.setText(_fmt("length"))
-            self.rng_W.setText(_fmt("width"))
-            self.rng_H.setText(_fmt("height"))
-            self.rng_N.setText(_fmt("stories", True))
-            self.rng_dc.setText(_fmt("door_count", True))
-            self.rng_dw.setText(_fmt("door_width"))
-            self.rng_wc.setText(_fmt("window_count", True))
-            self.rng_ww.setText(_fmt("window_width"))
-
-            self.desc_label.setText(
-                f"{p.get('cat_name', '')}-{p.get('name', '')}\n"
-                f"{p.get('description', '')}"
-            )
+            # Description
+            cn = bdata.get("cn_name", building_name)
+            desc = bdata.get("description", "")
+            self.desc_label.setText(f"{cn}\n{desc}" if desc else cn)
         finally:
             self._syncing = False
 
-    # ══════════════════════════════════════════════
-    # Read params → dict
-    # ══════════════════════════════════════════════
+    # ==================================================
+    # Parameter display for specialized models
+    # ==================================================
+
+    def _show_specialized_params(self, facility_name, building_name):
+        """Show read-only values from specialized building data."""
+        bdata = self.facility_manager.get_building_data(facility_name, building_name)
+        boundary = bdata.get("boundary", [0, 20, 0, 10])
+        values = {
+            "length": boundary[1],
+            "width": boundary[3],
+            "height": bdata.get("height", 3.0),
+            "stories": len(bdata.get("stories", [])),
+        }
+        self._params = {
+            "facility": facility_name,
+            "building": building_name,
+            "type": "specialized",
+        }
+        self._syncing = True
+        try:
+            for field_name, val in values.items():
+                spinbox = self._param_spinboxes[field_name]
+                # Temporarily widen range so setValue doesn't clamp
+                spinbox.setMinimum(0)
+                spinbox.setMaximum(99999)
+                spinbox.setValue(val)
+                spinbox.setEnabled(False)
+                self._range_labels[field_name].setVisible(False)
+
+            # Wall thickness read-only
+            self.sp_T.setValue(bdata.get("wall_thickness", 0.24))
+            self.sp_T.setEnabled(False)
+            # Offsets: allow editing position
+            self.sp_X_offset.setValue(boundary[0])
+            self.sp_Y_offset.setValue(boundary[2])
+
+            # Description
+            cn = bdata.get("cn_name", building_name)
+            self.desc_label.setText(f"{cn} (特异模型 - 参数只读)")
+        finally:
+            self._syncing = False
+
+    # ==================================================
+    # Read params -> dict (for equivalent models)
+    # ==================================================
 
     def _read_params(self) -> dict:
         p = dict(self._params) if self._params else {}
@@ -443,7 +537,6 @@ class FacilityListPanel(QWidget):
         )
 
         # Combustible selections from stored params (set via dialog)
-        # keep whatever was in _params
         if "combustible_selections" not in p:
             p["combustible_selections"] = {}
         if "combustible_method" not in p:
@@ -452,59 +545,72 @@ class FacilityListPanel(QWidget):
             p["combustible_floor"] = -1
         return p
 
-    # ══════════════════════════════════════════════
+    # ==================================================
     # Generate actions
-    # ══════════════════════════════════════════════
+    # ==================================================
+
     def _on_generate(self):
-        if not self._params and not self.selected_facility_data:
-            QMessageBox.warning(self, "提示", "请先从设施类型中选择一个设施")
+        if not self.selected_facility_data:
+            QMessageBox.warning(self, "提示", "请先从设施类型中选择一个建筑")
             return
-        if not self._params:
-            self._params = {}
-        p = self._read_params()
-        model = self.facility_manager.generate_model(p)
-        if model.building_group.buildings:
-            b = model.building_group.buildings[0]
-            x_off = p.get("x_offset", None)
-            y_off = p.get("y_offset", None)
-            if x_off is not None and y_off is not None and (x_off != 0 or y_off != 0):
-                b.x_offset = x_off
-                b.y_offset = y_off
-            else:
-                cat_key = self._params.get("cat_key")
-                sub_key = self._params.get("sub_key")
-                if cat_key:
-                    subs = self.facility_manager.sub_types(cat_key)
-                    sub_index = next(
-                        (i for i, (k, _) in enumerate(subs) if k == sub_key), 0
-                    )
-                    L, W = b.length, b.width
-                    sep = self._params.get("fire_separation", 15.0)
-                    slots = [
-                        (0.0, 0.0),
-                        (1.0, 0.0),
-                        (-1.0, 0.0),
-                        (0.0, 1.0),
-                        (0.0, -1.0),
-                    ]
-                    sx, sy = slots[min(sub_index, len(slots) - 1)]
-                    b.x_offset = sx * (L / 2 + sep + L / 2)
-                    b.y_offset = sy * (W / 2 + sep + W / 2)
-            b.x_offset = p.get("x_offset", 0.0)
-            b.y_offset = p.get("y_offset", 0.0)
-        self.building_added.emit(model.to_dict())
+
+        data = self.selected_facility_data
+        facility = data.get("facility")
+        building_name = data.get("building")
+        ftype = data.get("type")
+
+        if not facility or not building_name:
+            QMessageBox.warning(self, "提示", "请先从设施类型中选择一个具体建筑")
+            return
+
+        if ftype == "specialized":
+            building = self.facility_manager.load_specialized(facility, building_name)
+            # Apply user-specified offsets
+            building.boundary[0] = self.sp_X_offset.value()
+            building.boundary[2] = self.sp_Y_offset.value()
+        else:
+            params = {
+                field: self._param_spinboxes[field].value()
+                for field in ["length", "width", "height", "stories"]
+            }
+            building = self.facility_manager.load_equivalent(
+                facility, building_name, params
+            )
+            # Apply user-specified offsets
+            building.boundary[0] = self.sp_X_offset.value()
+            building.boundary[2] = self.sp_Y_offset.value()
+
+        self.building_added.emit(building)
 
     def _on_generate_category(self):
+        """Generate all buildings in the selected facility."""
         if not self.selected_facility_data:
             return
-        cat_key = self.selected_facility_data.get("key")
-        if not cat_key:
-            return
-        from ui.dialogs import CategoryGenerateDialog
 
-        dlg = CategoryGenerateDialog(self, self.facility_manager, cat_key)
-        if dlg.exec() == QDialog.Accepted and dlg.result_model:
-            self.facility_selected.emit(dlg.result_model.to_dict())
+        facility_name = self.selected_facility_data.get("facility")
+        if not facility_name:
+            return
+
+        ftype = self.facility_manager.get_type(facility_name)
+        buildings = []
+
+        if ftype == "specialized":
+            # Load all specialized buildings
+            for bname in self.facility_manager.list_buildings(facility_name):
+                b = self.facility_manager.load_specialized(facility_name, bname)
+                buildings.append(b)
+        else:
+            # Load all equivalent buildings with default params
+            for bname in self.facility_manager.list_buildings(facility_name):
+                params = self.facility_manager.default_params(facility_name, bname)
+                b = self.facility_manager.load_equivalent(
+                    facility_name, bname, params
+                )
+                buildings.append(b)
+
+        if buildings:
+            group = BuildingGroup(buildings=buildings)
+            self.facility_selected.emit(group.to_dict())
 
     def _open_combustible_dialog(self):
         """Open combustible management via a simplified selection dialog."""
@@ -522,9 +628,9 @@ class FacilityListPanel(QWidget):
         if dlg.exec() == QDialog.Accepted:
             self._params["combustible_selections"] = dlg.get_selections()
 
-    # ══════════════════════════════════════════════
+    # ==================================================
     # Compatibility stubs (for FacilityDialog path)
-    # ══════════════════════════════════════════════
+    # ==================================================
 
     def generate_equivalent_model(self):
         self._on_generate()
@@ -532,9 +638,9 @@ class FacilityListPanel(QWidget):
     def generate_category_model(self):
         self._on_generate_category()
 
-    # ══════════════════════════════════════════════
+    # ==================================================
     # Scene object list
-    # ══════════════════════════════════════════════
+    # ==================================================
 
     def update_scene_list(self, buildings):
         """Update scene table from list of Building objects."""
@@ -555,17 +661,19 @@ class FacilityListPanel(QWidget):
         )
 
         for i, b in enumerate(buildings):
-            name_item = QTableWidgetItem(b.name)
+            name_item = QTableWidgetItem(b.cn_name or b.name)
             name_item.setFlags(name_item.flags() & ~Qt.ItemIsEditable)
             self.scene_table.setItem(i, 0, name_item)
 
             size_item = QTableWidgetItem(
-                f"{b.length:.1f}x{b.width:.1f}x{b.total_height:.1f}"
+                f"{b.length:.1f}x{b.width:.1f}x{b.height:.1f}"
             )
             size_item.setFlags(size_item.flags() & ~Qt.ItemIsEditable)
             self.scene_table.setItem(i, 1, size_item)
 
-            pos_item = QTableWidgetItem(f"({b.x_offset:.1f}, {b.y_offset:.1f})")
+            pos_item = QTableWidgetItem(
+                f"({b.offset_x:.1f}, {b.offset_y:.1f})"
+            )
             pos_item.setFlags(pos_item.flags() & ~Qt.ItemIsEditable)
             self.scene_table.setItem(i, 2, pos_item)
 
@@ -578,7 +686,7 @@ class FacilityListPanel(QWidget):
             del_btn = QPushButton("删除")
             del_btn.setFixedHeight(24)
             del_btn.setStyleSheet(btn_style_del)
-            del_btn.setEnabled(len(buildings) > 1)  # 单建筑禁用删除
+            del_btn.setEnabled(len(buildings) > 1)  # single building: disable delete
             del_btn.clicked.connect(lambda _, idx=i: self._on_scene_delete_row(idx))
             self.scene_table.setCellWidget(i, 4, del_btn)
 
@@ -614,7 +722,7 @@ class FacilityListPanel(QWidget):
         x_spin = QDoubleSpinBox()
         x_spin.setRange(-1000, 10000)
         x_spin.setDecimals(1)
-        x_spin.setValue(b.x_offset)
+        x_spin.setValue(b.offset_x)
         x_spin.setFixedHeight(24)
         x_spin.setMinimumWidth(80)
         x_spin.setPrefix("X:")
@@ -623,7 +731,7 @@ class FacilityListPanel(QWidget):
         y_spin = QDoubleSpinBox()
         y_spin.setRange(-1000, 10000)
         y_spin.setDecimals(1)
-        y_spin.setValue(b.y_offset)
+        y_spin.setValue(b.offset_y)
         y_spin.setFixedHeight(24)
         y_spin.setMinimumWidth(80)
         y_spin.setPrefix("Y:")
@@ -661,7 +769,9 @@ class FacilityListPanel(QWidget):
         self.scene_table.removeCellWidget(row, 2)
         if row < len(buildings):
             b = buildings[row]
-            pos_item = QTableWidgetItem(f"({b.x_offset:.1f}, {b.y_offset:.1f})")
+            pos_item = QTableWidgetItem(
+                f"({b.offset_x:.1f}, {b.offset_y:.1f})"
+            )
             pos_item.setFlags(pos_item.flags() & ~Qt.ItemIsEditable)
             self.scene_table.setItem(row, 2, pos_item)
 
@@ -674,7 +784,7 @@ class FacilityListPanel(QWidget):
         buildings = getattr(self, "_scene_buildings", [])
         if row < 0 or row >= len(buildings):
             return
-        name = buildings[row].name
+        name = buildings[row].cn_name or buildings[row].name
         reply = QMessageBox.question(
             self,
             "确认删除",

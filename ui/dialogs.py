@@ -22,7 +22,10 @@ from models.combustibles import (
     CombustibleManager, Combustible, DistributionMethod
 )
 from models.materials import COMBUSTIBLE_LIBRARY
-from models.facility import FacilityManager, WALL_NAMES
+from models.facility import FacilityManager
+
+# Wall name choices (previously in models.facility, now defined locally)
+WALL_NAMES = ["南墙", "北墙", "东墙", "西墙", "均匀分布"]
 
 # ============================================================
 # 开口编辑对话框
@@ -1202,29 +1205,38 @@ class FireCompartmentDialog(QDialog):
 
 
 class CategoryGenerateDialog(QDialog):
-    """分类级别生成对话框 - 生成某类别下所有子类型建筑群"""
+    """设施级别生成对话框 - 生成某设施下所有建筑群
 
-    def __init__(self, parent=None, facility_manager=None, cat_key: str = ""):
+    Updated for new FacilityManager API (facilities dict, list_buildings,
+    load_equivalent, load_specialized, default_params).
+    """
+
+    def __init__(self, parent=None, facility_manager=None, facility_key: str = ""):
         super().__init__(parent)
-        self.setWindowTitle("生成一级目标（建筑群）")
+        self.setWindowTitle("生成设施全部建筑")
         self.resize(750, 500)
         self.result_model = None
         self._mgr = facility_manager or FacilityManager()
-        self._cat_key = cat_key
-        self._sub_params = []  # list of default_params dicts
+        self._facility_key = facility_key
+        self._building_params = []  # list of dicts with building info
         self._init_ui()
         self._load_data()
 
     def _init_ui(self):
         layout = QVBoxLayout(self)
 
-        cat_name = self._mgr._data.get(self._cat_key, {}).get("cn_name", self._cat_key)
-        layout.addWidget(QLabel(f"<b>类别: {cat_name}</b> — 调整各建筑偏移后生成建筑群"))
+        fac_data = self._mgr.facilities.get(self._facility_key, {})
+        cn_name = fac_data.get("cn_name", self._facility_key)
+        ftype = fac_data.get("type", "equivalent")
+        type_label = "等效模型" if ftype == "equivalent" else "特异模型"
+        layout.addWidget(QLabel(
+            f"<b>设施: {cn_name}</b> ({type_label}) — 调整各建筑偏移后生成建筑群"))
 
         # Table: Name, Length, Width, Height, X Offset, Y Offset
         self.table = QTableWidget()
         self.table.setColumnCount(6)
-        self.table.setHorizontalHeaderLabels(["名称", "长度(m)", "宽度(m)", "高度(m)", "X偏移(m)", "Y偏移(m)"])
+        self.table.setHorizontalHeaderLabels(
+            ["名称", "长度(m)", "宽度(m)", "高度(m)", "X偏移(m)", "Y偏移(m)"])
         self.table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
         layout.addWidget(self.table)
 
@@ -1250,21 +1262,48 @@ class CategoryGenerateDialog(QDialog):
         layout.addWidget(btn_box)
 
     def _load_data(self):
-        subs = self._mgr.sub_types(self._cat_key)
+        from models.building import Building, Story
+        from models.parameter_engine import ParameterEngine
 
-        self._sub_params = []
-        for sub_key, sub_name in subs:
-            p = self._mgr.default_params(self._cat_key, sub_key)
-            p["_x_offset"] = 0.0
-            p["_y_offset"] = 0.0
-            self._sub_params.append(p)
+        ftype = self._mgr.get_type(self._facility_key)
+        building_names = self._mgr.list_buildings(self._facility_key)
 
-        self._auto_arrange()
+        self._building_params = []
+        for bname in building_names:
+            bdata = self._mgr.get_building_data(self._facility_key, bname)
+            if ftype == "equivalent":
+                params = self._mgr.default_params(self._facility_key, bname)
+                entry = {
+                    "name": bdata.get("cn_name", bname),
+                    "building_name": bname,
+                    "length": params["length"],
+                    "width": params["width"],
+                    "height": params["height"],
+                    "stories": params["stories"],
+                    "_x_offset": 0.0,
+                    "_y_offset": 0.0,
+                }
+            else:
+                boundary = bdata.get("boundary", [0, 20, 0, 10])
+                entry = {
+                    "name": bdata.get("cn_name", bname),
+                    "building_name": bname,
+                    "length": boundary[1],
+                    "width": boundary[3],
+                    "height": bdata.get("height", 3.0),
+                    "stories": len(bdata.get("stories", [])),
+                    "_x_offset": boundary[0],
+                    "_y_offset": boundary[2],
+                }
+            self._building_params.append(entry)
+
+        if ftype == "equivalent":
+            self._auto_arrange()
         self._fill_table()
 
     def _fill_table(self):
-        self.table.setRowCount(len(self._sub_params))
-        for i, p in enumerate(self._sub_params):
+        self.table.setRowCount(len(self._building_params))
+        for i, p in enumerate(self._building_params):
             self.table.setItem(i, 0, QTableWidgetItem(p.get("name", "")))
             self.table.setItem(i, 1, QTableWidgetItem(f"{p['length']:.1f}"))
             self.table.setItem(i, 2, QTableWidgetItem(f"{p['width']:.1f}"))
@@ -1283,49 +1322,46 @@ class CategoryGenerateDialog(QDialog):
             self.table.setCellWidget(i, 5, y_spin)
 
     def _auto_arrange(self):
-        """Auto-arrange buildings using enclosure layout."""
-        from models.building import Building, Story, LayoutMode, compute_layout
+        """Auto-arrange buildings in a simple row layout with spacing."""
         spacing = self.spacing_spin.value()
 
-        # Build temporary Building objects for layout calculation
-        temp_buildings = []
-        for p in self._sub_params:
-            b = Building(name=p.get("name", ""), length=p["length"], width=p["width"])
-            n_st = max(1, p.get("stories", 1))
-            st_h = round(p["height"] / n_st, 2)
-            b.stories = [Story(name=f"{i+1}F", height=st_h) for i in range(n_st)]
-            b.update_z_offsets()
-            temp_buildings.append(b)
+        x_cursor = 0.0
+        for i, p in enumerate(self._building_params):
+            p["_x_offset"] = x_cursor
+            p["_y_offset"] = 0.0
+            x_cursor += p["length"] + spacing
 
-        offsets = compute_layout(temp_buildings, LayoutMode.ENCLOSURE, spacing)
-
-        for i, p in enumerate(self._sub_params):
-            xo, yo = offsets[i] if i < len(offsets) else (0.0, 0.0)
-            p["_x_offset"] = xo
-            p["_y_offset"] = yo
             x_spin = self.table.cellWidget(i, 4)
             y_spin = self.table.cellWidget(i, 5)
             if x_spin:
-                x_spin.setValue(xo)
+                x_spin.setValue(p["_x_offset"])
             if y_spin:
-                y_spin.setValue(yo)
+                y_spin.setValue(p["_y_offset"])
 
     def _on_generate(self):
-        # Read offsets from table
-        building_params = []
-        for i, p in enumerate(self._sub_params):
+        from models.building import Building, BuildingGroup
+
+        ftype = self._mgr.get_type(self._facility_key)
+        buildings = []
+
+        for i, p in enumerate(self._building_params):
             x_spin = self.table.cellWidget(i, 4)
             y_spin = self.table.cellWidget(i, 5)
             x_off = x_spin.value() if x_spin else 0.0
             y_off = y_spin.value() if y_spin else 0.0
-            building_params.append({
-                "params": p,
-                "sub_key": p.get("sub_key", ""),
-                "x_offset": x_off,
-                "y_offset": y_off,
-            })
+            bname = p["building_name"]
 
-        self.result_model = self._mgr.generate_group(self._cat_key, building_params)
+            if ftype == "specialized":
+                b = self._mgr.load_specialized(self._facility_key, bname)
+            else:
+                params = self._mgr.default_params(self._facility_key, bname)
+                b = self._mgr.load_equivalent(self._facility_key, bname, params)
+
+            b.boundary[0] = x_off
+            b.boundary[2] = y_off
+            buildings.append(b)
+
+        self.result_model = BuildingGroup(buildings=buildings)
         self.accept()
 
 class CombustibleSelectionDialog(QDialog):
