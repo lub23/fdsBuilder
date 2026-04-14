@@ -1,1853 +1,4083 @@
 {
+  "type": "specialized",
   "cn_name": "Alcoa Warrick Operations",
-  "fire_separation": 15.0,
-  "sub_types": {
-    "Bay_A1": {
+  "buildings": [
+    {
+      "name": "Bay_A1",
       "cn_name": "A1跨单元",
-      "description": "电解铝厂标准窄跨厂房1层",
-      "offset": {
-        "x": 9.5,
-        "y": 183
-      },
-      "rotation": 0,
-      "building": {
-        "length": {
-          "min": 19,
-          "max": 19,
-          "median": 19,
-          "mean": 19,
-          "unit": "m"
-        },
-        "width": {
-          "min": 334,
-          "max": 334,
-          "median": 334,
-          "mean": 334,
-          "unit": "m"
-        },
-        "height": { "min": 15, "max": 15, "median": 15, "mean": 15, "unit": "m"},
-        "stories": {
-          "min": 1,
-          "max": 1,
-          "median": 1,
-          "mean": 1,
-          "unit": ""
-        }
-      },
-      "doors": {},
-      "windows": {},
-      "wall_thickness": 0.3,
-      "fire_compartments": [
-        {
-          "name": "A1",
-          "x_ratio": [0,1.0],
-          "y_ratio": [0,1.0],
-          "wall_thickness": 0.3,
-          "wall_material": "CONCRETE",
-          "openings": [
-              {"wall": "x_max","type": "window","position": 0.85,"width": 30, "height": 5, "z_bottom": 1},
-              {"wall": "x_max","type": "window","position": 0.72,"width": 30, "height": 5, "z_bottom": 1},
-              {"wall": "x_max","type": "window","position": 0.59,"width": 30, "height": 5, "z_bottom": 1},
-              {"wall": "x_max","type": "window","position": 0.33,"width": 30, "height": 5, "z_bottom": 1},
-              {"wall": "x_max","type": "window","position": 0.20,"width": 30, "height": 5, "z_bottom": 1},
-              {"wall": "x_max","type": "window","position": 0.07,"width": 30, "height": 5, "z_bottom": 1},
-              {"wall": "x_min","type": "door","position": 0.443,"width": 8, "height": 15, "z_bottom": 0},
-              {"wall": "x_max","type": "door","position": 0.443,"width": 8, "height": 15, "z_bottom": 0},
-              {"wall": "x_min","type": "door","position": 0.928,"width": 16, "height": 15, "z_bottom": 0},
-              {"wall": "x_max","type": "door","position": 0.928,"width": 16, "height": 15, "z_bottom": 0}
-          ],
-          "combustibles": [
-            {
-              "key": "PREBAKED_ANODE_BLOCK",
-              "count": 320
-            },
-            {
-              "key": "CATHODE_CARBON_BLOCK",
-              "count": 240
-            },
-            {
-              "key": "TRANSFORMER_OIL_TANK",
-              "count": 2
-            },
-            {
-              "key": "CRANE_HYDRAULIC_TANK",
-              "count": 2
-            },
-            {
-              "key": "CABLE_BRIDGE",
-              "count": 3
-            }
-          ],
-          "specialized_components": [
-            {
-              "key": "POT_TENDING_MACHINE",
-              "count": 2
-            }
-          ]
-        }
+      "boundary": [
+        9.5,
+        19,
+        183,
+        334
       ],
-      "specialized_components": []
+      "wall_thickness": 0.3,
+      "height": 15,
+      "boundary_polygons": null,
+      "stories": [
+        {
+          "name": "1F",
+          "height": 15.0,
+          "openings": [],
+          "fire_compartments": [
+            {
+              "name": "A1",
+              "boundary": [
+                0,
+                19.0,
+                0,
+                334.0
+              ],
+              "firewall_thickness": 0.3,
+              "firewall_material": "CONCRETE",
+              "openings": [
+                {
+                  "wall": "x_max",
+                  "type": "window",
+                  "boundary": [
+                    268.9,
+                    30,
+                    1,
+                    5
+                  ]
+                },
+                {
+                  "wall": "x_max",
+                  "type": "window",
+                  "boundary": [
+                    225.48,
+                    30,
+                    1,
+                    5
+                  ]
+                },
+                {
+                  "wall": "x_max",
+                  "type": "window",
+                  "boundary": [
+                    182.06,
+                    30,
+                    1,
+                    5
+                  ]
+                },
+                {
+                  "wall": "x_max",
+                  "type": "window",
+                  "boundary": [
+                    95.22,
+                    30,
+                    1,
+                    5
+                  ]
+                },
+                {
+                  "wall": "x_max",
+                  "type": "window",
+                  "boundary": [
+                    51.8,
+                    30,
+                    1,
+                    5
+                  ]
+                },
+                {
+                  "wall": "x_max",
+                  "type": "window",
+                  "boundary": [
+                    8.38,
+                    30,
+                    1,
+                    5
+                  ]
+                },
+                {
+                  "wall": "x_min",
+                  "type": "door",
+                  "boundary": [
+                    143.962,
+                    8,
+                    0,
+                    15
+                  ]
+                },
+                {
+                  "wall": "x_max",
+                  "type": "door",
+                  "boundary": [
+                    143.962,
+                    8,
+                    0,
+                    15
+                  ]
+                },
+                {
+                  "wall": "x_min",
+                  "type": "door",
+                  "boundary": [
+                    301.952,
+                    16,
+                    0,
+                    15
+                  ]
+                },
+                {
+                  "wall": "x_max",
+                  "type": "door",
+                  "boundary": [
+                    301.952,
+                    16,
+                    0,
+                    15
+                  ]
+                }
+              ],
+              "combustibles": [
+                {
+                  "key": "PREBAKED_ANODE_BLOCK",
+                  "count": 320
+                },
+                {
+                  "key": "CATHODE_CARBON_BLOCK",
+                  "count": 240
+                },
+                {
+                  "key": "TRANSFORMER_OIL_TANK",
+                  "count": 2
+                },
+                {
+                  "key": "CRANE_HYDRAULIC_TANK",
+                  "count": 2
+                },
+                {
+                  "key": "CABLE_BRIDGE",
+                  "count": 3
+                }
+              ],
+              "specialized_components": [
+                {
+                  "key": "POT_TENDING_MACHINE",
+                  "count": 2
+                }
+              ]
+            }
+          ],
+          "roof": {
+            "thickness": 0.2,
+            "material": "CONCRETE",
+            "openings": []
+          }
+        }
+      ]
     },
-    "Bay_A2": {
+    {
+      "name": "Bay_A2",
       "cn_name": "A2跨单元",
-      "description": "电解铝厂标准窄跨厂房",
-      "offset": {
-        "x": 42.5,
-        "y": 183
-      },
-      "rotation": 0,
-      "building": {
-        "length": {
-          "min": 19,
-          "max": 19,
-          "median": 19,
-          "mean": 19,
-          "unit": "m"
-        },
-        "width": {"min": 334, "max": 334, "median": 334, "mean": 334, "unit": "m"},
-        "height": { "min": 15, "max": 15, "median": 15, "mean": 15, "unit": "m"},
-        "stories": {
-          "min": 1,
-          "max": 1,
-          "median": 1,
-          "mean": 1,
-          "unit": ""
-        }
-      },
-      "doors": {},
-      "windows": {},
-      "wall_thickness": 0.3,
-      "fire_compartments": [
-        {
-          "name": "A2",
-          "x_ratio": [0,1.0],
-          "y_ratio": [0,1.0],
-          "wall_thickness": 0.3,
-          "wall_material": "CONCRETE",
-          "openings": [
-              {"wall": "x_min","type": "window","position": 0.85,"width": 30, "height": 5, "z_bottom": 1},
-              {"wall": "x_min","type": "window","position": 0.72,"width": 30, "height": 5, "z_bottom": 1},
-              {"wall": "x_min","type": "window","position": 0.59,"width": 30, "height": 5, "z_bottom": 1},
-              {"wall": "x_min","type": "window","position": 0.33,"width": 30, "height": 5, "z_bottom": 1},
-              {"wall": "x_min","type": "window","position": 0.20,"width": 30, "height": 5, "z_bottom": 1},
-              {"wall": "x_min","type": "window","position": 0.07,"width": 30, "height": 5, "z_bottom": 1},
-              {"wall": "x_max","type": "window","position": 0.85,"width": 30, "height": 5, "z_bottom": 1},
-              {"wall": "x_max","type": "window","position": 0.72,"width": 30, "height": 5, "z_bottom": 1},
-              {"wall": "x_max","type": "window","position": 0.59,"width": 30, "height": 5, "z_bottom": 1},
-              {"wall": "x_max","type": "window","position": 0.33,"width": 30, "height": 5, "z_bottom": 1},
-              {"wall": "x_max","type": "window","position": 0.20,"width": 30, "height": 5, "z_bottom": 1},
-              {"wall": "x_max","type": "window","position": 0.07,"width": 30, "height": 5, "z_bottom": 1},
-              {"wall": "x_min","type": "door","position": 0.443,"width": 8, "height": 15, "z_bottom": 0},
-              {"wall": "x_max","type": "door","position": 0.443,"width": 8, "height": 15, "z_bottom": 0},
-              {"wall": "x_min","type": "door","position": 0.928,"width": 16, "height": 15, "z_bottom": 0},
-              {"wall": "x_max","type": "door","position": 0.928,"width": 16, "height": 15, "z_bottom": 0}
-          ],
-          "combustibles": [
-            {
-              "key": "PREBAKED_ANODE_BLOCK",
-              "count": 320
-            },
-            {
-              "key": "CATHODE_CARBON_BLOCK",
-              "count": 240
-            },
-            {
-              "key": "TRANSFORMER_OIL_TANK",
-              "count": 2
-            },
-            {
-              "key": "CRANE_HYDRAULIC_TANK",
-              "count": 2
-            },
-            {
-              "key": "CABLE_BRIDGE",
-              "count": 3
-            }
-          ],
-          "specialized_components": [
-            {
-              "key": "POT_TENDING_MACHINE",
-              "count": 2
-            }
-          ]
-        }
+      "boundary": [
+        42.5,
+        19,
+        183,
+        334
       ],
-      "specialized_components": []
+      "wall_thickness": 0.3,
+      "height": 15,
+      "boundary_polygons": null,
+      "stories": [
+        {
+          "name": "1F",
+          "height": 15.0,
+          "openings": [],
+          "fire_compartments": [
+            {
+              "name": "A2",
+              "boundary": [
+                0,
+                19.0,
+                0,
+                334.0
+              ],
+              "firewall_thickness": 0.3,
+              "firewall_material": "CONCRETE",
+              "openings": [
+                {
+                  "wall": "x_min",
+                  "type": "window",
+                  "boundary": [
+                    268.9,
+                    30,
+                    1,
+                    5
+                  ]
+                },
+                {
+                  "wall": "x_min",
+                  "type": "window",
+                  "boundary": [
+                    225.48,
+                    30,
+                    1,
+                    5
+                  ]
+                },
+                {
+                  "wall": "x_min",
+                  "type": "window",
+                  "boundary": [
+                    182.06,
+                    30,
+                    1,
+                    5
+                  ]
+                },
+                {
+                  "wall": "x_min",
+                  "type": "window",
+                  "boundary": [
+                    95.22,
+                    30,
+                    1,
+                    5
+                  ]
+                },
+                {
+                  "wall": "x_min",
+                  "type": "window",
+                  "boundary": [
+                    51.8,
+                    30,
+                    1,
+                    5
+                  ]
+                },
+                {
+                  "wall": "x_min",
+                  "type": "window",
+                  "boundary": [
+                    8.38,
+                    30,
+                    1,
+                    5
+                  ]
+                },
+                {
+                  "wall": "x_max",
+                  "type": "window",
+                  "boundary": [
+                    268.9,
+                    30,
+                    1,
+                    5
+                  ]
+                },
+                {
+                  "wall": "x_max",
+                  "type": "window",
+                  "boundary": [
+                    225.48,
+                    30,
+                    1,
+                    5
+                  ]
+                },
+                {
+                  "wall": "x_max",
+                  "type": "window",
+                  "boundary": [
+                    182.06,
+                    30,
+                    1,
+                    5
+                  ]
+                },
+                {
+                  "wall": "x_max",
+                  "type": "window",
+                  "boundary": [
+                    95.22,
+                    30,
+                    1,
+                    5
+                  ]
+                },
+                {
+                  "wall": "x_max",
+                  "type": "window",
+                  "boundary": [
+                    51.8,
+                    30,
+                    1,
+                    5
+                  ]
+                },
+                {
+                  "wall": "x_max",
+                  "type": "window",
+                  "boundary": [
+                    8.38,
+                    30,
+                    1,
+                    5
+                  ]
+                },
+                {
+                  "wall": "x_min",
+                  "type": "door",
+                  "boundary": [
+                    143.962,
+                    8,
+                    0,
+                    15
+                  ]
+                },
+                {
+                  "wall": "x_max",
+                  "type": "door",
+                  "boundary": [
+                    143.962,
+                    8,
+                    0,
+                    15
+                  ]
+                },
+                {
+                  "wall": "x_min",
+                  "type": "door",
+                  "boundary": [
+                    301.952,
+                    16,
+                    0,
+                    15
+                  ]
+                },
+                {
+                  "wall": "x_max",
+                  "type": "door",
+                  "boundary": [
+                    301.952,
+                    16,
+                    0,
+                    15
+                  ]
+                }
+              ],
+              "combustibles": [
+                {
+                  "key": "PREBAKED_ANODE_BLOCK",
+                  "count": 320
+                },
+                {
+                  "key": "CATHODE_CARBON_BLOCK",
+                  "count": 240
+                },
+                {
+                  "key": "TRANSFORMER_OIL_TANK",
+                  "count": 2
+                },
+                {
+                  "key": "CRANE_HYDRAULIC_TANK",
+                  "count": 2
+                },
+                {
+                  "key": "CABLE_BRIDGE",
+                  "count": 3
+                }
+              ],
+              "specialized_components": [
+                {
+                  "key": "POT_TENDING_MACHINE",
+                  "count": 2
+                }
+              ]
+            }
+          ],
+          "roof": {
+            "thickness": 0.2,
+            "material": "CONCRETE",
+            "openings": []
+          }
+        }
+      ]
     },
-    "Bay_A3": {
+    {
+      "name": "Bay_A3",
       "cn_name": "A3跨单元",
-      "description": "电解铝厂标准窄跨厂房",
-      "offset": {
-        "x": 75,
-        "y": 222
-      },
-      "rotation": 0,
-      "building": {
-        "length": {
-          "min": 18,
-          "max": 18,
-          "median": 18,
-          "mean": 18,
-          "unit": "m"
-        },
-        "width": {"min": 192, "max": 192, "median": 192, "mean": 192, "unit": "m"},
-        "height": { "min": 15, "max": 15, "median": 15, "mean": 15, "unit": "m"},
-        "stories": {
-          "min": 1,
-          "max": 1,
-          "median": 1,
-          "mean": 1,
-          "unit": ""
-        }
-      },
-      "doors": {},
-      "windows": {},
-      "wall_thickness": 0.3,
-      "fire_compartments": [
-        {
-          "name": "A3南分区",
-          "x_ratio": [0,1.0],
-          "y_ratio": [0,1.0],
-          "wall_thickness": 0.3,
-          "wall_material": "CONCRETE",
-          "openings": [
-              {"wall": "x_min","type": "door","position": 0.198,"width": 8, "height": 15, "z_bottom": 0},
-              {"wall": "x_max","type": "door","position": 0.198,"width": 8, "height": 15, "z_bottom": 0},
-              {"wall": "y_max","type": "door","position": 0.5,"width": 8, "height": 5, "z_bottom": 0}
-          ],
-          "combustibles": [
-            {
-              "key": "PREBAKED_ANODE_BLOCK",
-              "count": 320
-            },
-            {
-              "key": "CATHODE_CARBON_BLOCK",
-              "count": 240
-            },
-            {
-              "key": "TRANSFORMER_OIL_TANK",
-              "count": 2
-            },
-            {
-              "key": "CRANE_HYDRAULIC_TANK",
-              "count": 2
-            },
-            {
-              "key": "CABLE_BRIDGE",
-              "count": 3
-            }
-          ],
-          "specialized_components": [
-            {
-              "key": "POT_TENDING_MACHINE",
-              "count": 2
-            }
-          ]
-        }
+      "boundary": [
+        75,
+        18,
+        222,
+        192
       ],
-      "specialized_components": []
+      "wall_thickness": 0.3,
+      "height": 15,
+      "boundary_polygons": null,
+      "stories": [
+        {
+          "name": "1F",
+          "height": 15.0,
+          "openings": [],
+          "fire_compartments": [
+            {
+              "name": "A3南分区",
+              "boundary": [
+                0,
+                18.0,
+                0,
+                192.0
+              ],
+              "firewall_thickness": 0.3,
+              "firewall_material": "CONCRETE",
+              "openings": [
+                {
+                  "wall": "x_min",
+                  "type": "door",
+                  "boundary": [
+                    34.016,
+                    8,
+                    0,
+                    15
+                  ]
+                },
+                {
+                  "wall": "x_max",
+                  "type": "door",
+                  "boundary": [
+                    34.016,
+                    8,
+                    0,
+                    15
+                  ]
+                },
+                {
+                  "wall": "y_max",
+                  "type": "door",
+                  "boundary": [
+                    5.0,
+                    8,
+                    0,
+                    5
+                  ]
+                }
+              ],
+              "combustibles": [
+                {
+                  "key": "PREBAKED_ANODE_BLOCK",
+                  "count": 320
+                },
+                {
+                  "key": "CATHODE_CARBON_BLOCK",
+                  "count": 240
+                },
+                {
+                  "key": "TRANSFORMER_OIL_TANK",
+                  "count": 2
+                },
+                {
+                  "key": "CRANE_HYDRAULIC_TANK",
+                  "count": 2
+                },
+                {
+                  "key": "CABLE_BRIDGE",
+                  "count": 3
+                }
+              ],
+              "specialized_components": [
+                {
+                  "key": "POT_TENDING_MACHINE",
+                  "count": 2
+                }
+              ]
+            }
+          ],
+          "roof": {
+            "thickness": 0.2,
+            "material": "CONCRETE",
+            "openings": []
+          }
+        }
+      ]
     },
-    "Bay_B1": {
+    {
+      "name": "Bay_B1",
       "cn_name": "B1宽跨单元",
-      "description": "电解铝厂宽跨厂房，含内嵌功能区",
-      "offset": {
-        "x": 232.5,
-        "y": 8
-      },
-      "rotation": 0,
-      "building": {
-        "length": {
-          "min": 465,
-          "max": 465,
-          "median": 465,
-          "mean": 465,
-          "unit": "m"
-        },
-        "width": {
-          "min": 16,
-          "max": 16,
-          "median": 16,
-          "mean": 16,
-          "unit": "m"
-        },
-        "height": {
-          "min": 15,
-          "max": 15,
-          "median": 15,
-          "mean": 15,
-          "unit": "m"
-        },
-        "stories": {
-          "min": 1,
-          "max": 1,
-          "median": 1,
-          "mean": 1,
-          "unit": ""
-        }
-      },
-      "doors": {},
-      "windows": {},
-      "wall_thickness": 0.3,
-      "fire_compartments": [
-        {
-          "name": "B1西一区",
-          "x_ratio": [0, 0.325],
-          "y_ratio": [0, 1.0],
-          "wall_thickness": 0.3,
-          "wall_material": "CONCRETE",
-          "openings": [
-            {
-              "wall": "y_min",
-              "type": "door",
-              "position": 0.5,
-              "width": 5.0,
-              "height": 4.5,
-              "z_bottom": 0
-            }
-          ],
-          "combustibles": [
-            {
-              "key": "PREBAKED_ANODE_BLOCK",
-              "count": 480
-            },
-            {
-              "key": "CATHODE_CARBON_BLOCK",
-              "count": 360
-            }
-          ],
-          "specialized_components": []
-        },
-        {
-          "name": "B1内嵌功能区",
-          "x_ratio": [0.323, 0.703],
-          "y_ratio": [0, 1.0],
-          "wall_thickness": 0.3,
-          "wall_material": "CONCRETE",
-          "openings": [],
-          "combustibles": [
-            {
-              "key": "CABLE_BRIDGE",
-              "count": 6
-            },
-            {
-              "key": "HYDRAULIC_TANK",
-              "count": 4
-            },
-            {
-              "key": "LUBE_OIL_DRUM",
-              "count": 6
-            }
-          ],
-          "specialized_components": [
-            {
-              "key": "CONTROL_ROOM",
-              "count": 1
-            }
-          ]
-        },
-        {
-          "name": "B1东一区",
-          "x_ratio": [0.703,1.0],
-          "y_ratio": [0,1.0],
-          "wall_thickness": 0.3,
-          "wall_material": "CONCRETE",
-          "openings": [
-            {
-              "wall": "y_max",
-              "type": "door",
-              "position": 0.5,
-              "width": 5.0,
-              "height": 4.5,
-              "z_bottom": 0
-            }
-          ],
-          "combustibles": [
-            {
-              "key": "CABLE_BRIDGE",
-              "count": 6
-            },
-            {
-              "key": "HYDRAULIC_TANK",
-              "count": 4
-            },
-            {
-              "key": "LUBE_OIL_DRUM",
-              "count": 6
-            }
-          ],
-          "specialized_components": [
-            {
-              "key": "CONTROL_ROOM",
-              "count": 1
-            }
-          ]
-        }
+      "boundary": [
+        232.5,
+        465,
+        8,
+        16
       ],
-      "specialized_components": []
+      "wall_thickness": 0.3,
+      "height": 15,
+      "boundary_polygons": null,
+      "stories": [
+        {
+          "name": "1F",
+          "height": 15.0,
+          "openings": [],
+          "fire_compartments": [
+            {
+              "name": "B1西一区",
+              "boundary": [
+                0,
+                151.125,
+                0,
+                16.0
+              ],
+              "firewall_thickness": 0.3,
+              "firewall_material": "CONCRETE",
+              "openings": [
+                {
+                  "wall": "y_min",
+                  "type": "door",
+                  "boundary": [
+                    73.0625,
+                    5.0,
+                    0,
+                    4.5
+                  ]
+                }
+              ],
+              "combustibles": [
+                {
+                  "key": "PREBAKED_ANODE_BLOCK",
+                  "count": 480
+                },
+                {
+                  "key": "CATHODE_CARBON_BLOCK",
+                  "count": 360
+                }
+              ],
+              "specialized_components": []
+            },
+            {
+              "name": "B1内嵌功能区",
+              "boundary": [
+                150.195,
+                326.895,
+                0,
+                16.0
+              ],
+              "firewall_thickness": 0.3,
+              "firewall_material": "CONCRETE",
+              "openings": [],
+              "combustibles": [
+                {
+                  "key": "CABLE_BRIDGE",
+                  "count": 6
+                },
+                {
+                  "key": "HYDRAULIC_TANK",
+                  "count": 4
+                },
+                {
+                  "key": "LUBE_OIL_DRUM",
+                  "count": 6
+                }
+              ],
+              "specialized_components": [
+                {
+                  "key": "CONTROL_ROOM",
+                  "count": 1
+                }
+              ]
+            },
+            {
+              "name": "B1东一区",
+              "boundary": [
+                326.895,
+                465.0,
+                0,
+                16.0
+              ],
+              "firewall_thickness": 0.3,
+              "firewall_material": "CONCRETE",
+              "openings": [
+                {
+                  "wall": "y_max",
+                  "type": "door",
+                  "boundary": [
+                    66.5525,
+                    5.0,
+                    0,
+                    4.5
+                  ]
+                }
+              ],
+              "combustibles": [
+                {
+                  "key": "CABLE_BRIDGE",
+                  "count": 6
+                },
+                {
+                  "key": "HYDRAULIC_TANK",
+                  "count": 4
+                },
+                {
+                  "key": "LUBE_OIL_DRUM",
+                  "count": 6
+                }
+              ],
+              "specialized_components": [
+                {
+                  "key": "CONTROL_ROOM",
+                  "count": 1
+                }
+              ]
+            }
+          ],
+          "roof": {
+            "thickness": 0.2,
+            "material": "CONCRETE",
+            "openings": []
+          }
+        }
+      ]
     },
-    "Bay_A4": {
+    {
+      "name": "Bay_A4",
       "cn_name": "A4跨单元",
-      "description": "电解铝厂标准窄跨厂房",
-      "offset": {
-        "x": 107.5,
-        "y": 183
-      },
-      "rotation": 0,
-      "building": {
-        "length": {
-          "min": 19,
-          "max": 19,
-          "median": 19,
-          "mean": 19,
-          "unit": "m"
-        },
-        "width": {"min": 334, "max": 334, "median": 334, "mean": 334, "unit": "m"},
-        "height": { "min": 15, "max": 15, "median": 15, "mean": 15, "unit": "m"},
-        "stories": {
-          "min": 1,
-          "max": 1,
-          "median": 1,
-          "mean": 1,
-          "unit": ""
-        }
-      },
-      "doors": {},
-      "windows": {},
-      "wall_thickness": 0.3,
-      "fire_compartments": [
-        {
-          "name": "A4南分区",
-          "x_ratio": [0,1.0],
-          "y_ratio": [0,1.0],
-          "wall_thickness": 0.3,
-          "wall_material": "CONCRETE",
-          "openings": [
-              {"wall": "x_min","type": "window","position": 0.85,"width": 30, "height": 5, "z_bottom": 1},
-              {"wall": "x_min","type": "window","position": 0.72,"width": 30, "height": 5, "z_bottom": 1},
-              {"wall": "x_min","type": "window","position": 0.59,"width": 30, "height": 5, "z_bottom": 1},
-              {"wall": "x_min","type": "window","position": 0.33,"width": 30, "height": 5, "z_bottom": 1},
-              {"wall": "x_min","type": "window","position": 0.20,"width": 30, "height": 5, "z_bottom": 1},
-              {"wall": "x_min","type": "window","position": 0.07,"width": 30, "height": 5, "z_bottom": 1},
-              {"wall": "x_max","type": "window","position": 0.85,"width": 30, "height": 5, "z_bottom": 1},
-              {"wall": "x_max","type": "window","position": 0.72,"width": 30, "height": 5, "z_bottom": 1},
-              {"wall": "x_max","type": "window","position": 0.59,"width": 30, "height": 5, "z_bottom": 1},
-              {"wall": "x_max","type": "window","position": 0.33,"width": 30, "height": 5, "z_bottom": 1},
-              {"wall": "x_max","type": "window","position": 0.20,"width": 30, "height": 5, "z_bottom": 1},
-              {"wall": "x_max","type": "window","position": 0.07,"width": 30, "height": 5, "z_bottom": 1},
-              {"wall": "x_min","type": "door","position": 0.443,"width": 8, "height": 15, "z_bottom": 0},
-              {"wall": "x_max","type": "door","position": 0.443,"width": 8, "height": 15, "z_bottom": 0},
-              {"wall": "x_min","type": "door","position": 0.928,"width": 16, "height": 15, "z_bottom": 0},
-              {"wall": "x_max","type": "door","position": 0.928,"width": 16, "height": 15, "z_bottom": 0}
-          ],
-          "combustibles": [
-            {
-              "key": "PREBAKED_ANODE_BLOCK",
-              "count": 320
-            },
-            {
-              "key": "CATHODE_CARBON_BLOCK",
-              "count": 240
-            },
-            {
-              "key": "TRANSFORMER_OIL_TANK",
-              "count": 2
-            },
-            {
-              "key": "CRANE_HYDRAULIC_TANK",
-              "count": 2
-            },
-            {
-              "key": "CABLE_BRIDGE",
-              "count": 3
-            }
-          ],
-          "specialized_components": [
-            {
-              "key": "POT_TENDING_MACHINE",
-              "count": 2
-            }
-          ]
-        }
+      "boundary": [
+        107.5,
+        19,
+        183,
+        334
       ],
-      "specialized_components": []
-    },
-    "Bay_A5": {
-      "cn_name": "A5跨单元",
-      "description": "电解铝厂标准窄跨厂房",
-      "offset": {
-        "x": 140.5,
-        "y": 183
-      },
-      "rotation": 0,
-      "building": {
-        "length": {
-          "min": 19,
-          "max": 19,
-          "median": 19,
-          "mean": 19,
-          "unit": "m"
-        },
-        "width": {"min": 334, "max": 334, "median": 334, "mean": 334, "unit": "m"},
-        "height": { "min": 15, "max": 15, "median": 15, "mean": 15, "unit": "m"},
-        "stories": {
-          "min": 1,
-          "max": 1,
-          "median": 1,
-          "mean": 1,
-          "unit": ""
-        }
-      },
-      "doors": {},
-      "windows": {},
       "wall_thickness": 0.3,
-      "fire_compartments": [
+      "height": 15,
+      "boundary_polygons": null,
+      "stories": [
         {
-          "name": "A5南分区",
-          "x_ratio": [0,1.0],
-          "y_ratio": [0,1.0],
-          "wall_thickness": 0.3,
-          "wall_material": "CONCRETE",
-          "openings": [
-              {"wall": "x_min","type": "window","position": 0.85,"width": 30, "height": 5, "z_bottom": 1},
-              {"wall": "x_min","type": "window","position": 0.72,"width": 30, "height": 5, "z_bottom": 1},
-              {"wall": "x_min","type": "window","position": 0.59,"width": 30, "height": 5, "z_bottom": 1},
-              {"wall": "x_min","type": "window","position": 0.33,"width": 30, "height": 5, "z_bottom": 1},
-              {"wall": "x_min","type": "window","position": 0.20,"width": 30, "height": 5, "z_bottom": 1},
-              {"wall": "x_min","type": "window","position": 0.07,"width": 30, "height": 5, "z_bottom": 1},
-              {"wall": "x_max","type": "window","position": 0.85,"width": 30, "height": 5, "z_bottom": 1},
-              {"wall": "x_max","type": "window","position": 0.72,"width": 30, "height": 5, "z_bottom": 1},
-              {"wall": "x_max","type": "window","position": 0.59,"width": 30, "height": 5, "z_bottom": 1},
-              {"wall": "x_max","type": "window","position": 0.33,"width": 30, "height": 5, "z_bottom": 1},
-              {"wall": "x_max","type": "window","position": 0.20,"width": 30, "height": 5, "z_bottom": 1},
-              {"wall": "x_max","type": "window","position": 0.07,"width": 30, "height": 5, "z_bottom": 1},
-              {"wall": "x_min","type": "door","position": 0.443,"width": 8, "height": 15, "z_bottom": 0},
-              {"wall": "x_max","type": "door","position": 0.443,"width": 8, "height": 15, "z_bottom": 0},
-              {"wall": "x_min","type": "door","position": 0.928,"width": 16, "height": 15, "z_bottom": 0},
-              {"wall": "x_max","type": "door","position": 0.928,"width": 16, "height": 15, "z_bottom": 0}
-          ],
-          "combustibles": [
-            {
-              "key": "PREBAKED_ANODE_BLOCK",
-              "count": 320
-            },
-            {
-              "key": "CATHODE_CARBON_BLOCK",
-              "count": 240
-            },
-            {
-              "key": "TRANSFORMER_OIL_TANK",
-              "count": 2
-            },
-            {
-              "key": "CRANE_HYDRAULIC_TANK",
-              "count": 2
-            },
-            {
-              "key": "CABLE_BRIDGE",
-              "count": 3
-            }
-          ],
-          "specialized_components": [
-            {
-              "key": "POT_TENDING_MACHINE",
-              "count": 2
-            }
-          ]
-        }
-      ],
-      "specialized_components": []
-    },
-    "Bay_A6": {
-      "cn_name": "A6跨单元",
-      "description": "电解铝厂标准窄跨厂房",
-      "offset": {
-        "x": 173.5,
-        "y": 167
-      },
-      "rotation": 0,
-      "building": {
-        "length": {
-          "min": 19,
-          "max": 19,
-          "median": 19,
-          "mean": 19,
-          "unit": "m"
-        },
-        "width": {"min": 302, "max": 302, "median": 302, "mean": 302, "unit": "m"},
-        "height": { "min": 15, "max": 15, "median": 15, "mean": 15, "unit": "m"},
-        "stories": {
-          "min": 1,
-          "max": 1,
-          "median": 1,
-          "mean": 1,
-          "unit": ""
-        }
-      },
-      "doors": {},
-      "windows": {},
-      "wall_thickness": 0.3,
-      "fire_compartments": [
-        {
-          "name": "A6南分区",
-          "x_ratio": [0,1.0],
-          "y_ratio": [0,1.0],
-          "wall_thickness": 0.3,
-          "wall_material": "CONCRETE",
-          "openings": [
-              {"wall": "x_min","type": "window","position": 0.975,"width": 15, "height": 5, "z_bottom": 1},
-              {"wall": "x_min","type": "window","position": 0.85,"width": 30, "height": 5, "z_bottom": 1},
-              {"wall": "x_min","type": "window","position": 0.7,"width": 30, "height": 5, "z_bottom": 1},
-              {"wall": "x_min","type": "window","position": 0.57,"width": 30, "height": 5, "z_bottom": 1},
-              {"wall": "x_min","type": "window","position": 0.4,"width": 30, "height": 5, "z_bottom": 1},
-              {"wall": "x_min","type": "window","position": 0.25,"width": 30, "height": 5, "z_bottom": 1},
-              {"wall": "x_min","type": "window","position": 0.1,"width": 30, "height": 5, "z_bottom": 1},
-              {"wall": "x_max","type": "window","position": 0.975,"width": 15, "height": 5, "z_bottom": 1},
-              {"wall": "x_max","type": "window","position": 0.85,"width": 30, "height": 5, "z_bottom": 1},
-              {"wall": "x_max","type": "window","position": 0.7,"width": 30, "height": 5, "z_bottom": 1},
-              {"wall": "x_max","type": "window","position": 0.57,"width": 30, "height": 5, "z_bottom": 1},
-              {"wall": "x_max","type": "window","position": 0.4,"width": 30, "height": 5, "z_bottom": 1},
-              {"wall": "x_max","type": "window","position": 0.25,"width": 30, "height": 5, "z_bottom": 1},
-              {"wall": "x_max","type": "window","position": 0.1,"width": 30, "height": 5, "z_bottom": 1},
-              {"wall": "x_min","type": "door","position": 0.49,"width": 8, "height": 15, "z_bottom": 0},
-              {"wall": "x_max","type": "door","position": 0.49,"width": 8, "height": 15, "z_bottom": 0},
-              {"wall": "y_max","type": "door","position": 0.5,"width": 8, "height": 15, "z_bottom": 0}
-          ],
-          "combustibles": [
-            {
-              "key": "PREBAKED_ANODE_BLOCK",
-              "count": 320
-            },
-            {
-              "key": "CATHODE_CARBON_BLOCK",
-              "count": 240
-            },
-            {
-              "key": "TRANSFORMER_OIL_TANK",
-              "count": 2
-            },
-            {
-              "key": "CRANE_HYDRAULIC_TANK",
-              "count": 2
-            },
-            {
-              "key": "CABLE_BRIDGE",
-              "count": 3
-            }
-          ],
-          "specialized_components": [
-            {
-              "key": "POT_TENDING_MACHINE",
-              "count": 2
-            }
-          ]
-        }
-      ],
-      "specialized_components": []
-    },
-    "Bay_A7": {
-      "cn_name": "A7跨单元",
-      "description": "电解铝厂标准窄跨厂房",
-      "offset": {
-        "x": 206.5,
-        "y": 167
-      },
-      "rotation": 0,
-      "building": {
-        "length": {
-          "min": 19,
-          "max": 19,
-          "median": 19,
-          "mean": 19,
-          "unit": "m"
-        },
-        "width": {"min": 302, "max": 302, "median": 302, "mean": 302, "unit": "m"},
-        "height": { "min": 15, "max": 15, "median": 15, "mean": 15, "unit": "m"},
-        "stories": {
-          "min": 1,
-          "max": 1,
-          "median": 1,
-          "mean": 1,
-          "unit": ""
-        }
-      },
-      "doors": {},
-      "windows": {},
-      "wall_thickness": 0.3,
-      "fire_compartments": [
-        {
-          "name": "A7南分区",
-          "x_ratio": [0,1.0],
-          "y_ratio": [0,1.0],
-          "wall_thickness": 0.3,
-          "wall_material": "CONCRETE",
-          "openings": [
-              {"wall": "x_min","type": "window","position": 0.975,"width": 15, "height": 5, "z_bottom": 1},
-              {"wall": "x_min","type": "window","position": 0.85,"width": 30, "height": 5, "z_bottom": 1},
-              {"wall": "x_min","type": "window","position": 0.7,"width": 30, "height": 5, "z_bottom": 1},
-              {"wall": "x_min","type": "window","position": 0.57,"width": 30, "height": 5, "z_bottom": 1},
-              {"wall": "x_min","type": "window","position": 0.4,"width": 30, "height": 5, "z_bottom": 1},
-              {"wall": "x_min","type": "window","position": 0.25,"width": 30, "height": 5, "z_bottom": 1},
-              {"wall": "x_min","type": "window","position": 0.1,"width": 30, "height": 5, "z_bottom": 1},
-              {"wall": "x_max","type": "window","position": 0.975,"width": 15, "height": 5, "z_bottom": 1},
-              {"wall": "x_max","type": "window","position": 0.85,"width": 30, "height": 5, "z_bottom": 1},
-              {"wall": "x_max","type": "window","position": 0.7,"width": 30, "height": 5, "z_bottom": 1},
-              {"wall": "x_max","type": "window","position": 0.57,"width": 30, "height": 5, "z_bottom": 1},
-              {"wall": "x_max","type": "window","position": 0.4,"width": 30, "height": 5, "z_bottom": 1},
-              {"wall": "x_max","type": "window","position": 0.25,"width": 30, "height": 5, "z_bottom": 1},
-              {"wall": "x_max","type": "window","position": 0.1,"width": 30, "height": 5, "z_bottom": 1},
-              {"wall": "x_min","type": "door","position": 0.49,"width": 8, "height": 15, "z_bottom": 0},
-              {"wall": "x_max","type": "door","position": 0.49,"width": 8, "height": 15, "z_bottom": 0},
-              {"wall": "y_max","type": "door","position": 0.5,"width": 8, "height": 15, "z_bottom": 0}
-          ],
-          "combustibles": [
-            {
-              "key": "PREBAKED_ANODE_BLOCK",
-              "count": 320
-            },
-            {
-              "key": "CATHODE_CARBON_BLOCK",
-              "count": 240
-            },
-            {
-              "key": "TRANSFORMER_OIL_TANK",
-              "count": 2
-            },
-            {
-              "key": "CRANE_HYDRAULIC_TANK",
-              "count": 2
-            },
-            {
-              "key": "CABLE_BRIDGE",
-              "count": 3
-            }
-          ],
-          "specialized_components": [
-            {
-              "key": "POT_TENDING_MACHINE",
-              "count": 2
-            }
-          ]
-        }
-      ],
-      "specialized_components": []
-    },
-    "Bay_A8": {
-      "cn_name": "A8跨单元",
-      "description": "电解铝厂标准窄跨厂房",
-      "offset": {
-        "x": 239.5,
-        "y": 167
-      },
-      "rotation": 0,
-      "building": {
-        "length": {
-          "min": 19,
-          "max": 19,
-          "median": 19,
-          "mean": 19,
-          "unit": "m"
-        },
-        "width": {"min": 302, "max": 302, "median": 302, "mean": 302, "unit": "m"},
-        "height": { "min": 15, "max": 15, "median": 15, "mean": 15, "unit": "m"},
-        "stories": {
-          "min": 1,
-          "max": 1,
-          "median": 1,
-          "mean": 1,
-          "unit": ""
-        }
-      },
-      "doors": {},
-      "windows": {},
-      "wall_thickness": 0.3,
-      "fire_compartments": [
-        {
-          "name": "A8南分区",
-          "x_ratio": [0,1.0],
-          "y_ratio": [0,1.0],
-          "wall_thickness": 0.3,
-          "wall_material": "CONCRETE",
-          "openings": [
-              {"wall": "x_min","type": "window","position": 0.975,"width": 15, "height": 5, "z_bottom": 1},
-              {"wall": "x_min","type": "window","position": 0.85,"width": 30, "height": 5, "z_bottom": 1},
-              {"wall": "x_min","type": "window","position": 0.7,"width": 30, "height": 5, "z_bottom": 1},
-              {"wall": "x_min","type": "window","position": 0.57,"width": 30, "height": 5, "z_bottom": 1},
-              {"wall": "x_min","type": "window","position": 0.4,"width": 30, "height": 5, "z_bottom": 1},
-              {"wall": "x_min","type": "window","position": 0.25,"width": 30, "height": 5, "z_bottom": 1},
-              {"wall": "x_min","type": "window","position": 0.1,"width": 30, "height": 5, "z_bottom": 1},
-              {"wall": "x_max","type": "window","position": 0.975,"width": 15, "height": 5, "z_bottom": 1},
-              {"wall": "x_max","type": "window","position": 0.85,"width": 30, "height": 5, "z_bottom": 1},
-              {"wall": "x_max","type": "window","position": 0.7,"width": 30, "height": 5, "z_bottom": 1},
-              {"wall": "x_max","type": "window","position": 0.57,"width": 30, "height": 5, "z_bottom": 1},
-              {"wall": "x_max","type": "window","position": 0.4,"width": 30, "height": 5, "z_bottom": 1},
-              {"wall": "x_max","type": "window","position": 0.25,"width": 30, "height": 5, "z_bottom": 1},
-              {"wall": "x_max","type": "window","position": 0.1,"width": 30, "height": 5, "z_bottom": 1},
-              {"wall": "x_min","type": "door","position": 0.49,"width": 8, "height": 15, "z_bottom": 0},
-              {"wall": "x_max","type": "door","position": 0.49,"width": 8, "height": 15, "z_bottom": 0},
-              {"wall": "y_max","type": "door","position": 0.5,"width": 8, "height": 15, "z_bottom": 0}
-          ],
-          "combustibles": [
-            {
-              "key": "PREBAKED_ANODE_BLOCK",
-              "count": 320
-            },
-            {
-              "key": "CATHODE_CARBON_BLOCK",
-              "count": 240
-            },
-            {
-              "key": "TRANSFORMER_OIL_TANK",
-              "count": 2
-            },
-            {
-              "key": "CRANE_HYDRAULIC_TANK",
-              "count": 2
-            },
-            {
-              "key": "CABLE_BRIDGE",
-              "count": 3
-            }
-          ],
-          "specialized_components": [
-            {
-              "key": "POT_TENDING_MACHINE",
-              "count": 2
-            }
-          ]
-        }
-      ],
-      "specialized_components": []
-    },
-    "Bay_A9": {
-      "cn_name": "A9跨单元",
-      "description": "电解铝厂标准窄跨厂房",
-      "offset": {
-        "x": 272.5,
-        "y": 167
-      },
-      "rotation": 0,
-      "building": {
-        "length": {
-          "min": 19,
-          "max": 19,
-          "median": 19,
-          "mean": 19,
-          "unit": "m"
-        },
-        "width": {"min": 302, "max": 302, "median": 302, "mean": 302, "unit": "m"},
-        "height": { "min": 15, "max": 15, "median": 15, "mean": 15, "unit": "m"},
-        "stories": {
-          "min": 1,
-          "max": 1,
-          "median": 1,
-          "mean": 1,
-          "unit": ""
-        }
-      },
-      "doors": {},
-      "windows": {},
-      "wall_thickness": 0.3,
-      "fire_compartments": [
-        {
-          "name": "A9南分区",
-          "x_ratio": [0,1.0],
-          "y_ratio": [0,1.0],
-          "wall_thickness": 0.3,
-          "wall_material": "CONCRETE",
-          "openings": [
-              {"wall": "x_min","type": "window","position": 0.975,"width": 15, "height": 5, "z_bottom": 1},
-              {"wall": "x_min","type": "window","position": 0.85,"width": 30, "height": 5, "z_bottom": 1},
-              {"wall": "x_min","type": "window","position": 0.7,"width": 30, "height": 5, "z_bottom": 1},
-              {"wall": "x_min","type": "window","position": 0.57,"width": 30, "height": 5, "z_bottom": 1},
-              {"wall": "x_min","type": "window","position": 0.4,"width": 30, "height": 5, "z_bottom": 1},
-              {"wall": "x_min","type": "window","position": 0.25,"width": 30, "height": 5, "z_bottom": 1},
-              {"wall": "x_min","type": "window","position": 0.1,"width": 30, "height": 5, "z_bottom": 1},
-              {"wall": "x_max","type": "window","position": 0.975,"width": 15, "height": 5, "z_bottom": 1},
-              {"wall": "x_max","type": "window","position": 0.85,"width": 30, "height": 5, "z_bottom": 1},
-              {"wall": "x_max","type": "window","position": 0.7,"width": 30, "height": 5, "z_bottom": 1},
-              {"wall": "x_max","type": "window","position": 0.57,"width": 30, "height": 5, "z_bottom": 1},
-              {"wall": "x_max","type": "window","position": 0.4,"width": 30, "height": 5, "z_bottom": 1},
-              {"wall": "x_max","type": "window","position": 0.25,"width": 30, "height": 5, "z_bottom": 1},
-              {"wall": "x_max","type": "window","position": 0.1,"width": 30, "height": 5, "z_bottom": 1},
-              {"wall": "x_min","type": "door","position": 0.49,"width": 8, "height": 15, "z_bottom": 0},
-              {"wall": "x_max","type": "door","position": 0.49,"width": 8, "height": 15, "z_bottom": 0},
-              {"wall": "y_max","type": "door","position": 0.5,"width": 8, "height": 15, "z_bottom": 0}
-          ],
-          "combustibles": [
-            {
-              "key": "PREBAKED_ANODE_BLOCK",
-              "count": 320
-            },
-            {
-              "key": "CATHODE_CARBON_BLOCK",
-              "count": 240
-            },
-            {
-              "key": "TRANSFORMER_OIL_TANK",
-              "count": 2
-            },
-            {
-              "key": "CRANE_HYDRAULIC_TANK",
-              "count": 2
-            },
-            {
-              "key": "CABLE_BRIDGE",
-              "count": 3
-            }
-          ],
-          "specialized_components": [
-            {
-              "key": "POT_TENDING_MACHINE",
-              "count": 2
-            }
-          ]
-        }
-      ],
-      "specialized_components": []
-    },
-    "Bay_A10": {
-      "cn_name": "A10跨单元",
-      "description": "电解铝厂标准窄跨厂房",
-      "offset": {
-        "x": 336.5,
-        "y": 167
-      },
-      "rotation": 0,
-      "building": {
-        "length": {
-          "min": 19,
-          "max": 19,
-          "median": 19,
-          "mean": 19,
-          "unit": "m"
-        },
-        "width": {"min": 302, "max": 302, "median": 302, "mean": 302, "unit": "m"},
-        "height": { "min": 15, "max": 15, "median": 15, "mean": 15, "unit": "m"},
-        "stories": {
-          "min": 1,
-          "max": 1,
-          "median": 1,
-          "mean": 1,
-          "unit": ""
-        }
-      },
-      "doors": {},
-      "windows": {},
-      "wall_thickness": 0.3,
-      "fire_compartments": [
-        {
-          "name": "A10南分区",
-          "x_ratio": [0,1.0],
-          "y_ratio": [0,1.0],
-          "wall_thickness": 0.3,
-          "wall_material": "CONCRETE",
-          "openings": [
-              {"wall": "x_min","type": "window","position": 0.975,"width": 15, "height": 5, "z_bottom": 1},
-              {"wall": "x_min","type": "window","position": 0.85,"width": 30, "height": 5, "z_bottom": 1},
-              {"wall": "x_min","type": "window","position": 0.7,"width": 30, "height": 5, "z_bottom": 1},
-              {"wall": "x_min","type": "window","position": 0.57,"width": 30, "height": 5, "z_bottom": 1},
-              {"wall": "x_min","type": "window","position": 0.4,"width": 30, "height": 5, "z_bottom": 1},
-              {"wall": "x_min","type": "window","position": 0.25,"width": 30, "height": 5, "z_bottom": 1},
-              {"wall": "x_min","type": "window","position": 0.1,"width": 30, "height": 5, "z_bottom": 1},
-              {"wall": "x_max","type": "window","position": 0.975,"width": 15, "height": 5, "z_bottom": 1},
-              {"wall": "x_max","type": "window","position": 0.85,"width": 30, "height": 5, "z_bottom": 1},
-              {"wall": "x_max","type": "window","position": 0.7,"width": 30, "height": 5, "z_bottom": 1},
-              {"wall": "x_max","type": "window","position": 0.57,"width": 30, "height": 5, "z_bottom": 1},
-              {"wall": "x_max","type": "window","position": 0.4,"width": 30, "height": 5, "z_bottom": 1},
-              {"wall": "x_max","type": "window","position": 0.25,"width": 30, "height": 5, "z_bottom": 1},
-              {"wall": "x_max","type": "window","position": 0.1,"width": 30, "height": 5, "z_bottom": 1},
-              {"wall": "x_min","type": "door","position": 0.49,"width": 8, "height": 15, "z_bottom": 0},
-              {"wall": "x_max","type": "door","position": 0.49,"width": 8, "height": 15, "z_bottom": 0},
-              {"wall": "y_max","type": "door","position": 0.5,"width": 8, "height": 15, "z_bottom": 0}
-          ],
-          "combustibles": [
-            {
-              "key": "PREBAKED_ANODE_BLOCK",
-              "count": 320
-            },
-            {
-              "key": "CATHODE_CARBON_BLOCK",
-              "count": 240
-            },
-            {
-              "key": "TRANSFORMER_OIL_TANK",
-              "count": 2
-            },
-            {
-              "key": "CRANE_HYDRAULIC_TANK",
-              "count": 2
-            },
-            {
-              "key": "CABLE_BRIDGE",
-              "count": 3
-            }
-          ],
-          "specialized_components": [
-            {
-              "key": "POT_TENDING_MACHINE",
-              "count": 2
-            }
-          ]
-        }
-      ],
-      "specialized_components": []
-    },
-    "Bay_A11": {
-      "cn_name": "A11跨单元",
-      "description": "电解铝厂标准窄跨厂房",
-      "offset": {
-        "x": 369.5,
-        "y": 167
-      },
-      "building": {
-        "length": {
-          "min": 19,
-          "max": 19,
-          "median": 19,
-          "mean": 19,
-          "unit": "m"
-        },
-        "width": {"min": 302, "max": 302, "median": 302, "mean": 302, "unit": "m"},
-        "height": { "min": 15, "max": 15, "median": 15, "mean": 15, "unit": "m"},
-        "stories": {
-          "min": 1,
-          "max": 1,
-          "median": 1,
-          "mean": 1,
-          "unit": ""
-        }
-      },
-      "doors": {},
-      "windows": {},
-      "wall_thickness": 0.3,
-      "fire_compartments": [
-        {
-          "name": "A11南分区",
-          "x_ratio": [0,1.0],
-          "y_ratio": [0,1.0],
-          "wall_thickness": 0.3,
-          "wall_material": "CONCRETE",
-          "openings": [
-              {"wall": "x_min","type": "window","position": 0.975,"width": 15, "height": 5, "z_bottom": 1},
-              {"wall": "x_min","type": "window","position": 0.85,"width": 30, "height": 5, "z_bottom": 1},
-              {"wall": "x_min","type": "window","position": 0.7,"width": 30, "height": 5, "z_bottom": 1},
-              {"wall": "x_min","type": "window","position": 0.57,"width": 30, "height": 5, "z_bottom": 1},
-              {"wall": "x_min","type": "window","position": 0.4,"width": 30, "height": 5, "z_bottom": 1},
-              {"wall": "x_min","type": "window","position": 0.25,"width": 30, "height": 5, "z_bottom": 1},
-              {"wall": "x_min","type": "window","position": 0.1,"width": 30, "height": 5, "z_bottom": 1},
-              {"wall": "x_max","type": "window","position": 0.975,"width": 15, "height": 5, "z_bottom": 1},
-              {"wall": "x_max","type": "window","position": 0.85,"width": 30, "height": 5, "z_bottom": 1},
-              {"wall": "x_max","type": "window","position": 0.7,"width": 30, "height": 5, "z_bottom": 1},
-              {"wall": "x_max","type": "window","position": 0.57,"width": 30, "height": 5, "z_bottom": 1},
-              {"wall": "x_max","type": "window","position": 0.4,"width": 30, "height": 5, "z_bottom": 1},
-              {"wall": "x_max","type": "window","position": 0.25,"width": 30, "height": 5, "z_bottom": 1},
-              {"wall": "x_max","type": "window","position": 0.1,"width": 30, "height": 5, "z_bottom": 1},
-              {"wall": "x_min","type": "door","position": 0.49,"width": 8, "height": 15, "z_bottom": 0},
-              {"wall": "x_max","type": "door","position": 0.49,"width": 8, "height": 15, "z_bottom": 0},
-              {"wall": "y_max","type": "door","position": 0.5,"width": 8, "height": 15, "z_bottom": 0}
-          ],
-          "combustibles": [
-            {
-              "key": "PREBAKED_ANODE_BLOCK",
-              "count": 320
-            },
-            {
-              "key": "CATHODE_CARBON_BLOCK",
-              "count": 240
-            },
-            {
-              "key": "TRANSFORMER_OIL_TANK",
-              "count": 2
-            },
-            {
-              "key": "CRANE_HYDRAULIC_TANK",
-              "count": 2
-            },
-            {
-              "key": "CABLE_BRIDGE",
-              "count": 3
-            }
-          ],
-          "specialized_components": [
-            {
-              "key": "POT_TENDING_MACHINE",
-              "count": 2
-            }
-          ]
-        }
-      ],
-      "specialized_components": []
-    },
-    "Bay_A12": {
-      "cn_name": "A12跨单元",
-      "description": "电解铝厂标准窄跨厂房，东端最末跨单元",
-      "offset": {
-        "x": 402.5,
-        "y": 167
-      },
-      "rotation": 0,
-      "building": {
-        "length": {
-          "min": 19,
-          "max": 19,
-          "median": 19,
-          "mean": 19,
-          "unit": "m"
-        },
-        "width": {"min": 302, "max": 302, "median": 302, "mean": 302, "unit": "m"},
-        "height": { "min": 15, "max": 15, "median": 15, "mean": 15, "unit": "m"},
-        "stories": {
-          "min": 1,
-          "max": 1,
-          "median": 1,
-          "mean": 1,
-          "unit": ""
-        }
-      },
-      "doors": {},
-      "windows": {},
-      "wall_thickness": 0.3,
-      "fire_compartments": [
-        {
-          "name": "A12南分区",
-          "x_ratio": [0,1.0],
-          "y_ratio": [0,1.0],
-          "wall_thickness": 0.3,
-          "wall_material": "CONCRETE",
-          "openings": [
-              {"wall": "x_min","type": "window","position": 0.975,"width": 15, "height": 5, "z_bottom": 1},
-              {"wall": "x_min","type": "window","position": 0.85,"width": 30, "height": 5, "z_bottom": 1},
-              {"wall": "x_min","type": "window","position": 0.7,"width": 30, "height": 5, "z_bottom": 1},
-              {"wall": "x_min","type": "window","position": 0.57,"width": 30, "height": 5, "z_bottom": 1},
-              {"wall": "x_min","type": "window","position": 0.4,"width": 30, "height": 5, "z_bottom": 1},
-              {"wall": "x_min","type": "window","position": 0.25,"width": 30, "height": 5, "z_bottom": 1},
-              {"wall": "x_min","type": "window","position": 0.1,"width": 30, "height": 5, "z_bottom": 1},
-              {"wall": "x_max","type": "window","position": 0.975,"width": 15, "height": 5, "z_bottom": 1},
-              {"wall": "x_max","type": "window","position": 0.85,"width": 30, "height": 5, "z_bottom": 1},
-              {"wall": "x_max","type": "window","position": 0.7,"width": 30, "height": 5, "z_bottom": 1},
-              {"wall": "x_max","type": "window","position": 0.57,"width": 30, "height": 5, "z_bottom": 1},
-              {"wall": "x_max","type": "window","position": 0.4,"width": 30, "height": 5, "z_bottom": 1},
-              {"wall": "x_max","type": "window","position": 0.25,"width": 30, "height": 5, "z_bottom": 1},
-              {"wall": "x_max","type": "window","position": 0.1,"width": 30, "height": 5, "z_bottom": 1},
-              {"wall": "x_min","type": "door","position": 0.49,"width": 8, "height": 15, "z_bottom": 0},
-              {"wall": "x_max","type": "door","position": 0.49,"width": 8, "height": 15, "z_bottom": 0},
-              {"wall": "y_max","type": "door","position": 0.5,"width": 8, "height": 15, "z_bottom": 0}
-          ],
-          "combustibles": [
-            {
-              "key": "PREBAKED_ANODE_BLOCK",
-              "count": 320
-            },
-            {
-              "key": "CATHODE_CARBON_BLOCK",
-              "count": 240
-            },
-            {
-              "key": "TRANSFORMER_OIL_TANK",
-              "count": 2
-            },
-            {
-              "key": "CRANE_HYDRAULIC_TANK",
-              "count": 2
-            },
-            {
-              "key": "CABLE_BRIDGE",
-              "count": 3
-            }
-          ],
-          "specialized_components": [
-            {
-              "key": "POT_TENDING_MACHINE",
-              "count": 2
-            }
-          ]
-        }
-      ],
-      "specialized_components": []
-    },
-    "Bay_A13": {
-      "cn_name": "A13跨单元",
-      "description": "电解铝厂标准窄跨厂房，东端最末跨单元",
-      "offset": {
-        "x": 435.5,
-        "y": 167
-      },
-      "rotation": 0,
-      "building": {
-        "length": {
-          "min": 19,
-          "max": 19,
-          "median": 19,
-          "mean": 19,
-          "unit": "m"
-        },
-        "width": {"min": 302, "max": 302, "median": 302, "mean": 302, "unit": "m"},
-        "height": { "min": 15, "max": 15, "median": 15, "mean": 15, "unit": "m"},
-        "stories": {
-          "min": 1,
-          "max": 1,
-          "median": 1,
-          "mean": 1,
-          "unit": ""
-        }
-      },
-      "doors": {},
-      "windows": {},
-      "wall_thickness": 0.3,
-      "fire_compartments": [
-        {
-          "name": "A13南分区",
-          "x_ratio": [0,1.0],
-          "y_ratio": [0,1.0],
-          "wall_thickness": 0.3,
-          "wall_material": "CONCRETE",
-          "openings": [
-              {"wall": "x_min","type": "window","position": 0.975,"width": 15, "height": 5, "z_bottom": 1},
-              {"wall": "x_min","type": "window","position": 0.85,"width": 30, "height": 5, "z_bottom": 1},
-              {"wall": "x_min","type": "window","position": 0.7,"width": 30, "height": 5, "z_bottom": 1},
-              {"wall": "x_min","type": "window","position": 0.57,"width": 30, "height": 5, "z_bottom": 1},
-              {"wall": "x_min","type": "window","position": 0.4,"width": 30, "height": 5, "z_bottom": 1},
-              {"wall": "x_min","type": "window","position": 0.25,"width": 30, "height": 5, "z_bottom": 1},
-              {"wall": "x_min","type": "window","position": 0.1,"width": 30, "height": 5, "z_bottom": 1},
-              {"wall": "x_max","type": "window","position": 0.975,"width": 15, "height": 5, "z_bottom": 1},
-              {"wall": "x_max","type": "window","position": 0.85,"width": 30, "height": 5, "z_bottom": 1},
-              {"wall": "x_max","type": "window","position": 0.7,"width": 30, "height": 5, "z_bottom": 1},
-              {"wall": "x_max","type": "window","position": 0.57,"width": 30, "height": 5, "z_bottom": 1},
-              {"wall": "x_max","type": "window","position": 0.4,"width": 30, "height": 5, "z_bottom": 1},
-              {"wall": "x_max","type": "window","position": 0.25,"width": 30, "height": 5, "z_bottom": 1},
-              {"wall": "x_max","type": "window","position": 0.1,"width": 30, "height": 5, "z_bottom": 1},
-              {"wall": "x_min","type": "door","position": 0.49,"width": 8, "height": 15, "z_bottom": 0},
-              {"wall": "x_max","type": "door","position": 0.49,"width": 8, "height": 15, "z_bottom": 0},
-              {"wall": "y_max","type": "door","position": 0.5,"width": 8, "height": 15, "z_bottom": 0}
-          ],
-          "combustibles": [
-            {
-              "key": "PREBAKED_ANODE_BLOCK",
-              "count": 320
-            },
-            {
-              "key": "CATHODE_CARBON_BLOCK",
-              "count": 240
-            },
-            {
-              "key": "TRANSFORMER_OIL_TANK",
-              "count": 2
-            },
-            {
-              "key": "CRANE_HYDRAULIC_TANK",
-              "count": 2
-            },
-            {
-              "key": "CABLE_BRIDGE",
-              "count": 3
-            }
-          ],
-          "specialized_components": [
-            {
-              "key": "POT_TENDING_MACHINE",
-              "count": 2
-            }
-          ]
-        }
-      ],
-      "specialized_components": []
-    },
-    "Bay_A14": {
-      "cn_name": "B2宽跨单元",
-      "description": "电解铝厂宽跨厂房",
-      "offset": {
-        "x": 475,
-        "y": 167
-      },
-      "rotation": 0,
-      "building": {
-        "length": {
-          "min": 20,
-          "max": 20,
-          "median": 20,
-          "mean": 20,
-          "unit": "m"
-        },
-        "width": {"min": 334, "max": 334, "median": 334, "mean": 334, "unit": "m"},
-        "height": { "min": 15, "max": 15, "median": 15, "mean": 15, "unit": "m"},
-        "stories": {
-          "min": 1,
-          "max": 1,
-          "median": 1,
-          "mean": 1,
-          "unit": ""
-        }
-      },
-      "doors": {},
-      "windows": {},
-      "wall_thickness": 0.3,
-      "fire_compartments": [
-        {
-          "name": "南分区",
-          "x_ratio": [0,1.0],
-          "y_ratio": [0,0.77],
-          "wall_thickness": 0.3,
-          "wall_material": "CONCRETE",
-          "openings": [
-            {
-              "wall": "x_min",
-              "type": "door",
-              "position": 0.02,
-              "width": 10.0,
-              "height": 6,
-              "z_bottom": 0
-            },
-            {
-              "wall": "x_max",
-              "type": "door",
-              "position": 0.75,
-              "width": 10.0,
-              "height": 6,
-              "z_bottom": 0
-            },
-            {
-              "wall": "y_max",
-              "type": "door",
-              "position": 0.5,
-              "width": 6.0,
-              "height": 6,
-              "z_bottom": 0
-            }
-          ],
-          "combustibles": [
-            {
-              "key": "PREBAKED_ANODE_BLOCK",
-              "count": 480
-            },
-            {
-              "key": "CATHODE_CARBON_BLOCK",
-              "count": 360
-            }
-          ],
-          "specialized_components": []
-        },
-        {
-          "name": "北分区",
-          "x_ratio": [0,1.0],
-          "y_ratio": [0.77,1.0],
-          "wall_thickness": 0.3,
-          "wall_material": "CONCRETE",
-          "openings": [
-            {
-              "wall": "y_max",
-              "type": "door",
-              "position": 0.85,
-              "width": 5.0,
-              "height": 5.0,
-              "z_bottom": 0
-            },
-            {
-              "wall": "x_min",
-              "type": "door",
-              "position": 0.98,
-              "width": 10.0,
-              "height": 6.0,
-              "z_bottom": 0
-            },
-            {
-              "wall": "x_max",
-              "type": "door",
-              "position": 0.98,
-              "width": 10.0,
-              "height": 6.0,
-              "z_bottom": 0
-            }
-          ],
-          "combustibles": [
-            {
-              "key": "CABLE_BRIDGE",
-              "count": 6
-            },
-            {
-              "key": "HYDRAULIC_TANK",
-              "count": 4
-            },
-            {
-              "key": "LUBE_OIL_DRUM",
-              "count": 6
-            }
-          ],
-          "specialized_components": [
-            {
-              "key": "CONTROL_ROOM",
-              "count": 1
-            }
-          ]
-        }
-      ],
-      "specialized_components": []
-    },
-    "Material_storage_building": {
-      "cn_name": "西侧材料存储区",
-      "description": "材料存储区/油品存储/机修备件存储/阳极备用仓储",
-      "offset": {
-        "x": -106,
-        "y": 284
-      },
-      "rotation": 0,
-      "building": {
-        "length": {
-          "min": 46,
-          "max": 46,
-          "median": 46,
-          "mean": 46,
-          "unit": "m"
-        },
-        "width": {
-          "min": 68,
-          "max": 68,
-          "median": 68,
-          "mean": 68,
-          "unit": "m"
-        },
-        "height": {
-          "min": 12,
-          "max": 12,
-          "median": 12,
-          "mean": 12,
-          "unit": "m"
-        },
-        "stories": {
-          "min": 1,
-          "max": 1,
-          "median": 1,
-          "mean": 1,
-          "unit": ""
-        }
-      },
-      "doors": {},
-      "windows": {},
-      "wall_thickness": 0.25,
-      "fire_compartments": [
-        {
-          "name": "左下分区",
-          "x_ratio": [0,0.3],
-          "y_ratio": [0,0.44],
-          "wall_thickness": 0.25,
-          "wall_material": "CONCRETE",
-          "openings": [
-            {
-              "wall": "y_min",
-              "type": "door",
-              "position": 0.15,
-              "width": 5,
-              "height": 3,
-              "z_bottom": 0
-            },
-            {
-              "wall": "y_max",
-              "type": "door",
-              "position": 0.17,
-              "width": 5,
-              "height": 3,
-              "z_bottom": 0
-            },
-            {
-              "wall": "x_min",
-              "type": "door",
-              "position": 0.72,
-              "width": 38,
-              "height": 12,
-              "z_bottom": 0
-            }
-          ],
-          "combustibles": [
-            {
-              "key": "PREBAKED_ANODE_BLOCK",
-              "count": 480
-            },
-            {
-              "key": "CATHODE_CARBON_BLOCK",
-              "count": 360
-            },
-            {
-              "key": "CABLE_BRIDGE",
-              "count": 4
-            },
-            {
-              "key": "LUBE_OIL_DRUM",
-              "count": 8
-            }
-          ],
-          "specialized_components": [
-            {
-              "key": "CRANE_SYSTEM",
-              "count": 2
-            }
-          ]
-        },
-        {
-          "name": "右下分区",
-          "x_ratio": [0.3,1.0],
-          "y_ratio": [0,0.22],
-          "wall_thickness": 0.25,
-          "wall_material": "CONCRETE",
-          "openings": [
-            {
-              "wall": "y_min",
-              "type": "door",
-              "position": 0.4,
-              "width": 5,
-              "height": 3,
-              "z_bottom": 0
-            },
-            {
-              "wall": "x_max",
-              "type": "door",
-              "position": 0.17,
-              "width": 6,
-              "height": 3,
-              "z_bottom": 0
-            }
-          ],
-          "combustibles": [
-            {
-              "key": "LAB_EQUIPMENT",
-              "count": 10
-            },
-            {
-              "key": "CHEMICAL_SAMPLE",
-              "count": 30
-            }
-          ],
-          "specialized_components": []
-        },
-        {
-          "name": "右中分区",
-          "x_ratio": [0.3,1.0],
-          "y_ratio": [0.22,0.44],
-          "wall_thickness": 0.25,
-          "wall_material": "CONCRETE",
-          "openings": [
-            {
-              "wall": "x_max",
-              "type": "door",
-              "position": 0.25,
-              "width": 3,
-              "height": 3,
-              "z_bottom": 0
-            },
-            {
-              "wall": "x_max",
-              "type": "door",
-              "position": 0.35,
-              "width": 3,
-              "height": 3,
-              "z_bottom": 0
-            }
-          ],
-          "combustibles": [
-            {
-              "key": "LAB_EQUIPMENT",
-              "count": 10
-            },
-            {
-              "key": "CHEMICAL_SAMPLE",
-              "count": 30
-            }
-          ],
-          "specialized_components": []
-        },
-        {
-          "name": "右上分区",
-          "x_ratio": [0.3,1.0],
-          "y_ratio": [0.44,1.0],
-          "wall_thickness": 0.25,
-          "wall_material": "CONCRETE",
-          "openings": [
-            {
-              "wall": "x_max",
-              "type": "door",
-              "position": 0.5,
-              "width": 4,
-              "height": 4,
-              "z_bottom": 0
-            },
-            {
-              "wall": "y_max",
-              "type": "door",
-              "position": 0.8,
-              "width": 3,
-              "height": 3,
-              "z_bottom": 0
-            },
-            {
-              "wall": "y_max",
-              "type": "door",
-              "position": 0.15,
-              "width": 14,
-              "height": 12,
-              "z_bottom": 0
-            }
-          ],
-          "combustibles": [
-            {
-              "key": "LAB_EQUIPMENT",
-              "count": 10
-            },
-            {
-              "key": "CHEMICAL_SAMPLE",
-              "count": 30
-            }
-          ],
-          "specialized_components": []
-        }
-      ],
-      "specialized_components": []
-    },
-    "North_Corridor": {
-      "cn_name": "北侧贯通长廊",
-      "description": "贯穿厂房群北侧的东西向长廊，连接各纵向厂房",
-      "offset": {
-        "x": 175,
-        "y": 326
-      },
-      "rotation": 0,
-      "building": {
-        "length": {
-          "min": 580,
-          "max": 580,
-          "median": 580,
-          "mean": 580,
-          "unit": "m"
-        },
-        "width": {
-          "min": 16,
-          "max": 16,
-          "median": 16,
-          "mean": 16,
-          "unit": "m"
-        },
-        "height": {
-          "min": 6,
-          "max": 8,
-          "median": 7,
-          "mean": 7,
-          "unit": "m"
-        },
-        "stories": {
-          "min": 1,
-          "max": 1,
-          "median": 1,
-          "mean": 1,
-          "unit": ""
-        }
-      },
-      "doors": {},
-      "windows": {},
-      "wall_thickness": 0.3,
-      "fire_compartments": [
-        {
-          "name": "西一区",
-          "x_ratio": [0, 0.453],
-          "y_ratio": [0, 1.0],
-          "wall_thickness": 0.3,
-          "wall_material": "CONCRETE",
-          "openings": [
-            {
-              "wall": "y_min",
-              "type": "door",
-              "position": 0.5,
-              "width": 5.0,
-              "height": 4.5,
-              "z_bottom": 0
-            }
-          ],
-          "combustibles": [
-            {
-              "key": "PREBAKED_ANODE_BLOCK",
-              "count": 480
-            },
-            {
-              "key": "CATHODE_CARBON_BLOCK",
-              "count": 360
-            }
-          ],
-          "specialized_components": []
-        },
-        {
-          "name": "内嵌功能区",
-          "x_ratio": [0.453, 0.759],
-          "y_ratio": [0, 1.0],
-          "wall_thickness": 0.3,
-          "wall_material": "CONCRETE",
+          "name": "1F",
+          "height": 15.0,
           "openings": [],
-          "combustibles": [
+          "fire_compartments": [
             {
-              "key": "CABLE_BRIDGE",
-              "count": 6
-            },
-            {
-              "key": "HYDRAULIC_TANK",
-              "count": 4
-            },
-            {
-              "key": "LUBE_OIL_DRUM",
-              "count": 6
+              "name": "A4南分区",
+              "boundary": [
+                0,
+                19.0,
+                0,
+                334.0
+              ],
+              "firewall_thickness": 0.3,
+              "firewall_material": "CONCRETE",
+              "openings": [
+                {
+                  "wall": "x_min",
+                  "type": "window",
+                  "boundary": [
+                    268.9,
+                    30,
+                    1,
+                    5
+                  ]
+                },
+                {
+                  "wall": "x_min",
+                  "type": "window",
+                  "boundary": [
+                    225.48,
+                    30,
+                    1,
+                    5
+                  ]
+                },
+                {
+                  "wall": "x_min",
+                  "type": "window",
+                  "boundary": [
+                    182.06,
+                    30,
+                    1,
+                    5
+                  ]
+                },
+                {
+                  "wall": "x_min",
+                  "type": "window",
+                  "boundary": [
+                    95.22,
+                    30,
+                    1,
+                    5
+                  ]
+                },
+                {
+                  "wall": "x_min",
+                  "type": "window",
+                  "boundary": [
+                    51.8,
+                    30,
+                    1,
+                    5
+                  ]
+                },
+                {
+                  "wall": "x_min",
+                  "type": "window",
+                  "boundary": [
+                    8.38,
+                    30,
+                    1,
+                    5
+                  ]
+                },
+                {
+                  "wall": "x_max",
+                  "type": "window",
+                  "boundary": [
+                    268.9,
+                    30,
+                    1,
+                    5
+                  ]
+                },
+                {
+                  "wall": "x_max",
+                  "type": "window",
+                  "boundary": [
+                    225.48,
+                    30,
+                    1,
+                    5
+                  ]
+                },
+                {
+                  "wall": "x_max",
+                  "type": "window",
+                  "boundary": [
+                    182.06,
+                    30,
+                    1,
+                    5
+                  ]
+                },
+                {
+                  "wall": "x_max",
+                  "type": "window",
+                  "boundary": [
+                    95.22,
+                    30,
+                    1,
+                    5
+                  ]
+                },
+                {
+                  "wall": "x_max",
+                  "type": "window",
+                  "boundary": [
+                    51.8,
+                    30,
+                    1,
+                    5
+                  ]
+                },
+                {
+                  "wall": "x_max",
+                  "type": "window",
+                  "boundary": [
+                    8.38,
+                    30,
+                    1,
+                    5
+                  ]
+                },
+                {
+                  "wall": "x_min",
+                  "type": "door",
+                  "boundary": [
+                    143.962,
+                    8,
+                    0,
+                    15
+                  ]
+                },
+                {
+                  "wall": "x_max",
+                  "type": "door",
+                  "boundary": [
+                    143.962,
+                    8,
+                    0,
+                    15
+                  ]
+                },
+                {
+                  "wall": "x_min",
+                  "type": "door",
+                  "boundary": [
+                    301.952,
+                    16,
+                    0,
+                    15
+                  ]
+                },
+                {
+                  "wall": "x_max",
+                  "type": "door",
+                  "boundary": [
+                    301.952,
+                    16,
+                    0,
+                    15
+                  ]
+                }
+              ],
+              "combustibles": [
+                {
+                  "key": "PREBAKED_ANODE_BLOCK",
+                  "count": 320
+                },
+                {
+                  "key": "CATHODE_CARBON_BLOCK",
+                  "count": 240
+                },
+                {
+                  "key": "TRANSFORMER_OIL_TANK",
+                  "count": 2
+                },
+                {
+                  "key": "CRANE_HYDRAULIC_TANK",
+                  "count": 2
+                },
+                {
+                  "key": "CABLE_BRIDGE",
+                  "count": 3
+                }
+              ],
+              "specialized_components": [
+                {
+                  "key": "POT_TENDING_MACHINE",
+                  "count": 2
+                }
+              ]
             }
           ],
-          "specialized_components": [
-            {
-              "key": "CONTROL_ROOM",
-              "count": 1
-            }
-          ]
-        },
-        {
-          "name": "东一区",
-          "x_ratio": [0.759,1.0],
-          "y_ratio": [0,1.0],
-          "wall_thickness": 0.3,
-          "wall_material": "CONCRETE",
-          "openings": [
-            {
-              "wall": "y_max",
-              "type": "door",
-              "position": 0.5,
-              "width": 5.0,
-              "height": 4.5,
-              "z_bottom": 0
-            }
-          ],
-          "combustibles": [
-            {
-              "key": "CABLE_BRIDGE",
-              "count": 6
-            },
-            {
-              "key": "HYDRAULIC_TANK",
-              "count": 4
-            },
-            {
-              "key": "LUBE_OIL_DRUM",
-              "count": 6
-            }
-          ],
-          "specialized_components": [
-            {
-              "key": "CONTROL_ROOM",
-              "count": 1
-            }
-          ]
+          "roof": {
+            "thickness": 0.2,
+            "material": "CONCRETE",
+            "openings": []
+          }
         }
-      ],
-      "specialized_components": []
+      ]
     },
-    "Bay_B2": {
-      "cn_name": "中央横跨长廊",
-      "description": "横跨贯穿长廊的东西向单元，包含设备间等功能区",
-      "offset": {
-        "x": 207.5,
-        "y": 164
-      },
-      "rotation": 0,
-      "building": {
-        "length": {
-          "min": 515,
-          "max": 515,
-          "median": 515,
-          "mean": 515,
-          "unit": "m"
-        },
-        "width": {
-          "min": 8,
-          "max": 8,
-          "median": 8,
-          "mean": 8,
-          "unit": "m"
-        },
-        "height": {
-          "min": 15,
-          "max": 15,
-          "median": 15,
-          "mean": 15,
-          "unit": "m"
-        },
-        "stories": {
-          "min": 1,
-          "max": 1,
-          "median": 1,
-          "mean": 1,
-          "unit": ""
-        }
-      },
-      "doors": {},
-      "windows": {},
-      "wall_thickness": 0.2,
-      "fire_compartments": [
-        {
-          "name": "A1交叉区",
-          "x_ratio": [0, 1.0],
-          "y_ratio": [0, 1.0],
-          "wall_thickness": 0.2,
-          "wall_material": "CONCRETE",
-          "openings": [
-            {"wall": "y_max", "type": "door", "position": 0.1155, "width": 19, "height": 15, "z_bottom": 0},
-            {"wall": "y_min", "type": "door", "position": 0.1155, "width": 19, "height": 15, "z_bottom": 0},
-            {"wall": "y_max", "type": "door", "position": 0.1476, "width": 5, "height": 5, "z_bottom": 0},
-            {"wall": "y_min", "type": "door", "position": 0.1476, "width": 5, "height": 5, "z_bottom": 0},
-            {"wall": "y_max", "type": "door", "position": 0.1796, "width": 19, "height": 15, "z_bottom": 0},
-            {"wall": "y_min", "type": "door", "position": 0.1796, "width": 19, "height": 15, "z_bottom": 0},
-            {"wall": "y_max", "type": "door", "position": 0.2117, "width": 5, "height": 5, "z_bottom": 0},
-            {"wall": "y_min", "type": "door", "position": 0.2117, "width": 5, "height": 5, "z_bottom": 0},
-            {"wall": "y_max", "type": "door", "position": 0.2427, "width": 18, "height": 15, "z_bottom": 0},
-            {"wall": "y_min", "type": "door", "position": 0.2427, "width": 18, "height": 15, "z_bottom": 0},
-            {"wall": "y_max", "type": "door", "position": 0.2738, "width": 5, "height": 5, "z_bottom": 0},
-            {"wall": "y_min", "type": "door", "position": 0.2738, "width": 5, "height": 5, "z_bottom": 0},
-            {"wall": "y_max", "type": "door", "position": 0.3058, "width": 19, "height": 15, "z_bottom": 0},
-            {"wall": "y_min", "type": "door", "position": 0.3058, "width": 19, "height": 15, "z_bottom": 0},
-            {"wall": "y_max", "type": "door", "position": 0.3379, "width": 5, "height": 5, "z_bottom": 0},
-            {"wall": "y_min", "type": "door", "position": 0.3379, "width": 5, "height": 5, "z_bottom": 0},
-            {"wall": "y_max", "type": "door", "position": 0.3699, "width": 19, "height": 15, "z_bottom": 0},
-            {"wall": "y_min", "type": "door", "position": 0.3699, "width": 19, "height": 15, "z_bottom": 0},
-            {"wall": "y_max", "type": "door", "position": 0.4019, "width": 5, "height": 5, "z_bottom": 0},
-            {"wall": "y_min", "type": "door", "position": 0.4019, "width": 5, "height": 5, "z_bottom": 0},
-            {"wall": "y_max", "type": "door", "position": 0.434, "width": 19, "height": 15, "z_bottom": 0},
-            {"wall": "y_min", "type": "door", "position": 0.434, "width": 19, "height": 15, "z_bottom": 0},
-            {"wall": "y_max", "type": "door", "position": 0.466, "width": 5, "height": 5, "z_bottom": 0},
-            {"wall": "y_min", "type": "door", "position": 0.466, "width": 5, "height": 5, "z_bottom": 0},
-            {"wall": "y_max", "type": "door", "position": 0.4981, "width": 19, "height": 15, "z_bottom": 0},
-            {"wall": "y_min", "type": "door", "position": 0.4981, "width": 19, "height": 15, "z_bottom": 0},
-            {"wall": "y_max", "type": "door", "position": 0.5301, "width": 5, "height": 5, "z_bottom": 0},
-            {"wall": "y_min", "type": "door", "position": 0.5301, "width": 5, "height": 5, "z_bottom": 0},
-            {"wall": "y_max", "type": "door", "position": 0.5621, "width": 19, "height": 15, "z_bottom": 0},
-            {"wall": "y_min", "type": "door", "position": 0.5621, "width": 19, "height": 15, "z_bottom": 0},
-            {"wall": "y_max", "type": "door", "position": 0.5942, "width": 5, "height": 5, "z_bottom": 0},
-            {"wall": "y_min", "type": "door", "position": 0.5942, "width": 5, "height": 5, "z_bottom": 0},
-            {"wall": "y_max", "type": "door", "position": 0.6262, "width": 19, "height": 15, "z_bottom": 0},
-            {"wall": "y_min", "type": "door", "position": 0.6262, "width": 19, "height": 15, "z_bottom": 0},
-            {"wall": "y_max", "type": "door", "position": 0.6883, "width": 5, "height": 5, "z_bottom": 0},
-            {"wall": "y_min", "type": "door", "position": 0.6883, "width": 5, "height": 5, "z_bottom": 0},
-            {"wall": "y_max", "type": "door", "position": 0.7505, "width": 19, "height": 15, "z_bottom": 0},
-            {"wall": "y_min", "type": "door", "position": 0.7505, "width": 19, "height": 15, "z_bottom": 0},
-            {"wall": "y_max", "type": "door", "position": 0.7825, "width": 5, "height": 5, "z_bottom": 0},
-            {"wall": "y_min", "type": "door", "position": 0.7825, "width": 5, "height": 5, "z_bottom": 0},
-            {"wall": "y_max", "type": "door", "position": 0.8146, "width": 19, "height": 15, "z_bottom": 0},
-            {"wall": "y_min", "type": "door", "position": 0.8146, "width": 19, "height": 15, "z_bottom": 0},
-            {"wall": "y_max", "type": "door", "position": 0.8466, "width": 5, "height": 5, "z_bottom": 0},
-            {"wall": "y_min", "type": "door", "position": 0.8466, "width": 5, "height": 5, "z_bottom": 0},
-            {"wall": "y_max", "type": "door", "position": 0.8786, "width": 19, "height": 15, "z_bottom": 0},
-            {"wall": "y_min", "type": "door", "position": 0.8786, "width": 19, "height": 15, "z_bottom": 0},
-            {"wall": "y_max", "type": "door", "position": 0.9107, "width": 5, "height": 5, "z_bottom": 0},
-            {"wall": "y_min", "type": "door", "position": 0.9107, "width": 5, "height": 5, "z_bottom": 0},
-            {"wall": "y_max", "type": "door", "position": 0.9427, "width": 19, "height": 15, "z_bottom": 0},
-            {"wall": "y_min", "type": "door", "position": 0.9427, "width": 19, "height": 15, "z_bottom": 0},
-            {"wall": "y_max", "type": "door", "position": 0.9806, "width": 5, "height": 5, "z_bottom": 0},
-            {"wall": "y_min", "type": "door", "position": 0.9806, "width": 5, "height": 5, "z_bottom": 0}
-          ],
-          "combustibles": [
-            {"key": "CABLE_BRIDGE", "count": 2},
-            {"key": "LUBE_OIL_DRUM", "count": 4}
-          ],
-          "specialized_components": []
-        }
+    {
+      "name": "Bay_A5",
+      "cn_name": "A5跨单元",
+      "boundary": [
+        140.5,
+        19,
+        183,
+        334
       ],
-      "specialized_components": []
+      "wall_thickness": 0.3,
+      "height": 15,
+      "boundary_polygons": null,
+      "stories": [
+        {
+          "name": "1F",
+          "height": 15.0,
+          "openings": [],
+          "fire_compartments": [
+            {
+              "name": "A5南分区",
+              "boundary": [
+                0,
+                19.0,
+                0,
+                334.0
+              ],
+              "firewall_thickness": 0.3,
+              "firewall_material": "CONCRETE",
+              "openings": [
+                {
+                  "wall": "x_min",
+                  "type": "window",
+                  "boundary": [
+                    268.9,
+                    30,
+                    1,
+                    5
+                  ]
+                },
+                {
+                  "wall": "x_min",
+                  "type": "window",
+                  "boundary": [
+                    225.48,
+                    30,
+                    1,
+                    5
+                  ]
+                },
+                {
+                  "wall": "x_min",
+                  "type": "window",
+                  "boundary": [
+                    182.06,
+                    30,
+                    1,
+                    5
+                  ]
+                },
+                {
+                  "wall": "x_min",
+                  "type": "window",
+                  "boundary": [
+                    95.22,
+                    30,
+                    1,
+                    5
+                  ]
+                },
+                {
+                  "wall": "x_min",
+                  "type": "window",
+                  "boundary": [
+                    51.8,
+                    30,
+                    1,
+                    5
+                  ]
+                },
+                {
+                  "wall": "x_min",
+                  "type": "window",
+                  "boundary": [
+                    8.38,
+                    30,
+                    1,
+                    5
+                  ]
+                },
+                {
+                  "wall": "x_max",
+                  "type": "window",
+                  "boundary": [
+                    268.9,
+                    30,
+                    1,
+                    5
+                  ]
+                },
+                {
+                  "wall": "x_max",
+                  "type": "window",
+                  "boundary": [
+                    225.48,
+                    30,
+                    1,
+                    5
+                  ]
+                },
+                {
+                  "wall": "x_max",
+                  "type": "window",
+                  "boundary": [
+                    182.06,
+                    30,
+                    1,
+                    5
+                  ]
+                },
+                {
+                  "wall": "x_max",
+                  "type": "window",
+                  "boundary": [
+                    95.22,
+                    30,
+                    1,
+                    5
+                  ]
+                },
+                {
+                  "wall": "x_max",
+                  "type": "window",
+                  "boundary": [
+                    51.8,
+                    30,
+                    1,
+                    5
+                  ]
+                },
+                {
+                  "wall": "x_max",
+                  "type": "window",
+                  "boundary": [
+                    8.38,
+                    30,
+                    1,
+                    5
+                  ]
+                },
+                {
+                  "wall": "x_min",
+                  "type": "door",
+                  "boundary": [
+                    143.962,
+                    8,
+                    0,
+                    15
+                  ]
+                },
+                {
+                  "wall": "x_max",
+                  "type": "door",
+                  "boundary": [
+                    143.962,
+                    8,
+                    0,
+                    15
+                  ]
+                },
+                {
+                  "wall": "x_min",
+                  "type": "door",
+                  "boundary": [
+                    301.952,
+                    16,
+                    0,
+                    15
+                  ]
+                },
+                {
+                  "wall": "x_max",
+                  "type": "door",
+                  "boundary": [
+                    301.952,
+                    16,
+                    0,
+                    15
+                  ]
+                }
+              ],
+              "combustibles": [
+                {
+                  "key": "PREBAKED_ANODE_BLOCK",
+                  "count": 320
+                },
+                {
+                  "key": "CATHODE_CARBON_BLOCK",
+                  "count": 240
+                },
+                {
+                  "key": "TRANSFORMER_OIL_TANK",
+                  "count": 2
+                },
+                {
+                  "key": "CRANE_HYDRAULIC_TANK",
+                  "count": 2
+                },
+                {
+                  "key": "CABLE_BRIDGE",
+                  "count": 3
+                }
+              ],
+              "specialized_components": [
+                {
+                  "key": "POT_TENDING_MACHINE",
+                  "count": 2
+                }
+              ]
+            }
+          ],
+          "roof": {
+            "thickness": 0.2,
+            "material": "CONCRETE",
+            "openings": []
+          }
+        }
+      ]
+    },
+    {
+      "name": "Bay_A6",
+      "cn_name": "A6跨单元",
+      "boundary": [
+        173.5,
+        19,
+        167,
+        302
+      ],
+      "wall_thickness": 0.3,
+      "height": 15,
+      "boundary_polygons": null,
+      "stories": [
+        {
+          "name": "1F",
+          "height": 15.0,
+          "openings": [],
+          "fire_compartments": [
+            {
+              "name": "A6南分区",
+              "boundary": [
+                0,
+                19.0,
+                0,
+                302.0
+              ],
+              "firewall_thickness": 0.3,
+              "firewall_material": "CONCRETE",
+              "openings": [
+                {
+                  "wall": "x_min",
+                  "type": "window",
+                  "boundary": [
+                    286.95,
+                    15,
+                    1,
+                    5
+                  ]
+                },
+                {
+                  "wall": "x_min",
+                  "type": "window",
+                  "boundary": [
+                    241.7,
+                    30,
+                    1,
+                    5
+                  ]
+                },
+                {
+                  "wall": "x_min",
+                  "type": "window",
+                  "boundary": [
+                    196.4,
+                    30,
+                    1,
+                    5
+                  ]
+                },
+                {
+                  "wall": "x_min",
+                  "type": "window",
+                  "boundary": [
+                    157.14,
+                    30,
+                    1,
+                    5
+                  ]
+                },
+                {
+                  "wall": "x_min",
+                  "type": "window",
+                  "boundary": [
+                    105.8,
+                    30,
+                    1,
+                    5
+                  ]
+                },
+                {
+                  "wall": "x_min",
+                  "type": "window",
+                  "boundary": [
+                    60.5,
+                    30,
+                    1,
+                    5
+                  ]
+                },
+                {
+                  "wall": "x_min",
+                  "type": "window",
+                  "boundary": [
+                    15.2,
+                    30,
+                    1,
+                    5
+                  ]
+                },
+                {
+                  "wall": "x_max",
+                  "type": "window",
+                  "boundary": [
+                    286.95,
+                    15,
+                    1,
+                    5
+                  ]
+                },
+                {
+                  "wall": "x_max",
+                  "type": "window",
+                  "boundary": [
+                    241.7,
+                    30,
+                    1,
+                    5
+                  ]
+                },
+                {
+                  "wall": "x_max",
+                  "type": "window",
+                  "boundary": [
+                    196.4,
+                    30,
+                    1,
+                    5
+                  ]
+                },
+                {
+                  "wall": "x_max",
+                  "type": "window",
+                  "boundary": [
+                    157.14,
+                    30,
+                    1,
+                    5
+                  ]
+                },
+                {
+                  "wall": "x_max",
+                  "type": "window",
+                  "boundary": [
+                    105.8,
+                    30,
+                    1,
+                    5
+                  ]
+                },
+                {
+                  "wall": "x_max",
+                  "type": "window",
+                  "boundary": [
+                    60.5,
+                    30,
+                    1,
+                    5
+                  ]
+                },
+                {
+                  "wall": "x_max",
+                  "type": "window",
+                  "boundary": [
+                    15.2,
+                    30,
+                    1,
+                    5
+                  ]
+                },
+                {
+                  "wall": "x_min",
+                  "type": "door",
+                  "boundary": [
+                    143.98,
+                    8,
+                    0,
+                    15
+                  ]
+                },
+                {
+                  "wall": "x_max",
+                  "type": "door",
+                  "boundary": [
+                    143.98,
+                    8,
+                    0,
+                    15
+                  ]
+                },
+                {
+                  "wall": "y_max",
+                  "type": "door",
+                  "boundary": [
+                    5.5,
+                    8,
+                    0,
+                    15
+                  ]
+                }
+              ],
+              "combustibles": [
+                {
+                  "key": "PREBAKED_ANODE_BLOCK",
+                  "count": 320
+                },
+                {
+                  "key": "CATHODE_CARBON_BLOCK",
+                  "count": 240
+                },
+                {
+                  "key": "TRANSFORMER_OIL_TANK",
+                  "count": 2
+                },
+                {
+                  "key": "CRANE_HYDRAULIC_TANK",
+                  "count": 2
+                },
+                {
+                  "key": "CABLE_BRIDGE",
+                  "count": 3
+                }
+              ],
+              "specialized_components": [
+                {
+                  "key": "POT_TENDING_MACHINE",
+                  "count": 2
+                }
+              ]
+            }
+          ],
+          "roof": {
+            "thickness": 0.2,
+            "material": "CONCRETE",
+            "openings": []
+          }
+        }
+      ]
+    },
+    {
+      "name": "Bay_A7",
+      "cn_name": "A7跨单元",
+      "boundary": [
+        206.5,
+        19,
+        167,
+        302
+      ],
+      "wall_thickness": 0.3,
+      "height": 15,
+      "boundary_polygons": null,
+      "stories": [
+        {
+          "name": "1F",
+          "height": 15.0,
+          "openings": [],
+          "fire_compartments": [
+            {
+              "name": "A7南分区",
+              "boundary": [
+                0,
+                19.0,
+                0,
+                302.0
+              ],
+              "firewall_thickness": 0.3,
+              "firewall_material": "CONCRETE",
+              "openings": [
+                {
+                  "wall": "x_min",
+                  "type": "window",
+                  "boundary": [
+                    286.95,
+                    15,
+                    1,
+                    5
+                  ]
+                },
+                {
+                  "wall": "x_min",
+                  "type": "window",
+                  "boundary": [
+                    241.7,
+                    30,
+                    1,
+                    5
+                  ]
+                },
+                {
+                  "wall": "x_min",
+                  "type": "window",
+                  "boundary": [
+                    196.4,
+                    30,
+                    1,
+                    5
+                  ]
+                },
+                {
+                  "wall": "x_min",
+                  "type": "window",
+                  "boundary": [
+                    157.14,
+                    30,
+                    1,
+                    5
+                  ]
+                },
+                {
+                  "wall": "x_min",
+                  "type": "window",
+                  "boundary": [
+                    105.8,
+                    30,
+                    1,
+                    5
+                  ]
+                },
+                {
+                  "wall": "x_min",
+                  "type": "window",
+                  "boundary": [
+                    60.5,
+                    30,
+                    1,
+                    5
+                  ]
+                },
+                {
+                  "wall": "x_min",
+                  "type": "window",
+                  "boundary": [
+                    15.2,
+                    30,
+                    1,
+                    5
+                  ]
+                },
+                {
+                  "wall": "x_max",
+                  "type": "window",
+                  "boundary": [
+                    286.95,
+                    15,
+                    1,
+                    5
+                  ]
+                },
+                {
+                  "wall": "x_max",
+                  "type": "window",
+                  "boundary": [
+                    241.7,
+                    30,
+                    1,
+                    5
+                  ]
+                },
+                {
+                  "wall": "x_max",
+                  "type": "window",
+                  "boundary": [
+                    196.4,
+                    30,
+                    1,
+                    5
+                  ]
+                },
+                {
+                  "wall": "x_max",
+                  "type": "window",
+                  "boundary": [
+                    157.14,
+                    30,
+                    1,
+                    5
+                  ]
+                },
+                {
+                  "wall": "x_max",
+                  "type": "window",
+                  "boundary": [
+                    105.8,
+                    30,
+                    1,
+                    5
+                  ]
+                },
+                {
+                  "wall": "x_max",
+                  "type": "window",
+                  "boundary": [
+                    60.5,
+                    30,
+                    1,
+                    5
+                  ]
+                },
+                {
+                  "wall": "x_max",
+                  "type": "window",
+                  "boundary": [
+                    15.2,
+                    30,
+                    1,
+                    5
+                  ]
+                },
+                {
+                  "wall": "x_min",
+                  "type": "door",
+                  "boundary": [
+                    143.98,
+                    8,
+                    0,
+                    15
+                  ]
+                },
+                {
+                  "wall": "x_max",
+                  "type": "door",
+                  "boundary": [
+                    143.98,
+                    8,
+                    0,
+                    15
+                  ]
+                },
+                {
+                  "wall": "y_max",
+                  "type": "door",
+                  "boundary": [
+                    5.5,
+                    8,
+                    0,
+                    15
+                  ]
+                }
+              ],
+              "combustibles": [
+                {
+                  "key": "PREBAKED_ANODE_BLOCK",
+                  "count": 320
+                },
+                {
+                  "key": "CATHODE_CARBON_BLOCK",
+                  "count": 240
+                },
+                {
+                  "key": "TRANSFORMER_OIL_TANK",
+                  "count": 2
+                },
+                {
+                  "key": "CRANE_HYDRAULIC_TANK",
+                  "count": 2
+                },
+                {
+                  "key": "CABLE_BRIDGE",
+                  "count": 3
+                }
+              ],
+              "specialized_components": [
+                {
+                  "key": "POT_TENDING_MACHINE",
+                  "count": 2
+                }
+              ]
+            }
+          ],
+          "roof": {
+            "thickness": 0.2,
+            "material": "CONCRETE",
+            "openings": []
+          }
+        }
+      ]
+    },
+    {
+      "name": "Bay_A8",
+      "cn_name": "A8跨单元",
+      "boundary": [
+        239.5,
+        19,
+        167,
+        302
+      ],
+      "wall_thickness": 0.3,
+      "height": 15,
+      "boundary_polygons": null,
+      "stories": [
+        {
+          "name": "1F",
+          "height": 15.0,
+          "openings": [],
+          "fire_compartments": [
+            {
+              "name": "A8南分区",
+              "boundary": [
+                0,
+                19.0,
+                0,
+                302.0
+              ],
+              "firewall_thickness": 0.3,
+              "firewall_material": "CONCRETE",
+              "openings": [
+                {
+                  "wall": "x_min",
+                  "type": "window",
+                  "boundary": [
+                    286.95,
+                    15,
+                    1,
+                    5
+                  ]
+                },
+                {
+                  "wall": "x_min",
+                  "type": "window",
+                  "boundary": [
+                    241.7,
+                    30,
+                    1,
+                    5
+                  ]
+                },
+                {
+                  "wall": "x_min",
+                  "type": "window",
+                  "boundary": [
+                    196.4,
+                    30,
+                    1,
+                    5
+                  ]
+                },
+                {
+                  "wall": "x_min",
+                  "type": "window",
+                  "boundary": [
+                    157.14,
+                    30,
+                    1,
+                    5
+                  ]
+                },
+                {
+                  "wall": "x_min",
+                  "type": "window",
+                  "boundary": [
+                    105.8,
+                    30,
+                    1,
+                    5
+                  ]
+                },
+                {
+                  "wall": "x_min",
+                  "type": "window",
+                  "boundary": [
+                    60.5,
+                    30,
+                    1,
+                    5
+                  ]
+                },
+                {
+                  "wall": "x_min",
+                  "type": "window",
+                  "boundary": [
+                    15.2,
+                    30,
+                    1,
+                    5
+                  ]
+                },
+                {
+                  "wall": "x_max",
+                  "type": "window",
+                  "boundary": [
+                    286.95,
+                    15,
+                    1,
+                    5
+                  ]
+                },
+                {
+                  "wall": "x_max",
+                  "type": "window",
+                  "boundary": [
+                    241.7,
+                    30,
+                    1,
+                    5
+                  ]
+                },
+                {
+                  "wall": "x_max",
+                  "type": "window",
+                  "boundary": [
+                    196.4,
+                    30,
+                    1,
+                    5
+                  ]
+                },
+                {
+                  "wall": "x_max",
+                  "type": "window",
+                  "boundary": [
+                    157.14,
+                    30,
+                    1,
+                    5
+                  ]
+                },
+                {
+                  "wall": "x_max",
+                  "type": "window",
+                  "boundary": [
+                    105.8,
+                    30,
+                    1,
+                    5
+                  ]
+                },
+                {
+                  "wall": "x_max",
+                  "type": "window",
+                  "boundary": [
+                    60.5,
+                    30,
+                    1,
+                    5
+                  ]
+                },
+                {
+                  "wall": "x_max",
+                  "type": "window",
+                  "boundary": [
+                    15.2,
+                    30,
+                    1,
+                    5
+                  ]
+                },
+                {
+                  "wall": "x_min",
+                  "type": "door",
+                  "boundary": [
+                    143.98,
+                    8,
+                    0,
+                    15
+                  ]
+                },
+                {
+                  "wall": "x_max",
+                  "type": "door",
+                  "boundary": [
+                    143.98,
+                    8,
+                    0,
+                    15
+                  ]
+                },
+                {
+                  "wall": "y_max",
+                  "type": "door",
+                  "boundary": [
+                    5.5,
+                    8,
+                    0,
+                    15
+                  ]
+                }
+              ],
+              "combustibles": [
+                {
+                  "key": "PREBAKED_ANODE_BLOCK",
+                  "count": 320
+                },
+                {
+                  "key": "CATHODE_CARBON_BLOCK",
+                  "count": 240
+                },
+                {
+                  "key": "TRANSFORMER_OIL_TANK",
+                  "count": 2
+                },
+                {
+                  "key": "CRANE_HYDRAULIC_TANK",
+                  "count": 2
+                },
+                {
+                  "key": "CABLE_BRIDGE",
+                  "count": 3
+                }
+              ],
+              "specialized_components": [
+                {
+                  "key": "POT_TENDING_MACHINE",
+                  "count": 2
+                }
+              ]
+            }
+          ],
+          "roof": {
+            "thickness": 0.2,
+            "material": "CONCRETE",
+            "openings": []
+          }
+        }
+      ]
+    },
+    {
+      "name": "Bay_A9",
+      "cn_name": "A9跨单元",
+      "boundary": [
+        272.5,
+        19,
+        167,
+        302
+      ],
+      "wall_thickness": 0.3,
+      "height": 15,
+      "boundary_polygons": null,
+      "stories": [
+        {
+          "name": "1F",
+          "height": 15.0,
+          "openings": [],
+          "fire_compartments": [
+            {
+              "name": "A9南分区",
+              "boundary": [
+                0,
+                19.0,
+                0,
+                302.0
+              ],
+              "firewall_thickness": 0.3,
+              "firewall_material": "CONCRETE",
+              "openings": [
+                {
+                  "wall": "x_min",
+                  "type": "window",
+                  "boundary": [
+                    286.95,
+                    15,
+                    1,
+                    5
+                  ]
+                },
+                {
+                  "wall": "x_min",
+                  "type": "window",
+                  "boundary": [
+                    241.7,
+                    30,
+                    1,
+                    5
+                  ]
+                },
+                {
+                  "wall": "x_min",
+                  "type": "window",
+                  "boundary": [
+                    196.4,
+                    30,
+                    1,
+                    5
+                  ]
+                },
+                {
+                  "wall": "x_min",
+                  "type": "window",
+                  "boundary": [
+                    157.14,
+                    30,
+                    1,
+                    5
+                  ]
+                },
+                {
+                  "wall": "x_min",
+                  "type": "window",
+                  "boundary": [
+                    105.8,
+                    30,
+                    1,
+                    5
+                  ]
+                },
+                {
+                  "wall": "x_min",
+                  "type": "window",
+                  "boundary": [
+                    60.5,
+                    30,
+                    1,
+                    5
+                  ]
+                },
+                {
+                  "wall": "x_min",
+                  "type": "window",
+                  "boundary": [
+                    15.2,
+                    30,
+                    1,
+                    5
+                  ]
+                },
+                {
+                  "wall": "x_max",
+                  "type": "window",
+                  "boundary": [
+                    286.95,
+                    15,
+                    1,
+                    5
+                  ]
+                },
+                {
+                  "wall": "x_max",
+                  "type": "window",
+                  "boundary": [
+                    241.7,
+                    30,
+                    1,
+                    5
+                  ]
+                },
+                {
+                  "wall": "x_max",
+                  "type": "window",
+                  "boundary": [
+                    196.4,
+                    30,
+                    1,
+                    5
+                  ]
+                },
+                {
+                  "wall": "x_max",
+                  "type": "window",
+                  "boundary": [
+                    157.14,
+                    30,
+                    1,
+                    5
+                  ]
+                },
+                {
+                  "wall": "x_max",
+                  "type": "window",
+                  "boundary": [
+                    105.8,
+                    30,
+                    1,
+                    5
+                  ]
+                },
+                {
+                  "wall": "x_max",
+                  "type": "window",
+                  "boundary": [
+                    60.5,
+                    30,
+                    1,
+                    5
+                  ]
+                },
+                {
+                  "wall": "x_max",
+                  "type": "window",
+                  "boundary": [
+                    15.2,
+                    30,
+                    1,
+                    5
+                  ]
+                },
+                {
+                  "wall": "x_min",
+                  "type": "door",
+                  "boundary": [
+                    143.98,
+                    8,
+                    0,
+                    15
+                  ]
+                },
+                {
+                  "wall": "x_max",
+                  "type": "door",
+                  "boundary": [
+                    143.98,
+                    8,
+                    0,
+                    15
+                  ]
+                },
+                {
+                  "wall": "y_max",
+                  "type": "door",
+                  "boundary": [
+                    5.5,
+                    8,
+                    0,
+                    15
+                  ]
+                }
+              ],
+              "combustibles": [
+                {
+                  "key": "PREBAKED_ANODE_BLOCK",
+                  "count": 320
+                },
+                {
+                  "key": "CATHODE_CARBON_BLOCK",
+                  "count": 240
+                },
+                {
+                  "key": "TRANSFORMER_OIL_TANK",
+                  "count": 2
+                },
+                {
+                  "key": "CRANE_HYDRAULIC_TANK",
+                  "count": 2
+                },
+                {
+                  "key": "CABLE_BRIDGE",
+                  "count": 3
+                }
+              ],
+              "specialized_components": [
+                {
+                  "key": "POT_TENDING_MACHINE",
+                  "count": 2
+                }
+              ]
+            }
+          ],
+          "roof": {
+            "thickness": 0.2,
+            "material": "CONCRETE",
+            "openings": []
+          }
+        }
+      ]
+    },
+    {
+      "name": "Bay_A10",
+      "cn_name": "A10跨单元",
+      "boundary": [
+        336.5,
+        19,
+        167,
+        302
+      ],
+      "wall_thickness": 0.3,
+      "height": 15,
+      "boundary_polygons": null,
+      "stories": [
+        {
+          "name": "1F",
+          "height": 15.0,
+          "openings": [],
+          "fire_compartments": [
+            {
+              "name": "A10南分区",
+              "boundary": [
+                0,
+                19.0,
+                0,
+                302.0
+              ],
+              "firewall_thickness": 0.3,
+              "firewall_material": "CONCRETE",
+              "openings": [
+                {
+                  "wall": "x_min",
+                  "type": "window",
+                  "boundary": [
+                    286.95,
+                    15,
+                    1,
+                    5
+                  ]
+                },
+                {
+                  "wall": "x_min",
+                  "type": "window",
+                  "boundary": [
+                    241.7,
+                    30,
+                    1,
+                    5
+                  ]
+                },
+                {
+                  "wall": "x_min",
+                  "type": "window",
+                  "boundary": [
+                    196.4,
+                    30,
+                    1,
+                    5
+                  ]
+                },
+                {
+                  "wall": "x_min",
+                  "type": "window",
+                  "boundary": [
+                    157.14,
+                    30,
+                    1,
+                    5
+                  ]
+                },
+                {
+                  "wall": "x_min",
+                  "type": "window",
+                  "boundary": [
+                    105.8,
+                    30,
+                    1,
+                    5
+                  ]
+                },
+                {
+                  "wall": "x_min",
+                  "type": "window",
+                  "boundary": [
+                    60.5,
+                    30,
+                    1,
+                    5
+                  ]
+                },
+                {
+                  "wall": "x_min",
+                  "type": "window",
+                  "boundary": [
+                    15.2,
+                    30,
+                    1,
+                    5
+                  ]
+                },
+                {
+                  "wall": "x_max",
+                  "type": "window",
+                  "boundary": [
+                    286.95,
+                    15,
+                    1,
+                    5
+                  ]
+                },
+                {
+                  "wall": "x_max",
+                  "type": "window",
+                  "boundary": [
+                    241.7,
+                    30,
+                    1,
+                    5
+                  ]
+                },
+                {
+                  "wall": "x_max",
+                  "type": "window",
+                  "boundary": [
+                    196.4,
+                    30,
+                    1,
+                    5
+                  ]
+                },
+                {
+                  "wall": "x_max",
+                  "type": "window",
+                  "boundary": [
+                    157.14,
+                    30,
+                    1,
+                    5
+                  ]
+                },
+                {
+                  "wall": "x_max",
+                  "type": "window",
+                  "boundary": [
+                    105.8,
+                    30,
+                    1,
+                    5
+                  ]
+                },
+                {
+                  "wall": "x_max",
+                  "type": "window",
+                  "boundary": [
+                    60.5,
+                    30,
+                    1,
+                    5
+                  ]
+                },
+                {
+                  "wall": "x_max",
+                  "type": "window",
+                  "boundary": [
+                    15.2,
+                    30,
+                    1,
+                    5
+                  ]
+                },
+                {
+                  "wall": "x_min",
+                  "type": "door",
+                  "boundary": [
+                    143.98,
+                    8,
+                    0,
+                    15
+                  ]
+                },
+                {
+                  "wall": "x_max",
+                  "type": "door",
+                  "boundary": [
+                    143.98,
+                    8,
+                    0,
+                    15
+                  ]
+                },
+                {
+                  "wall": "y_max",
+                  "type": "door",
+                  "boundary": [
+                    5.5,
+                    8,
+                    0,
+                    15
+                  ]
+                }
+              ],
+              "combustibles": [
+                {
+                  "key": "PREBAKED_ANODE_BLOCK",
+                  "count": 320
+                },
+                {
+                  "key": "CATHODE_CARBON_BLOCK",
+                  "count": 240
+                },
+                {
+                  "key": "TRANSFORMER_OIL_TANK",
+                  "count": 2
+                },
+                {
+                  "key": "CRANE_HYDRAULIC_TANK",
+                  "count": 2
+                },
+                {
+                  "key": "CABLE_BRIDGE",
+                  "count": 3
+                }
+              ],
+              "specialized_components": [
+                {
+                  "key": "POT_TENDING_MACHINE",
+                  "count": 2
+                }
+              ]
+            }
+          ],
+          "roof": {
+            "thickness": 0.2,
+            "material": "CONCRETE",
+            "openings": []
+          }
+        }
+      ]
+    },
+    {
+      "name": "Bay_A11",
+      "cn_name": "A11跨单元",
+      "boundary": [
+        369.5,
+        19,
+        167,
+        302
+      ],
+      "wall_thickness": 0.3,
+      "height": 15,
+      "boundary_polygons": null,
+      "stories": [
+        {
+          "name": "1F",
+          "height": 15.0,
+          "openings": [],
+          "fire_compartments": [
+            {
+              "name": "A11南分区",
+              "boundary": [
+                0,
+                19.0,
+                0,
+                302.0
+              ],
+              "firewall_thickness": 0.3,
+              "firewall_material": "CONCRETE",
+              "openings": [
+                {
+                  "wall": "x_min",
+                  "type": "window",
+                  "boundary": [
+                    286.95,
+                    15,
+                    1,
+                    5
+                  ]
+                },
+                {
+                  "wall": "x_min",
+                  "type": "window",
+                  "boundary": [
+                    241.7,
+                    30,
+                    1,
+                    5
+                  ]
+                },
+                {
+                  "wall": "x_min",
+                  "type": "window",
+                  "boundary": [
+                    196.4,
+                    30,
+                    1,
+                    5
+                  ]
+                },
+                {
+                  "wall": "x_min",
+                  "type": "window",
+                  "boundary": [
+                    157.14,
+                    30,
+                    1,
+                    5
+                  ]
+                },
+                {
+                  "wall": "x_min",
+                  "type": "window",
+                  "boundary": [
+                    105.8,
+                    30,
+                    1,
+                    5
+                  ]
+                },
+                {
+                  "wall": "x_min",
+                  "type": "window",
+                  "boundary": [
+                    60.5,
+                    30,
+                    1,
+                    5
+                  ]
+                },
+                {
+                  "wall": "x_min",
+                  "type": "window",
+                  "boundary": [
+                    15.2,
+                    30,
+                    1,
+                    5
+                  ]
+                },
+                {
+                  "wall": "x_max",
+                  "type": "window",
+                  "boundary": [
+                    286.95,
+                    15,
+                    1,
+                    5
+                  ]
+                },
+                {
+                  "wall": "x_max",
+                  "type": "window",
+                  "boundary": [
+                    241.7,
+                    30,
+                    1,
+                    5
+                  ]
+                },
+                {
+                  "wall": "x_max",
+                  "type": "window",
+                  "boundary": [
+                    196.4,
+                    30,
+                    1,
+                    5
+                  ]
+                },
+                {
+                  "wall": "x_max",
+                  "type": "window",
+                  "boundary": [
+                    157.14,
+                    30,
+                    1,
+                    5
+                  ]
+                },
+                {
+                  "wall": "x_max",
+                  "type": "window",
+                  "boundary": [
+                    105.8,
+                    30,
+                    1,
+                    5
+                  ]
+                },
+                {
+                  "wall": "x_max",
+                  "type": "window",
+                  "boundary": [
+                    60.5,
+                    30,
+                    1,
+                    5
+                  ]
+                },
+                {
+                  "wall": "x_max",
+                  "type": "window",
+                  "boundary": [
+                    15.2,
+                    30,
+                    1,
+                    5
+                  ]
+                },
+                {
+                  "wall": "x_min",
+                  "type": "door",
+                  "boundary": [
+                    143.98,
+                    8,
+                    0,
+                    15
+                  ]
+                },
+                {
+                  "wall": "x_max",
+                  "type": "door",
+                  "boundary": [
+                    143.98,
+                    8,
+                    0,
+                    15
+                  ]
+                },
+                {
+                  "wall": "y_max",
+                  "type": "door",
+                  "boundary": [
+                    5.5,
+                    8,
+                    0,
+                    15
+                  ]
+                }
+              ],
+              "combustibles": [
+                {
+                  "key": "PREBAKED_ANODE_BLOCK",
+                  "count": 320
+                },
+                {
+                  "key": "CATHODE_CARBON_BLOCK",
+                  "count": 240
+                },
+                {
+                  "key": "TRANSFORMER_OIL_TANK",
+                  "count": 2
+                },
+                {
+                  "key": "CRANE_HYDRAULIC_TANK",
+                  "count": 2
+                },
+                {
+                  "key": "CABLE_BRIDGE",
+                  "count": 3
+                }
+              ],
+              "specialized_components": [
+                {
+                  "key": "POT_TENDING_MACHINE",
+                  "count": 2
+                }
+              ]
+            }
+          ],
+          "roof": {
+            "thickness": 0.2,
+            "material": "CONCRETE",
+            "openings": []
+          }
+        }
+      ]
+    },
+    {
+      "name": "Bay_A12",
+      "cn_name": "A12跨单元",
+      "boundary": [
+        402.5,
+        19,
+        167,
+        302
+      ],
+      "wall_thickness": 0.3,
+      "height": 15,
+      "boundary_polygons": null,
+      "stories": [
+        {
+          "name": "1F",
+          "height": 15.0,
+          "openings": [],
+          "fire_compartments": [
+            {
+              "name": "A12南分区",
+              "boundary": [
+                0,
+                19.0,
+                0,
+                302.0
+              ],
+              "firewall_thickness": 0.3,
+              "firewall_material": "CONCRETE",
+              "openings": [
+                {
+                  "wall": "x_min",
+                  "type": "window",
+                  "boundary": [
+                    286.95,
+                    15,
+                    1,
+                    5
+                  ]
+                },
+                {
+                  "wall": "x_min",
+                  "type": "window",
+                  "boundary": [
+                    241.7,
+                    30,
+                    1,
+                    5
+                  ]
+                },
+                {
+                  "wall": "x_min",
+                  "type": "window",
+                  "boundary": [
+                    196.4,
+                    30,
+                    1,
+                    5
+                  ]
+                },
+                {
+                  "wall": "x_min",
+                  "type": "window",
+                  "boundary": [
+                    157.14,
+                    30,
+                    1,
+                    5
+                  ]
+                },
+                {
+                  "wall": "x_min",
+                  "type": "window",
+                  "boundary": [
+                    105.8,
+                    30,
+                    1,
+                    5
+                  ]
+                },
+                {
+                  "wall": "x_min",
+                  "type": "window",
+                  "boundary": [
+                    60.5,
+                    30,
+                    1,
+                    5
+                  ]
+                },
+                {
+                  "wall": "x_min",
+                  "type": "window",
+                  "boundary": [
+                    15.2,
+                    30,
+                    1,
+                    5
+                  ]
+                },
+                {
+                  "wall": "x_max",
+                  "type": "window",
+                  "boundary": [
+                    286.95,
+                    15,
+                    1,
+                    5
+                  ]
+                },
+                {
+                  "wall": "x_max",
+                  "type": "window",
+                  "boundary": [
+                    241.7,
+                    30,
+                    1,
+                    5
+                  ]
+                },
+                {
+                  "wall": "x_max",
+                  "type": "window",
+                  "boundary": [
+                    196.4,
+                    30,
+                    1,
+                    5
+                  ]
+                },
+                {
+                  "wall": "x_max",
+                  "type": "window",
+                  "boundary": [
+                    157.14,
+                    30,
+                    1,
+                    5
+                  ]
+                },
+                {
+                  "wall": "x_max",
+                  "type": "window",
+                  "boundary": [
+                    105.8,
+                    30,
+                    1,
+                    5
+                  ]
+                },
+                {
+                  "wall": "x_max",
+                  "type": "window",
+                  "boundary": [
+                    60.5,
+                    30,
+                    1,
+                    5
+                  ]
+                },
+                {
+                  "wall": "x_max",
+                  "type": "window",
+                  "boundary": [
+                    15.2,
+                    30,
+                    1,
+                    5
+                  ]
+                },
+                {
+                  "wall": "x_min",
+                  "type": "door",
+                  "boundary": [
+                    143.98,
+                    8,
+                    0,
+                    15
+                  ]
+                },
+                {
+                  "wall": "x_max",
+                  "type": "door",
+                  "boundary": [
+                    143.98,
+                    8,
+                    0,
+                    15
+                  ]
+                },
+                {
+                  "wall": "y_max",
+                  "type": "door",
+                  "boundary": [
+                    5.5,
+                    8,
+                    0,
+                    15
+                  ]
+                }
+              ],
+              "combustibles": [
+                {
+                  "key": "PREBAKED_ANODE_BLOCK",
+                  "count": 320
+                },
+                {
+                  "key": "CATHODE_CARBON_BLOCK",
+                  "count": 240
+                },
+                {
+                  "key": "TRANSFORMER_OIL_TANK",
+                  "count": 2
+                },
+                {
+                  "key": "CRANE_HYDRAULIC_TANK",
+                  "count": 2
+                },
+                {
+                  "key": "CABLE_BRIDGE",
+                  "count": 3
+                }
+              ],
+              "specialized_components": [
+                {
+                  "key": "POT_TENDING_MACHINE",
+                  "count": 2
+                }
+              ]
+            }
+          ],
+          "roof": {
+            "thickness": 0.2,
+            "material": "CONCRETE",
+            "openings": []
+          }
+        }
+      ]
+    },
+    {
+      "name": "Bay_A13",
+      "cn_name": "A13跨单元",
+      "boundary": [
+        435.5,
+        19,
+        167,
+        302
+      ],
+      "wall_thickness": 0.3,
+      "height": 15,
+      "boundary_polygons": null,
+      "stories": [
+        {
+          "name": "1F",
+          "height": 15.0,
+          "openings": [],
+          "fire_compartments": [
+            {
+              "name": "A13南分区",
+              "boundary": [
+                0,
+                19.0,
+                0,
+                302.0
+              ],
+              "firewall_thickness": 0.3,
+              "firewall_material": "CONCRETE",
+              "openings": [
+                {
+                  "wall": "x_min",
+                  "type": "window",
+                  "boundary": [
+                    286.95,
+                    15,
+                    1,
+                    5
+                  ]
+                },
+                {
+                  "wall": "x_min",
+                  "type": "window",
+                  "boundary": [
+                    241.7,
+                    30,
+                    1,
+                    5
+                  ]
+                },
+                {
+                  "wall": "x_min",
+                  "type": "window",
+                  "boundary": [
+                    196.4,
+                    30,
+                    1,
+                    5
+                  ]
+                },
+                {
+                  "wall": "x_min",
+                  "type": "window",
+                  "boundary": [
+                    157.14,
+                    30,
+                    1,
+                    5
+                  ]
+                },
+                {
+                  "wall": "x_min",
+                  "type": "window",
+                  "boundary": [
+                    105.8,
+                    30,
+                    1,
+                    5
+                  ]
+                },
+                {
+                  "wall": "x_min",
+                  "type": "window",
+                  "boundary": [
+                    60.5,
+                    30,
+                    1,
+                    5
+                  ]
+                },
+                {
+                  "wall": "x_min",
+                  "type": "window",
+                  "boundary": [
+                    15.2,
+                    30,
+                    1,
+                    5
+                  ]
+                },
+                {
+                  "wall": "x_max",
+                  "type": "window",
+                  "boundary": [
+                    286.95,
+                    15,
+                    1,
+                    5
+                  ]
+                },
+                {
+                  "wall": "x_max",
+                  "type": "window",
+                  "boundary": [
+                    241.7,
+                    30,
+                    1,
+                    5
+                  ]
+                },
+                {
+                  "wall": "x_max",
+                  "type": "window",
+                  "boundary": [
+                    196.4,
+                    30,
+                    1,
+                    5
+                  ]
+                },
+                {
+                  "wall": "x_max",
+                  "type": "window",
+                  "boundary": [
+                    157.14,
+                    30,
+                    1,
+                    5
+                  ]
+                },
+                {
+                  "wall": "x_max",
+                  "type": "window",
+                  "boundary": [
+                    105.8,
+                    30,
+                    1,
+                    5
+                  ]
+                },
+                {
+                  "wall": "x_max",
+                  "type": "window",
+                  "boundary": [
+                    60.5,
+                    30,
+                    1,
+                    5
+                  ]
+                },
+                {
+                  "wall": "x_max",
+                  "type": "window",
+                  "boundary": [
+                    15.2,
+                    30,
+                    1,
+                    5
+                  ]
+                },
+                {
+                  "wall": "x_min",
+                  "type": "door",
+                  "boundary": [
+                    143.98,
+                    8,
+                    0,
+                    15
+                  ]
+                },
+                {
+                  "wall": "x_max",
+                  "type": "door",
+                  "boundary": [
+                    143.98,
+                    8,
+                    0,
+                    15
+                  ]
+                },
+                {
+                  "wall": "y_max",
+                  "type": "door",
+                  "boundary": [
+                    5.5,
+                    8,
+                    0,
+                    15
+                  ]
+                }
+              ],
+              "combustibles": [
+                {
+                  "key": "PREBAKED_ANODE_BLOCK",
+                  "count": 320
+                },
+                {
+                  "key": "CATHODE_CARBON_BLOCK",
+                  "count": 240
+                },
+                {
+                  "key": "TRANSFORMER_OIL_TANK",
+                  "count": 2
+                },
+                {
+                  "key": "CRANE_HYDRAULIC_TANK",
+                  "count": 2
+                },
+                {
+                  "key": "CABLE_BRIDGE",
+                  "count": 3
+                }
+              ],
+              "specialized_components": [
+                {
+                  "key": "POT_TENDING_MACHINE",
+                  "count": 2
+                }
+              ]
+            }
+          ],
+          "roof": {
+            "thickness": 0.2,
+            "material": "CONCRETE",
+            "openings": []
+          }
+        }
+      ]
+    },
+    {
+      "name": "Bay_A14",
+      "cn_name": "B2宽跨单元",
+      "boundary": [
+        475,
+        20,
+        167,
+        334
+      ],
+      "wall_thickness": 0.3,
+      "height": 15,
+      "boundary_polygons": null,
+      "stories": [
+        {
+          "name": "1F",
+          "height": 15.0,
+          "openings": [],
+          "fire_compartments": [
+            {
+              "name": "南分区",
+              "boundary": [
+                0,
+                20.0,
+                0,
+                257.18
+              ],
+              "firewall_thickness": 0.3,
+              "firewall_material": "CONCRETE",
+              "openings": [
+                {
+                  "wall": "x_min",
+                  "type": "door",
+                  "boundary": [
+                    0.1436,
+                    10.0,
+                    0,
+                    6
+                  ]
+                },
+                {
+                  "wall": "x_max",
+                  "type": "door",
+                  "boundary": [
+                    187.885,
+                    10.0,
+                    0,
+                    6
+                  ]
+                },
+                {
+                  "wall": "y_max",
+                  "type": "door",
+                  "boundary": [
+                    7.0,
+                    6.0,
+                    0,
+                    6
+                  ]
+                }
+              ],
+              "combustibles": [
+                {
+                  "key": "PREBAKED_ANODE_BLOCK",
+                  "count": 480
+                },
+                {
+                  "key": "CATHODE_CARBON_BLOCK",
+                  "count": 360
+                }
+              ],
+              "specialized_components": []
+            },
+            {
+              "name": "北分区",
+              "boundary": [
+                0,
+                20.0,
+                257.18,
+                334.0
+              ],
+              "firewall_thickness": 0.3,
+              "firewall_material": "CONCRETE",
+              "openings": [
+                {
+                  "wall": "y_max",
+                  "type": "door",
+                  "boundary": [
+                    14.5,
+                    5.0,
+                    0,
+                    5.0
+                  ]
+                },
+                {
+                  "wall": "x_min",
+                  "type": "door",
+                  "boundary": [
+                    70.2836,
+                    10.0,
+                    0,
+                    6.0
+                  ]
+                },
+                {
+                  "wall": "x_max",
+                  "type": "door",
+                  "boundary": [
+                    70.2836,
+                    10.0,
+                    0,
+                    6.0
+                  ]
+                }
+              ],
+              "combustibles": [
+                {
+                  "key": "CABLE_BRIDGE",
+                  "count": 6
+                },
+                {
+                  "key": "HYDRAULIC_TANK",
+                  "count": 4
+                },
+                {
+                  "key": "LUBE_OIL_DRUM",
+                  "count": 6
+                }
+              ],
+              "specialized_components": [
+                {
+                  "key": "CONTROL_ROOM",
+                  "count": 1
+                }
+              ]
+            }
+          ],
+          "roof": {
+            "thickness": 0.2,
+            "material": "CONCRETE",
+            "openings": []
+          }
+        }
+      ]
+    },
+    {
+      "name": "Material_storage_building",
+      "cn_name": "西侧材料存储区",
+      "boundary": [
+        -106,
+        46,
+        284,
+        68
+      ],
+      "wall_thickness": 0.25,
+      "height": 12,
+      "boundary_polygons": null,
+      "stories": [
+        {
+          "name": "1F",
+          "height": 12.0,
+          "openings": [],
+          "fire_compartments": [
+            {
+              "name": "左下分区",
+              "boundary": [
+                0,
+                13.8,
+                0,
+                29.92
+              ],
+              "firewall_thickness": 0.25,
+              "firewall_material": "CONCRETE",
+              "openings": [
+                {
+                  "wall": "y_min",
+                  "type": "door",
+                  "boundary": [
+                    -0.43,
+                    5,
+                    0,
+                    3
+                  ]
+                },
+                {
+                  "wall": "y_max",
+                  "type": "door",
+                  "boundary": [
+                    -0.154,
+                    5,
+                    0,
+                    3
+                  ]
+                },
+                {
+                  "wall": "x_min",
+                  "type": "door",
+                  "boundary": [
+                    2.5424,
+                    38,
+                    0,
+                    12
+                  ]
+                }
+              ],
+              "combustibles": [
+                {
+                  "key": "PREBAKED_ANODE_BLOCK",
+                  "count": 480
+                },
+                {
+                  "key": "CATHODE_CARBON_BLOCK",
+                  "count": 360
+                },
+                {
+                  "key": "CABLE_BRIDGE",
+                  "count": 4
+                },
+                {
+                  "key": "LUBE_OIL_DRUM",
+                  "count": 8
+                }
+              ],
+              "specialized_components": [
+                {
+                  "key": "CRANE_SYSTEM",
+                  "count": 2
+                }
+              ]
+            },
+            {
+              "name": "右下分区",
+              "boundary": [
+                13.8,
+                46.0,
+                0,
+                14.96
+              ],
+              "firewall_thickness": 0.25,
+              "firewall_material": "CONCRETE",
+              "openings": [
+                {
+                  "wall": "y_min",
+                  "type": "door",
+                  "boundary": [
+                    10.38,
+                    5,
+                    0,
+                    3
+                  ]
+                },
+                {
+                  "wall": "x_max",
+                  "type": "door",
+                  "boundary": [
+                    -0.4568,
+                    6,
+                    0,
+                    3
+                  ]
+                }
+              ],
+              "combustibles": [
+                {
+                  "key": "LAB_EQUIPMENT",
+                  "count": 10
+                },
+                {
+                  "key": "CHEMICAL_SAMPLE",
+                  "count": 30
+                }
+              ],
+              "specialized_components": []
+            },
+            {
+              "name": "右中分区",
+              "boundary": [
+                13.8,
+                46.0,
+                14.96,
+                29.92
+              ],
+              "firewall_thickness": 0.25,
+              "firewall_material": "CONCRETE",
+              "openings": [
+                {
+                  "wall": "x_max",
+                  "type": "door",
+                  "boundary": [
+                    2.24,
+                    3,
+                    0,
+                    3
+                  ]
+                },
+                {
+                  "wall": "x_max",
+                  "type": "door",
+                  "boundary": [
+                    3.736,
+                    3,
+                    0,
+                    3
+                  ]
+                }
+              ],
+              "combustibles": [
+                {
+                  "key": "LAB_EQUIPMENT",
+                  "count": 10
+                },
+                {
+                  "key": "CHEMICAL_SAMPLE",
+                  "count": 30
+                }
+              ],
+              "specialized_components": []
+            },
+            {
+              "name": "右上分区",
+              "boundary": [
+                13.8,
+                46.0,
+                29.92,
+                68.0
+              ],
+              "firewall_thickness": 0.25,
+              "firewall_material": "CONCRETE",
+              "openings": [
+                {
+                  "wall": "x_max",
+                  "type": "door",
+                  "boundary": [
+                    17.04,
+                    4,
+                    0,
+                    4
+                  ]
+                },
+                {
+                  "wall": "y_max",
+                  "type": "door",
+                  "boundary": [
+                    24.26,
+                    3,
+                    0,
+                    3
+                  ]
+                },
+                {
+                  "wall": "y_max",
+                  "type": "door",
+                  "boundary": [
+                    -2.17,
+                    14,
+                    0,
+                    12
+                  ]
+                }
+              ],
+              "combustibles": [
+                {
+                  "key": "LAB_EQUIPMENT",
+                  "count": 10
+                },
+                {
+                  "key": "CHEMICAL_SAMPLE",
+                  "count": 30
+                }
+              ],
+              "specialized_components": []
+            }
+          ],
+          "roof": {
+            "thickness": 0.2,
+            "material": "CONCRETE",
+            "openings": []
+          }
+        }
+      ]
+    },
+    {
+      "name": "North_Corridor",
+      "cn_name": "北侧贯通长廊",
+      "boundary": [
+        175,
+        580,
+        326,
+        16
+      ],
+      "wall_thickness": 0.3,
+      "height": 6,
+      "boundary_polygons": null,
+      "stories": [
+        {
+          "name": "1F",
+          "height": 6.0,
+          "openings": [],
+          "fire_compartments": [
+            {
+              "name": "西一区",
+              "boundary": [
+                0,
+                262.74,
+                0,
+                16.0
+              ],
+              "firewall_thickness": 0.3,
+              "firewall_material": "CONCRETE",
+              "openings": [
+                {
+                  "wall": "y_min",
+                  "type": "door",
+                  "boundary": [
+                    128.87,
+                    5.0,
+                    0,
+                    4.5
+                  ]
+                }
+              ],
+              "combustibles": [
+                {
+                  "key": "PREBAKED_ANODE_BLOCK",
+                  "count": 480
+                },
+                {
+                  "key": "CATHODE_CARBON_BLOCK",
+                  "count": 360
+                }
+              ],
+              "specialized_components": []
+            },
+            {
+              "name": "内嵌功能区",
+              "boundary": [
+                262.74,
+                440.22,
+                0,
+                16.0
+              ],
+              "firewall_thickness": 0.3,
+              "firewall_material": "CONCRETE",
+              "openings": [],
+              "combustibles": [
+                {
+                  "key": "CABLE_BRIDGE",
+                  "count": 6
+                },
+                {
+                  "key": "HYDRAULIC_TANK",
+                  "count": 4
+                },
+                {
+                  "key": "LUBE_OIL_DRUM",
+                  "count": 6
+                }
+              ],
+              "specialized_components": [
+                {
+                  "key": "CONTROL_ROOM",
+                  "count": 1
+                }
+              ]
+            },
+            {
+              "name": "东一区",
+              "boundary": [
+                440.22,
+                580.0,
+                0,
+                16.0
+              ],
+              "firewall_thickness": 0.3,
+              "firewall_material": "CONCRETE",
+              "openings": [
+                {
+                  "wall": "y_max",
+                  "type": "door",
+                  "boundary": [
+                    67.39,
+                    5.0,
+                    0,
+                    4.5
+                  ]
+                }
+              ],
+              "combustibles": [
+                {
+                  "key": "CABLE_BRIDGE",
+                  "count": 6
+                },
+                {
+                  "key": "HYDRAULIC_TANK",
+                  "count": 4
+                },
+                {
+                  "key": "LUBE_OIL_DRUM",
+                  "count": 6
+                }
+              ],
+              "specialized_components": [
+                {
+                  "key": "CONTROL_ROOM",
+                  "count": 1
+                }
+              ]
+            }
+          ],
+          "roof": {
+            "thickness": 0.2,
+            "material": "CONCRETE",
+            "openings": []
+          }
+        }
+      ]
+    },
+    {
+      "name": "Bay_B2",
+      "cn_name": "中央横跨长廊",
+      "boundary": [
+        207.5,
+        515,
+        164,
+        8
+      ],
+      "wall_thickness": 0.2,
+      "height": 15,
+      "boundary_polygons": null,
+      "stories": [
+        {
+          "name": "1F",
+          "height": 15.0,
+          "openings": [],
+          "fire_compartments": [
+            {
+              "name": "A1交叉区",
+              "boundary": [
+                0,
+                515.0,
+                0,
+                8.0
+              ],
+              "firewall_thickness": 0.2,
+              "firewall_material": "CONCRETE",
+              "openings": [
+                {
+                  "wall": "y_max",
+                  "type": "door",
+                  "boundary": [
+                    49.9825,
+                    19,
+                    0,
+                    15
+                  ]
+                },
+                {
+                  "wall": "y_min",
+                  "type": "door",
+                  "boundary": [
+                    49.9825,
+                    19,
+                    0,
+                    15
+                  ]
+                },
+                {
+                  "wall": "y_max",
+                  "type": "door",
+                  "boundary": [
+                    73.514,
+                    5,
+                    0,
+                    5
+                  ]
+                },
+                {
+                  "wall": "y_min",
+                  "type": "door",
+                  "boundary": [
+                    73.514,
+                    5,
+                    0,
+                    5
+                  ]
+                },
+                {
+                  "wall": "y_max",
+                  "type": "door",
+                  "boundary": [
+                    82.994,
+                    19,
+                    0,
+                    15
+                  ]
+                },
+                {
+                  "wall": "y_min",
+                  "type": "door",
+                  "boundary": [
+                    82.994,
+                    19,
+                    0,
+                    15
+                  ]
+                },
+                {
+                  "wall": "y_max",
+                  "type": "door",
+                  "boundary": [
+                    106.5255,
+                    5,
+                    0,
+                    5
+                  ]
+                },
+                {
+                  "wall": "y_min",
+                  "type": "door",
+                  "boundary": [
+                    106.5255,
+                    5,
+                    0,
+                    5
+                  ]
+                },
+                {
+                  "wall": "y_max",
+                  "type": "door",
+                  "boundary": [
+                    115.9905,
+                    18,
+                    0,
+                    15
+                  ]
+                },
+                {
+                  "wall": "y_min",
+                  "type": "door",
+                  "boundary": [
+                    115.9905,
+                    18,
+                    0,
+                    15
+                  ]
+                },
+                {
+                  "wall": "y_max",
+                  "type": "door",
+                  "boundary": [
+                    138.507,
+                    5,
+                    0,
+                    5
+                  ]
+                },
+                {
+                  "wall": "y_min",
+                  "type": "door",
+                  "boundary": [
+                    138.507,
+                    5,
+                    0,
+                    5
+                  ]
+                },
+                {
+                  "wall": "y_max",
+                  "type": "door",
+                  "boundary": [
+                    147.987,
+                    19,
+                    0,
+                    15
+                  ]
+                },
+                {
+                  "wall": "y_min",
+                  "type": "door",
+                  "boundary": [
+                    147.987,
+                    19,
+                    0,
+                    15
+                  ]
+                },
+                {
+                  "wall": "y_max",
+                  "type": "door",
+                  "boundary": [
+                    171.5185,
+                    5,
+                    0,
+                    5
+                  ]
+                },
+                {
+                  "wall": "y_min",
+                  "type": "door",
+                  "boundary": [
+                    171.5185,
+                    5,
+                    0,
+                    5
+                  ]
+                },
+                {
+                  "wall": "y_max",
+                  "type": "door",
+                  "boundary": [
+                    180.9985,
+                    19,
+                    0,
+                    15
+                  ]
+                },
+                {
+                  "wall": "y_min",
+                  "type": "door",
+                  "boundary": [
+                    180.9985,
+                    19,
+                    0,
+                    15
+                  ]
+                },
+                {
+                  "wall": "y_max",
+                  "type": "door",
+                  "boundary": [
+                    204.4785,
+                    5,
+                    0,
+                    5
+                  ]
+                },
+                {
+                  "wall": "y_min",
+                  "type": "door",
+                  "boundary": [
+                    204.4785,
+                    5,
+                    0,
+                    5
+                  ]
+                },
+                {
+                  "wall": "y_max",
+                  "type": "door",
+                  "boundary": [
+                    214.01,
+                    19,
+                    0,
+                    15
+                  ]
+                },
+                {
+                  "wall": "y_min",
+                  "type": "door",
+                  "boundary": [
+                    214.01,
+                    19,
+                    0,
+                    15
+                  ]
+                },
+                {
+                  "wall": "y_max",
+                  "type": "door",
+                  "boundary": [
+                    237.49,
+                    5,
+                    0,
+                    5
+                  ]
+                },
+                {
+                  "wall": "y_min",
+                  "type": "door",
+                  "boundary": [
+                    237.49,
+                    5,
+                    0,
+                    5
+                  ]
+                },
+                {
+                  "wall": "y_max",
+                  "type": "door",
+                  "boundary": [
+                    247.0215,
+                    19,
+                    0,
+                    15
+                  ]
+                },
+                {
+                  "wall": "y_min",
+                  "type": "door",
+                  "boundary": [
+                    247.0215,
+                    19,
+                    0,
+                    15
+                  ]
+                },
+                {
+                  "wall": "y_max",
+                  "type": "door",
+                  "boundary": [
+                    270.5015,
+                    5,
+                    0,
+                    5
+                  ]
+                },
+                {
+                  "wall": "y_min",
+                  "type": "door",
+                  "boundary": [
+                    270.5015,
+                    5,
+                    0,
+                    5
+                  ]
+                },
+                {
+                  "wall": "y_max",
+                  "type": "door",
+                  "boundary": [
+                    279.9815,
+                    19,
+                    0,
+                    15
+                  ]
+                },
+                {
+                  "wall": "y_min",
+                  "type": "door",
+                  "boundary": [
+                    279.9815,
+                    19,
+                    0,
+                    15
+                  ]
+                },
+                {
+                  "wall": "y_max",
+                  "type": "door",
+                  "boundary": [
+                    303.513,
+                    5,
+                    0,
+                    5
+                  ]
+                },
+                {
+                  "wall": "y_min",
+                  "type": "door",
+                  "boundary": [
+                    303.513,
+                    5,
+                    0,
+                    5
+                  ]
+                },
+                {
+                  "wall": "y_max",
+                  "type": "door",
+                  "boundary": [
+                    312.993,
+                    19,
+                    0,
+                    15
+                  ]
+                },
+                {
+                  "wall": "y_min",
+                  "type": "door",
+                  "boundary": [
+                    312.993,
+                    19,
+                    0,
+                    15
+                  ]
+                },
+                {
+                  "wall": "y_max",
+                  "type": "door",
+                  "boundary": [
+                    351.9745,
+                    5,
+                    0,
+                    5
+                  ]
+                },
+                {
+                  "wall": "y_min",
+                  "type": "door",
+                  "boundary": [
+                    351.9745,
+                    5,
+                    0,
+                    5
+                  ]
+                },
+                {
+                  "wall": "y_max",
+                  "type": "door",
+                  "boundary": [
+                    377.0075,
+                    19,
+                    0,
+                    15
+                  ]
+                },
+                {
+                  "wall": "y_min",
+                  "type": "door",
+                  "boundary": [
+                    377.0075,
+                    19,
+                    0,
+                    15
+                  ]
+                },
+                {
+                  "wall": "y_max",
+                  "type": "door",
+                  "boundary": [
+                    400.4875,
+                    5,
+                    0,
+                    5
+                  ]
+                },
+                {
+                  "wall": "y_min",
+                  "type": "door",
+                  "boundary": [
+                    400.4875,
+                    5,
+                    0,
+                    5
+                  ]
+                },
+                {
+                  "wall": "y_max",
+                  "type": "door",
+                  "boundary": [
+                    410.019,
+                    19,
+                    0,
+                    15
+                  ]
+                },
+                {
+                  "wall": "y_min",
+                  "type": "door",
+                  "boundary": [
+                    410.019,
+                    19,
+                    0,
+                    15
+                  ]
+                },
+                {
+                  "wall": "y_max",
+                  "type": "door",
+                  "boundary": [
+                    433.499,
+                    5,
+                    0,
+                    5
+                  ]
+                },
+                {
+                  "wall": "y_min",
+                  "type": "door",
+                  "boundary": [
+                    433.499,
+                    5,
+                    0,
+                    5
+                  ]
+                },
+                {
+                  "wall": "y_max",
+                  "type": "door",
+                  "boundary": [
+                    442.979,
+                    19,
+                    0,
+                    15
+                  ]
+                },
+                {
+                  "wall": "y_min",
+                  "type": "door",
+                  "boundary": [
+                    442.979,
+                    19,
+                    0,
+                    15
+                  ]
+                },
+                {
+                  "wall": "y_max",
+                  "type": "door",
+                  "boundary": [
+                    466.5105,
+                    5,
+                    0,
+                    5
+                  ]
+                },
+                {
+                  "wall": "y_min",
+                  "type": "door",
+                  "boundary": [
+                    466.5105,
+                    5,
+                    0,
+                    5
+                  ]
+                },
+                {
+                  "wall": "y_max",
+                  "type": "door",
+                  "boundary": [
+                    475.9905,
+                    19,
+                    0,
+                    15
+                  ]
+                },
+                {
+                  "wall": "y_min",
+                  "type": "door",
+                  "boundary": [
+                    475.9905,
+                    19,
+                    0,
+                    15
+                  ]
+                },
+                {
+                  "wall": "y_max",
+                  "type": "door",
+                  "boundary": [
+                    502.509,
+                    5,
+                    0,
+                    5
+                  ]
+                },
+                {
+                  "wall": "y_min",
+                  "type": "door",
+                  "boundary": [
+                    502.509,
+                    5,
+                    0,
+                    5
+                  ]
+                }
+              ],
+              "combustibles": [
+                {
+                  "key": "CABLE_BRIDGE",
+                  "count": 2
+                },
+                {
+                  "key": "LUBE_OIL_DRUM",
+                  "count": 4
+                }
+              ],
+              "specialized_components": []
+            }
+          ],
+          "roof": {
+            "thickness": 0.2,
+            "material": "CONCRETE",
+            "openings": []
+          }
+        }
+      ]
     }
-  }
+  ]
 }
