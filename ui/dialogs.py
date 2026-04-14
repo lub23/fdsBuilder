@@ -24,185 +24,123 @@ from models.combustibles import (
 from models.materials import COMBUSTIBLE_LIBRARY
 from models.facility import FacilityManager
 
-# Wall name choices (previously in models.facility, now defined locally)
-WALL_NAMES = ["南墙", "北墙", "东墙", "西墙", "均匀分布"]
+# Wall identifiers for the 4 exterior walls
+WALL_IDS = ["x_min", "x_max", "y_min", "y_max"]
+WALL_LABELS = {"x_min": "X- (西墙)", "x_max": "X+ (东墙)", "y_min": "Y- (南墙)", "y_max": "Y+ (北墙)"}
 
 # ============================================================
 # 开口编辑对话框
 # ============================================================
 class OpeningDialog(QDialog):
-    """开口编辑对话框"""
-    
+    """开口编辑对话框 — 使用 Opening(wall, type, boundary) 格式"""
+
     def __init__(self, parent=None, opening=None, walls=None):
+        """
+        Args:
+            opening: Opening object or dict with {wall, type, boundary}.
+            walls:   Ignored (kept for call-site compat); wall is now a string id.
+        """
         super().__init__(parent)
-        self.opening = opening or {}
-        self.walls = walls or []
+        self.opening = opening
         self.setup_ui()
         self.load_data()
-    
+
     def setup_ui(self):
         self.setWindowTitle("编辑开口")
         self.setMinimumWidth(400)
-        
+
         layout = QVBoxLayout(self)
         form = QFormLayout()
-        
-        # 所属墙体
+
+        # 所属墙体 (string id)
         self.wall_combo = QComboBox()
-        for i, w in enumerate(self.walls):
-            name = w.get("name", f"墙体{i}")
-            is_ext = "外墙" if w.get("is_external") else "内墙"
-            self.wall_combo.addItem(f"{i}: {name} ({is_ext})", i)
-        form.addRow("所属墙体:", self.wall_combo)
-        
+        for wid in WALL_IDS:
+            self.wall_combo.addItem(WALL_LABELS[wid], wid)
+        form.addRow("所属墙:", self.wall_combo)
+
         # 类型
         self.type_combo = QComboBox()
-        self.type_combo.addItems(["door", "window"])
+        self.type_combo.addItems(["door", "window", "opening", "loading_dock", "ribbon_window"])
         self.type_combo.currentTextChanged.connect(self.on_type_changed)
         form.addRow("类型:", self.type_combo)
-        
-        # 沿墙位置 (0-1)
-        self.position_spin = QDoubleSpinBox()
-        self.position_spin.setRange(0, 1)
-        self.position_spin.setDecimals(2)
-        self.position_spin.setSingleStep(0.1)
-        self.position_spin.setValue(0.5)
-        form.addRow("沿墙位置 (0-1):", self.position_spin)
-        
-        # 宽度
+
+        # 偏移(m) — w_offset: boundary[0]
+        self.w_offset_spin = QDoubleSpinBox()
+        self.w_offset_spin.setRange(-500, 500)
+        self.w_offset_spin.setDecimals(2)
+        self.w_offset_spin.setSuffix(" m")
+        self.w_offset_spin.setValue(0.0)
+        form.addRow("偏移(m):", self.w_offset_spin)
+
+        # 宽度 — boundary[1]
         self.width_spin = QDoubleSpinBox()
         self.width_spin.setRange(0.1, 50)
         self.width_spin.setDecimals(2)
         self.width_spin.setSuffix(" m")
         self.width_spin.setValue(2.0)
         form.addRow("宽度:", self.width_spin)
-        
-        # 高度
+
+        # h_offset — boundary[2]
+        self.h_offset_spin = QDoubleSpinBox()
+        self.h_offset_spin.setRange(0, 20)
+        self.h_offset_spin.setDecimals(2)
+        self.h_offset_spin.setSuffix(" m")
+        self.h_offset_spin.setValue(0)
+        form.addRow("高度偏移(m):", self.h_offset_spin)
+
+        # 高度 — boundary[3]
         self.height_spin = QDoubleSpinBox()
         self.height_spin.setRange(0.1, 20)
         self.height_spin.setDecimals(2)
         self.height_spin.setSuffix(" m")
         self.height_spin.setValue(2.0)
         form.addRow("高度:", self.height_spin)
-        
-        # 底部高度
-        self.z_bottom_label = QLabel("底部高度:")
-        self.z_bottom_spin = QDoubleSpinBox()
-        self.z_bottom_spin.setRange(0, 20)
-        self.z_bottom_spin.setDecimals(2)
-        self.z_bottom_spin.setSuffix(" m")
-        self.z_bottom_spin.setValue(0)
-        form.addRow(self.z_bottom_label, self.z_bottom_spin)
-        
+
         layout.addLayout(form)
-        
+
         button_box = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
         button_box.accepted.connect(self.accept)
         button_box.rejected.connect(self.reject)
         layout.addWidget(button_box)
-    
+
     def on_type_changed(self, type_name):
         is_window = type_name == "window"
-        self.z_bottom_spin.setValue(1.0 if is_window else 0)
-    
+        self.h_offset_spin.setValue(1.0 if is_window else 0)
+
     def load_data(self):
-        if self.opening:
-            idx = self.opening.get("wall_index", 0)
-            self.wall_combo.setCurrentIndex(min(idx, self.wall_combo.count()-1))
-            self.type_combo.setCurrentText(self.opening.get("type", "door"))
-            self.position_spin.setValue(self.opening.get("position", 0.5))
-            self.width_spin.setValue(self.opening.get("width", 2.0))
-            self.height_spin.setValue(self.opening.get("height", 2.0))
-            self.z_bottom_spin.setValue(self.opening.get("z_bottom", 0))
-    
-    def get_data(self) -> dict:
-        return {
-            "wall_index": self.wall_combo.currentData(),
-            "type": self.type_combo.currentText(),
-            "position": self.position_spin.value(),
-            "width": self.width_spin.value(),
-            "height": self.height_spin.value(),
-            "z_bottom": self.z_bottom_spin.value()
-        }
+        from models.building import Opening
+        o = self.opening
+        if o is None:
+            return
+        if isinstance(o, Opening):
+            wall, tp, bd = o.wall, o.type, o.boundary
+        elif isinstance(o, dict):
+            wall = o.get("wall", "x_min")
+            tp = o.get("type", "door")
+            bd = o.get("boundary", [0, 2, 0, 2])
+        else:
+            return
+        idx = WALL_IDS.index(wall) if wall in WALL_IDS else 0
+        self.wall_combo.setCurrentIndex(idx)
+        self.type_combo.setCurrentText(tp)
+        self.w_offset_spin.setValue(bd[0])
+        self.width_spin.setValue(bd[1])
+        self.h_offset_spin.setValue(bd[2])
+        self.height_spin.setValue(bd[3])
 
-
-class WallDialog(QDialog):
-    """墙体编辑对话框"""
-    
-    def __init__(self, parent=None, wall=None, is_external=False):
-        super().__init__(parent)
-        self.wall = wall or {}
-        self.is_external = is_external
-        self.setWindowTitle("编辑外墙" if is_external else "编辑内墙")
-        self.setMinimumWidth(350)
-        
-        layout = QVBoxLayout(self)
-        form = QFormLayout()
-        
-        # 名称
-        self.name_edit = QLineEdit(self.wall.get('name', ''))
-        form.addRow("名称:", self.name_edit)
-        
-        self.x1_spin = QDoubleSpinBox()
-        self.x1_spin.setRange(0, 500)
-        self.x1_spin.setDecimals(2)
-        self.x1_spin.setValue(self.wall.get('x1', 0))
-        self.x1_spin.setSuffix(" m")
-        form.addRow("起点 X:", self.x1_spin)
-        
-        self.y1_spin = QDoubleSpinBox()
-        self.y1_spin.setRange(0, 500)
-        self.y1_spin.setDecimals(2)
-        self.y1_spin.setValue(self.wall.get('y1', 0))
-        self.y1_spin.setSuffix(" m")
-        form.addRow("起点 Y:", self.y1_spin)
-        
-        self.x2_spin = QDoubleSpinBox()
-        self.x2_spin.setRange(0, 500)
-        self.x2_spin.setDecimals(2)
-        self.x2_spin.setValue(self.wall.get('x2', 5))
-        self.x2_spin.setSuffix(" m")
-        form.addRow("终点 X:", self.x2_spin)
-        
-        self.y2_spin = QDoubleSpinBox()
-        self.y2_spin.setRange(0, 500)
-        self.y2_spin.setDecimals(2)
-        self.y2_spin.setValue(self.wall.get('y2', 0))
-        self.y2_spin.setSuffix(" m")
-        form.addRow("终点 Y:", self.y2_spin)
-        
-        self.thick_spin = QDoubleSpinBox()
-        self.thick_spin.setRange(0.05, 1.0)
-        self.thick_spin.setDecimals(2)
-        self.thick_spin.setValue(self.wall.get('thickness', 0.24))
-        self.thick_spin.setSuffix(" m")
-        form.addRow("墙厚:", self.thick_spin)
-        
-        self.height_spin = QDoubleSpinBox()
-        self.height_spin.setRange(0.5, 20)
-        self.height_spin.setDecimals(2)
-        self.height_spin.setValue(self.wall.get('height', 3.0))
-        self.height_spin.setSuffix(" m")
-        form.addRow("高度:", self.height_spin)
-        
-        layout.addLayout(form)
-        
-        buttons = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
-        buttons.accepted.connect(self.accept)
-        buttons.rejected.connect(self.reject)
-        layout.addWidget(buttons)
-    
-    def get_data(self) -> dict:
-        return {
-            'name': self.name_edit.text(),
-            'x1': self.x1_spin.value(),
-            'y1': self.y1_spin.value(),
-            'x2': self.x2_spin.value(),
-            'y2': self.y2_spin.value(),
-            'thickness': self.thick_spin.value(),
-            'height': self.height_spin.value(),
-            'is_external': self.is_external
-        }
+    def get_data(self):
+        """Return an Opening object."""
+        from models.building import Opening
+        return Opening(
+            wall=self.wall_combo.currentData(),
+            type=self.type_combo.currentText(),
+            boundary=[
+                self.w_offset_spin.value(),
+                self.width_spin.value(),
+                self.h_offset_spin.value(),
+                self.height_spin.value(),
+            ],
+        )
 
 
 # ============================================================
@@ -424,47 +362,51 @@ class CombustibleDialog(QDialog):
             f"当前 {len(self.manager.items)} 个可燃物")
         
 
-class FloorSlabHoleDialog(QDialog):
-    """楼梯口编辑对话框"""
+class RoofOpeningDialog(QDialog):
+    """屋顶开口编辑对话框 — boundary = [x, length, y, width]"""
 
     def __init__(self, parent=None, max_length=20.0, max_width=15.0, hole=None):
         super().__init__(parent)
-        self.setWindowTitle("编辑楼梯口")
+        self.setWindowTitle("编辑屋顶开口")
         self.setMinimumWidth(350)
         self.hole = hole or {}
 
         layout = QVBoxLayout(self)
         form = QFormLayout()
 
-        self.name_edit = QLineEdit(self.hole.get("name", "楼梯间"))
+        self.name_edit = QLineEdit(self.hole.get("name", "屋顶开口"))
         form.addRow("名称:", self.name_edit)
+
+        bd = self.hole.get("boundary", [1.0, 2.0, 1.0, 2.0])
+        if len(bd) < 4:
+            bd = [1.0, 2.0, 1.0, 2.0]
 
         self.x_spin = QDoubleSpinBox()
         self.x_spin.setRange(0, max_length)
         self.x_spin.setDecimals(2)
         self.x_spin.setSuffix(" m")
-        self.x_spin.setValue(self.hole.get("x", 1.0))
+        self.x_spin.setValue(bd[0])
         form.addRow("X 位置:", self.x_spin)
-
-        self.y_spin = QDoubleSpinBox()
-        self.y_spin.setRange(0, max_width)
-        self.y_spin.setDecimals(2)
-        self.y_spin.setSuffix(" m")
-        self.y_spin.setValue(self.hole.get("y", 1.0))
-        form.addRow("Y 位置:", self.y_spin)
 
         self.len_spin = QDoubleSpinBox()
         self.len_spin.setRange(0.1, max_length)
         self.len_spin.setDecimals(2)
         self.len_spin.setSuffix(" m")
-        self.len_spin.setValue(self.hole.get("length", 2.0))
+        self.len_spin.setValue(bd[1])
         form.addRow("长度:", self.len_spin)
+
+        self.y_spin = QDoubleSpinBox()
+        self.y_spin.setRange(0, max_width)
+        self.y_spin.setDecimals(2)
+        self.y_spin.setSuffix(" m")
+        self.y_spin.setValue(bd[2])
+        form.addRow("Y 位置:", self.y_spin)
 
         self.wid_spin = QDoubleSpinBox()
         self.wid_spin.setRange(0.1, max_width)
         self.wid_spin.setDecimals(2)
         self.wid_spin.setSuffix(" m")
-        self.wid_spin.setValue(self.hole.get("width", 2.0))
+        self.wid_spin.setValue(bd[3])
         form.addRow("宽度:", self.wid_spin)
 
         layout.addLayout(form)
@@ -477,19 +419,28 @@ class FloorSlabHoleDialog(QDialog):
     def get_data(self) -> dict:
         return {
             "name": self.name_edit.text(),
-            "x": self.x_spin.value(),
-            "y": self.y_spin.value(),
-            "length": self.len_spin.value(),
-            "width": self.wid_spin.value(),
+            "boundary": [
+                self.x_spin.value(),
+                self.len_spin.value(),
+                self.y_spin.value(),
+                self.wid_spin.value(),
+            ],
         }
+
+# Keep alias for backward compat with lazy imports
+FloorSlabHoleDialog = RoofOpeningDialog
     
 
 class BatchOpeningDialog(QDialog):
-    """批量生成开口（门/窗/楼梯口）"""
+    """批量生成开口（门/窗/屋顶开口）"""
 
     def __init__(self, parent=None, walls=None, model=None, viewer=None):
+        """
+        Args:
+            walls:  Ignored (kept for call-site compat).
+            model:  Building object (has .length, .width).
+        """
         super().__init__(parent)
-        self.walls = walls or []
         self.model = model
         self._result = []
         self.setWindowTitle("批量生成开口")
@@ -504,12 +455,12 @@ class BatchOpeningDialog(QDialog):
         # 类型
         form.addWidget(QLabel("类型:"), 0, 0)
         self.type_combo = QComboBox()
-        self.type_combo.addItems(["door", "window", "楼梯口"])
+        self.type_combo.addItems(["door", "window", "屋顶开口"])
         self.type_combo.currentTextChanged.connect(self._on_type_changed)
         form.addWidget(self.type_combo, 0, 1)
 
-        # 所属
-        form.addWidget(QLabel("所属:"), 0, 2)
+        # 所属墙
+        form.addWidget(QLabel("所属墙:"), 0, 2)
         self.wall_combo = QComboBox()
         self._fill_wall_combo()
         form.addWidget(self.wall_combo, 0, 3)
@@ -548,8 +499,8 @@ class BatchOpeningDialog(QDialog):
         self.height_spin.valueChanged.connect(self._update_preview)
         form.addWidget(self.height_spin, 2, 3)
 
-        # 底高
-        form.addWidget(QLabel("底高:"), 3, 0)
+        # 底高 / h_offset
+        form.addWidget(QLabel("高度偏移:"), 3, 0)
         self.z_spin = QDoubleSpinBox()
         self.z_spin.setRange(0, 20)
         self.z_spin.setValue(0)
@@ -557,9 +508,9 @@ class BatchOpeningDialog(QDialog):
         self.z_spin.valueChanged.connect(self._update_preview)
         form.addWidget(self.z_spin, 3, 1)
 
-        # 楼梯口的名称
+        # 屋顶开口的名称
         form.addWidget(QLabel("名称:"), 3, 2)
-        self.name_edit = QLineEdit("楼梯口")
+        self.name_edit = QLineEdit("屋顶开口")
         form.addWidget(self.name_edit, 3, 3)
 
         layout.addLayout(form)
@@ -573,7 +524,7 @@ class BatchOpeningDialog(QDialog):
         self.preview_table = QTableWidget()
         self.preview_table.setColumnCount(4)
         self.preview_table.setHorizontalHeaderLabels(
-            ["序号", "位置/XY", "长×宽", "底高"])
+            ["序号", "偏移/XY", "尺寸", "h_offset"])
         self.preview_table.setMaximumHeight(150)
         self.preview_table.horizontalHeader().setStretchLastSection(True)
         layout.addWidget(self.preview_table)
@@ -589,21 +540,19 @@ class BatchOpeningDialog(QDialog):
 
     def _fill_wall_combo(self):
         self.wall_combo.clear()
-        for i, w in enumerate(self.walls):
-            name = w.get("name", f"墙{i}")
-            tag = "外" if w.get("is_external") else "内"
-            self.wall_combo.addItem(f"{name}({tag})", i)
+        for wid in WALL_IDS:
+            self.wall_combo.addItem(WALL_LABELS[wid], wid)
         self.wall_combo.currentIndexChanged.connect(self._update_preview)
 
     def _on_type_changed(self, t):
-        is_hole = (t == "楼梯口")
+        is_hole = (t == "屋顶开口")
         # 所属：禁用+灰色
         self.wall_combo.setEnabled(not is_hole)
         if is_hole:
             self.wall_combo.setStyleSheet("QComboBox{background:#313244;color:#6c7086;}")
         else:
             self.wall_combo.setStyleSheet("")
-        # 底高：禁用+灰色
+        # 高度偏移：禁用+灰色
         self.z_spin.setEnabled(not is_hole)
         if is_hole:
             self.z_spin.setStyleSheet("QDoubleSpinBox{background:#313244;color:#6c7086;}")
@@ -615,7 +564,7 @@ class BatchOpeningDialog(QDialog):
             self.name_edit.setStyleSheet("")
         else:
             self.name_edit.setStyleSheet("QLineEdit{background:#313244;color:#6c7086;}")
-        
+
         if t == "window":
             self.z_spin.setValue(1.0)
         elif t == "door":
@@ -623,27 +572,30 @@ class BatchOpeningDialog(QDialog):
         self._update_preview()
 
     def _get_wall_length(self):
-        idx = self.wall_combo.currentData()
-        if idx is None or idx >= len(self.walls):
+        """Get the wall length based on wall id and model dimensions."""
+        wid = self.wall_combo.currentData()
+        if wid is None or self.model is None:
             return 0
-        w = self.walls[idx]
-        return ((w["x2"] - w["x1"])**2 + (w["y2"] - w["y1"])**2)**0.5
+        if wid in ("x_min", "x_max"):
+            return getattr(self.model, "width", 15)
+        else:
+            return getattr(self.model, "length", 20)
 
     def _update_preview(self):
-        is_hole = self.type_combo.currentText() == "楼梯口"
+        is_hole = self.type_combo.currentText() == "屋顶开口"
         count = self.count_spin.value()
         o_w = self.width_spin.value()
         o_h = self.height_spin.value()
         margin = self.margin_spin.value()
 
         if is_hole:
-            # 楼梯口：沿X方向等距分布
+            # 屋顶开口：沿X方向等距分布
             L = self.model.length if self.model else 20
             W = self.model.width if self.model else 15
             usable = L - 2 * margin
             total_w = count * o_w
             if total_w > usable or usable <= 0:
-                self.status_label.setText(f"⚠️ 放不下！可用{usable:.1f}m")
+                self.status_label.setText(f"放不下！可用{usable:.1f}m")
                 self.status_label.setStyleSheet("color:#f38ba8;")
                 self._result = []
                 self.preview_table.setRowCount(0)
@@ -658,20 +610,19 @@ class BatchOpeningDialog(QDialog):
                 x = margin + spacing * (i + 1) + o_w * i
                 item = {
                     "_kind": "hole",
-                    "name": self.name_edit.text() or f"洞口{i+1}",
-                    "x": round(x, 2), "y": round(y_pos, 2),
-                    "length": o_w, "width": o_h,
+                    "name": self.name_edit.text() or f"开口{i+1}",
+                    "boundary": [round(x, 2), o_w, round(y_pos, 2), o_h],
                 }
                 self._result.append(item)
                 self.preview_table.setItem(i, 0, QTableWidgetItem(str(i+1)))
                 self.preview_table.setItem(
                     i, 1, QTableWidgetItem(f"({x:.1f},{y_pos:.1f})"))
                 self.preview_table.setItem(
-                    i, 2, QTableWidgetItem(f"{o_w:.1f}×{o_h:.1f}"))
+                    i, 2, QTableWidgetItem(f"{o_w:.1f}x{o_h:.1f}"))
                 self.preview_table.setItem(i, 3, QTableWidgetItem("-"))
 
             self.status_label.setText(
-                f"✅ {count}个楼梯口 | 间距{spacing:.2f}m")
+                f"{count}个屋顶开口 | 间距{spacing:.2f}m")
             self.status_label.setStyleSheet("color:#a6e3a1;")
         else:
             # 门窗：沿墙等距
@@ -680,37 +631,41 @@ class BatchOpeningDialog(QDialog):
             total_w = count * o_w
             if total_w > usable or usable <= 0:
                 self.status_label.setText(
-                    f"⚠️ 墙长{wall_len:.1f}m 放不下{count}个")
+                    f"墙长{wall_len:.1f}m 放不下{count}个")
                 self.status_label.setStyleSheet("color:#f38ba8;")
                 self._result = []
                 self.preview_table.setRowCount(0)
                 return
 
             spacing = (usable - total_w) / (count + 1) if count > 0 else 0
+            wall_id = self.wall_combo.currentData() or "x_min"
 
             self._result = []
             self.preview_table.setRowCount(count)
             for i in range(count):
-                center = margin + spacing * (i + 1) + o_w * (i + 0.5)
-                pos = center / wall_len
-                item = {
-                    "wall_index": self.wall_combo.currentData(),
-                    "type": self.type_combo.currentText(),
-                    "position": round(pos, 4),
-                    "width": o_w, "height": o_h,
-                    "z_bottom": self.z_spin.value(),
-                }
+                w_offset = margin + spacing * (i + 1) + o_w * i
+                from models.building import Opening
+                item = Opening(
+                    wall=wall_id,
+                    type=self.type_combo.currentText(),
+                    boundary=[
+                        round(w_offset, 4),
+                        o_w,
+                        self.z_spin.value(),
+                        o_h,
+                    ],
+                )
                 self._result.append(item)
                 self.preview_table.setItem(i, 0, QTableWidgetItem(str(i+1)))
                 self.preview_table.setItem(
-                    i, 1, QTableWidgetItem(f"{pos:.3f}"))
+                    i, 1, QTableWidgetItem(f"{w_offset:.3f}"))
                 self.preview_table.setItem(
-                    i, 2, QTableWidgetItem(f"{o_w:.1f}×{o_h:.1f}"))
+                    i, 2, QTableWidgetItem(f"{o_w:.1f}x{o_h:.1f}"))
                 self.preview_table.setItem(
                     i, 3, QTableWidgetItem(f"{self.z_spin.value():.1f}"))
 
             self.status_label.setText(
-                f"✅ 墙长{wall_len:.1f}m | {count}个 | 间距{spacing:.2f}m")
+                f"墙长{wall_len:.1f}m | {count}个 | 间距{spacing:.2f}m")
             self.status_label.setStyleSheet("color:#a6e3a1;")
 
     def _validate_and_accept(self):
@@ -723,159 +678,23 @@ class BatchOpeningDialog(QDialog):
         return self._result
     
 
-class BatchWallDialog(QDialog):
-    """批量生成内墙"""
-
-    def __init__(self, parent=None, model=None):
-        super().__init__(parent)
-        self.model = model
-        self._result = []
-        self.setWindowTitle("批量生成内墙")
-        self.setMinimumWidth(420)
-
-        layout = QVBoxLayout(self)
-        form = QGridLayout()
-        form.setSpacing(4)
-        form.setColumnStretch(1, 1)
-        form.setColumnStretch(3, 1)
-
-        L = model.length if model else 20
-        W = model.width if model else 15
-
-        # 方向
-        form.addWidget(QLabel("方向:"), 0, 0)
-        self.dir_combo = QComboBox()
-        self.dir_combo.addItems(["横向(东西)", "纵向(南北)"])
-        self.dir_combo.currentIndexChanged.connect(self._update_preview)
-        form.addWidget(self.dir_combo, 0, 1)
-
-        # 数量
-        form.addWidget(QLabel("数量:"), 0, 2)
-        self.count_spin = QSpinBox()
-        self.count_spin.setRange(1, 50)
-        self.count_spin.setValue(2)
-        self.count_spin.valueChanged.connect(self._update_preview)
-        form.addWidget(self.count_spin, 0, 3)
-
-        # 墙厚
-        form.addWidget(QLabel("墙厚:"), 1, 0)
-        self.thick_spin = QDoubleSpinBox()
-        self.thick_spin.setRange(0.05, 1.0)
-        self.thick_spin.setValue(model.wall_thickness if model else 0.24)
-        self.thick_spin.setSuffix(" m")
-        form.addWidget(self.thick_spin, 1, 1)
-
-        # 边距
-        form.addWidget(QLabel("边距:"), 1, 2)
-        self.margin_spin = QDoubleSpinBox()
-        self.margin_spin.setRange(0, 50)
-        self.margin_spin.setValue(1.0)
-        self.margin_spin.setSuffix(" m")
-        self.margin_spin.valueChanged.connect(self._update_preview)
-        form.addWidget(self.margin_spin, 1, 3)
-
-        layout.addLayout(form)
-
-        self.status_label = QLabel("")
-        self.status_label.setStyleSheet("color:#a6adc8; font-size:12px;")
-        layout.addWidget(self.status_label)
-
-        self.preview_table = QTableWidget()
-        self.preview_table.setColumnCount(4)
-        self.preview_table.setHorizontalHeaderLabels(
-            ["名称", "起点", "终点", "厚度"])
-        self.preview_table.setMaximumHeight(150)
-        self.preview_table.horizontalHeader().setStretchLastSection(True)
-        layout.addWidget(self.preview_table)
-
-        buttons = QDialogButtonBox(
-            QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
-        buttons.accepted.connect(self._validate_and_accept)
-        buttons.rejected.connect(self.reject)
-        layout.addWidget(buttons)
-
-        self._update_preview()
-
-    def _update_preview(self):
-        L = self.model.length if self.model else 20
-        W = self.model.width if self.model else 15
-        count = self.count_spin.value()
-        margin = self.margin_spin.value()
-        is_horizontal = self.dir_combo.currentIndex() == 0
-        thick = self.thick_spin.value()
-
-        if is_horizontal:
-            # 横向墙：沿Y方向等距，墙从x=0到x=L
-            usable = W - 2 * margin
-        else:
-            usable = L - 2 * margin
-
-        if usable <= 0:
-            self.status_label.setText("⚠️ 边距太大")
-            self.status_label.setStyleSheet("color:#f38ba8;")
-            self._result = []
-            self.preview_table.setRowCount(0)
-            return
-
-        spacing = usable / (count + 1)
-
-        self._result = []
-        self.preview_table.setRowCount(count)
-        for i in range(count):
-            pos = margin + spacing * (i + 1)
-            if is_horizontal:
-                wall = {
-                    "name": f"内墙H{i+1}",
-                    "x1": 0, "y1": round(pos, 2),
-                    "x2": L, "y2": round(pos, 2),
-                    "thickness": thick,
-                    "height": 3.0,
-                }
-            else:
-                wall = {
-                    "name": f"内墙V{i+1}",
-                    "x1": round(pos, 2), "y1": 0,
-                    "x2": round(pos, 2), "y2": W,
-                    "thickness": thick,
-                    "height": 3.0,
-                }
-            self._result.append(wall)
-            self.preview_table.setItem(
-                i, 0, QTableWidgetItem(wall["name"]))
-            self.preview_table.setItem(
-                i, 1, QTableWidgetItem(
-                    f"({wall['x1']:.1f},{wall['y1']:.1f})"))
-            self.preview_table.setItem(
-                i, 2, QTableWidgetItem(
-                    f"({wall['x2']:.1f},{wall['y2']:.1f})"))
-            self.preview_table.setItem(
-                i, 3, QTableWidgetItem(f"{thick:.2f}"))
-
-        self.status_label.setText(
-            f"✅ {count}面内墙 | 间距{spacing:.2f}m")
-        self.status_label.setStyleSheet("color:#a6e3a1;")
-
-    def _validate_and_accept(self):
-        if not self._result:
-            QMessageBox.warning(self, "错误", "无法生成")
-            return
-        self.accept()
-
-    def get_data(self):
-        return self._result
-
 
 class WallOpeningManagerDialog(QDialog):
-    """门窗管理对话框：左侧墙体列表，右侧该墙开口列表"""
+    """门窗管理对话框：左侧墙体列表，右侧该墙开口列表.
+
+    Now uses string wall IDs ("x_min", "x_max", "y_min", "y_max") and
+    Opening objects instead of index-based wall_index dicts.
+    """
 
     def __init__(self, parent=None, walls=None, openings=None, building_length=20, building_width=15):
         super().__init__(parent)
         self.setWindowTitle("门窗管理")
         self.setMinimumSize(700, 500)
-        self._walls = walls or []
-        self._openings = list(openings or [])
+        # walls param is ignored; we always show the 4 exterior walls
         self._L = building_length
         self._W = building_width
+        # openings: list of Opening objects
+        self._openings = list(openings or [])
         self._build_ui()
         self._refresh_wall_list()
 
@@ -888,8 +707,8 @@ class WallOpeningManagerDialog(QDialog):
         left = QVBoxLayout()
         left.addWidget(QLabel("墙体列表"))
         self.wall_list = QTableWidget()
-        self.wall_list.setColumnCount(3)
-        self.wall_list.setHorizontalHeaderLabels(["名称", "类型", "长度"])
+        self.wall_list.setColumnCount(2)
+        self.wall_list.setHorizontalHeaderLabels(["名称", "长度"])
         self.wall_list.setSelectionBehavior(QTableWidget.SelectRows)
         self.wall_list.setSelectionMode(QTableWidget.SingleSelection)
         self.wall_list.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
@@ -901,7 +720,7 @@ class WallOpeningManagerDialog(QDialog):
         right.addWidget(QLabel("该墙开口"))
         self.opening_table = QTableWidget()
         self.opening_table.setColumnCount(5)
-        self.opening_table.setHorizontalHeaderLabels(["类型", "位置", "宽度", "高度", "底高"])
+        self.opening_table.setHorizontalHeaderLabels(["类型", "偏移", "宽度", "高度", "h偏移"])
         self.opening_table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
         right.addWidget(self.opening_table)
 
@@ -937,39 +756,48 @@ class WallOpeningManagerDialog(QDialog):
         root.addWidget(btn_box)
 
     def _refresh_wall_list(self):
-        self.wall_list.setRowCount(len(self._walls))
-        for i, w in enumerate(self._walls):
-            name = w.get("name", f"墙{i}")
-            if w.get("is_fire_partition"):
-                wtype = "防火墙"
-            elif w.get("is_external"):
-                wtype = "外墙"
-            else:
-                wtype = "内墙"
-            wlen = ((w["x2"] - w["x1"])**2 + (w["y2"] - w["y1"])**2)**0.5
-            self.wall_list.setItem(i, 0, QTableWidgetItem(name))
-            self.wall_list.setItem(i, 1, QTableWidgetItem(wtype))
-            self.wall_list.setItem(i, 2, QTableWidgetItem(f"{wlen:.1f}m"))
+        wall_info = [
+            ("x_min", WALL_LABELS["x_min"], self._W),
+            ("x_max", WALL_LABELS["x_max"], self._W),
+            ("y_min", WALL_LABELS["y_min"], self._L),
+            ("y_max", WALL_LABELS["y_max"], self._L),
+        ]
+        self.wall_list.setRowCount(len(wall_info))
+        self._wall_ids = [wi[0] for wi in wall_info]
+        for i, (wid, label, wlen) in enumerate(wall_info):
+            self.wall_list.setItem(i, 0, QTableWidgetItem(label))
+            self.wall_list.setItem(i, 1, QTableWidgetItem(f"{wlen:.1f}m"))
 
     def _on_wall_selected(self, row, col, prev_row, prev_col):
-        if row < 0:
+        if row < 0 or row >= len(self._wall_ids):
             self.opening_table.setRowCount(0)
             return
-        wall_openings = [o for o in self._openings if o.get("wall_index") == row]
+        wid = self._wall_ids[row]
+        from models.building import Opening
+        wall_openings = [o for o in self._openings
+                         if (o.wall if isinstance(o, Opening) else o.get("wall", "")) == wid]
         self.opening_table.setRowCount(len(wall_openings))
         for i, o in enumerate(wall_openings):
-            self.opening_table.setItem(i, 0, QTableWidgetItem(o.get("type", "door")))
-            self.opening_table.setItem(i, 1, QTableWidgetItem(f"{o.get('position', 0.5):.2f}"))
-            self.opening_table.setItem(i, 2, QTableWidgetItem(f"{o.get('width', 1.0):.1f}"))
-            self.opening_table.setItem(i, 3, QTableWidgetItem(f"{o.get('height', 2.0):.1f}"))
-            self.opening_table.setItem(i, 4, QTableWidgetItem(f"{o.get('z_bottom', 0):.1f}"))
+            if isinstance(o, Opening):
+                bd = o.boundary
+                tp = o.type
+            else:
+                bd = o.get("boundary", [0, 1, 0, 2])
+                tp = o.get("type", "door")
+            self.opening_table.setItem(i, 0, QTableWidgetItem(tp))
+            self.opening_table.setItem(i, 1, QTableWidgetItem(f"{bd[0]:.2f}"))
+            self.opening_table.setItem(i, 2, QTableWidgetItem(f"{bd[1]:.1f}"))
+            self.opening_table.setItem(i, 3, QTableWidgetItem(f"{bd[3]:.1f}"))
+            self.opening_table.setItem(i, 4, QTableWidgetItem(f"{bd[2]:.1f}"))
 
     def _add_opening(self):
         wi = self.wall_list.currentRow()
-        if wi < 0:
+        if wi < 0 or wi >= len(self._wall_ids):
             QMessageBox.warning(self, "提示", "请先选择一面墙")
             return
-        dlg = OpeningDialog(self, opening={"wall_index": wi}, walls=self._walls)
+        wid = self._wall_ids[wi]
+        from models.building import Opening
+        dlg = OpeningDialog(self, opening=Opening(wall=wid, type="door", boundary=[0, 2, 0, 2]))
         if dlg.exec() == QDialog.Accepted:
             self._openings.append(dlg.get_data())
             self._on_wall_selected(wi, 0, -1, 0)
@@ -977,13 +805,16 @@ class WallOpeningManagerDialog(QDialog):
     def _edit_opening(self):
         wi = self.wall_list.currentRow()
         oi = self.opening_table.currentRow()
-        if wi < 0 or oi < 0:
+        if wi < 0 or oi < 0 or wi >= len(self._wall_ids):
             return
-        wall_openings = [o for o in self._openings if o.get("wall_index") == wi]
+        wid = self._wall_ids[wi]
+        from models.building import Opening
+        wall_openings = [o for o in self._openings
+                         if (o.wall if isinstance(o, Opening) else o.get("wall", "")) == wid]
         if oi >= len(wall_openings):
             return
         opening = wall_openings[oi]
-        dlg = OpeningDialog(self, opening=opening, walls=self._walls)
+        dlg = OpeningDialog(self, opening=opening)
         if dlg.exec() == QDialog.Accepted:
             new_data = dlg.get_data()
             # Update in-place
@@ -994,9 +825,12 @@ class WallOpeningManagerDialog(QDialog):
     def _delete_opening(self):
         wi = self.wall_list.currentRow()
         oi = self.opening_table.currentRow()
-        if wi < 0 or oi < 0:
+        if wi < 0 or oi < 0 or wi >= len(self._wall_ids):
             return
-        wall_openings = [o for o in self._openings if o.get("wall_index") == wi]
+        wid = self._wall_ids[wi]
+        from models.building import Opening
+        wall_openings = [o for o in self._openings
+                         if (o.wall if isinstance(o, Opening) else o.get("wall", "")) == wid]
         if oi < len(wall_openings):
             self._openings.remove(wall_openings[oi])
             self._on_wall_selected(wi, 0, -1, 0)
