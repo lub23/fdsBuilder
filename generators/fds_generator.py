@@ -4,181 +4,475 @@
 @File  : fds_generator.py
 @Author: Lubber
 @Date  : 2026-02-27
-@Version : 2.0
-@Desc  : FDS file generator for building models
+@Version : 3.0
+@Desc  : FDS file generator for boundary-based BuildingGroup model
 """
 
 import re
 import math
-from models.building import BuildingModel
-from models.materials import MATERIAL_LIBRARY
-from models.combustibles import SPECIALIZED_COMPONENTS, COMBUSTIBLE_LIBRARY
+from models.building import BuildingGroup, Building, Story, Opening, FireCompartment, Roof
+from models.geometry import detect_coplanar_openings, wall_length_for_building, wall_length_for_fc, resolve_negative_offset, is_coplanar
+from models.materials import MATERIAL_LIBRARY, COMBUSTIBLE_LIBRARY
+from models.combustibles import SPECIALIZED_COMPONENTS
+
+
+# 5cm redundancy expansion in the wall-normal direction for HOLEs
+REDUNDANCY = 0.05
 
 
 # ============================================================
-# FDS生成器
+# FDS Generator
 # ============================================================
 class FDSGenerator:
-    """FDS文件生成器"""
+    """FDS file generator for BuildingGroup."""
 
-    def __init__(self, model):
-        self.model = model
+    def __init__(self, building_group):
+        """Accept a BuildingGroup directly, or a legacy model object.
+
+        Legacy callers may pass an object with a ``building_group`` attribute;
+        we extract the BuildingGroup from it.
+        """
+        if isinstance(building_group, BuildingGroup):
+            self.bg = building_group
+        elif hasattr(building_group, "building_group"):
+            # Legacy compat: old callers pass a model with .building_group
+            bg = building_group.building_group
+            if isinstance(bg, BuildingGroup):
+                self.bg = bg
+            else:
+                self.bg = BuildingGroup.from_dict(bg if isinstance(bg, dict) else bg.to_dict())
+            # Copy top-level fields from legacy model if present
+            if hasattr(building_group, "heat_source") and building_group.heat_source:
+                self.bg.heat_source = building_group.heat_source
+            if hasattr(building_group, "simulation_time"):
+                self.bg.simulation_time = building_group.simulation_time
+            if hasattr(building_group, "domain"):
+                self.bg.domain = building_group.domain
+            if hasattr(building_group, "output"):
+                self.bg.output = building_group.output
+            if hasattr(building_group, "chid"):
+                self._chid_override = building_group.chid
+            if hasattr(building_group, "materials"):
+                self._materials_override = building_group.materials
+        else:
+            raise TypeError(f"Expected BuildingGroup, got {type(building_group)}")
+
+    # ------------------------------------------------------------------
+    # Low-level emitters
+    # ------------------------------------------------------------------
+    def _emit_obst(self, lines, bounds, surf="WALL", comment=""):
+        """Append an &OBST line.  bounds = [x1, x2, y1, y2, z1, z2]."""
+        x1, x2, y1, y2, z1, z2 = bounds
+        c = f"  ! {comment}" if comment else ""
+        lines.append(
+            f"&OBST XB={x1:.3f},{x2:.3f},{y1:.3f},{y2:.3f},{z1:.3f},{z2:.3f}, SURF_ID='{surf}' /{c}\n"
+        )
+
+    def _emit_hole(self, lines, bounds, comment=""):
+        """Append a &HOLE line.  bounds = [x1, x2, y1, y2, z1, z2]."""
+        x1, x2, y1, y2, z1, z2 = bounds
+        c = f"  ! {comment}" if comment else ""
+        lines.append(
+            f"&HOLE XB={x1:.3f},{x2:.3f},{y1:.3f},{y2:.3f},{z1:.3f},{z2:.3f} /{c}\n"
+        )
 
     def gen_box(self, x1, x2, y1, y2, z1, z2, surf="WALL"):
+        """Compat helper returning a formatted &OBST string."""
         return f"&OBST XB={x1:.3f},{x2:.3f},{y1:.3f},{y2:.3f},{z1:.3f},{z2:.3f}, SURF_ID='{surf}' /\n"
 
-    def generate_materials(self) -> str:
-        fds = "! ========== 材料定义 ==========\n"
-        used_materials = set(self.model.materials.values())
-        # Also collect materials used by specialized component parts
-        component_matls = set()
-        for b in self.model.building_group.buildings:
-            for story in b.stories:
-                for cb in story.combustibles.items:
-                    if cb.component_key and cb.material_key:
-                        component_matls.add(cb.material_key)
-            # Also collect from building specialized_components
-            for sc_info in getattr(b, "specialized_components", []):
-                comp = SPECIALIZED_COMPONENTS.get(sc_info.get("key", ""))
-                if comp:
-                    for part in comp.parts:
-                        if part.material_key:
-                            component_matls.add(part.material_key)
+    # ------------------------------------------------------------------
+    # Materials & Surfaces
+    # ------------------------------------------------------------------
+    def _generate_materials(self, lines):
+        """Generate &MATL and &SURF blocks."""
+        bg = self.bg
+        buildings = bg.buildings
 
-        # Also collect materials from COMBUSTIBLE_LIBRARY for MATL definitions
-        all_matl_keys = used_materials | component_matls
-        for mat_name in all_matl_keys:
+        # Collect which MATL keys are referenced
+        wall_matl_keys = set()
+        combustible_keys = set()
+        component_matl_keys = set()
+
+        # Legacy materials override (for existing UI integration)
+        materials_map = getattr(self, "_materials_override", None) or {}
+        wall_matl_keys.update(materials_map.values())
+
+        for b in buildings:
+            for story in b.stories:
+                for fc in story.fire_compartments:
+                    for cb in fc.combustibles:
+                        key = cb.get("key", "")
+                        if key:
+                            combustible_keys.add(key)
+                    for sc_info in fc.specialized_components:
+                        comp = SPECIALIZED_COMPONENTS.get(sc_info.get("key", ""))
+                        if comp:
+                            for part in comp.parts:
+                                if part.material_key:
+                                    component_matl_keys.add(part.material_key)
+
+        lines.append("! ========== 材料定义 ==========\n")
+
+        # Wall / structural materials
+        all_structural = wall_matl_keys | component_matl_keys
+        for mat_name in sorted(all_structural):
             if mat_name in MATERIAL_LIBRARY:
                 mat = MATERIAL_LIBRARY[mat_name]
-                fds += f"&MATL ID='{mat_name}', DENSITY={mat['DENSITY']}, CONDUCTIVITY={mat['CONDUCTIVITY']}, SPECIFIC_HEAT={mat['SPECIFIC_HEAT']} /\n"
-            elif mat_name in COMBUSTIBLE_LIBRARY:
-                # Materials from COMBUSTIBLE_LIBRARY need MATL definitions too
-                mat = COMBUSTIBLE_LIBRARY[mat_name]
-                mt = mat.get("matl", {})
-                if mt:
-                    fds += (
-                        f"&MATL ID='{mat_name}',\n"
-                        f"      DENSITY={mt.get('DENSITY', 1000)},\n"
-                        f"      CONDUCTIVITY={mt.get('CONDUCTIVITY', 0.2)},\n"
-                        f"      SPECIFIC_HEAT={mt.get('SPECIFIC_HEAT', 1.0)} /\n"
-                    )
+                lines.append(
+                    f"&MATL ID='{mat_name}', DENSITY={mat['DENSITY']}, "
+                    f"CONDUCTIVITY={mat['CONDUCTIVITY']}, SPECIFIC_HEAT={mat['SPECIFIC_HEAT']} /\n"
+                )
 
-        fds += "\n! ========== 表面定义 ==========\n"
+        # Default structural materials (always need CONCRETE at minimum)
+        for default_mat in ("CONCRETE",):
+            if default_mat not in all_structural and default_mat in MATERIAL_LIBRARY:
+                mat = MATERIAL_LIBRARY[default_mat]
+                lines.append(
+                    f"&MATL ID='{default_mat}', DENSITY={mat['DENSITY']}, "
+                    f"CONDUCTIVITY={mat['CONDUCTIVITY']}, SPECIFIC_HEAT={mat['SPECIFIC_HEAT']} /\n"
+                )
+
+        lines.append("\n! ========== 表面定义 ==========\n")
+
+        # Standard surfaces
         surfaces = {
             "WALL": ("walls", "墙体"),
             "FLOOR": ("floor", "地板"),
             "ROOF": ("roof", "屋顶"),
         }
         for surf_name, (mat_key, desc) in surfaces.items():
-            mat_name = self.model.materials.get(mat_key, "CONCRETE")
+            mat_name = materials_map.get(mat_key, "CONCRETE")
             if mat_name in MATERIAL_LIBRARY:
                 thick = MATERIAL_LIBRARY[mat_name]["THICKNESS"]
-                fds += f"&SURF ID='{surf_name}', MATL_ID='{mat_name}', THICKNESS={thick} /  ! {desc}\n"
+                lines.append(f"&SURF ID='{surf_name}', MATL_ID='{mat_name}', THICKNESS={thick} /  ! {desc}\n")
+
         # Specialized component surfaces
         comp_surfs_done = set()
-        for mat_key in component_matls:
+        for mat_key in sorted(component_matl_keys):
             surf_id = f"{mat_key}_SURF"
             if surf_id in comp_surfs_done:
                 continue
-            # Check MATERIAL_LIBRARY first, then COMBUSTIBLE_LIBRARY
             mat = MATERIAL_LIBRARY.get(mat_key) or COMBUSTIBLE_LIBRARY.get(mat_key)
             if mat:
                 thick = mat.get("THICKNESS", 0.1)
-                fds += (
-                    f"&SURF ID='{surf_id}', MATL_ID='{mat_key}', THICKNESS={thick} /\n"
-                )
+                lines.append(f"&SURF ID='{surf_id}', MATL_ID='{mat_key}', THICKNESS={thick} /\n")
                 comp_surfs_done.add(surf_id)
-        # Also add standard aliases used in component definitions
-        for alias in (
-            "PROPELLANT_SURF",
-            "GASOLINE_SURF",
-            "ELECTROLYTE_SURF",
-            "STEEL_SURF",
-            "ALUMINUM_SURF",
-        ):
-            mat_key = alias.replace("_SURF", "")
-            if mat_key == "PROPELLANT":
-                mat_key = "SOLID_PROPELLANT"
-            if alias not in comp_surfs_done and mat_key in component_matls:
-                if mat_key in MATERIAL_LIBRARY:
-                    mat = MATERIAL_LIBRARY[mat_key]
-                    fds += f"&SURF ID='{alias}', MATL_ID='{mat_key}', THICKNESS={mat['THICKNESS']} /\n"
-                    comp_surfs_done.add(alias)
-        # 每层楼板可能材料不同，生成 FLOOR_xxF 表面
-        for story in self.model.stories:
-            slab_mat = story.floor_slab.material
-            surf_id = f"FLOOR_{story.name}"
-            if slab_mat in MATERIAL_LIBRARY:
-                thick = MATERIAL_LIBRARY[slab_mat]["THICKNESS"]
-                fds += (
-                    f"&SURF ID='{surf_id}', MATL_ID='{slab_mat}', THICKNESS={thick} /\n"
+
+        # Combustible MATL / SURF definitions
+        if combustible_keys:
+            lines.append("\n! ========== 可燃物材料/表面 ==========\n")
+            for ck in sorted(combustible_keys):
+                if ck not in COMBUSTIBLE_LIBRARY:
+                    continue
+                cb_def = COMBUSTIBLE_LIBRARY[ck]
+                mt = cb_def.get("matl", {})
+                if not mt:
+                    continue
+                matl_id = f"MATL_{ck}"
+                surf_id = f"SURF_{ck}"
+                lines.append(
+                    f"&MATL ID='{matl_id}',\n"
+                    f"      DENSITY={mt.get('DENSITY', 1000)},\n"
+                    f"      CONDUCTIVITY={mt.get('CONDUCTIVITY', 0.2)},\n"
+                    f"      SPECIFIC_HEAT={mt.get('SPECIFIC_HEAT', 1.0)} /\n\n"
+                )
+                hrrpua = cb_def.get("hrrpua", 300)
+                color = cb_def.get("color", "RED")
+                lines.append(
+                    f"&SURF ID='{surf_id}',\n"
+                    f"      MATL_ID='{matl_id}',\n"
+                    f"      THICKNESS=0.05,\n"
+                    f"      IGNITION_TEMPERATURE=250.0,\n"
+                    f"      HRRPUA={hrrpua},\n"
+                    f"      COLOR='{color}' /\n\n"
                 )
 
-        return fds + "\n"
+        lines.append("\n")
 
-    def generate_specialized_components(self, building, story, z0) -> str:
-        """Legacy wrapper - not used directly anymore."""
-        return ""
+    # ------------------------------------------------------------------
+    # Exterior walls
+    # ------------------------------------------------------------------
+    def _generate_exterior_walls(self, building, story, story_index, lines):
+        """Generate 4 exterior wall OBST + openings as HOLE."""
+        walls = building.get_exterior_walls(story_index)
 
-    def _generate_specialized_for_building(self, building, story, z0, ox, oy) -> str:
-        """Generate OBST blocks for specialized components with coord offset."""
-        sc_list = getattr(building, "specialized_components", [])
-        if not sc_list:
-            return ""
+        # Merge story-level exterior openings + coplanar FC openings
+        all_exterior_openings = list(story.openings)
+        all_exterior_openings += detect_coplanar_openings(building, story)
 
-        L, W = building.length, building.width
-        x_off, y_off = building.x_offset, building.y_offset
-        fds = "! -- 专用组件 --\n"
+        for wall_id, obst_bounds in walls.items():
+            wall_openings = [o for o in all_exterior_openings if o.wall == wall_id]
+            self._emit_obst(lines, obst_bounds, surf="WALL", comment=f"ext wall {wall_id}")
+            for opening in wall_openings:
+                hole = self._opening_to_hole(wall_id, obst_bounds, opening, building)
+                self._emit_hole(lines, hole, comment=f"{opening.type} on {wall_id}")
 
-        for sc_info in sc_list:
-            key = sc_info.get("key", "")
-            comp = SPECIALIZED_COMPONENTS.get(key)
-            if not comp:
+    def _opening_to_hole(self, wall_id, obst_bounds, opening, building):
+        """Convert an Opening to a HOLE bounding box for an exterior wall."""
+        ox, L, oy, W = building.boundary
+        t = building.wall_thickness
+        w_off, w, h_off, h = opening.boundary
+
+        # Resolve negative w_offset
+        if wall_id in ("y_min", "y_max"):
+            wall_len = L
+        else:
+            wall_len = W
+        if w_off < 0:
+            w_off = resolve_negative_offset(w_off, w, wall_len)
+
+        z0 = obst_bounds[4]  # z_bottom of the wall
+
+        if wall_id == "y_min":
+            return [ox + w_off, ox + w_off + w,
+                    oy - t - REDUNDANCY, oy + REDUNDANCY,
+                    z0 + h_off, z0 + h_off + h]
+        elif wall_id == "y_max":
+            return [ox + w_off, ox + w_off + w,
+                    oy + W - REDUNDANCY, oy + W + t + REDUNDANCY,
+                    z0 + h_off, z0 + h_off + h]
+        elif wall_id == "x_min":
+            return [ox - t - REDUNDANCY, ox + REDUNDANCY,
+                    oy + w_off, oy + w_off + w,
+                    z0 + h_off, z0 + h_off + h]
+        else:  # x_max
+            return [ox + L - REDUNDANCY, ox + L + t + REDUNDANCY,
+                    oy + w_off, oy + w_off + w,
+                    z0 + h_off, z0 + h_off + h]
+
+    # ------------------------------------------------------------------
+    # Fire compartment walls (non-coplanar only)
+    # ------------------------------------------------------------------
+    def _generate_firewalls(self, building, story, lines):
+        """Generate partition wall OBSTs for fire compartments."""
+        ox, L, oy, W = building.boundary
+        z0, z1 = story.z_bottom, story.z_top
+
+        for fc in story.fire_compartments:
+            if fc.firewall_thickness <= 0:
                 continue
-            comp_x = sc_info.get("x", building.wall_thickness + 1.0)
-            comp_y = sc_info.get("y", building.wall_thickness + 1.0)
-            count = sc_info.get("count", 1)
+            x_min, x_max, y_min, y_max = fc.boundary
+            ft = fc.firewall_thickness
 
-            for ci in range(count):
-                inst_x = comp_x + ci * (comp.total_length + 2.0)
-                fds += f"! {comp.name} #{ci + 1}\n"
-                for pi, part in enumerate(comp.parts):
-                    px = inst_x + part.dx - L / 2 + x_off + ox
-                    py = comp_y + part.dy - W / 2 + y_off + oy
-                    pz = z0 + part.dz
-                    surf = part.surf_id or "INERT"
-                    fds += (
-                        f"&OBST XB={px:.2f},{px + part.length:.2f},"
-                        f"{py:.2f},{py + part.width:.2f},"
-                        f"{pz:.2f},{pz + part.height:.2f},\n"
-                        f"      SURF_ID='{surf}',\n"
-                        f"      ID='{key}_{ci}_{pi}' /\n"
+            # Only non-coplanar boundaries get firewalls
+            # x_min boundary
+            if x_min > 0 and not is_coplanar(fc.boundary, L, W, "x_min"):
+                self._emit_obst(lines,
+                    [ox + x_min - ft/2, ox + x_min + ft/2, oy + y_min, oy + y_max, z0, z1],
+                    surf="WALL", comment=f"firewall {fc.name} x_min")
+            # x_max boundary
+            if abs(x_max - L) > 1e-6 and not is_coplanar(fc.boundary, L, W, "x_max"):
+                self._emit_obst(lines,
+                    [ox + x_max - ft/2, ox + x_max + ft/2, oy + y_min, oy + y_max, z0, z1],
+                    surf="WALL", comment=f"firewall {fc.name} x_max")
+            # y_min boundary
+            if y_min > 0 and not is_coplanar(fc.boundary, L, W, "y_min"):
+                self._emit_obst(lines,
+                    [ox + x_min, ox + x_max, oy + y_min - ft/2, oy + y_min + ft/2, z0, z1],
+                    surf="WALL", comment=f"firewall {fc.name} y_min")
+            # y_max boundary
+            if abs(y_max - W) > 1e-6 and not is_coplanar(fc.boundary, L, W, "y_max"):
+                self._emit_obst(lines,
+                    [ox + x_min, ox + x_max, oy + y_max - ft/2, oy + y_max + ft/2, z0, z1],
+                    surf="WALL", comment=f"firewall {fc.name} y_max")
+
+            # Non-coplanar FC openings (not on exterior walls) -> HOLE on firewalls
+            for opening in fc.openings:
+                if not is_coplanar(fc.boundary, L, W, opening.wall):
+                    hole = self._fc_opening_to_hole(fc, opening, building, story)
+                    self._emit_hole(lines, hole, comment=f"FC opening {opening.type}")
+
+    def _fc_opening_to_hole(self, fc, opening, building, story):
+        """Convert a FireCompartment opening to a HOLE on the partition firewall."""
+        ox, _L, oy, _W = building.boundary
+        x_min, x_max, y_min, y_max = fc.boundary
+        ft = fc.firewall_thickness
+        w_off, w, h_off, h = opening.boundary
+        z0 = story.z_bottom
+        wall_id = opening.wall
+
+        # Determine wall length for negative offset resolution
+        wl = wall_length_for_fc(fc.boundary, wall_id)
+        if w_off < 0:
+            w_off = resolve_negative_offset(w_off, w, wl)
+
+        if wall_id == "x_min":
+            wx = ox + x_min
+            return [wx - ft/2 - REDUNDANCY, wx + ft/2 + REDUNDANCY,
+                    oy + y_min + w_off, oy + y_min + w_off + w,
+                    z0 + h_off, z0 + h_off + h]
+        elif wall_id == "x_max":
+            wx = ox + x_max
+            return [wx - ft/2 - REDUNDANCY, wx + ft/2 + REDUNDANCY,
+                    oy + y_min + w_off, oy + y_min + w_off + w,
+                    z0 + h_off, z0 + h_off + h]
+        elif wall_id == "y_min":
+            wy = oy + y_min
+            return [ox + x_min + w_off, ox + x_min + w_off + w,
+                    wy - ft/2 - REDUNDANCY, wy + ft/2 + REDUNDANCY,
+                    z0 + h_off, z0 + h_off + h]
+        else:  # y_max
+            wy = oy + y_max
+            return [ox + x_min + w_off, ox + x_min + w_off + w,
+                    wy - ft/2 - REDUNDANCY, wy + ft/2 + REDUNDANCY,
+                    z0 + h_off, z0 + h_off + h]
+
+    # ------------------------------------------------------------------
+    # Roof
+    # ------------------------------------------------------------------
+    def _generate_roof(self, building, story, lines):
+        """Generate roof OBST and its openings as HOLEs."""
+        ox, L, oy, W = building.boundary
+        t = building.wall_thickness
+        z = story.z_top
+        roof = story.roof
+
+        # Roof slab OBST
+        self._emit_obst(lines,
+            [ox - t/2, ox + L + t/2, oy - t/2, oy + W + t/2, z, z + roof.thickness],
+            surf="ROOF", comment="roof slab")
+
+        # Roof openings (HOLEs for stairwells, skylights, etc.)
+        for ro in roof.openings:
+            bnd = ro.get("boundary", ro.get("bnd", [0, 0, 0, 0]))
+            self._emit_hole(lines,
+                [ox + bnd[0], ox + bnd[0] + bnd[1],
+                 oy + bnd[2], oy + bnd[2] + bnd[3],
+                 z - 0.05, z + roof.thickness + 0.05],
+                comment="roof opening")
+
+    # ------------------------------------------------------------------
+    # Combustibles (from fire compartment data)
+    # ------------------------------------------------------------------
+    def _generate_combustibles(self, building, story, lines):
+        """Generate combustible OBSTs from fire compartment data."""
+        ox, L, oy, W = building.boundary
+        z0 = story.z_bottom
+
+        for fc in story.fire_compartments:
+            if not fc.combustibles:
+                continue
+            fc_xmin, fc_xmax, fc_ymin, fc_ymax = fc.boundary
+            fc_L = fc_xmax - fc_xmin
+            fc_W = fc_ymax - fc_ymin
+
+            lines.append(f"! -- 可燃物 ({fc.name}) --\n")
+
+            # Place combustible items within the fire compartment area
+            item_index = 0
+            for cb_entry in fc.combustibles:
+                key = cb_entry.get("key", "")
+                count = cb_entry.get("count", 1)
+                if key not in COMBUSTIBLE_LIBRARY:
+                    continue
+                cb_def = COMBUSTIBLE_LIBRARY[key]
+                cb_L = cb_def.get("length", 1.0)
+                cb_W = cb_def.get("width", 0.8)
+                cb_H = cb_def.get("height", 0.5)
+                surf_id = f"SURF_{key}"
+
+                # Simple grid layout within the FC
+                for ci in range(count):
+                    # Compute position using grid layout
+                    cols = max(1, int(fc_L / (cb_L + 0.5)))
+                    if cols == 0:
+                        cols = 1
+                    row = item_index // cols
+                    col = item_index % cols
+                    local_x = fc_xmin + 0.5 + col * (cb_L + 0.5)
+                    local_y = fc_ymin + 0.5 + row * (cb_W + 0.5)
+
+                    # Clamp to FC bounds
+                    if local_x + cb_L > fc_xmax:
+                        local_x = fc_xmax - cb_L - 0.1
+                    if local_y + cb_W > fc_ymax:
+                        local_y = fc_ymax - cb_W - 0.1
+
+                    x1 = ox + local_x
+                    x2 = ox + local_x + cb_L
+                    y1 = oy + local_y
+                    y2 = oy + local_y + cb_W
+                    z1 = z0
+                    z2 = z0 + cb_H
+
+                    cb_id = f"{key}_{fc.name}_{ci}".replace(" ", "_")
+                    cb_name = cb_def.get("name", key)
+                    lines.append(
+                        f"&OBST XB={x1:.2f},{x2:.2f},{y1:.2f},{y2:.2f},"
+                        f"{z1:.2f},{z2:.2f},\n"
+                        f"      SURF_IDS='{surf_id}','INERT','INERT',\n"
+                        f"      ID='{cb_id}' /  ! {cb_name}\n"
                     )
-        return fds
+                    item_index += 1
 
-    def _generate_heat_source_shifted(self, ox, oy) -> str:
-        """Generate heat source with shifted coordinates and grid strip stitching."""
-        hs = self.model.heat_source
+    # ------------------------------------------------------------------
+    # Specialized components
+    # ------------------------------------------------------------------
+    def _generate_specialized_components(self, building, story, lines):
+        """Generate OBST blocks for specialized components within fire compartments."""
+        ox, _L, oy, _W = building.boundary
+        z0 = story.z_bottom
+
+        for fc in story.fire_compartments:
+            if not fc.specialized_components:
+                continue
+            fc_xmin, fc_xmax, fc_ymin, fc_ymax = fc.boundary
+
+            for sc_info in fc.specialized_components:
+                key = sc_info.get("key", "")
+                comp = SPECIALIZED_COMPONENTS.get(key)
+                if not comp:
+                    continue
+                count = sc_info.get("count", 1)
+                comp_x = sc_info.get("x", fc_xmin + 1.0)
+                comp_y = sc_info.get("y", fc_ymin + 1.0)
+
+                for ci in range(count):
+                    inst_x = comp_x + ci * (comp.total_length + 2.0)
+                    lines.append(f"! {comp.name} #{ci + 1}\n")
+                    for pi, part in enumerate(comp.parts):
+                        px = ox + inst_x + part.dx
+                        py = oy + comp_y + part.dy
+                        pz = z0 + part.dz
+                        surf = part.surf_id or "INERT"
+                        lines.append(
+                            f"&OBST XB={px:.2f},{px + part.length:.2f},"
+                            f"{py:.2f},{py + part.width:.2f},"
+                            f"{pz:.2f},{pz + part.height:.2f},\n"
+                            f"      SURF_ID='{surf}',\n"
+                            f"      ID='{key}_{ci}_{pi}' /\n"
+                        )
+
+    # ------------------------------------------------------------------
+    # Heat source
+    # ------------------------------------------------------------------
+    def _generate_heat_source(self, lines):
+        """Generate external heat source (radiation panel)."""
+        hs = self.bg.heat_source
         if not hs.get("enabled", False):
-            return ""
+            return
 
-        fds = "! ========== 外部强辐射热源 ==========\n"
-        buildings = self.model.building_group.buildings
-        g_xmin = g_ymin = float("inf")
-        g_xmax = g_ymax = -float("inf")
-        for b in buildings:
-            bx = b.x_offset
-            by = b.y_offset
-            g_xmin = min(g_xmin, bx - b.length / 2)
-            g_xmax = max(g_xmax, bx + b.length / 2)
-            g_ymin = min(g_ymin, by - b.width / 2)
-            g_ymax = max(g_ymax, by + b.width / 2)
+        buildings = self.bg.buildings
+        if not buildings:
+            return
+
+        lines.append("! ========== 外部强辐射热源 ==========\n")
+
+        # Compute group bounding box
+        g_xmin = min(b.offset_x for b in buildings)
+        g_xmax = max(b.offset_x + b.length for b in buildings)
+        g_ymin = min(b.offset_y for b in buildings)
+        g_ymax = max(b.offset_y + b.width for b in buildings)
 
         group_cx = (g_xmin + g_xmax) / 2
         group_cy = (g_ymin + g_ymax) / 2
         group_half_L = (g_xmax - g_xmin) / 2
         group_half_W = (g_ymax - g_ymin) / 2
-        total_h = self.model.total_height
+
+        total_h = max(
+            sum(s.height for s in b.stories) for b in buildings
+        ) if buildings else 10.0
+
         distance = hs.get("distance", 3.0)
         width_ratio = hs.get("width_ratio", 1.5)
         height_ratio = hs.get("height_ratio", 1.0)
@@ -186,12 +480,6 @@ class FDSGenerator:
         duration = hs.get("duration", 1.36)
         azimuth = hs.get("azimuth", 0)
 
-        # T29: 俯仰角彻底修正 - 使用正确的几何公式
-        # 辐射源中心坐标：
-        # x = bc_x + D * cos(α) * sin(θ)
-        # y = bc_y - D * cos(α) * cos(θ)
-        # z = bc_z + D * sin(α)
-        # 其中 D = 建筑半尺寸 + distance，α=俯仰角，θ=方位角
         D = max(group_half_L, group_half_W) + distance
         theta = math.radians(azimuth)
         alpha = math.radians(elevation)
@@ -201,27 +489,25 @@ class FDSGenerator:
         source_cz = D * math.sin(alpha)
 
         temperature = hs.get("temperature", 800.0)
-
         if hs.get("radiation_flux") and "temperature" not in hs:
             flux_val = hs.get("radiation_flux")
             temperature = 1000.0 if flux_val > 20000 else 800.0
-        if duration > 0:
-            fds += f"&RAMP ID='HEAT_RAMP', T=0, F=1.0 /\n"
-            fds += f"&RAMP ID='HEAT_RAMP', T={duration:.2f}, F=1.0 /\n"
-            fds += f"&RAMP ID='HEAT_RAMP', T={duration + 1:.2f}, F=0.0 /\n\n"
 
-        fds += "&SURF ID='HEAT_SOURCE',\n"
-        fds += f"      TMP_FRONT={temperature:.1f}"
         if duration > 0:
-            fds += ",\n      RAMP_T='HEAT_RAMP'"
-        fds += ",\n      COLOR='ORANGE' /\n\n"
+            lines.append(f"&RAMP ID='HEAT_RAMP', T=0, F=1.0 /\n")
+            lines.append(f"&RAMP ID='HEAT_RAMP', T={duration:.2f}, F=1.0 /\n")
+            lines.append(f"&RAMP ID='HEAT_RAMP', T={duration + 1:.2f}, F=0.0 /\n\n")
 
-        # 使用正确的几何公式计算窄条位置
+        lines.append("&SURF ID='HEAT_SOURCE',\n")
+        lines.append(f"      TMP_FRONT={temperature:.1f}")
+        if duration > 0:
+            lines.append(",\n      RAMP_T='HEAT_RAMP'")
+        lines.append(",\n      COLOR='ORANGE' /\n\n")
+
+        # Strip geometry
         az_rad = math.radians(azimuth)
         perp_x = -math.sin(az_rad + math.pi / 2)
         perp_y = math.cos(az_rad + math.pi / 2)
-
-        # Normal direction: from source toward building center
         norm_x = -math.sin(az_rad)
         norm_y = math.cos(az_rad)
 
@@ -238,7 +524,7 @@ class FDSGenerator:
 
         elev_rad = math.radians(elevation)
 
-        fds += f"! 热源: 方位角{azimuth}°, 距离{distance}m, 仰角{elevation}°\n"
+        lines.append(f"! 热源: 方位角{azimuth}°, 距离{distance}m, 仰角{elevation}°\n")
 
         if elevation > 0:
             tan_alpha = math.tan(elev_rad)
@@ -247,7 +533,6 @@ class FDSGenerator:
             for row in range(n_rows):
                 z_lo = row * dh
                 z_hi = (row + 1) * dh
-                # Forward offset along normal for this row
                 fwd_offset = row * dh / tan_alpha if tan_alpha > 1e-10 else 0
                 for col in range(n_cols):
                     perp_pos = -source_W / 2 + (col + 0.5) * strip_w
@@ -259,15 +544,9 @@ class FDSGenerator:
                     obst_y2 = cy + perp_y * strip_w / 2 + norm_y * thickness / 2
                     x1, x2 = min(obst_x1, obst_x2), max(obst_x1, obst_x2)
                     y1, y2 = min(obst_y1, obst_y2), max(obst_y1, obst_y2)
-                    fds += self.gen_box(
-                        x1 + ox,
-                        x2 + ox,
-                        y1 + oy,
-                        y2 + oy,
-                        source_cz + z_lo,
-                        source_cz + z_hi,
-                        "HEAT_SOURCE",
-                    )
+                    lines.append(self.gen_box(x1, x2, y1, y2,
+                                              source_cz + z_lo, source_cz + z_hi,
+                                              "HEAT_SOURCE"))
         else:
             thickness = 0.2
             for row in range(n_rows):
@@ -283,401 +562,203 @@ class FDSGenerator:
                     obst_y2 = cy + perp_y * strip_w / 2 + norm_y * thickness / 2
                     x1, x2 = min(obst_x1, obst_x2), max(obst_x1, obst_x2)
                     y1, y2 = min(obst_y1, obst_y2), max(obst_y1, obst_y2)
-                    fds += self.gen_box(
-                        x1 + ox,
-                        x2 + ox,
-                        y1 + oy,
-                        y2 + oy,
-                        source_cz + z_lo,
-                        source_cz + z_hi,
-                        "HEAT_SOURCE",
-                    )
-        return fds + "\n"
+                    lines.append(self.gen_box(x1, x2, y1, y2,
+                                              source_cz + z_lo, source_cz + z_hi,
+                                              "HEAT_SOURCE"))
+        lines.append("\n")
 
-    def generate(self) -> str:
-        m = self.model
-        buildings = m.building_group.buildings
+    # ------------------------------------------------------------------
+    # MESH computation
+    # ------------------------------------------------------------------
+    def _compute_mesh(self):
+        """Compute domain bounding box from all buildings."""
+        bg = self.bg
+        buildings = bg.buildings
 
-        # Calculate global domain bounds from all buildings
-        g_xmin = g_ymin = float("inf")
-        g_xmax = g_ymax = g_zmax = -float("inf")
-        for b in buildings:
-            bx = b.x_offset
-            by = b.y_offset
-            g_xmin = min(g_xmin, bx - b.length / 2 - b.wall_thickness / 2)
-            g_xmax = max(g_xmax, bx + b.length / 2 + b.wall_thickness / 2)
-            g_ymin = min(g_ymin, by - b.width / 2 - b.wall_thickness / 2)
-            g_ymax = max(g_ymax, by + b.width / 2 + b.wall_thickness / 2)
-            g_zmax = max(g_zmax, b.total_height)
+        if not buildings:
+            return [0, 10, 0, 10, 0, 10], 0.5
 
-        # Fallback for single building (compat)
-        if g_xmin == float("inf"):
-            L, W = m.length, m.width
-            t = m.wall_thickness
-            g_xmin, g_xmax = -L / 2 - t / 2, L / 2 + t / 2
-            g_ymin, g_ymax = -W / 2 - t / 2, W / 2 + t / 2
-            g_zmax = m.total_height
-        else:
-            t = buildings[0].wall_thickness if buildings else m.wall_thickness
+        x_min = min(b.offset_x - b.wall_thickness for b in buildings)
+        x_max = max(b.offset_x + b.length + b.wall_thickness for b in buildings)
+        y_min = min(b.offset_y - b.wall_thickness for b in buildings)
+        y_max = max(b.offset_y + b.width + b.wall_thickness for b in buildings)
+        z_max = max(sum(s.height for s in b.stories) for b in buildings)
 
-        total_h = g_zmax
-        roof_t = m.roof.get("thickness", 0.2)
+        grid_size = bg.domain.get("grid_size", 0.5)
 
-        chid = m.chid.replace(" ", "_").replace(".", "_").replace("-", "_")
-        chid = "".join(c for c in chid if ord(c) < 128) or "building"
+        expand_x = max((x_max - x_min) * 0.2, 5.0)
+        expand_y = max((y_max - y_min) * 0.2, 5.0)
+        expand_z = max(z_max * 0.2, 5.0)
 
-        fds = f"&HEAD CHID='{chid}', TITLE='Auto-generated Building Model' /\n\n"
+        domain = [
+            x_min - expand_x,
+            x_max + expand_x,
+            y_min - expand_y,
+            y_max + expand_y,
+            0,
+            z_max + expand_z,
+        ]
 
-        fds += "! ========== 燃烧反应 ==========\n"
-        fds += "&REAC FUEL='METHANE',\n      SOOT_YIELD=0.01 /\n\n"
-
-        grid_size = m.domain.get("grid_size", 0.5)
-
-        expand_x = max((g_xmax - g_xmin) * 0.2, 5.0)
-        expand_y = max((g_ymax - g_ymin) * 0.2, 5.0)
-        expand_z = max(total_h * 0.2, 5.0)
-
-        domain_xmin = g_xmin - expand_x
-        domain_xmax = g_xmax + expand_x
-        domain_ymin = g_ymin - expand_y
-        domain_ymax = g_ymax + expand_y
-        domain_zmax = total_h + expand_z
-
-        if m.heat_source.get("enabled", False):
-            hs = m.heat_source
+        # Extend for heat source if enabled
+        if bg.heat_source.get("enabled", False):
+            hs = bg.heat_source
             azimuth = hs.get("azimuth", 0)
             distance = hs.get("distance", 3.0)
-
             az_rad = math.radians(azimuth)
             dir_x = math.sin(az_rad)
             dir_y = math.cos(az_rad)
-            radius = abs((g_xmax - g_xmin) / 2 * dir_x) + abs(
-                (g_ymax - g_ymin) / 2 * dir_y
-            )
-            source_ox = (g_xmax + g_xmin) / 2 + dir_x * (radius + distance + 15)
-            source_oy = (g_ymax + g_ymin) / 2 + dir_y * (radius + distance + 15)
-            domain_xmin = min(domain_xmin, source_ox - 5)
-            domain_xmax = max(domain_xmax, source_ox + 5)
-            domain_ymin = min(domain_ymin, source_oy - 5)
-            domain_ymax = max(domain_ymax, source_oy + 5)
-        ox = -domain_xmin
-        oy = -domain_ymin
-        domain_w = domain_xmax - domain_xmin
-        domain_d = domain_ymax - domain_ymin
+            radius = abs((x_max - x_min) / 2 * dir_x) + abs((y_max - y_min) / 2 * dir_y)
+            source_ox = (x_max + x_min) / 2 + dir_x * (radius + distance + 15)
+            source_oy = (y_max + y_min) / 2 + dir_y * (radius + distance + 15)
+            domain[0] = min(domain[0], source_ox - 5)
+            domain[1] = max(domain[1], source_ox + 5)
+            domain[2] = min(domain[2], source_oy - 5)
+            domain[3] = max(domain[3], source_oy + 5)
+
+        return domain, grid_size
+
+    # ------------------------------------------------------------------
+    # Main generate
+    # ------------------------------------------------------------------
+    def generate(self) -> str:
+        """Generate the complete FDS input file as a string."""
+        bg = self.bg
+        buildings = bg.buildings
+
+        # Ensure z_offsets are computed
+        for b in buildings:
+            b.update_z_offsets()
+
+        # Determine CHID
+        chid = getattr(self, "_chid_override", "") or ""
+        if not chid:
+            if buildings:
+                chid = buildings[0].name or "building"
+            else:
+                chid = "building"
+        chid = chid.replace(" ", "_").replace(".", "_").replace("-", "_")
+        chid = "".join(c for c in chid if ord(c) < 128) or "building"
+
+        lines = []
+
+        # HEAD
+        lines.append(f"&HEAD CHID='{chid}', TITLE='Auto-generated Building Model' /\n\n")
+
+        # REAC
+        lines.append("! ========== 燃烧反应 ==========\n")
+        lines.append("&REAC FUEL='METHANE',\n      SOOT_YIELD=0.01 /\n\n")
+
+        # MESH
+        domain, grid_size = self._compute_mesh()
+        domain_w = domain[1] - domain[0]
+        domain_d = domain[3] - domain[2]
+        domain_h = domain[5] - domain[4]
         nx = max(10, math.ceil(domain_w / grid_size))
         ny = max(10, math.ceil(domain_d / grid_size))
-        nz = max(10, math.ceil(domain_zmax / grid_size))
-        mesh = [nx, ny, nz]
+        nz = max(10, math.ceil(domain_h / grid_size))
 
-        fds += "! ========== 计算域 ==========\n"
-        fds += (
-            f"&MESH IJK={mesh[0]},{mesh[1]},{mesh[2]}, "
-            f"XB=0.00,{domain_w:.2f},"
-            f"0.00,{domain_d:.2f},"
-            f"0.00,{domain_zmax:.2f} /\n\n"
+        lines.append("! ========== 计算域 ==========\n")
+        lines.append(
+            f"&MESH IJK={nx},{ny},{nz}, "
+            f"XB={domain[0]:.2f},{domain[1]:.2f},"
+            f"{domain[2]:.2f},{domain[3]:.2f},"
+            f"{domain[4]:.2f},{domain[5]:.2f} /\n\n"
         )
 
-        fds += f"&TIME T_END={m.simulation_time:.1f} /\n\n"
+        # TIME
+        lines.append(f"&TIME T_END={bg.simulation_time:.1f} /\n\n")
 
-        fds += "&DUMP DT_DEVC=10, DT_SLCF=10 /\n\n"
+        # DUMP
+        lines.append("&DUMP DT_DEVC=10, DT_SLCF=10 /\n\n")
 
-        fds += self.generate_materials()
+        # Materials & Surfaces
+        self._generate_materials(lines)
 
-        # Collect combustible materials/surfaces across all buildings
-        all_combustible_matls = {}
-        all_combustible_surfs = {}
-        first_cb_center = None
-
-        for b in buildings:
-            for story in b.stories:
-                for cb in story.combustibles.items:
-                    # Skip component parts - they use specialized SURFs
-                    if cb.component_key:
-                        continue
-                    matl_id = f"MATL_{cb.preset_key}"
-                    surf_id = f"SURF_{cb.preset_key}"
-                    if matl_id not in all_combustible_matls:
-                        all_combustible_matls[matl_id] = cb
-                    if surf_id not in all_combustible_surfs:
-                        all_combustible_surfs[surf_id] = cb
-                    if first_cb_center is None and not cb.component_key:
-                        first_cb_center = (
-                            cb.x - b.length / 2 + cb.length / 2 + b.x_offset + ox,
-                            cb.y - b.width / 2 + cb.width / 2 + b.y_offset + oy,
-                            story.z_bottom + cb.z + cb.height / 2,
-                        )
-
-        if all_combustible_matls:
-            fds += "! ========== 可燃物材料/表面 ==========\n"
-            for matl_id, cb in all_combustible_matls.items():
-                mt = cb.matl
-                fds += (
-                    f"&MATL ID='{matl_id}',\n"
-                    f"      DENSITY={mt['DENSITY']},\n"
-                    f"      CONDUCTIVITY={mt['CONDUCTIVITY']},\n"
-                    f"      SPECIFIC_HEAT={mt['SPECIFIC_HEAT']} /\n\n"
-                )
-            for surf_id, cb in all_combustible_surfs.items():
-                fds += (
-                    f"&SURF ID='{surf_id}',\n"
-                    f"      MATL_ID='MATL_{cb.preset_key}',\n"
-                    f"      THICKNESS=0.05,\n"
-                    f"      IGNITION_TEMPERATURE=250.0,\n"
-                    f"      HRRPUA={cb.hrrpua},\n"
-                    f"      COLOR='{cb.color}' /\n\n"
-                )
-
-        # Generate geometry for each building
+        # For each building: geometry
         for bi, b in enumerate(buildings):
-            L, W, t = b.length, b.width, b.wall_thickness
-            x_off, y_off = b.x_offset, b.y_offset
-            b_total_h = b.total_height
-            b_roof_t = b.roof.get("thickness", 0.2)
-
-            bld_label = f"建筑{bi + 1}: {b.name}" if len(buildings) > 1 else ""
+            bld_label = f"建筑{bi + 1}: {b.name or b.cn_name}" if len(buildings) > 1 else ""
             if bld_label:
-                fds += f"\n! ########## {bld_label} (offset={x_off:.1f},{y_off:.1f}) ##########\n"
+                lines.append(f"\n! ########## {bld_label} (offset={b.offset_x:.1f},{b.offset_y:.1f}) ##########\n")
 
-            # Ground floor
-            fds += "! ========== 地板 ==========\n"
-            fds += self.gen_box(
-                x_off - L / 2 - t / 2 + ox,
-                x_off + L / 2 + t / 2 + ox,
-                y_off - W / 2 - t / 2 + oy,
-                y_off + W / 2 + t / 2 + oy,
-                0,
-                t,
-                "FLOOR",
-            )
-            fds += "\n"
+            # Ground floor slab
+            ox, L, oy, W = b.boundary
+            t = b.wall_thickness
+            lines.append("! ========== 地板 ==========\n")
+            lines.append(self.gen_box(
+                ox - t / 2, ox + L + t / 2,
+                oy - t / 2, oy + W + t / 2,
+                0, t, "FLOOR"
+            ))
+            lines.append("\n")
 
             for si, story in enumerate(b.stories):
-                z0 = story.z_bottom + t  # shift z by floor thickness
-                slab_t = story.floor_slab.thickness
+                z0 = story.z_bottom
+                lines.append(f"\n! ========== {story.name} (z={z0:.2f}~{story.z_top:.2f}) ==========\n")
 
-                fds += f"\n! ========== {story.name} (z={z0:.2f}~{z0 + story.height:.2f}) ==========\n"
+                # Exterior walls + openings
+                lines.append("! -- 外墙 --\n")
+                self._generate_exterior_walls(b, story, si, lines)
 
-                if si > 0:
-                    fds += f"! -- 楼板 --\n"
-                    fds += self.gen_box(
-                        x_off - L / 2 - t / 2 + ox,
-                        x_off + L / 2 + t / 2 + ox,
-                        y_off - W / 2 - t / 2 + oy,
-                        y_off + W / 2 + t / 2 + oy,
-                        z0 - slab_t,
-                        z0,
-                        f"FLOOR_{story.name}",
-                    )
-                    for hole in story.floor_slab.openings:
-                        hx = hole["x"] - L / 2 + x_off + ox
-                        hy = hole["y"] - W / 2 + y_off + oy
-                        fds += (
-                            f"&HOLE XB={hx:.2f},{hx + hole['length']:.2f},"
-                            f"{hy:.2f},{hy + hole['width']:.2f},"
-                            f"{z0 - slab_t - 0.01:.2f},{z0 + 0.01:.2f} /  ! {hole.get('name', '洞口')}\n"
-                        )
+                # Fire compartment walls
+                if story.fire_compartments:
+                    lines.append("! -- 防火墙 --\n")
+                    self._generate_firewalls(b, story, lines)
 
-                    # Auto-generate stairwell HOLE for 2F+
-                    sw_x = t + 0.5 - L / 2 + x_off + ox
-                    sw_y = t + 0.5 - W / 2 + y_off + oy
-                    sw_l, sw_w = min(4.0, L * 0.3), min(3.0, W * 0.3)
-                    fds += (
-                        f"&HOLE XB={sw_x:.2f},{sw_x + sw_l:.2f},"
-                        f"{sw_y:.2f},{sw_y + sw_w:.2f},"
-                        f"{z0 - slab_t - 0.01:.2f},{z0 + 0.01:.2f} /  ! 自动楼梯口\n"
-                    )
-
-                fds += f"! -- 墙体 --\n"
-                for wi in range(len(story.walls)):
-                    fds += self._generate_wall_for_building(b, wi, si, ox, oy, t)
-
-                if story.combustibles.items:
-                    fds += f"! -- 可燃物 --\n"
-                    for cb in story.combustibles.items:
-                        x1 = cb.x - L / 2 + x_off + ox
-                        x2 = cb.x + cb.length - L / 2 + x_off + ox
-                        y1 = cb.y - W / 2 + y_off + oy
-                        y2 = cb.y + cb.width - W / 2 + y_off + oy
-                        z1 = cb.z + z0
-                        z2 = z1 + cb.height
-                        # Component parts use their specific SURF_ID
-                        if cb.component_key and cb.material_key:
-                            surf = f"{cb.material_key}_SURF"
-                            fds += (
-                                f"&OBST XB={x1:.2f},{x2:.2f},{y1:.2f},{y2:.2f},"
-                                f"{z1:.2f},{z2:.2f},\n"
-                                f"      SURF_ID='{surf}',\n"
-                                f"      ID='{cb.id}' /  ! {cb.name}\n"
-                            )
-                        else:
-                            fds += (
-                                f"&OBST XB={x1:.2f},{x2:.2f},{y1:.2f},{y2:.2f},"
-                                f"{z1:.2f},{z2:.2f},\n"
-                                f"      SURF_IDS='SURF_{cb.preset_key}','INERT','INERT',\n"
-                                f"      ID='{cb.id}' /  ! {cb.name}\n"
-                            )
+                # Combustibles
+                self._generate_combustibles(b, story, lines)
 
                 # Specialized components
-                fds += self._generate_specialized_for_building(b, story, z0, ox, oy)
-            fds += "\n! ========== 屋顶 ==========\n"
-            fds += self.gen_box(
-                x_off - L / 2 - t / 2 + ox,
-                x_off + L / 2 + t / 2 + ox,
-                y_off - W / 2 - t / 2 + oy,
-                y_off + W / 2 + t / 2 + oy,
-                b_total_h + t,
-                b_total_h + t + b_roof_t,
-                "ROOF",
-            )
-            fds += "\n"
+                self._generate_specialized_components(b, story, lines)
 
-        # Heat source (pass ox, oy for coord shift)
-        fds += self._generate_heat_source_shifted(ox, oy)
+            # Roof: use the last story's roof
+            if b.stories:
+                last_story = b.stories[-1]
+                lines.append("\n! ========== 屋顶 ==========\n")
+                self._generate_roof(b, last_story, lines)
+            lines.append("\n")
 
-        # Output: one default SLCF + BNDF, one default DEVC, then custom
-        if m.output.get("slices", True):
-            fds += "! ========== 切片输出 ==========\n"
-            fds += "&SLCF PBZ=1.50, QUANTITY='TEMPERATURE' /\n"
-            fds += "&BNDF QUANTITY='WALL TEMPERATURE' /\n"
-            for cs in m.output.get("custom_slices", []):
+        # Heat source
+        self._generate_heat_source(lines)
+
+        # Output: slices
+        output = bg.output
+        if output.get("slices", True):
+            lines.append("! ========== 切片输出 ==========\n")
+            lines.append("&SLCF PBZ=1.50, QUANTITY='TEMPERATURE' /\n")
+            lines.append("&BNDF QUANTITY='WALL TEMPERATURE' /\n")
+            for cs in output.get("custom_slices", []):
                 axis = cs.get("axis", "PBX")
                 pos = cs.get("position", 0)
                 qty = cs.get("quantity", "TEMPERATURE")
-                fds += f"&SLCF {axis}={pos:.2f}, QUANTITY='{qty}' /\n"
-            fds += "\n"
+                lines.append(f"&SLCF {axis}={pos:.2f}, QUANTITY='{qty}' /\n")
+            lines.append("\n")
 
-        if m.output.get("devices", True):
-            fds += "! ========== 测量点 ==========\n"
-            dev_x = ox + (g_xmin + g_xmax) / 2
-            dev_y = oy + (g_ymin + g_ymax) / 2
+        # Output: devices
+        if output.get("devices", True):
+            lines.append("! ========== 测量点 ==========\n")
+            if buildings:
+                g_xmin = min(b.offset_x for b in buildings)
+                g_xmax = max(b.offset_x + b.length for b in buildings)
+                g_ymin = min(b.offset_y for b in buildings)
+                g_ymax = max(b.offset_y + b.width for b in buildings)
+                dev_x = (g_xmin + g_xmax) / 2
+                dev_y = (g_ymin + g_ymax) / 2
+            else:
+                dev_x = dev_y = 0.0
             dev_z = 1.5
-            fds += f"&DEVC XYZ={dev_x:.2f},{dev_y:.2f},{dev_z:.2f}, QUANTITY='TEMPERATURE', ID='center_temp' /\n"
-            for i, cd in enumerate(m.output.get("custom_devices", [])):
+            lines.append(f"&DEVC XYZ={dev_x:.2f},{dev_y:.2f},{dev_z:.2f}, QUANTITY='TEMPERATURE', ID='center_temp' /\n")
+            for i, cd in enumerate(output.get("custom_devices", [])):
                 x = cd.get("x", 0)
                 y = cd.get("y", 0)
                 z = cd.get("z", 0)
                 qty = cd.get("quantity", "TEMPERATURE")
-                fds += f"&DEVC XYZ={x:.2f},{y:.2f},{z:.2f}, QUANTITY='{qty}', ID='custom_dev_{i + 1}' /\n"
-            fds += "\n"
+                lines.append(f"&DEVC XYZ={x:.2f},{y:.2f},{z:.2f}, QUANTITY='{qty}', ID='custom_dev_{i + 1}' /\n")
+            lines.append("\n")
 
-        fds += "&TAIL /\n"
-        return fds
+        # TAIL
+        lines.append("&TAIL /\n")
 
-    def _generate_wall_for_building(
-        self, building, wall_index, story_index=0, ox=0.0, oy=0.0, floor_t=0.0
-    ) -> str:
-        """Generate wall FDS code for a specific building (with offset)."""
-        L, W = building.length, building.width
-        t = building.wall_thickness
-        x_off, y_off = building.x_offset, building.y_offset
-
-        story = building.stories[story_index]
-        wall = story.walls[wall_index]
-        z0 = story.z_bottom + floor_t
-
-        x1, y1, x2, y2 = wall["x1"], wall["y1"], wall["x2"], wall["y2"]
-        thick = wall.get("thickness", t)
-        wall_h = wall.get("height", story.height)
-
-        fx1, fy1 = x1 - L / 2 + x_off + ox, y1 - W / 2 + y_off + oy
-        fx2, fy2 = x2 - L / 2 + x_off + ox, y2 - W / 2 + y_off + oy
-
-        openings = [o for o in story.openings if o["wall_index"] == wall_index]
-
-        wall_len = ((x2 - x1) ** 2 + (y2 - y1) ** 2) ** 0.5
-        if wall_len < 0.01:
-            return ""
-
-        is_horizontal = abs(y2 - y1) < abs(x2 - x1)
-
-        if not openings:
-            if is_horizontal:
-                return self.gen_box(
-                    min(fx1, fx2) - thick / 2,
-                    max(fx1, fx2) + thick / 2,
-                    fy1 - thick / 2,
-                    fy1 + thick / 2,
-                    z0,
-                    z0 + wall_h,
-                    "WALL",
-                )
-            else:
-                return self.gen_box(
-                    fx1 - thick / 2,
-                    fx1 + thick / 2,
-                    min(fy1, fy2) + thick / 2,
-                    max(fy1, fy2) - thick / 2,
-                    z0,
-                    z0 + wall_h,
-                    "WALL",
-                )
-
-        fds = ""
-        z_splits = [0, wall_h]
-        for o in openings:
-            z_b = o.get("z_bottom", 0)
-            z_t = z_b + o["height"]
-            z_splits.extend([z_b, z_t])
-        z_splits = sorted(set(z_splits))
-
-        for zi in range(len(z_splits) - 1):
-            z_low, z_up = z_splits[zi], z_splits[zi + 1]
-
-            cuts = []
-            for o in openings:
-                z_b = o.get("z_bottom", 0)
-                z_t = z_b + o["height"]
-                if not (z_up <= z_b or z_low >= z_t):
-                    pos = o["position"]
-                    o_width = o["width"]
-                    center_dist = pos * wall_len
-                    half_w = o_width / 2
-                    cuts.append((center_dist - half_w, center_dist + half_w))
-
-            seg_points = [0]
-            for cut in cuts:
-                seg_points.extend([max(0, cut[0]), min(wall_len, cut[1])])
-            seg_points.append(wall_len)
-            seg_points = sorted(set(seg_points))
-
-            for si in range(len(seg_points) - 1):
-                s_start, s_end = seg_points[si], seg_points[si + 1]
-
-                is_opening = False
-                for cut in cuts:
-                    if s_start >= cut[0] - 0.001 and s_end <= cut[1] + 0.001:
-                        is_opening = True
-                        break
-
-                if not is_opening and s_end - s_start > 0.01:
-                    t_start = s_start / wall_len
-                    t_end = s_end / wall_len
-                    sx1 = fx1 + (fx2 - fx1) * t_start
-                    sy1 = fy1 + (fy2 - fy1) * t_start
-                    sx2 = fx1 + (fx2 - fx1) * t_end
-                    sy2 = fy1 + (fy2 - fy1) * t_end
-
-                    if is_horizontal:
-                        fds += self.gen_box(
-                            min(sx1, sx2),
-                            max(sx1, sx2),
-                            sy1 - thick / 2,
-                            sy1 + thick / 2,
-                            z0 + z_low,
-                            z0 + z_up,
-                            "WALL",
-                        )
-                    else:
-                        fds += self.gen_box(
-                            sx1 - thick / 2,
-                            sx1 + thick / 2,
-                            min(sy1, sy2),
-                            max(sy1, sy2),
-                            z0 + z_low,
-                            z0 + z_up,
-                            "WALL",
-                        )
-        return fds
+        return "".join(lines)
 
 
 # ============================================================
@@ -686,11 +767,6 @@ class FDSGenerator:
 def validate_fds(fds_text: str) -> list:
     """Validate FDS text and return list of warning/error strings."""
     warnings = []
-    lines = fds_text.split("\n")
-    non_comment = [
-        l.strip() for l in lines if l.strip() and not l.strip().startswith("!")
-    ]
-    full_text = " ".join(non_comment)
     # Check for required namelists
     required = ["HEAD", "MESH", "TIME", "REAC", "TAIL"]
     for nml in required:
