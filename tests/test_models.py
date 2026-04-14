@@ -289,7 +289,6 @@ class TestBuilding:
         assert b.boundary == [0, 20, 0, 10]
         assert b.wall_thickness == 0.24
         assert b.height == 3.0
-        assert b.boundary_polygons is None
         assert b.stories == []
 
     def test_properties(self):
@@ -442,25 +441,6 @@ class TestBuilding:
         assert len(b2.stories) == len(b.stories)
         assert b2.stories[0].openings[0] == b.stories[0].openings[0]
 
-    def test_boundary_polygons(self):
-        polys = [[0, 0], [20, 0], [20, 10], [0, 10]]
-        b = Building(boundary_polygons=polys)
-        assert b.boundary_polygons == polys
-
-    def test_boundary_polygons_serialization(self):
-        polys = [[0, 0], [20, 0], [20, 10], [0, 10]]
-        b = Building(boundary_polygons=polys)
-        d = b.to_dict()
-        assert d["boundary_polygons"] == polys
-        b2 = Building.from_dict(d)
-        assert b2.boundary_polygons == polys
-
-    def test_boundary_polygons_none(self):
-        b = Building()
-        d = b.to_dict()
-        assert d.get("boundary_polygons") is None
-        b2 = Building.from_dict(d)
-        assert b2.boundary_polygons is None
 
 
 # ============================================================

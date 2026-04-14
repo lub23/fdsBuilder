@@ -13,7 +13,6 @@
       ],
       "wall_thickness": 0.3,
       "height": 10,
-      "boundary_polygons": null,
       "stories": [
         {
           "name": "1F",
@@ -704,7 +703,6 @@
       ],
       "wall_thickness": 0.3,
       "height": 10,
-      "boundary_polygons": null,
       "stories": [
         {
           "name": "1F",
@@ -795,7 +793,6 @@
       ],
       "wall_thickness": 0.3,
       "height": 6,
-      "boundary_polygons": null,
       "stories": [
         {
           "name": "1F",

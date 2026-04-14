@@ -5,11 +5,6 @@
     {
       "name": "Electrolytic plant",
       "cn_name": "电解工厂",
-      "description": "电解工厂，包含主电解厂房、连接厂房、中型辅助厂房、大型配套厂房及圆形储罐",
-      "offset": {
-        "x": 0,
-        "y": 0
-      },
       "length_range": [
         180,
         370,
@@ -73,7 +68,12 @@
               6
             ]
           },
-          "fire_compartments": [
+          "roof": {
+            "thickness": 0.2,
+            "material": "CONCRETE",
+            "openings": []
+          },
+          "fire_compartment_ratios": [
             {
               "name": "电解槽作业区",
               "boundary_ratio": [
@@ -84,16 +84,6 @@
               ],
               "firewall_thickness": 0.3,
               "firewall_material": "CONCRETE",
-              "openings": [
-                {
-                  "wall": "x_max",
-                  "type": "door",
-                  "w_offset_ratio": 0.44,
-                  "width_ratio": 0.12,
-                  "height": 3.5,
-                  "z_bottom": 0
-                }
-              ],
               "combustibles": [
                 {
                   "key": "CARBON_MATERIAL_STACK",
@@ -109,6 +99,16 @@
                   "key": "ELECTROLYSIS_CELL",
                   "count": 2
                 }
+              ],
+              "opening_templates": [
+                {
+                  "wall": "x_max",
+                  "type": "door",
+                  "w_offset_ratio": 0.44,
+                  "width_ratio": 0.12,
+                  "height": 3.5,
+                  "h_offset": 0
+                }
               ]
             },
             {
@@ -121,16 +121,6 @@
               ],
               "firewall_thickness": 0.3,
               "firewall_material": "CONCRETE",
-              "openings": [
-                {
-                  "wall": "x_min",
-                  "type": "door",
-                  "w_offset_ratio": 0.45,
-                  "width_ratio": 0.1,
-                  "height": 3.0,
-                  "z_bottom": 0
-                }
-              ],
               "combustibles": [
                 {
                   "key": "INDUSTRIAL_OIL_DRUM",
@@ -149,33 +139,32 @@
                   "count": 3
                 }
               ],
-              "specialized_components": []
+              "specialized_components": [],
+              "opening_templates": [
+                {
+                  "wall": "x_min",
+                  "type": "door",
+                  "w_offset_ratio": 0.45,
+                  "width_ratio": 0.1,
+                  "height": 3.0,
+                  "h_offset": 0
+                }
+              ]
             }
-          ],
-          "roof": {
-            "thickness": 0.2,
-            "material": "CONCRETE",
-            "openings": []
-          }
+          ]
         }
       ],
       "stories": [],
-      "specialized_components": [
-        {
-          "key": "ELECTROLYSIS_CELL",
-          "count": 2,
-          "size_class": "large"
-        }
+      "boundary": [
+        0,
+        220,
+        0,
+        20
       ]
     },
     {
       "name": "Dedicated power plant",
       "cn_name": "专用电厂",
-      "description": "专用电厂，包含主厂房、大型辅助厂房、辅助厂房、长条通廊、金属架、烟囱及储罐",
-      "offset": {
-        "x": 0,
-        "y": 100
-      },
       "length_range": [
         8,
         212,
@@ -239,7 +228,12 @@
               9
             ]
           },
-          "fire_compartments": [
+          "roof": {
+            "thickness": 0.2,
+            "material": "CONCRETE",
+            "openings": []
+          },
+          "fire_compartment_ratios": [
             {
               "name": "锅炉汽轮机区",
               "boundary_ratio": [
@@ -250,16 +244,6 @@
               ],
               "firewall_thickness": 0.3,
               "firewall_material": "CONCRETE",
-              "openings": [
-                {
-                  "wall": "x_max",
-                  "type": "door",
-                  "w_offset_ratio": 0.45,
-                  "width_ratio": 0.1,
-                  "height": 4.5,
-                  "z_bottom": 0
-                }
-              ],
               "combustibles": [
                 {
                   "key": "COAL_STACK",
@@ -278,7 +262,17 @@
                   "count": 3
                 }
               ],
-              "specialized_components": []
+              "specialized_components": [],
+              "opening_templates": [
+                {
+                  "wall": "x_max",
+                  "type": "door",
+                  "w_offset_ratio": 0.45,
+                  "width_ratio": 0.1,
+                  "height": 4.5,
+                  "h_offset": 0
+                }
+              ]
             },
             {
               "name": "电气控制区",
@@ -290,16 +284,6 @@
               ],
               "firewall_thickness": 0.3,
               "firewall_material": "CONCRETE",
-              "openings": [
-                {
-                  "wall": "x_min",
-                  "type": "door",
-                  "w_offset_ratio": 0.475,
-                  "width_ratio": 0.05,
-                  "height": 3.0,
-                  "z_bottom": 0
-                }
-              ],
               "combustibles": [
                 {
                   "key": "COMBUSTIBLE_GAS_CYLINDER",
@@ -326,27 +310,32 @@
                   "count": 2
                 }
               ],
-              "specialized_components": []
+              "specialized_components": [],
+              "opening_templates": [
+                {
+                  "wall": "x_min",
+                  "type": "door",
+                  "w_offset_ratio": 0.475,
+                  "width_ratio": 0.05,
+                  "height": 3.0,
+                  "h_offset": 0
+                }
+              ]
             }
-          ],
-          "roof": {
-            "thickness": 0.2,
-            "material": "CONCRETE",
-            "openings": []
-          }
+          ]
         }
       ],
       "stories": [],
-      "specialized_components": []
+      "boundary": [
+        0,
+        40,
+        100,
+        32
+      ]
     },
     {
       "name": "Steel plant",
       "cn_name": "钢铁厂",
-      "description": "钢铁厂，包含炼铁炼钢主厂房、熔炼车间、轧钢车间、精整车间、卷材加工车间及辅助厂房",
-      "offset": {
-        "x": 100,
-        "y": 100
-      },
       "length_range": [
         80,
         230,
@@ -410,7 +399,12 @@
               30
             ]
           },
-          "fire_compartments": [
+          "roof": {
+            "thickness": 0.2,
+            "material": "CONCRETE",
+            "openings": []
+          },
+          "fire_compartment_ratios": [
             {
               "name": "熔炼作业区",
               "boundary_ratio": [
@@ -421,16 +415,6 @@
               ],
               "firewall_thickness": 0.3,
               "firewall_material": "CONCRETE",
-              "openings": [
-                {
-                  "wall": "x_max",
-                  "type": "door",
-                  "w_offset_ratio": 0.454545,
-                  "width_ratio": 0.090909,
-                  "height": 5.0,
-                  "z_bottom": 0
-                }
-              ],
               "combustibles": [
                 {
                   "key": "INDUSTRIAL_OIL_DRUM",
@@ -445,7 +429,17 @@
                   "count": 2
                 }
               ],
-              "specialized_components": []
+              "specialized_components": [],
+              "opening_templates": [
+                {
+                  "wall": "x_max",
+                  "type": "door",
+                  "w_offset_ratio": 0.454545,
+                  "width_ratio": 0.090909,
+                  "height": 5.0,
+                  "h_offset": 0
+                }
+              ]
             },
             {
               "name": "轧钢辅助区",
@@ -457,16 +451,6 @@
               ],
               "firewall_thickness": 0.3,
               "firewall_material": "CONCRETE",
-              "openings": [
-                {
-                  "wall": "x_min",
-                  "type": "door",
-                  "w_offset_ratio": 0.463636,
-                  "width_ratio": 0.072727,
-                  "height": 4.5,
-                  "z_bottom": 0
-                }
-              ],
               "combustibles": [
                 {
                   "key": "POLYMER_MATERIAL",
@@ -481,27 +465,32 @@
                   "count": 2
                 }
               ],
-              "specialized_components": []
+              "specialized_components": [],
+              "opening_templates": [
+                {
+                  "wall": "x_min",
+                  "type": "door",
+                  "w_offset_ratio": 0.463636,
+                  "width_ratio": 0.072727,
+                  "height": 4.5,
+                  "h_offset": 0
+                }
+              ]
             }
-          ],
-          "roof": {
-            "thickness": 0.2,
-            "material": "CONCRETE",
-            "openings": []
-          }
+          ]
         }
       ],
       "stories": [],
-      "specialized_components": []
+      "boundary": [
+        100,
+        210,
+        100,
+        33
+      ]
     },
     {
       "name": "Tantalum refinery",
       "cn_name": "钽精炼厂",
-      "description": "钽精炼厂，包含多栋厂房建筑",
-      "offset": {
-        "x": 200,
-        "y": 100
-      },
       "length_range": [
         19,
         75,
@@ -565,7 +554,12 @@
               7
             ]
           },
-          "fire_compartments": [
+          "roof": {
+            "thickness": 0.2,
+            "material": "CONCRETE",
+            "openings": []
+          },
+          "fire_compartment_ratios": [
             {
               "name": "精炼作业区",
               "boundary_ratio": [
@@ -576,16 +570,6 @@
               ],
               "firewall_thickness": 0.3,
               "firewall_material": "CONCRETE",
-              "openings": [
-                {
-                  "wall": "x_max",
-                  "type": "door",
-                  "w_offset_ratio": 0.472973,
-                  "width_ratio": 0.054054,
-                  "height": 2.5,
-                  "z_bottom": 0
-                }
-              ],
               "combustibles": [
                 {
                   "key": "ORGANIC_SOLVENT_DRUM",
@@ -605,6 +589,16 @@
                   "key": "ELECTROLYSIS_CELL_MEDIUM",
                   "count": 2
                 }
+              ],
+              "opening_templates": [
+                {
+                  "wall": "x_max",
+                  "type": "door",
+                  "w_offset_ratio": 0.472973,
+                  "width_ratio": 0.054054,
+                  "height": 2.5,
+                  "h_offset": 0
+                }
               ]
             },
             {
@@ -617,16 +611,6 @@
               ],
               "firewall_thickness": 0.3,
               "firewall_material": "CONCRETE",
-              "openings": [
-                {
-                  "wall": "x_min",
-                  "type": "door",
-                  "w_offset_ratio": 0.47973,
-                  "width_ratio": 0.040541,
-                  "height": 2.0,
-                  "z_bottom": 0
-                }
-              ],
               "combustibles": [
                 {
                   "key": "WOOD_PALLET",
@@ -645,33 +629,32 @@
                   "count": 3
                 }
               ],
-              "specialized_components": []
+              "specialized_components": [],
+              "opening_templates": [
+                {
+                  "wall": "x_min",
+                  "type": "door",
+                  "w_offset_ratio": 0.47973,
+                  "width_ratio": 0.040541,
+                  "height": 2.0,
+                  "h_offset": 0
+                }
+              ]
             }
-          ],
-          "roof": {
-            "thickness": 0.2,
-            "material": "CONCRETE",
-            "openings": []
-          }
+          ]
         }
       ],
       "stories": [],
-      "specialized_components": [
-        {
-          "key": "ELECTROLYSIS_CELL_MEDIUM",
-          "count": 2,
-          "size_class": "medium"
-        }
+      "boundary": [
+        200,
+        55,
+        100,
+        30
       ]
     },
     {
       "name": "Gold Refinery",
       "cn_name": "金精炼厂",
-      "description": "金精炼厂",
-      "offset": {
-        "x": 300,
-        "y": 100
-      },
       "length_range": [
         38,
         38,
@@ -735,7 +718,12 @@
               82
             ]
           },
-          "fire_compartments": [
+          "roof": {
+            "thickness": 0.2,
+            "material": "CONCRETE",
+            "openings": []
+          },
+          "fire_compartment_ratios": [
             {
               "name": "冶炼提纯区",
               "boundary_ratio": [
@@ -746,16 +734,6 @@
               ],
               "firewall_thickness": 0.3,
               "firewall_material": "CONCRETE",
-              "openings": [
-                {
-                  "wall": "x_max",
-                  "type": "door",
-                  "w_offset_ratio": 0.458333,
-                  "width_ratio": 0.083333,
-                  "height": 2.0,
-                  "z_bottom": 0
-                }
-              ],
               "combustibles": [
                 {
                   "key": "ORGANIC_SOLVENT_DRUM",
@@ -779,6 +757,16 @@
                   "key": "ELECTROLYSIS_CELL_MEDIUM",
                   "count": 1
                 }
+              ],
+              "opening_templates": [
+                {
+                  "wall": "x_max",
+                  "type": "door",
+                  "w_offset_ratio": 0.458333,
+                  "width_ratio": 0.083333,
+                  "height": 2.0,
+                  "h_offset": 0
+                }
               ]
             },
             {
@@ -791,16 +779,6 @@
               ],
               "firewall_thickness": 0.3,
               "firewall_material": "CONCRETE",
-              "openings": [
-                {
-                  "wall": "x_min",
-                  "type": "door",
-                  "w_offset_ratio": 0.458333,
-                  "width_ratio": 0.083333,
-                  "height": 2.0,
-                  "z_bottom": 0
-                }
-              ],
               "combustibles": [
                 {
                   "key": "INDUSTRIAL_OIL_DRUM",
@@ -827,23 +805,27 @@
                   "count": 2
                 }
               ],
-              "specialized_components": []
+              "specialized_components": [],
+              "opening_templates": [
+                {
+                  "wall": "x_min",
+                  "type": "door",
+                  "w_offset_ratio": 0.458333,
+                  "width_ratio": 0.083333,
+                  "height": 2.0,
+                  "h_offset": 0
+                }
+              ]
             }
-          ],
-          "roof": {
-            "thickness": 0.2,
-            "material": "CONCRETE",
-            "openings": []
-          }
+          ]
         }
       ],
       "stories": [],
-      "specialized_components": [
-        {
-          "key": "ELECTROLYSIS_CELL_MEDIUM",
-          "count": 1,
-          "size_class": "medium"
-        }
+      "boundary": [
+        300,
+        38,
+        100,
+        18
       ]
     }
   ]

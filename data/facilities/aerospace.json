@@ -5,11 +5,12 @@
     {
       "name": "Launch control center",
       "cn_name": "发射控制中心",
-      "description": "",
-      "offset": {
-        "x": -50,
-        "y": 80
-      },
+      "boundary": [
+        -50,
+        85,
+        80,
+        32.5
+      ],
       "length_range": [
         50,
         120
@@ -62,7 +63,12 @@
               0
             ]
           },
-          "fire_compartments": [
+          "roof": {
+            "thickness": 0.2,
+            "material": "CONCRETE",
+            "openings": []
+          },
+          "fire_compartment_ratios": [
             {
               "name": "指挥控制区",
               "boundary_ratio": [
@@ -73,16 +79,6 @@
               ],
               "firewall_thickness": 0.3,
               "firewall_material": "CONCRETE",
-              "openings": [
-                {
-                  "wall": "x_max",
-                  "type": "door",
-                  "w_offset_ratio": 0.48,
-                  "width_ratio": 0.04,
-                  "height": 2.5,
-                  "z_bottom": 0
-                }
-              ],
               "combustibles": [
                 {
                   "key": "ELECTRONICS_CONSOLE",
@@ -101,7 +97,17 @@
                   "count": 3
                 }
               ],
-              "specialized_components": []
+              "specialized_components": [],
+              "opening_templates": [
+                {
+                  "wall": "x_max",
+                  "type": "door",
+                  "w_offset_ratio": 0.48,
+                  "width_ratio": 0.04,
+                  "height": 2.5,
+                  "h_offset": 0
+                }
+              ]
             },
             {
               "name": "设备机房区",
@@ -113,16 +119,6 @@
               ],
               "firewall_thickness": 0.3,
               "firewall_material": "CONCRETE",
-              "openings": [
-                {
-                  "wall": "x_min",
-                  "type": "door",
-                  "w_offset_ratio": 0.485,
-                  "width_ratio": 0.03,
-                  "height": 2.5,
-                  "z_bottom": 0
-                }
-              ],
               "combustibles": [
                 {
                   "key": "ELECTRONICS_CONSOLE",
@@ -137,7 +133,17 @@
                   "count": 2
                 }
               ],
-              "specialized_components": []
+              "specialized_components": [],
+              "opening_templates": [
+                {
+                  "wall": "x_min",
+                  "type": "door",
+                  "w_offset_ratio": 0.485,
+                  "width_ratio": 0.03,
+                  "height": 2.5,
+                  "h_offset": 0
+                }
+              ]
             },
             {
               "name": "办公存储区",
@@ -149,7 +155,6 @@
               ],
               "firewall_thickness": 0.3,
               "firewall_material": "CONCRETE",
-              "openings": [],
               "combustibles": [
                 {
                   "key": "OFFICE_COMPOSITE_FURNITURE",
@@ -168,33 +173,17 @@
                   "count": 2
                 }
               ],
-              "specialized_components": []
+              "specialized_components": [],
+              "opening_templates": []
             }
-          ],
-          "roof": {
-            "thickness": 0.2,
-            "material": "CONCRETE",
-            "openings": []
-          }
+          ]
         }
       ],
-      "stories": [],
-      "specialized_components": [
-        {
-          "key": "ROCKET_VEHICLE_SMALL",
-          "count": 1,
-          "size_class": "small"
-        }
-      ]
+      "stories": []
     },
     {
       "name": "Assembly building",
       "cn_name": "总装车间",
-      "description": "",
-      "offset": {
-        "x": 0,
-        "y": 80
-      },
       "length_range": [
         150,
         200
@@ -247,7 +236,12 @@
               30
             ]
           },
-          "fire_compartments": [
+          "roof": {
+            "thickness": 0.2,
+            "material": "CONCRETE",
+            "openings": []
+          },
+          "fire_compartment_ratios": [
             {
               "name": "总装主厂区",
               "boundary_ratio": [
@@ -258,16 +252,6 @@
               ],
               "firewall_thickness": 0.3,
               "firewall_material": "CONCRETE",
-              "openings": [
-                {
-                  "wall": "x_max",
-                  "type": "door",
-                  "w_offset_ratio": 0.475,
-                  "width_ratio": 0.05,
-                  "height": 10.0,
-                  "z_bottom": 0
-                }
-              ],
               "combustibles": [
                 {
                   "key": "TEMP_TIMBER_WORKS",
@@ -291,6 +275,16 @@
                   "key": "ROCKET_VEHICLE_LARGE",
                   "count": 1
                 }
+              ],
+              "opening_templates": [
+                {
+                  "wall": "x_max",
+                  "type": "door",
+                  "w_offset_ratio": 0.475,
+                  "width_ratio": 0.05,
+                  "height": 10.0,
+                  "h_offset": 0
+                }
               ]
             },
             {
@@ -303,16 +297,6 @@
               ],
               "firewall_thickness": 0.3,
               "firewall_material": "CONCRETE",
-              "openings": [
-                {
-                  "wall": "x_min",
-                  "type": "door",
-                  "w_offset_ratio": 0.484375,
-                  "width_ratio": 0.03125,
-                  "height": 6.0,
-                  "z_bottom": 0
-                }
-              ],
               "combustibles": [
                 {
                   "key": "WOOD_PALLET",
@@ -331,7 +315,17 @@
                   "count": 3
                 }
               ],
-              "specialized_components": []
+              "specialized_components": [],
+              "opening_templates": [
+                {
+                  "wall": "x_min",
+                  "type": "door",
+                  "w_offset_ratio": 0.484375,
+                  "width_ratio": 0.03125,
+                  "height": 6.0,
+                  "h_offset": 0
+                }
+              ]
             },
             {
               "name": "办公辅助区",
@@ -343,7 +337,6 @@
               ],
               "firewall_thickness": 0.3,
               "firewall_material": "CONCRETE",
-              "openings": [],
               "combustibles": [
                 {
                   "key": "OFFICE_COMPOSITE_FURNITURE",
@@ -358,33 +351,23 @@
                   "count": 2
                 }
               ],
-              "specialized_components": []
+              "specialized_components": [],
+              "opening_templates": []
             }
-          ],
-          "roof": {
-            "thickness": 0.2,
-            "material": "CONCRETE",
-            "openings": []
-          }
+          ]
         }
       ],
       "stories": [],
-      "specialized_components": [
-        {
-          "key": "ROCKET_VEHICLE_LARGE",
-          "count": 1,
-          "size_class": "large"
-        }
+      "boundary": [
+        0,
+        175.0,
+        80,
+        130.0
       ]
     },
     {
       "name": "Sub-assembly building",
       "cn_name": "部装车间",
-      "description": "",
-      "offset": {
-        "x": 150,
-        "y": 150
-      },
       "length_range": [
         100,
         175
@@ -437,7 +420,12 @@
               30
             ]
           },
-          "fire_compartments": [
+          "roof": {
+            "thickness": 0.2,
+            "material": "CONCRETE",
+            "openings": []
+          },
+          "fire_compartment_ratios": [
             {
               "name": "部件装配区",
               "boundary_ratio": [
@@ -448,16 +436,6 @@
               ],
               "firewall_thickness": 0.3,
               "firewall_material": "CONCRETE",
-              "openings": [
-                {
-                  "wall": "x_max",
-                  "type": "door",
-                  "w_offset_ratio": 0.48,
-                  "width_ratio": 0.04,
-                  "height": 5.0,
-                  "z_bottom": 0
-                }
-              ],
               "combustibles": [
                 {
                   "key": "AEROSPACE_COMPOSITE_PART",
@@ -481,6 +459,16 @@
                   "key": "ROCKET_VEHICLE_MEDIUM",
                   "count": 1
                 }
+              ],
+              "opening_templates": [
+                {
+                  "wall": "x_max",
+                  "type": "door",
+                  "w_offset_ratio": 0.48,
+                  "width_ratio": 0.04,
+                  "height": 5.0,
+                  "h_offset": 0
+                }
               ]
             },
             {
@@ -493,16 +481,6 @@
               ],
               "firewall_thickness": 0.3,
               "firewall_material": "CONCRETE",
-              "openings": [
-                {
-                  "wall": "x_min",
-                  "type": "door",
-                  "w_offset_ratio": 0.485,
-                  "width_ratio": 0.03,
-                  "height": 4.0,
-                  "z_bottom": 0
-                }
-              ],
               "combustibles": [
                 {
                   "key": "ORGANIC_SOLVENT_DRUM",
@@ -525,33 +503,32 @@
                   "count": 3
                 }
               ],
-              "specialized_components": []
+              "specialized_components": [],
+              "opening_templates": [
+                {
+                  "wall": "x_min",
+                  "type": "door",
+                  "w_offset_ratio": 0.485,
+                  "width_ratio": 0.03,
+                  "height": 4.0,
+                  "h_offset": 0
+                }
+              ]
             }
-          ],
-          "roof": {
-            "thickness": 0.2,
-            "material": "CONCRETE",
-            "openings": []
-          }
+          ]
         }
       ],
       "stories": [],
-      "specialized_components": [
-        {
-          "key": "ROCKET_VEHICLE_MEDIUM",
-          "count": 1,
-          "size_class": "medium"
-        }
+      "boundary": [
+        150,
+        137.5,
+        150,
+        65.0
       ]
     },
     {
       "name": "Processing plant",
       "cn_name": "加工厂房",
-      "description": "",
-      "offset": {
-        "x": 300,
-        "y": 150
-      },
       "length_range": [
         70,
         120
@@ -604,7 +581,12 @@
               0
             ]
           },
-          "fire_compartments": [
+          "roof": {
+            "thickness": 0.2,
+            "material": "CONCRETE",
+            "openings": []
+          },
+          "fire_compartment_ratios": [
             {
               "name": "加工作业区",
               "boundary_ratio": [
@@ -615,16 +597,6 @@
               ],
               "firewall_thickness": 0.3,
               "firewall_material": "CONCRETE",
-              "openings": [
-                {
-                  "wall": "x_max",
-                  "type": "door",
-                  "w_offset_ratio": 0.475,
-                  "width_ratio": 0.05,
-                  "height": 5.0,
-                  "z_bottom": 0
-                }
-              ],
               "combustibles": [
                 {
                   "key": "PREPREG_MATERIAL",
@@ -648,6 +620,16 @@
                   "key": "ROCKET_VEHICLE_SMALL",
                   "count": 2
                 }
+              ],
+              "opening_templates": [
+                {
+                  "wall": "x_max",
+                  "type": "door",
+                  "w_offset_ratio": 0.475,
+                  "width_ratio": 0.05,
+                  "height": 5.0,
+                  "h_offset": 0
+                }
               ]
             },
             {
@@ -660,16 +642,6 @@
               ],
               "firewall_thickness": 0.3,
               "firewall_material": "CONCRETE",
-              "openings": [
-                {
-                  "wall": "x_min",
-                  "type": "door",
-                  "w_offset_ratio": 0.48125,
-                  "width_ratio": 0.0375,
-                  "height": 4.0,
-                  "z_bottom": 0
-                }
-              ],
               "combustibles": [
                 {
                   "key": "CARDBOARD_BOX",
@@ -692,33 +664,32 @@
                   "count": 3
                 }
               ],
-              "specialized_components": []
+              "specialized_components": [],
+              "opening_templates": [
+                {
+                  "wall": "x_min",
+                  "type": "door",
+                  "w_offset_ratio": 0.48125,
+                  "width_ratio": 0.0375,
+                  "height": 4.0,
+                  "h_offset": 0
+                }
+              ]
             }
-          ],
-          "roof": {
-            "thickness": 0.2,
-            "material": "CONCRETE",
-            "openings": []
-          }
+          ]
         }
       ],
       "stories": [],
-      "specialized_components": [
-        {
-          "key": "ROCKET_VEHICLE_SMALL",
-          "count": 2,
-          "size_class": "small"
-        }
+      "boundary": [
+        300,
+        95.0,
+        150,
+        55.0
       ]
     },
     {
       "name": "Launch site",
       "cn_name": "发射场",
-      "description": "",
-      "offset": {
-        "x": 300,
-        "y": 300
-      },
       "length_range": [
         70,
         119
@@ -771,7 +742,12 @@
               0
             ]
           },
-          "fire_compartments": [
+          "roof": {
+            "thickness": 0.2,
+            "material": "CONCRETE",
+            "openings": []
+          },
+          "fire_compartment_ratios": [
             {
               "name": "发射准备区",
               "boundary_ratio": [
@@ -782,16 +758,6 @@
               ],
               "firewall_thickness": 0.3,
               "firewall_material": "CONCRETE",
-              "openings": [
-                {
-                  "wall": "x_max",
-                  "type": "door",
-                  "w_offset_ratio": 0.469697,
-                  "width_ratio": 0.060606,
-                  "height": 8.0,
-                  "z_bottom": 0
-                }
-              ],
               "combustibles": [
                 {
                   "key": "LIQUID_FUEL_DRUM",
@@ -811,6 +777,16 @@
                   "key": "ROCKET_VEHICLE_LARGE",
                   "count": 1
                 }
+              ],
+              "opening_templates": [
+                {
+                  "wall": "x_max",
+                  "type": "door",
+                  "w_offset_ratio": 0.469697,
+                  "width_ratio": 0.060606,
+                  "height": 8.0,
+                  "h_offset": 0
+                }
               ]
             },
             {
@@ -823,16 +799,6 @@
               ],
               "firewall_thickness": 0.3,
               "firewall_material": "CONCRETE",
-              "openings": [
-                {
-                  "wall": "x_min",
-                  "type": "door",
-                  "w_offset_ratio": 0.479798,
-                  "width_ratio": 0.040404,
-                  "height": 5.0,
-                  "z_bottom": 0
-                }
-              ],
               "combustibles": [
                 {
                   "key": "INDUSTRIAL_OIL_DRUM",
@@ -859,23 +825,27 @@
                   "count": 3
                 }
               ],
-              "specialized_components": []
+              "specialized_components": [],
+              "opening_templates": [
+                {
+                  "wall": "x_min",
+                  "type": "door",
+                  "w_offset_ratio": 0.479798,
+                  "width_ratio": 0.040404,
+                  "height": 5.0,
+                  "h_offset": 0
+                }
+              ]
             }
-          ],
-          "roof": {
-            "thickness": 0.2,
-            "material": "CONCRETE",
-            "openings": []
-          }
+          ]
         }
       ],
       "stories": [],
-      "specialized_components": [
-        {
-          "key": "ROCKET_VEHICLE_LARGE",
-          "count": 1,
-          "size_class": "large"
-        }
+      "boundary": [
+        300,
+        94.5,
+        300,
+        79.5
       ]
     }
   ]

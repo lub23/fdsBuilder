@@ -73,10 +73,15 @@ class ParameterEngine:
             story = Story.from_dict(story_dict)
             stories.append(story)
 
+        # Read boundary offset from template
+        template_boundary = template_building.get("boundary", [0, 0, 0, 0])
+        offset_x = template_boundary[0]
+        offset_y = template_boundary[2] if len(template_boundary) > 2 else 0
+
         building = Building(
             name=template_building.get("name", ""),
             cn_name=template_building.get("cn_name", ""),
-            boundary=[0, length, 0, width],
+            boundary=[offset_x, length, offset_y, width],
             wall_thickness=template_building.get("wall_thickness", 0.24),
             height=height,
             stories=stories,

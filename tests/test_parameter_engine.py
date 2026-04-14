@@ -609,3 +609,102 @@ class TestParameterEngineIntegration:
         assert fc.name == "Zone A"
         assert fc.boundary == [0.0, 42.5, 0.0, 32.5]
         assert fc.combustibles == [{"key": "WOOD_DESK", "count": 3}]
+
+    def test_boundary_offset_from_template(self):
+        """When template has a boundary field, its offset_x/offset_y should be used."""
+        tmpl = {
+            "name": "Offset Plant",
+            "cn_name": "偏移工厂",
+            "boundary": [100, 60, 200, 30],
+            "length_range": [50, 80],
+            "width_range": [20, 40],
+            "height_range": [6, 10],
+            "stories_range": [1, 1],
+            "stories_template": [
+                {
+                    "name": "1F",
+                    "height": 8.0,
+                    "doors": {
+                        "width": [3, 3],
+                        "height": [3, 3],
+                        "count": [1, 1],
+                    },
+                    "windows": {
+                        "width": [0, 0],
+                        "height": [0, 0],
+                        "count": [0, 0],
+                    },
+                    "fire_compartment_ratios": [],
+                    "roof": {
+                        "thickness": 0.2,
+                        "material": "CONCRETE",
+                        "openings": [],
+                    },
+                }
+            ],
+            "stories": [],
+        }
+        params = {"length": 60.0, "width": 30.0, "height": 8.0, "stories": 1}
+        b = ParameterEngine.generate(tmpl, params)
+        # boundary should use offset from template boundary [100, _, 200, _]
+        assert b.boundary[0] == 100  # offset_x
+        assert b.boundary[1] == 60.0  # length from params
+        assert b.boundary[2] == 200  # offset_y
+        assert b.boundary[3] == 30.0  # width from params
+
+    def test_no_boundary_defaults_to_origin(self):
+        """Without template boundary, building should be at origin."""
+        tmpl = {
+            "name": "Origin Plant",
+            "cn_name": "原点工厂",
+            "length_range": [50, 80],
+            "width_range": [20, 40],
+            "height_range": [6, 10],
+            "stories_range": [1, 1],
+            "stories_template": [
+                {
+                    "name": "1F",
+                    "height": 8.0,
+                    "fire_compartment_ratios": [],
+                    "roof": {"thickness": 0.2, "material": "CONCRETE", "openings": []},
+                }
+            ],
+            "stories": [],
+        }
+        params = {"length": 60.0, "width": 30.0, "height": 8.0, "stories": 1}
+        b = ParameterEngine.generate(tmpl, params)
+        assert b.boundary == [0, 60.0, 0, 30.0]
+
+    def test_equivalent_json_fire_compartments_load(self):
+        """Verify that loading an equivalent JSON and generating produces fire compartments."""
+        import json
+        import os
+        aerospace_path = os.path.join(
+            os.path.dirname(__file__), "..", "data", "facilities", "aerospace.json"
+        )
+        if not os.path.exists(aerospace_path):
+            pytest.skip("aerospace.json not found")
+
+        with open(aerospace_path, "r", encoding="utf-8") as f:
+            facility = json.load(f)
+
+        tmpl_building = facility["buildings"][0]
+        lr = tmpl_building["length_range"]
+        wr = tmpl_building["width_range"]
+        hr = tmpl_building["height_range"]
+        sr = tmpl_building["stories_range"]
+        params = {
+            "length": ParameterEngine.resolve_range(lr),
+            "width": ParameterEngine.resolve_range(wr),
+            "height": ParameterEngine.resolve_range(hr),
+            "stories": int(ParameterEngine.resolve_range(sr)),
+        }
+        b = ParameterEngine.generate(tmpl_building, params)
+
+        assert isinstance(b, Building)
+        # Must have fire compartments (the key rename bug would cause 0)
+        assert len(b.stories) > 0
+        assert len(b.stories[0].fire_compartments) > 0
+        # Verify boundary offset is applied
+        assert b.boundary[0] == tmpl_building["boundary"][0]
+        assert b.boundary[2] == tmpl_building["boundary"][2]

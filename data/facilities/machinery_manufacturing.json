@@ -5,11 +5,6 @@
     {
       "name": "Assembly building",
       "cn_name": "总装车间",
-      "description": "",
-      "offset": {
-        "x": 0,
-        "y": 0
-      },
       "length_range": [
         68,
         565,
@@ -73,7 +68,12 @@
               13
             ]
           },
-          "fire_compartments": [
+          "roof": {
+            "thickness": 0.2,
+            "material": "CONCRETE",
+            "openings": []
+          },
+          "fire_compartment_ratios": [
             {
               "name": "总装作业区",
               "boundary_ratio": [
@@ -84,16 +84,6 @@
               ],
               "firewall_thickness": 0.3,
               "firewall_material": "CONCRETE",
-              "openings": [
-                {
-                  "wall": "x_max",
-                  "type": "door",
-                  "w_offset_ratio": 0.491438,
-                  "width_ratio": 0.017123,
-                  "height": 5.0,
-                  "z_bottom": 0
-                }
-              ],
               "combustibles": [
                 {
                   "key": "INDUSTRIAL_OIL_DRUM",
@@ -117,6 +107,16 @@
                   "key": "VEHICLE_TRUCK",
                   "count": 1
                 }
+              ],
+              "opening_templates": [
+                {
+                  "wall": "x_max",
+                  "type": "door",
+                  "w_offset_ratio": 0.491438,
+                  "width_ratio": 0.017123,
+                  "height": 5.0,
+                  "h_offset": 0
+                }
               ]
             },
             {
@@ -129,16 +129,6 @@
               ],
               "firewall_thickness": 0.3,
               "firewall_material": "CONCRETE",
-              "openings": [
-                {
-                  "wall": "x_min",
-                  "type": "door",
-                  "w_offset_ratio": 0.493151,
-                  "width_ratio": 0.013699,
-                  "height": 4.0,
-                  "z_bottom": 0
-                }
-              ],
               "combustibles": [
                 {
                   "key": "WOOD_PALLET",
@@ -161,33 +151,32 @@
                   "count": 2
                 }
               ],
-              "specialized_components": []
+              "specialized_components": [],
+              "opening_templates": [
+                {
+                  "wall": "x_min",
+                  "type": "door",
+                  "w_offset_ratio": 0.493151,
+                  "width_ratio": 0.013699,
+                  "height": 4.0,
+                  "h_offset": 0
+                }
+              ]
             }
-          ],
-          "roof": {
-            "thickness": 0.2,
-            "material": "CONCRETE",
-            "openings": []
-          }
+          ]
         }
       ],
       "stories": [],
-      "specialized_components": [
-        {
-          "key": "VEHICLE_TRUCK",
-          "count": 1,
-          "size_class": "medium"
-        }
+      "boundary": [
+        0,
+        157.5,
+        0,
+        86
       ]
     },
     {
       "name": "Sub-assembly building",
       "cn_name": "部装车间",
-      "description": "部装车间，用于部件组装加工",
-      "offset": {
-        "x": 0,
-        "y": 100
-      },
       "length_range": [
         30,
         500,
@@ -251,7 +240,12 @@
               33
             ]
           },
-          "fire_compartments": [
+          "roof": {
+            "thickness": 0.2,
+            "material": "CONCRETE",
+            "openings": []
+          },
+          "fire_compartment_ratios": [
             {
               "name": "装配作业区",
               "boundary_ratio": [
@@ -262,16 +256,6 @@
               ],
               "firewall_thickness": 0.3,
               "firewall_material": "CONCRETE",
-              "openings": [
-                {
-                  "wall": "x_max",
-                  "type": "door",
-                  "w_offset_ratio": 0.489583,
-                  "width_ratio": 0.020833,
-                  "height": 4.0,
-                  "z_bottom": 0
-                }
-              ],
               "combustibles": [
                 {
                   "key": "INDUSTRIAL_OIL_DRUM",
@@ -299,6 +283,16 @@
                   "key": "VEHICLE_CAR",
                   "count": 2
                 }
+              ],
+              "opening_templates": [
+                {
+                  "wall": "x_max",
+                  "type": "door",
+                  "w_offset_ratio": 0.489583,
+                  "width_ratio": 0.020833,
+                  "height": 4.0,
+                  "h_offset": 0
+                }
               ]
             },
             {
@@ -311,16 +305,6 @@
               ],
               "firewall_thickness": 0.3,
               "firewall_material": "CONCRETE",
-              "openings": [
-                {
-                  "wall": "x_min",
-                  "type": "door",
-                  "w_offset_ratio": 0.489583,
-                  "width_ratio": 0.020833,
-                  "height": 3.5,
-                  "z_bottom": 0
-                }
-              ],
               "combustibles": [
                 {
                   "key": "WOOD_PALLET",
@@ -343,33 +327,32 @@
                   "count": 2
                 }
               ],
-              "specialized_components": []
+              "specialized_components": [],
+              "opening_templates": [
+                {
+                  "wall": "x_min",
+                  "type": "door",
+                  "w_offset_ratio": 0.489583,
+                  "width_ratio": 0.020833,
+                  "height": 3.5,
+                  "h_offset": 0
+                }
+              ]
             }
-          ],
-          "roof": {
-            "thickness": 0.2,
-            "material": "CONCRETE",
-            "openings": []
-          }
+          ]
         }
       ],
       "stories": [],
-      "specialized_components": [
-        {
-          "key": "VEHICLE_CAR",
-          "count": 2,
-          "size_class": "small"
-        }
+      "boundary": [
+        0,
+        130,
+        100,
+        70
       ]
     },
     {
       "name": "Machining workshop",
       "cn_name": "机械加工车间",
-      "description": "机械加工车间，用于零部件机械加工作业",
-      "offset": {
-        "x": 100,
-        "y": 100
-      },
       "length_range": [
         45,
         266,
@@ -433,7 +416,12 @@
               12.5
             ]
           },
-          "fire_compartments": [
+          "roof": {
+            "thickness": 0.2,
+            "material": "CONCRETE",
+            "openings": []
+          },
+          "fire_compartment_ratios": [
             {
               "name": "机加工区",
               "boundary_ratio": [
@@ -444,16 +432,6 @@
               ],
               "firewall_thickness": 0.3,
               "firewall_material": "CONCRETE",
-              "openings": [
-                {
-                  "wall": "x_max",
-                  "type": "door",
-                  "w_offset_ratio": 0.493392,
-                  "width_ratio": 0.013216,
-                  "height": 4.0,
-                  "z_bottom": 0
-                }
-              ],
               "combustibles": [
                 {
                   "key": "INDUSTRIAL_OIL_DRUM",
@@ -481,6 +459,16 @@
                   "key": "VEHICLE_CAR",
                   "count": 1
                 }
+              ],
+              "opening_templates": [
+                {
+                  "wall": "x_max",
+                  "type": "door",
+                  "w_offset_ratio": 0.493392,
+                  "width_ratio": 0.013216,
+                  "height": 4.0,
+                  "h_offset": 0
+                }
               ]
             },
             {
@@ -493,16 +481,6 @@
               ],
               "firewall_thickness": 0.3,
               "firewall_material": "CONCRETE",
-              "openings": [
-                {
-                  "wall": "x_min",
-                  "type": "door",
-                  "w_offset_ratio": 0.494493,
-                  "width_ratio": 0.011013,
-                  "height": 3.0,
-                  "z_bottom": 0
-                }
-              ],
               "combustibles": [
                 {
                   "key": "WOOD_PALLET",
@@ -525,23 +503,27 @@
                   "count": 2
                 }
               ],
-              "specialized_components": []
+              "specialized_components": [],
+              "opening_templates": [
+                {
+                  "wall": "x_min",
+                  "type": "door",
+                  "w_offset_ratio": 0.494493,
+                  "width_ratio": 0.011013,
+                  "height": 3.0,
+                  "h_offset": 0
+                }
+              ]
             }
-          ],
-          "roof": {
-            "thickness": 0.2,
-            "material": "CONCRETE",
-            "openings": []
-          }
+          ]
         }
       ],
       "stories": [],
-      "specialized_components": [
-        {
-          "key": "VEHICLE_CAR",
-          "count": 1,
-          "size_class": "small"
-        }
+      "boundary": [
+        100,
+        135,
+        100,
+        70
       ]
     }
   ]

@@ -13,7 +13,6 @@
       ],
       "wall_thickness": 0.25,
       "height": 4,
-      "boundary_polygons": null,
       "stories": [
         {
           "name": "1F",
@@ -75,7 +74,6 @@
       ],
       "wall_thickness": 0.25,
       "height": 10,
-      "boundary_polygons": null,
       "stories": [
         {
           "name": "1F",
@@ -163,7 +161,6 @@
       ],
       "wall_thickness": 0.3,
       "height": 10,
-      "boundary_polygons": null,
       "stories": [
         {
           "name": "1F",
@@ -230,7 +227,6 @@
       ],
       "wall_thickness": 0.25,
       "height": 5,
-      "boundary_polygons": null,
       "stories": [
         {
           "name": "1F",
@@ -306,7 +302,6 @@
       ],
       "wall_thickness": 0.2,
       "height": 5,
-      "boundary_polygons": null,
       "stories": [
         {
           "name": "1F",
@@ -347,7 +342,6 @@
       ],
       "wall_thickness": 0.2,
       "height": 3.5,
-      "boundary_polygons": null,
       "stories": [
         {
           "name": "1F",
@@ -399,7 +393,6 @@
       ],
       "wall_thickness": 0.2,
       "height": 5,
-      "boundary_polygons": null,
       "stories": [
         {
           "name": "1F",
@@ -451,7 +444,6 @@
       ],
       "wall_thickness": 0.15,
       "height": 4,
-      "boundary_polygons": null,
       "stories": [
         {
           "name": "1F",
@@ -503,7 +495,6 @@
       ],
       "wall_thickness": 0.2,
       "height": 4,
-      "boundary_polygons": null,
       "stories": [
         {
           "name": "1F",
@@ -544,7 +535,6 @@
       ],
       "wall_thickness": 0.2,
       "height": 5,
-      "boundary_polygons": null,
       "stories": [
         {
           "name": "1F",
@@ -585,7 +575,6 @@
       ],
       "wall_thickness": 0.2,
       "height": 4,
-      "boundary_polygons": null,
       "stories": [
         {
           "name": "1F",

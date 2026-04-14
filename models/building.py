@@ -177,7 +177,6 @@ class Building:
         boundary:          [offset_x, length, offset_y, width] -- position + size.
         wall_thickness:    Exterior wall thickness in metres.
         height:            Summary height (authoritative value from sum of story heights).
-        boundary_polygons: Optional polygon list for non-rectangular footprints.
         stories:           Ordered list of stories from bottom to top.
     """
     name: str = ""
@@ -185,7 +184,6 @@ class Building:
     boundary: list[float] = field(default_factory=lambda: [0, 20, 0, 10])
     wall_thickness: float = 0.24
     height: float = 3.0
-    boundary_polygons: list | None = None
     stories: list[Story] = field(default_factory=list)
 
     # -- convenience properties -----------------------------------------------
@@ -241,7 +239,6 @@ class Building:
             "boundary": list(self.boundary),
             "wall_thickness": self.wall_thickness,
             "height": self.height,
-            "boundary_polygons": self.boundary_polygons,
             "stories": [s.to_dict() for s in self.stories],
         }
         return d
@@ -254,7 +251,6 @@ class Building:
             boundary=list(d.get("boundary", [0, 20, 0, 10])),
             wall_thickness=d.get("wall_thickness", 0.24),
             height=d.get("height", 3.0),
-            boundary_polygons=d.get("boundary_polygons", None),
             stories=[Story.from_dict(s) for s in d.get("stories", [])],
         )
 
