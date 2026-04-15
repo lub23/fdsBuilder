@@ -20,3 +20,11 @@ case/
 
 # fds file
 *.fds
+*.md
+
+.*
+
+_backup/
+docs/
+
+!.gitignore
