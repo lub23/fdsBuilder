@@ -94,7 +94,8 @@ class SimulationControlPanel(QWidget):
         self.heat_azimuth_slider.setPageStep(45)
         self.heat_azimuth_slider.setTickPosition(QSlider.TicksBelow)
         self.heat_azimuth_slider.setTickInterval(45)
-        self.heat_azimuth_slider.valueChanged.connect(self._on_azimuth_changed)
+        self.heat_azimuth_slider.valueChanged.connect(self._on_azimuth_label_update)
+        self.heat_azimuth_slider.sliderReleased.connect(self._on_azimuth_committed)
         az_row.addWidget(self.heat_azimuth_slider)
         self.azimuth_label = QLabel("0° (北)")
         self.azimuth_label.setFixedWidth(60)
@@ -130,7 +131,7 @@ class SimulationControlPanel(QWidget):
         form.addWidget(QLabel("热通量:"), 1, 2)
         self.heat_flux_spin = QDoubleSpinBox()
         self.heat_flux_spin.setRange(1, 1000000)
-        self.heat_flux_spin.setValue(50)
+        self.heat_flux_spin.setValue(100)
         self.heat_flux_spin.setSuffix(" kW/m²")
         self.heat_flux_spin.valueChanged.connect(self.on_param_changed)
         form.addWidget(self.heat_flux_spin, 1, 3)
@@ -487,12 +488,19 @@ class SimulationControlPanel(QWidget):
         self.heat_options.setVisible(visible)
         self.on_param_changed()
 
-    def _on_azimuth_changed(self, value):
-        """Update azimuth label from slider."""
+    def _on_azimuth_label_update(self, value):
+        """Snap to 5° and update label while dragging (no model refresh)."""
+        snapped = round(value / 5) * 5
+        if self.heat_azimuth_slider.value() != snapped:
+            self.heat_azimuth_slider.setValue(snapped)
+            return  # setValue triggers another call with the snapped value
         directions = {0: "北", 90: "东", 180: "南", 270: "西", 360: "北"}
-        closest = min(directions.keys(), key=lambda k: abs(k - value))
-        suffix = f" ({directions[closest]})" if abs(closest - value) <= 15 else ""
-        self.azimuth_label.setText(f"{value}°{suffix}")
+        closest = min(directions.keys(), key=lambda k: abs(k - snapped))
+        suffix = f" ({directions[closest]})" if abs(closest - snapped) <= 15 else ""
+        self.azimuth_label.setText(f"{snapped}°{suffix}")
+
+    def _on_azimuth_committed(self):
+        """Refresh model only when slider is released."""
         self._on_param_changed_debounced()
 
     def _on_elevation_changed(self, index):
@@ -803,12 +811,12 @@ class SimulationControlPanel(QWidget):
         self._syncing = True
         try:
             # 热源设置
-            self.heat_enabled_check.setChecked(model.heat_source.get("enabled", False))
+            self.heat_enabled_check.setChecked(model.heat_source.get("enabled", True))
             # loc = model.heat_source.get("location", "north")
             # self.heat_location_combo.setCurrentText(
             #     self._heat_loc_rmap.get(loc, "北"))
             self.heat_distance_spin.setValue(model.heat_source.get("distance", 3.0))
-            self.heat_flux_spin.setValue(model.heat_source.get("radiation_flux", 50.0))
+            self.heat_flux_spin.setValue(model.heat_source.get("radiation_flux", 100.0))
             self.heat_width_ratio_spin.setValue(
                 model.heat_source.get("width_ratio", 1.5)
             )
@@ -848,7 +856,7 @@ class SimulationControlPanel(QWidget):
                 entry["z"].setValue(d.get("z", 0))
                 entry["qty"].setCurrentText(d.get("quantity", "TEMPERATURE"))
 
-            self._toggle_heat(2 if model.heat_source.get("enabled", False) else 0)
+            self._toggle_heat(2 if model.heat_source.get("enabled", True) else 0)
         finally:
             self._syncing = False
 

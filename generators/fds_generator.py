@@ -345,94 +345,69 @@ class FDSGenerator:
     # Combustibles (from fire compartment data)
     # ------------------------------------------------------------------
     def _generate_combustibles(self, building, story, lines):
-        """Generate combustible OBSTs from fire compartment data."""
+        """Generate combustible and specialized component OBSTs per FC.
+
+        Specialized components are laid out first (priority), then combustibles
+        fill the remaining space. Both share the same layout grid.
+        """
+        from models.geometry import layout_items_in_fc
         ox, L, oy, W = building.boundary
         z0 = story.z_bottom
 
         for fc in story.fire_compartments:
-            if not fc.combustibles:
+            if not fc.combustibles and not fc.specialized_components:
                 continue
-            fc_xmin, fc_xmax, fc_ymin, fc_ymax = fc.boundary
-            fc_L = fc_xmax - fc_xmin
-            fc_W = fc_ymax - fc_ymin
 
-            lines.append(f"! -- 可燃物 ({fc.name}) --\n")
+            # Build unified item list: specialized first (priority), then combustibles
+            all_items = []
 
-            # Place combustible items within the fire compartment area
-            item_index = 0
+            # 1. Specialized components (priority)
+            for sc_info in fc.specialized_components:
+                key = sc_info.get("key", "")
+                comp = SPECIALIZED_COMPONENTS.get(key)
+                if not comp:
+                    continue
+                for ci in range(sc_info.get("count", 1)):
+                    all_items.append({
+                        "length": comp.total_length,
+                        "width": comp.total_width,
+                        "height": comp.total_height,
+                        "key": key,
+                        "_type": "component",
+                        "_comp": comp,
+                        "_instance": ci,
+                    })
+
+            # 2. Combustibles
             for cb_entry in fc.combustibles:
                 key = cb_entry.get("key", "")
                 count = cb_entry.get("count", 1)
                 if key not in COMBUSTIBLE_LIBRARY:
                     continue
                 cb_def = COMBUSTIBLE_LIBRARY[key]
-                cb_L = cb_def.get("length", 1.0)
-                cb_W = cb_def.get("width", 0.8)
-                cb_H = cb_def.get("height", 0.5)
-                surf_id = f"SURF_{key}"
+                for _ in range(count):
+                    all_items.append({
+                        "length": cb_def.get("length", 1.0),
+                        "width": cb_def.get("width", 0.8),
+                        "height": cb_def.get("height", 0.5),
+                        "key": key,
+                        "name": cb_def.get("name", key),
+                        "_type": "combustible",
+                    })
 
-                # Simple grid layout within the FC
-                for ci in range(count):
-                    # Compute position using grid layout
-                    cols = max(1, int(fc_L / (cb_L + 0.5)))
-                    if cols == 0:
-                        cols = 1
-                    row = item_index // cols
-                    col = item_index % cols
-                    local_x = fc_xmin + 0.5 + col * (cb_L + 0.5)
-                    local_y = fc_ymin + 0.5 + row * (cb_W + 0.5)
+            placed = layout_items_in_fc(fc.boundary, all_items, margin=1.0, gap=0.5)
 
-                    # Clamp to FC bounds
-                    if local_x + cb_L > fc_xmax:
-                        local_x = fc_xmax - cb_L - 0.1
-                    if local_y + cb_W > fc_ymax:
-                        local_y = fc_ymax - cb_W - 0.1
-
-                    x1 = ox + local_x
-                    x2 = ox + local_x + cb_L
-                    y1 = oy + local_y
-                    y2 = oy + local_y + cb_W
-                    z1 = z0
-                    z2 = z0 + cb_H
-
-                    cb_id = f"{key}_{fc.name}_{ci}".replace(" ", "_")
-                    cb_name = cb_def.get("name", key)
-                    lines.append(
-                        f"&OBST XB={x1:.2f},{x2:.2f},{y1:.2f},{y2:.2f},"
-                        f"{z1:.2f},{z2:.2f},\n"
-                        f"      SURF_IDS='{surf_id}','INERT','INERT',\n"
-                        f"      ID='{cb_id}' /  ! {cb_name}\n"
-                    )
-                    item_index += 1
-
-    # ------------------------------------------------------------------
-    # Specialized components
-    # ------------------------------------------------------------------
-    def _generate_specialized_components(self, building, story, lines):
-        """Generate OBST blocks for specialized components within fire compartments."""
-        ox, _L, oy, _W = building.boundary
-        z0 = story.z_bottom
-
-        for fc in story.fire_compartments:
-            if not fc.specialized_components:
-                continue
-            fc_xmin, fc_xmax, fc_ymin, fc_ymax = fc.boundary
-
-            for sc_info in fc.specialized_components:
-                key = sc_info.get("key", "")
-                comp = SPECIALIZED_COMPONENTS.get(key)
-                if not comp:
-                    continue
-                count = sc_info.get("count", 1)
-                comp_x = sc_info.get("x", fc_xmin + 1.0)
-                comp_y = sc_info.get("y", fc_ymin + 1.0)
-
-                for ci in range(count):
-                    inst_x = comp_x + ci * (comp.total_length + 2.0)
+            lines.append(f"! -- 可燃物与组件 ({fc.name}) --\n")
+            cb_idx = 0
+            for item in placed:
+                if item.get("_type") == "component":
+                    comp = item["_comp"]
+                    ci = item["_instance"]
+                    key = item["key"]
                     lines.append(f"! {comp.name} #{ci + 1}\n")
                     for pi, part in enumerate(comp.parts):
-                        px = ox + inst_x + part.dx
-                        py = oy + comp_y + part.dy
+                        px = ox + item["x"] + part.dx
+                        py = oy + item["y"] + part.dy
                         pz = z0 + part.dz
                         surf = part.surf_id or "INERT"
                         lines.append(
@@ -442,6 +417,23 @@ class FDSGenerator:
                             f"      SURF_ID='{surf}',\n"
                             f"      ID='{key}_{ci}_{pi}' /\n"
                         )
+                else:
+                    key = item["key"]
+                    surf_id = f"SURF_{key}"
+                    x1 = ox + item["x"]
+                    x2 = x1 + item["length"]
+                    y1 = oy + item["y"]
+                    y2 = y1 + item["width"]
+                    z1 = z0
+                    z2 = z0 + item["height"]
+                    cb_id = f"{key}_{fc.name}_{cb_idx}".replace(" ", "_")
+                    lines.append(
+                        f"&OBST XB={x1:.2f},{x2:.2f},{y1:.2f},{y2:.2f},"
+                        f"{z1:.2f},{z2:.2f},\n"
+                        f"      SURF_IDS='{surf_id}','INERT','INERT',\n"
+                        f"      ID='{cb_id}' /  ! {item.get('name', key)}\n"
+                    )
+                    cb_idx += 1
 
     # ------------------------------------------------------------------
     # Heat source
@@ -511,12 +503,12 @@ class FDSGenerator:
         norm_x = -math.sin(az_rad)
         norm_y = math.cos(az_rad)
 
-        source_W = abs(group_half_L * perp_x) + abs(group_half_W * perp_y)
+        source_W = 2 * (abs(group_half_L * perp_x) + abs(group_half_W * perp_y))
         if width_ratio > 1.0:
             source_W *= width_ratio
         source_H = total_h * height_ratio
 
-        n_cols = 1 if azimuth == 0 else max(5, int(source_W / 0.5))
+        n_cols = 1 if azimuth % 90 == 0 else max(5, int(source_W / 0.5))
         n_rows = 1 if elevation == 0 else max(5, int(source_H / 0.5))
 
         strip_w = source_W / n_cols
@@ -706,9 +698,6 @@ class FDSGenerator:
 
                 # Combustibles
                 self._generate_combustibles(b, story, lines)
-
-                # Specialized components
-                self._generate_specialized_components(b, story, lines)
 
             # Roof: use the last story's roof
             if b.stories:

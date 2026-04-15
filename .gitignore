@@ -17,8 +17,15 @@ wheels/
 # case
 case/
 
+_backup/
 
 # fds file
 *.fds
 
 *.md
+
+
+.*/
+!.env.example
+!.gitignore
+!.python-version

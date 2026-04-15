@@ -206,17 +206,22 @@ class ParameterEngine:
             h = ParameterEngine.resolve_range(doors_tmpl["height"])
             count = int(ParameterEngine.resolve_range(doors_tmpl["count"]))
             wall_len = length  # y walls run along x -> length
-            for wall_id in ("y_min", "y_max"):
-                if count > 0:
-                    spacing = wall_len / (count + 1)
-                    for i in range(count):
-                        center = spacing * (i + 1)
-                        w_offset = center - w / 2
-                        result.append({
-                            "wall": wall_id,
-                            "type": "door",
-                            "boundary": [w_offset, w, 0.0, h],
-                        })
+            # Skip if door wider than wall
+            if w > 0 and h > 0 and w <= wall_len:
+                for wall_id in ("y_min", "y_max"):
+                    if count > 0:
+                        spacing = wall_len / (count + 1)
+                        for i in range(count):
+                            center = spacing * (i + 1)
+                            w_offset = max(0.0, center - w / 2)
+                            # Clamp to wall bounds
+                            if w_offset + w > wall_len:
+                                w_offset = wall_len - w
+                            result.append({
+                                "wall": wall_id,
+                                "type": "door",
+                                "boundary": [w_offset, w, 0.0, h],
+                            })
 
         # --- Windows on x_min / x_max ---
         windows_tmpl = tmpl.get("windows")
@@ -226,12 +231,15 @@ class ParameterEngine:
             count = int(ParameterEngine.resolve_range(windows_tmpl["count"]))
             wall_len = width  # x walls run along y -> width
             h_offset = story_height * 0.4
-            for wall_id in ("x_min", "x_max"):
-                if count > 0:
-                    spacing = wall_len / (count + 1)
-                    for i in range(count):
-                        center = spacing * (i + 1)
-                        w_offset = center - w / 2
+            if w > 0 and h > 0 and w <= wall_len:
+                for wall_id in ("x_min", "x_max"):
+                    if count > 0:
+                        spacing = wall_len / (count + 1)
+                        for i in range(count):
+                            center = spacing * (i + 1)
+                            w_offset = max(0.0, center - w / 2)
+                            if w_offset + w > wall_len:
+                                w_offset = wall_len - w
                         result.append({
                             "wall": wall_id,
                             "type": "window",
