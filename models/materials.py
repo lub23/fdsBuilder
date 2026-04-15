@@ -1445,4 +1445,20 @@ COMBUSTIBLE_LIBRARY = {
             "REFERENCE_TEMPERATURE": 300,
         },
     },
+    "WOODEN_FURNITURE": {
+        "name": "木质家具",
+        "length": 1.2,
+        "width": 0.6,
+        "height": 1.0,
+        "hrrpua": 280,
+        "ignition_temp": 350,
+        "color": "BROWN",
+        "matl": {
+            "DENSITY": 550,
+            "CONDUCTIVITY": 0.14,
+            "SPECIFIC_HEAT": 2.85,
+            "HEAT_OF_COMBUSTION": 18000,
+            "REFERENCE_TEMPERATURE": 350,
+        },
+    },
 }
