@@ -1,3 +1,10 @@
+from .generator import (
+    FEATURE_COLUMNS,
+    build_sample,
+    generate_balanced_dataset,
+    generate_splits,
+    write_csv,
+)
 from .labeling import (
     LABEL_THRESHOLD_HIGH,
     LABEL_THRESHOLD_MEDIUM,
@@ -5,7 +12,12 @@ from .labeling import (
 )
 
 __all__ = [
+    "FEATURE_COLUMNS",
     "LABEL_THRESHOLD_HIGH",
     "LABEL_THRESHOLD_MEDIUM",
+    "build_sample",
+    "generate_balanced_dataset",
+    "generate_splits",
     "simulate_damage_label",
+    "write_csv",
 ]
