@@ -131,8 +131,8 @@ class SimulationControlPanel(QWidget):
         form.addWidget(QLabel("热通量:"), 1, 2)
         self.heat_flux_spin = QDoubleSpinBox()
         self.heat_flux_spin.setRange(1, 1000000)
-        self.heat_flux_spin.setValue(100)
-        self.heat_flux_spin.setSuffix(" kW/m²")
+        self.heat_flux_spin.setValue(3000)
+        self.heat_flux_spin.setSuffix(" W/m²")
         self.heat_flux_spin.valueChanged.connect(self.on_param_changed)
         form.addWidget(self.heat_flux_spin, 1, 3)
 
@@ -455,16 +455,30 @@ class SimulationControlPanel(QWidget):
         layout.addWidget(self.output_text)
 
         # Smokeview按钮
-        self.smv_btn = QPushButton("🔍 用Smokeview查看结果")
-        self.smv_btn.setFixedHeight(28)
+        self.smv_btn = QPushButton("🔍 查看结果")
+        self.smv_btn.setFixedHeight(24)
         self.smv_btn.setEnabled(False)
         self.smv_btn.setStyleSheet(
             "QPushButton{background:#89b4fa;color:#1e1e2e;font-weight:bold;"
-            "padding:2px 10px;border-radius:3px}"
+            "padding:2px 8px;border-radius:3px}"
             "QPushButton:hover{background:#74c7ec}"
         )
         self.smv_btn.clicked.connect(self.open_smokeview)
-        layout.addWidget(self.smv_btn)
+
+        # 工程快速预测按钮
+        self.predict_btn = QPushButton("⚡ 工程预测")
+        self.predict_btn.setFixedHeight(24)
+        self.predict_btn.setStyleSheet(
+            "QPushButton{background:#f9e2af;color:#1e1e2e;font-weight:bold;"
+            "padding:2px 8px;border-radius:3px}"
+            "QPushButton:hover{background:#f5d76e}"
+        )
+        self.predict_btn.clicked.connect(self.run_predict)
+
+        btn_row = QHBoxLayout()
+        btn_row.addWidget(self.smv_btn)
+        btn_row.addWidget(self.predict_btn)
+        layout.addLayout(btn_row)
 
         grp.content_layout.addLayout(layout)
         return grp
@@ -816,7 +830,7 @@ class SimulationControlPanel(QWidget):
             # self.heat_location_combo.setCurrentText(
             #     self._heat_loc_rmap.get(loc, "北"))
             self.heat_distance_spin.setValue(model.heat_source.get("distance", 3.0))
-            self.heat_flux_spin.setValue(model.heat_source.get("radiation_flux", 100.0))
+            self.heat_flux_spin.setValue(model.heat_source.get("net_heat_flux", 3000.0))
             self.heat_width_ratio_spin.setValue(
                 model.heat_source.get("width_ratio", 1.5)
             )
@@ -873,7 +887,7 @@ class SimulationControlPanel(QWidget):
         m.heat_source["enabled"] = self.heat_enabled_check.isChecked()
         m.heat_source["azimuth"] = self.heat_azimuth_slider.value()
         m.heat_source["distance"] = self.heat_distance_spin.value()
-        m.heat_source["radiation_flux"] = self.heat_flux_spin.value()
+        m.heat_source["net_heat_flux"] = self.heat_flux_spin.value()
         m.heat_source["width_ratio"] = self.heat_width_ratio_spin.value()
         m.heat_source["height_ratio"] = self.heat_height_ratio_spin.value()
         m.heat_source["use_ramp"] = False
@@ -910,3 +924,98 @@ class SimulationControlPanel(QWidget):
                 }
             )
         m.output["custom_devices"] = custom_devices
+
+    # ── 工程快速预测 ────────────────────────────────────────
+    def run_predict(self):
+        """运行工程快速预测（使用 agent_damage 的融合模型）"""
+        from PySide6.QtWidgets import QMessageBox
+        import time
+
+        if not hasattr(self, "model") or not self.model.buildings:
+            QMessageBox.warning(self, "预测", "当前没有展示的设施")
+            return
+
+        try:
+            from agent_damage.src.inference import (
+                CheckpointError,
+                group_to_facility,
+                list_available_checkpoints,
+                load_predictor_from_checkpoints,
+                nearest_enum,
+            )
+            from agent_damage.src.processing.heat_source import (
+                AZIMUTH_OPTIONS,
+                DURATION_OPTIONS,
+                ELEVATION_OPTIONS,
+                HEAT_FLUX_OPTIONS,
+                HeatSourceParams,
+            )
+            from ui.damage_result_dialog import DamageResultDialog
+        except ImportError as exc:
+            QMessageBox.critical(
+                self,
+                "预测失败",
+                f"无法导入 agent_damage 模块：{exc}",
+            )
+            return
+
+        # 1. Build heat source, clamping UI values to enum-valid options.
+        # UI heat_flux uses W/m²; agent_damage expects the enum range (kW/m²).
+        ui_flux_kw = max(self.heat_flux_spin.value() / 1000.0, 1e-3)
+        try:
+            heat_source = HeatSourceParams(
+                elevation=ELEVATION_OPTIONS[min(self.heat_elevation_slider.value(), 3)],
+                azimuth=int(nearest_enum(self.heat_azimuth_slider.value(), AZIMUTH_OPTIONS)),
+                duration=float(nearest_enum(self.heat_duration_spin.value(), DURATION_OPTIONS)),
+                heat_flux=float(nearest_enum(ui_flux_kw, HEAT_FLUX_OPTIONS)),
+            )
+        except ValueError as exc:
+            QMessageBox.critical(self, "预测失败", f"热源参数无效：{exc}")
+            return
+
+        # 2. Load the ensemble predictor from checkpoints.
+        try:
+            predictor = load_predictor_from_checkpoints()
+        except CheckpointError as exc:
+            available = list_available_checkpoints()
+            msg = str(exc)
+            if available:
+                msg += "\n\n当前检测到: " + ", ".join(available)
+            msg += (
+                "\n\n请先在 agent_damage 目录下运行训练脚本：\n"
+                "    python agent_damage/scripts/generate_data.py\n"
+                "    python agent_damage/scripts/train.py --models svm rf mlp cnn1d"
+            )
+            QMessageBox.warning(self, "预测", msg)
+            return
+        except Exception as exc:
+            QMessageBox.critical(self, "预测失败", f"加载模型失败：{exc}")
+            return
+
+        # 3. Convert main-app BuildingGroup → agent_damage Facility and predict.
+        try:
+            facility = group_to_facility(self.model)
+            if not facility.buildings:
+                QMessageBox.warning(self, "预测", "当前设施没有可预测的建筑")
+                return
+            t0 = time.perf_counter()
+            result = predictor.predict_facility(facility, heat_source)
+            infer_ms = (time.perf_counter() - t0) * 1000.0
+        except Exception as exc:
+            import traceback
+
+            traceback.print_exc()
+            QMessageBox.critical(self, "预测失败", f"推理出错：{exc}")
+            return
+
+        # 4. Display beautified dialog.
+        model_names = [name.upper() for name in predictor.models.keys()]
+        dialog = DamageResultDialog(
+            facility_result=result,
+            heat_source=heat_source,
+            infer_time_ms=infer_ms,
+            model_names=model_names,
+            algorithm="max",
+            parent=self,
+        )
+        dialog.exec()
