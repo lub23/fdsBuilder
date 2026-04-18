@@ -10,6 +10,11 @@ from .heat_source import (
     HeatSourceParams,
     iter_heat_source_combinations,
 )
+from .occlusion import (
+    FIXED_SOURCE_OFFSET,
+    heat_source_position,
+    occluding_higher_count,
+)
 
 __all__ = [
     "AZIMUTH_OPTIONS",
@@ -20,8 +25,11 @@ __all__ = [
     "ELEVATION_OPTIONS",
     "Facility",
     "FacilityType",
+    "FIXED_SOURCE_OFFSET",
     "HEAT_FLUX_OPTIONS",
     "HeatSourceParams",
     "combustible_vector",
+    "heat_source_position",
     "iter_heat_source_combinations",
+    "occluding_higher_count",
 ]
