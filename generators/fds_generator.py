@@ -10,8 +10,21 @@
 
 import re
 import math
-from models.building import BuildingGroup, Building, Story, Opening, FireCompartment, Roof
-from models.geometry import detect_coplanar_openings, wall_length_for_building, wall_length_for_fc, resolve_negative_offset, is_coplanar
+from models.building import (
+    BuildingGroup,
+    Building,
+    Story,
+    Opening,
+    FireCompartment,
+    Roof,
+)
+from models.geometry import (
+    detect_coplanar_openings,
+    wall_length_for_building,
+    wall_length_for_fc,
+    resolve_negative_offset,
+    is_coplanar,
+)
 from models.materials import MATERIAL_LIBRARY, COMBUSTIBLE_LIBRARY
 from models.combustibles import SPECIALIZED_COMPONENTS
 
@@ -40,7 +53,9 @@ class FDSGenerator:
             if isinstance(bg, BuildingGroup):
                 self.bg = bg
             else:
-                self.bg = BuildingGroup.from_dict(bg if isinstance(bg, dict) else bg.to_dict())
+                self.bg = BuildingGroup.from_dict(
+                    bg if isinstance(bg, dict) else bg.to_dict()
+                )
             # Copy top-level fields from legacy model if present
             if hasattr(building_group, "heat_source") and building_group.heat_source:
                 self.bg.heat_source = building_group.heat_source
@@ -116,12 +131,20 @@ class FDSGenerator:
         # Wall / structural materials
         all_structural = wall_matl_keys | component_matl_keys
         for mat_name in sorted(all_structural):
-            if mat_name in MATERIAL_LIBRARY:
-                mat = MATERIAL_LIBRARY[mat_name]
+            mat = MATERIAL_LIBRARY.get(mat_name)
+            if mat:
                 lines.append(
                     f"&MATL ID='{mat_name}', DENSITY={mat['DENSITY']}, "
                     f"CONDUCTIVITY={mat['CONDUCTIVITY']}, SPECIFIC_HEAT={mat['SPECIFIC_HEAT']} /\n"
                 )
+            else:
+                cb = COMBUSTIBLE_LIBRARY.get(mat_name)
+                if cb and cb.get("matl"):
+                    mt = cb["matl"]
+                    lines.append(
+                        f"&MATL ID='{mat_name}', DENSITY={mt['DENSITY']}, "
+                        f"CONDUCTIVITY={mt['CONDUCTIVITY']}, SPECIFIC_HEAT={mt['SPECIFIC_HEAT']} /\n"
+                    )
 
         # Default structural materials (always need CONCRETE at minimum)
         for default_mat in ("CONCRETE",):
@@ -144,18 +167,26 @@ class FDSGenerator:
             mat_name = materials_map.get(mat_key, "CONCRETE")
             if mat_name in MATERIAL_LIBRARY:
                 thick = MATERIAL_LIBRARY[mat_name]["THICKNESS"]
-                lines.append(f"&SURF ID='{surf_name}', MATL_ID='{mat_name}', THICKNESS={thick} /  ! {desc}\n")
+                lines.append(
+                    f"&SURF ID='{surf_name}', MATL_ID='{mat_name}', THICKNESS={thick} /  ! {desc}\n"
+                )
 
-        # Specialized component surfaces
         comp_surfs_done = set()
         for mat_key in sorted(component_matl_keys):
-            surf_id = f"{mat_key}_SURF"
-            if surf_id in comp_surfs_done:
+            if mat_key in comp_surfs_done:
                 continue
-            mat = MATERIAL_LIBRARY.get(mat_key) or COMBUSTIBLE_LIBRARY.get(mat_key)
+            if mat_key in COMBUSTIBLE_LIBRARY:
+                surf_id = f"SURF_{mat_key}"
+                if surf_id not in comp_surfs_done:
+                    comp_surfs_done.add(surf_id)
+                continue
+            surf_id = f"{mat_key}_SURF"
+            mat = MATERIAL_LIBRARY.get(mat_key)
             if mat:
                 thick = mat.get("THICKNESS", 0.1)
-                lines.append(f"&SURF ID='{surf_id}', MATL_ID='{mat_key}', THICKNESS={thick} /\n")
+                lines.append(
+                    f"&SURF ID='{surf_id}', MATL_ID='{mat_key}', THICKNESS={thick} /\n"
+                )
                 comp_surfs_done.add(surf_id)
 
         # Combustible MATL / SURF definitions
@@ -202,7 +233,9 @@ class FDSGenerator:
 
         for wall_id, obst_bounds in walls.items():
             wall_openings = [o for o in all_exterior_openings if o.wall == wall_id]
-            self._emit_obst(lines, obst_bounds, surf="WALL", comment=f"ext wall {wall_id}")
+            self._emit_obst(
+                lines, obst_bounds, surf="WALL", comment=f"ext wall {wall_id}"
+            )
             for opening in wall_openings:
                 hole = self._opening_to_hole(wall_id, obst_bounds, opening, building)
                 self._emit_hole(lines, hole, comment=f"{opening.type} on {wall_id}")
@@ -224,21 +257,41 @@ class FDSGenerator:
         z0 = obst_bounds[4]  # z_bottom of the wall
 
         if wall_id == "y_min":
-            return [ox + w_off, ox + w_off + w,
-                    oy - t - REDUNDANCY, oy + REDUNDANCY,
-                    z0 + h_off, z0 + h_off + h]
+            return [
+                ox + w_off,
+                ox + w_off + w,
+                oy - t - REDUNDANCY,
+                oy + REDUNDANCY,
+                z0 + h_off,
+                z0 + h_off + h,
+            ]
         elif wall_id == "y_max":
-            return [ox + w_off, ox + w_off + w,
-                    oy + W - REDUNDANCY, oy + W + t + REDUNDANCY,
-                    z0 + h_off, z0 + h_off + h]
+            return [
+                ox + w_off,
+                ox + w_off + w,
+                oy + W - REDUNDANCY,
+                oy + W + t + REDUNDANCY,
+                z0 + h_off,
+                z0 + h_off + h,
+            ]
         elif wall_id == "x_min":
-            return [ox - t - REDUNDANCY, ox + REDUNDANCY,
-                    oy + w_off, oy + w_off + w,
-                    z0 + h_off, z0 + h_off + h]
+            return [
+                ox - t - REDUNDANCY,
+                ox + REDUNDANCY,
+                oy + w_off,
+                oy + w_off + w,
+                z0 + h_off,
+                z0 + h_off + h,
+            ]
         else:  # x_max
-            return [ox + L - REDUNDANCY, ox + L + t + REDUNDANCY,
-                    oy + w_off, oy + w_off + w,
-                    z0 + h_off, z0 + h_off + h]
+            return [
+                ox + L - REDUNDANCY,
+                ox + L + t + REDUNDANCY,
+                oy + w_off,
+                oy + w_off + w,
+                z0 + h_off,
+                z0 + h_off + h,
+            ]
 
     # ------------------------------------------------------------------
     # Fire compartment walls (non-coplanar only)
@@ -257,24 +310,64 @@ class FDSGenerator:
             # Only non-coplanar boundaries get firewalls
             # x_min boundary
             if x_min > 0 and not is_coplanar(fc.boundary, L, W, "x_min"):
-                self._emit_obst(lines,
-                    [ox + x_min - ft/2, ox + x_min + ft/2, oy + y_min, oy + y_max, z0, z1],
-                    surf="WALL", comment=f"firewall {fc.name} x_min")
+                self._emit_obst(
+                    lines,
+                    [
+                        ox + x_min - ft / 2,
+                        ox + x_min + ft / 2,
+                        oy + y_min,
+                        oy + y_max,
+                        z0,
+                        z1,
+                    ],
+                    surf="WALL",
+                    comment=f"firewall {fc.name} x_min",
+                )
             # x_max boundary
             if abs(x_max - L) > 1e-6 and not is_coplanar(fc.boundary, L, W, "x_max"):
-                self._emit_obst(lines,
-                    [ox + x_max - ft/2, ox + x_max + ft/2, oy + y_min, oy + y_max, z0, z1],
-                    surf="WALL", comment=f"firewall {fc.name} x_max")
+                self._emit_obst(
+                    lines,
+                    [
+                        ox + x_max - ft / 2,
+                        ox + x_max + ft / 2,
+                        oy + y_min,
+                        oy + y_max,
+                        z0,
+                        z1,
+                    ],
+                    surf="WALL",
+                    comment=f"firewall {fc.name} x_max",
+                )
             # y_min boundary
             if y_min > 0 and not is_coplanar(fc.boundary, L, W, "y_min"):
-                self._emit_obst(lines,
-                    [ox + x_min, ox + x_max, oy + y_min - ft/2, oy + y_min + ft/2, z0, z1],
-                    surf="WALL", comment=f"firewall {fc.name} y_min")
+                self._emit_obst(
+                    lines,
+                    [
+                        ox + x_min,
+                        ox + x_max,
+                        oy + y_min - ft / 2,
+                        oy + y_min + ft / 2,
+                        z0,
+                        z1,
+                    ],
+                    surf="WALL",
+                    comment=f"firewall {fc.name} y_min",
+                )
             # y_max boundary
             if abs(y_max - W) > 1e-6 and not is_coplanar(fc.boundary, L, W, "y_max"):
-                self._emit_obst(lines,
-                    [ox + x_min, ox + x_max, oy + y_max - ft/2, oy + y_max + ft/2, z0, z1],
-                    surf="WALL", comment=f"firewall {fc.name} y_max")
+                self._emit_obst(
+                    lines,
+                    [
+                        ox + x_min,
+                        ox + x_max,
+                        oy + y_max - ft / 2,
+                        oy + y_max + ft / 2,
+                        z0,
+                        z1,
+                    ],
+                    surf="WALL",
+                    comment=f"firewall {fc.name} y_max",
+                )
 
             # Non-coplanar FC openings (not on exterior walls) -> HOLE on firewalls
             for opening in fc.openings:
@@ -298,24 +391,44 @@ class FDSGenerator:
 
         if wall_id == "x_min":
             wx = ox + x_min
-            return [wx - ft/2 - REDUNDANCY, wx + ft/2 + REDUNDANCY,
-                    oy + y_min + w_off, oy + y_min + w_off + w,
-                    z0 + h_off, z0 + h_off + h]
+            return [
+                wx - ft / 2 - REDUNDANCY,
+                wx + ft / 2 + REDUNDANCY,
+                oy + y_min + w_off,
+                oy + y_min + w_off + w,
+                z0 + h_off,
+                z0 + h_off + h,
+            ]
         elif wall_id == "x_max":
             wx = ox + x_max
-            return [wx - ft/2 - REDUNDANCY, wx + ft/2 + REDUNDANCY,
-                    oy + y_min + w_off, oy + y_min + w_off + w,
-                    z0 + h_off, z0 + h_off + h]
+            return [
+                wx - ft / 2 - REDUNDANCY,
+                wx + ft / 2 + REDUNDANCY,
+                oy + y_min + w_off,
+                oy + y_min + w_off + w,
+                z0 + h_off,
+                z0 + h_off + h,
+            ]
         elif wall_id == "y_min":
             wy = oy + y_min
-            return [ox + x_min + w_off, ox + x_min + w_off + w,
-                    wy - ft/2 - REDUNDANCY, wy + ft/2 + REDUNDANCY,
-                    z0 + h_off, z0 + h_off + h]
+            return [
+                ox + x_min + w_off,
+                ox + x_min + w_off + w,
+                wy - ft / 2 - REDUNDANCY,
+                wy + ft / 2 + REDUNDANCY,
+                z0 + h_off,
+                z0 + h_off + h,
+            ]
         else:  # y_max
             wy = oy + y_max
-            return [ox + x_min + w_off, ox + x_min + w_off + w,
-                    wy - ft/2 - REDUNDANCY, wy + ft/2 + REDUNDANCY,
-                    z0 + h_off, z0 + h_off + h]
+            return [
+                ox + x_min + w_off,
+                ox + x_min + w_off + w,
+                wy - ft / 2 - REDUNDANCY,
+                wy + ft / 2 + REDUNDANCY,
+                z0 + h_off,
+                z0 + h_off + h,
+            ]
 
     # ------------------------------------------------------------------
     # Roof
@@ -328,18 +441,35 @@ class FDSGenerator:
         roof = story.roof
 
         # Roof slab OBST
-        self._emit_obst(lines,
-            [ox - t/2, ox + L + t/2, oy - t/2, oy + W + t/2, z, z + roof.thickness],
-            surf="ROOF", comment="roof slab")
+        self._emit_obst(
+            lines,
+            [
+                ox - t / 2,
+                ox + L + t / 2,
+                oy - t / 2,
+                oy + W + t / 2,
+                z,
+                z + roof.thickness,
+            ],
+            surf="ROOF",
+            comment="roof slab",
+        )
 
         # Roof openings (HOLEs for stairwells, skylights, etc.)
         for ro in roof.openings:
             bnd = ro.get("boundary", ro.get("bnd", [0, 0, 0, 0]))
-            self._emit_hole(lines,
-                [ox + bnd[0], ox + bnd[0] + bnd[1],
-                 oy + bnd[2], oy + bnd[2] + bnd[3],
-                 z - 0.05, z + roof.thickness + 0.05],
-                comment="roof opening")
+            self._emit_hole(
+                lines,
+                [
+                    ox + bnd[0],
+                    ox + bnd[0] + bnd[1],
+                    oy + bnd[2],
+                    oy + bnd[2] + bnd[3],
+                    z - 0.05,
+                    z + roof.thickness + 0.05,
+                ],
+                comment="roof opening",
+            )
 
     # ------------------------------------------------------------------
     # Combustibles (from fire compartment data)
@@ -351,6 +481,7 @@ class FDSGenerator:
         fill the remaining space. Both share the same layout grid.
         """
         from models.geometry import layout_items_in_fc
+
         ox, L, oy, W = building.boundary
         z0 = story.z_bottom
 
@@ -367,16 +498,23 @@ class FDSGenerator:
                 comp = SPECIALIZED_COMPONENTS.get(key)
                 if not comp:
                     continue
+                # Determine if rocket should be horizontal (not in launch site)
+                is_rocket = key.startswith("ROCKET_VEHICLE")
+                is_launch_site = "发射场" in fc.name or "Launch site" in fc.name
+                horizontal = is_rocket and not is_launch_site
                 for ci in range(sc_info.get("count", 1)):
-                    all_items.append({
-                        "length": comp.total_length,
-                        "width": comp.total_width,
-                        "height": comp.total_height,
-                        "key": key,
-                        "_type": "component",
-                        "_comp": comp,
-                        "_instance": ci,
-                    })
+                    all_items.append(
+                        {
+                            "length": comp.total_length,
+                            "width": comp.total_width,
+                            "height": comp.total_height,
+                            "key": key,
+                            "_type": "component",
+                            "_comp": comp,
+                            "_instance": ci,
+                            "_horizontal": horizontal,
+                        }
+                    )
 
             # 2. Combustibles
             for cb_entry in fc.combustibles:
@@ -385,15 +523,23 @@ class FDSGenerator:
                 if key not in COMBUSTIBLE_LIBRARY:
                     continue
                 cb_def = COMBUSTIBLE_LIBRARY[key]
+                length = cb_def.get("length", 1.0)
+                width = cb_def.get("width", 0.8)
+                height = cb_def.get("height", 0.5)
+                rotation = cb_entry.get("rotation", 0)
+                if rotation == 90:
+                    length, width = width, length
                 for _ in range(count):
-                    all_items.append({
-                        "length": cb_def.get("length", 1.0),
-                        "width": cb_def.get("width", 0.8),
-                        "height": cb_def.get("height", 0.5),
-                        "key": key,
-                        "name": cb_def.get("name", key),
-                        "_type": "combustible",
-                    })
+                    all_items.append(
+                        {
+                            "length": length,
+                            "width": width,
+                            "height": height,
+                            "key": key,
+                            "name": cb_def.get("name", key),
+                            "_type": "combustible",
+                        }
+                    )
 
             placed = layout_items_in_fc(fc.boundary, all_items, margin=1.0, gap=0.5)
 
@@ -404,18 +550,31 @@ class FDSGenerator:
                     comp = item["_comp"]
                     ci = item["_instance"]
                     key = item["key"]
+                    horizontal = item.get("_horizontal", False)
                     lines.append(f"! {comp.name} #{ci + 1}\n")
                     for pi, part in enumerate(comp.parts):
-                        px = ox + item["x"] + part.dx
-                        py = oy + item["y"] + part.dy
-                        pz = z0 + part.dz
+                        if horizontal:
+                            # 水平放置：x方向变为长度，z方向变为高度（平躺在地面上）
+                            px = ox + item["x"] + part.dz  # 原dz变为dx
+                            py = oy + item["y"] + part.dy
+                            pz = z0 + part.dx  # 原dx变为dz，贴地
+                            part_length = part.height  # 原height变为length
+                            part_width = part.width
+                            part_height = part.length  # 原length变为height
+                        else:
+                            px = ox + item["x"] + part.dx
+                            py = oy + item["y"] + part.dy
+                            pz = z0 + part.dz
+                            part_length = part.length
+                            part_width = part.width
+                            part_height = part.height
                         surf = part.surf_id or "INERT"
                         lines.append(
-                            f"&OBST XB={px:.2f},{px + part.length:.2f},"
-                            f"{py:.2f},{py + part.width:.2f},"
-                            f"{pz:.2f},{pz + part.height:.2f},\n"
+                            f"&OBST XB={px:.2f},{px + part_length:.2f},"
+                            f"{py:.2f},{py + part_width:.2f},"
+                            f"{pz:.2f},{pz + part_height:.2f},\n"
                             f"      SURF_ID='{surf}',\n"
-                            f"      ID='{key}_{ci}_{pi}' /\n"
+                            f"      ID='{key}_{fc.name}_{ci}_{pi}' /\n"
                         )
                 else:
                     key = item["key"]
@@ -439,124 +598,62 @@ class FDSGenerator:
     # Heat source
     # ------------------------------------------------------------------
     def _generate_heat_source(self, lines):
-        """Generate external heat source (radiation panel)."""
+        """Emit one &VENT per MESH face that receives a share of the heat flux.
+
+        Flux is decomposed by models.heat_source.face_fluxes.
+        """
+        from models.heat_source import face_fluxes
+
         hs = self.bg.heat_source
-        if not hs.get("enabled", False):
-            return
-
-        buildings = self.bg.buildings
-        if not buildings:
-            return
-
-        lines.append("! ========== 外部强辐射热源 ==========\n")
-
-        # Compute group bounding box
-        g_xmin = min(b.offset_x for b in buildings)
-        g_xmax = max(b.offset_x + b.length for b in buildings)
-        g_ymin = min(b.offset_y for b in buildings)
-        g_ymax = max(b.offset_y + b.width for b in buildings)
-
-        group_cx = (g_xmin + g_xmax) / 2
-        group_cy = (g_ymin + g_ymax) / 2
-        group_half_L = (g_xmax - g_xmin) / 2
-        group_half_W = (g_ymax - g_ymin) / 2
-
-        total_h = max(
-            sum(s.height for s in b.stories) for b in buildings
-        ) if buildings else 10.0
-
-        distance = hs.get("distance", 3.0)
-        width_ratio = hs.get("width_ratio", 1.5)
-        height_ratio = hs.get("height_ratio", 1.0)
-        elevation = hs.get("elevation", 0)
-        duration = hs.get("duration", 1.36)
         azimuth = hs.get("azimuth", 0)
+        elevation = hs.get("elevation", 0)
+        Q_kw = hs.get("net_heat_flux", 20.0)
+        duration = hs.get("duration", 1.36)
 
-        D = max(group_half_L, group_half_W) + distance
-        theta = math.radians(azimuth)
-        alpha = math.radians(elevation)
+        fluxes = face_fluxes(azimuth, elevation, Q_kw)
+        if not fluxes:
+            return
 
-        source_cx = group_cx + D * math.cos(alpha) * math.sin(theta)
-        source_cy = group_cy - D * math.cos(alpha) * math.cos(theta)
-        source_cz = D * math.sin(alpha)
+        domain, grid_size, num_meshes = self._compute_mesh()
+        x0, x1, y0, y1, z0, z1 = domain
 
-        temperature = hs.get("temperature", 800.0)
-        if hs.get("radiation_flux") and "temperature" not in hs:
-            flux_val = hs.get("radiation_flux")
-            temperature = 1000.0 if flux_val > 20000 else 800.0
+        lines.append(
+            f"! ========== 外部热源 (azimuth={azimuth}°, elevation={elevation}°) ==========\n"
+        )
 
-        if duration > 0:
-            lines.append(f"&RAMP ID='HEAT_RAMP', T=0, F=1.0 /\n")
-            lines.append(f"&RAMP ID='HEAT_RAMP', T={duration:.2f}, F=1.0 /\n")
-            lines.append(f"&RAMP ID='HEAT_RAMP', T={duration + 1:.2f}, F=0.0 /\n\n")
+        # One SURF per face with its own NET_HEAT_FLUX, optionally ramped
+        # off after `duration` seconds.
+        for face_name, face_flux in fluxes.items():
+            surf_id = f"HEAT_SOURCE_{face_name}"
+            ramp_clause = ""
+            if duration > 0:
+                ramp_clause = f", RAMP_Q='RAMP_{face_name}'"
+            lines.append(
+                f"&SURF ID='{surf_id}', NET_HEAT_FLUX={face_flux:.2f}, "
+                f"COLOR='ORANGE'{ramp_clause} /\n"
+            )
+            if duration > 0:
+                lines.append(
+                    f"&RAMP ID='RAMP_{face_name}', T=0.00, F=1.0 /\n"
+                    f"&RAMP ID='RAMP_{face_name}', T={duration:.2f}, F=1.0 /\n"
+                    f"&RAMP ID='RAMP_{face_name}', T={duration + 0.01:.2f}, F=0.0 /\n"
+                )
 
-        lines.append("&SURF ID='HEAT_SOURCE',\n")
-        lines.append(f"      TMP_FRONT={temperature:.1f}")
-        if duration > 0:
-            lines.append(",\n      RAMP_T='HEAT_RAMP'")
-        lines.append(",\n      COLOR='ORANGE' /\n\n")
-
-        # Strip geometry
-        az_rad = math.radians(azimuth)
-        perp_x = -math.sin(az_rad + math.pi / 2)
-        perp_y = math.cos(az_rad + math.pi / 2)
-        norm_x = -math.sin(az_rad)
-        norm_y = math.cos(az_rad)
-
-        source_W = 2 * (abs(group_half_L * perp_x) + abs(group_half_W * perp_y))
-        if width_ratio > 1.0:
-            source_W *= width_ratio
-        source_H = total_h * height_ratio
-
-        n_cols = 1 if azimuth % 90 == 0 else max(5, int(source_W / 0.5))
-        n_rows = 1 if elevation == 0 else max(5, int(source_H / 0.5))
-
-        strip_w = source_W / n_cols
-        dh = source_H / n_rows
-
-        elev_rad = math.radians(elevation)
-
-        lines.append(f"! 热源: 方位角{azimuth}°, 距离{distance}m, 仰角{elevation}°\n")
-
-        if elevation > 0:
-            tan_alpha = math.tan(elev_rad)
-            cos_alpha = math.cos(elev_rad)
-            thickness = dh / cos_alpha if cos_alpha > 1e-10 else 0.2
-            for row in range(n_rows):
-                z_lo = row * dh
-                z_hi = (row + 1) * dh
-                fwd_offset = row * dh / tan_alpha if tan_alpha > 1e-10 else 0
-                for col in range(n_cols):
-                    perp_pos = -source_W / 2 + (col + 0.5) * strip_w
-                    cx = source_cx + perp_x * perp_pos + norm_x * fwd_offset
-                    cy = source_cy + perp_y * perp_pos + norm_y * fwd_offset
-                    obst_x1 = cx - perp_x * strip_w / 2 - norm_x * thickness / 2
-                    obst_x2 = cx + perp_x * strip_w / 2 + norm_x * thickness / 2
-                    obst_y1 = cy - perp_y * strip_w / 2 - norm_y * thickness / 2
-                    obst_y2 = cy + perp_y * strip_w / 2 + norm_y * thickness / 2
-                    x1, x2 = min(obst_x1, obst_x2), max(obst_x1, obst_x2)
-                    y1, y2 = min(obst_y1, obst_y2), max(obst_y1, obst_y2)
-                    lines.append(self.gen_box(x1, x2, y1, y2,
-                                              source_cz + z_lo, source_cz + z_hi,
-                                              "HEAT_SOURCE"))
-        else:
-            thickness = 0.2
-            for row in range(n_rows):
-                z_lo = row * dh
-                z_hi = (row + 1) * dh
-                for col in range(n_cols):
-                    perp_pos = -source_W / 2 + (col + 0.5) * strip_w
-                    cx = source_cx + perp_x * perp_pos
-                    cy = source_cy + perp_y * perp_pos
-                    obst_x1 = cx - perp_x * strip_w / 2 - norm_x * thickness / 2
-                    obst_x2 = cx + perp_x * strip_w / 2 + norm_x * thickness / 2
-                    obst_y1 = cy - perp_y * strip_w / 2 - norm_y * thickness / 2
-                    obst_y2 = cy + perp_y * strip_w / 2 + norm_y * thickness / 2
-                    x1, x2 = min(obst_x1, obst_x2), max(obst_x1, obst_x2)
-                    y1, y2 = min(obst_y1, obst_y2), max(obst_y1, obst_y2)
-                    lines.append(self.gen_box(x1, x2, y1, y2,
-                                              source_cz + z_lo, source_cz + z_hi,
-                                              "HEAT_SOURCE"))
+        face_xb = {
+            "XMIN": (x0, x0, y0, y1, z0, z1),
+            "XMAX": (x1, x1, y0, y1, z0, z1),
+            "YMIN": (x0, x1, y0, y0, z0, z1),
+            "YMAX": (x0, x1, y1, y1, z0, z1),
+            "ZMAX": (x0, x1, y0, y1, z1, z1),
+        }
+        for face_name in fluxes:
+            xb = face_xb[face_name]
+            lines.append(
+                f"&VENT XB={xb[0]:.2f},{xb[1]:.2f},"
+                f"{xb[2]:.2f},{xb[3]:.2f},"
+                f"{xb[4]:.2f},{xb[5]:.2f}, "
+                f"SURF_ID='HEAT_SOURCE_{face_name}' /\n"
+            )
         lines.append("\n")
 
     # ------------------------------------------------------------------
@@ -568,7 +665,7 @@ class FDSGenerator:
         buildings = bg.buildings
 
         if not buildings:
-            return [0, 10, 0, 10, 0, 10], 0.5
+            return [0, 10, 0, 10, 0, 10], 0.5, 1
 
         x_min = min(b.offset_x - b.wall_thickness for b in buildings)
         x_max = max(b.offset_x + b.length + b.wall_thickness for b in buildings)
@@ -576,11 +673,11 @@ class FDSGenerator:
         y_max = max(b.offset_y + b.width + b.wall_thickness for b in buildings)
         z_max = max(sum(s.height for s in b.stories) for b in buildings)
 
-        grid_size = bg.domain.get("grid_size", 0.5)
+        base_grid_size = bg.domain.get("grid_size", 1.0)
 
-        expand_x = max((x_max - x_min) * 0.2, 5.0)
-        expand_y = max((y_max - y_min) * 0.2, 5.0)
-        expand_z = max(z_max * 0.2, 5.0)
+        expand_x = max((x_max - x_min) * 0.1, 2.0)
+        expand_y = max((y_max - y_min) * 0.1, 2.0)
+        expand_z = max(z_max * 0.1, 2.0)
 
         domain = [
             x_min - expand_x,
@@ -591,23 +688,37 @@ class FDSGenerator:
             z_max + expand_z,
         ]
 
-        # Extend for heat source if enabled
-        if bg.heat_source.get("enabled", False):
-            hs = bg.heat_source
-            azimuth = hs.get("azimuth", 0)
-            distance = hs.get("distance", 3.0)
-            az_rad = math.radians(azimuth)
-            dir_x = math.sin(az_rad)
-            dir_y = math.cos(az_rad)
-            radius = abs((x_max - x_min) / 2 * dir_x) + abs((y_max - y_min) / 2 * dir_y)
-            source_ox = (x_max + x_min) / 2 + dir_x * (radius + distance + 15)
-            source_oy = (y_max + y_min) / 2 + dir_y * (radius + distance + 15)
-            domain[0] = min(domain[0], source_ox - 5)
-            domain[1] = max(domain[1], source_ox + 5)
-            domain[2] = min(domain[2], source_oy - 5)
-            domain[3] = max(domain[3], source_oy + 5)
+        domain_w = domain[1] - domain[0]
+        domain_d = domain[3] - domain[2]
+        domain_h = domain[5] - domain[4]
 
-        return domain, grid_size
+        max_cells_per_mesh = 150000
+        grid_size = base_grid_size
+        nx = math.ceil(domain_w / grid_size)
+        ny = math.ceil(domain_d / grid_size)
+        nz = math.ceil(domain_h / grid_size)
+        total_cells = nx * ny * nz
+
+        while total_cells > max_cells_per_mesh and grid_size < 5.0:
+            grid_size *= 1.5
+            nx = math.ceil(domain_w / grid_size)
+            ny = math.ceil(domain_d / grid_size)
+            nz = math.ceil(domain_h / grid_size)
+            total_cells = nx * ny * nz
+
+        num_meshes = 1
+        if total_cells > max_cells_per_mesh:
+            num_meshes = 2
+
+        if total_cells > max_cells_per_mesh:
+            nz = max(1, math.floor(max_cells_per_mesh / (nx * ny)))
+            domain[5] = domain[4] + nz * grid_size
+
+        domain = [round(x) for x in domain]
+        nx = max(10, math.ceil(domain_w / grid_size))
+        ny = max(10, math.ceil(domain_d / grid_size))
+        nz = max(10, math.ceil(domain_h / grid_size))
+        return domain, grid_size, num_meshes
 
     # ------------------------------------------------------------------
     # Main generate
@@ -621,7 +732,7 @@ class FDSGenerator:
         for b in buildings:
             b.update_z_offsets()
 
-        # Determine CHID
+        # Determine CHID with工况信息
         chid = getattr(self, "_chid_override", "") or ""
         if not chid:
             if buildings:
@@ -631,17 +742,35 @@ class FDSGenerator:
         chid = chid.replace(" ", "_").replace(".", "_").replace("-", "_")
         chid = "".join(c for c in chid if ord(c) < 128) or "building"
 
+        hs = bg.heat_source
+        heat_flux_kw = int(round(hs.get("net_heat_flux", 20.0)))
+        azimuth = int(hs.get("azimuth", 0))
+        elevation = int(hs.get("elevation", 0))
+        duration = int(hs.get("duration", 0) * 100)
+        sim_time = int(bg.simulation_time)
+
+        chid_suffix = f"q{heat_flux_kw}_a{azimuth}_e{elevation}_d{duration}_t{sim_time}"
+        full_chid = f"{chid}_{chid_suffix}"
+
+        title = (
+            f"Heat Flux={heat_flux_kw}kW/m2, Azimuth={azimuth}, "
+            f"Elevation={elevation}, Duration={hs.get('duration', 0)}s, "
+            f"SimTime={sim_time}s"
+        )
+
         lines = []
 
         # HEAD
-        lines.append(f"&HEAD CHID='{chid}', TITLE='Auto-generated Building Model' /\n\n")
+        lines.append(
+            f"&HEAD CHID='{full_chid}', TITLE='{title}' /\n\n"
+        )
 
         # REAC
         lines.append("! ========== 燃烧反应 ==========\n")
-        lines.append("&REAC FUEL='METHANE',\n      SOOT_YIELD=0.01 /\n\n")
+        lines.append("&REAC ID='METHANE', FUEL='METHANE', FORMULA='C1H4', SOOT_YIELD=0.01 /\n\n")
 
         # MESH
-        domain, grid_size = self._compute_mesh()
+        domain, grid_size, num_meshes = self._compute_mesh()
         domain_w = domain[1] - domain[0]
         domain_d = domain[3] - domain[2]
         domain_h = domain[5] - domain[4]
@@ -650,42 +779,73 @@ class FDSGenerator:
         nz = max(10, math.ceil(domain_h / grid_size))
 
         lines.append("! ========== 计算域 ==========\n")
-        lines.append(
-            f"&MESH IJK={nx},{ny},{nz}, "
-            f"XB={domain[0]:.2f},{domain[1]:.2f},"
-            f"{domain[2]:.2f},{domain[3]:.2f},"
-            f"{domain[4]:.2f},{domain[5]:.2f} /\n\n"
-        )
+        if num_meshes == 1:
+            lines.append(
+                f"&MESH IJK={nx},{ny},{nz}, "
+                f"XB={domain[0]:.2f},{domain[1]:.2f},"
+                f"{domain[2]:.2f},{domain[3]:.2f},"
+                f"{domain[4]:.2f},{domain[5]:.2f} /\n\n"
+            )
+        else:
+            lines.append("! 分割为多个网格以避免内存溢出\n")
+            half_ny = ny // 2
+            ny1 = half_ny
+            ny2 = ny - half_ny
+            y_mid = domain[2] + half_ny * grid_size
+            lines.append(
+                f"&MESH ID='Mesh01', IJK={nx},{ny1},{nz}, "
+                f"XB={domain[0]:.2f},{domain[1]:.2f},"
+                f"{domain[2]:.2f},{y_mid:.2f},"
+                f"{domain[4]:.2f},{domain[5]:.2f} /\n"
+            )
+            lines.append(
+                f"&MESH ID='Mesh02', IJK={nx},{ny2},{nz}, "
+                f"XB={domain[0]:.2f},{domain[1]:.2f},"
+                f"{y_mid:.2f},{domain[3]:.2f},"
+                f"{domain[4]:.2f},{domain[5]:.2f} /\n\n"
+            )
 
         # TIME
         lines.append(f"&TIME T_END={bg.simulation_time:.1f} /\n\n")
 
         # DUMP
-        lines.append("&DUMP DT_DEVC=10, DT_SLCF=10 /\n\n")
+        lines.append("&DUMP DT_RESTART=300.0, DT_SL3D=0.25 /\n\n")
 
         # Materials & Surfaces
         self._generate_materials(lines)
 
         # For each building: geometry
         for bi, b in enumerate(buildings):
-            bld_label = f"建筑{bi + 1}: {b.name or b.cn_name}" if len(buildings) > 1 else ""
+            bld_label = (
+                f"建筑{bi + 1}: {b.name or b.cn_name}" if len(buildings) > 1 else ""
+            )
             if bld_label:
-                lines.append(f"\n! ########## {bld_label} (offset={b.offset_x:.1f},{b.offset_y:.1f}) ##########\n")
+                lines.append(
+                    f"\n! ########## {bld_label} (offset={b.offset_x:.1f},{b.offset_y:.1f}) ##########\n"
+                )
 
             # Ground floor slab
             ox, L, oy, W = b.boundary
             t = b.wall_thickness
             lines.append("! ========== 地板 ==========\n")
-            lines.append(self.gen_box(
-                ox - t / 2, ox + L + t / 2,
-                oy - t / 2, oy + W + t / 2,
-                0, t, "FLOOR"
-            ))
+            lines.append(
+                self.gen_box(
+                    ox - t / 2,
+                    ox + L + t / 2,
+                    oy - t / 2,
+                    oy + W + t / 2,
+                    0,
+                    t,
+                    "FLOOR",
+                )
+            )
             lines.append("\n")
 
             for si, story in enumerate(b.stories):
                 z0 = story.z_bottom
-                lines.append(f"\n! ========== {story.name} (z={z0:.2f}~{story.z_top:.2f}) ==========\n")
+                lines.append(
+                    f"\n! ========== {story.name} (z={z0:.2f}~{story.z_top:.2f}) ==========\n"
+                )
 
                 # Exterior walls + openings
                 lines.append("! -- 外墙 --\n")
@@ -735,13 +895,17 @@ class FDSGenerator:
             else:
                 dev_x = dev_y = 0.0
             dev_z = 1.5
-            lines.append(f"&DEVC XYZ={dev_x:.2f},{dev_y:.2f},{dev_z:.2f}, QUANTITY='TEMPERATURE', ID='center_temp' /\n")
+            lines.append(
+                f"&DEVC XYZ={dev_x:.2f},{dev_y:.2f},{dev_z:.2f}, QUANTITY='TEMPERATURE', ID='center_temp' /\n"
+            )
             for i, cd in enumerate(output.get("custom_devices", [])):
                 x = cd.get("x", 0)
                 y = cd.get("y", 0)
                 z = cd.get("z", 0)
                 qty = cd.get("quantity", "TEMPERATURE")
-                lines.append(f"&DEVC XYZ={x:.2f},{y:.2f},{z:.2f}, QUANTITY='{qty}', ID='custom_dev_{i + 1}' /\n")
+                lines.append(
+                    f"&DEVC XYZ={x:.2f},{y:.2f},{z:.2f}, QUANTITY='{qty}', ID='custom_dev_{i + 1}' /\n"
+                )
             lines.append("\n")
 
         # TAIL
