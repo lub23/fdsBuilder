@@ -646,9 +646,29 @@ class FacilityListPanel(QWidget):
             self.facility_selected.emit(group.to_dict())
 
     def _open_combustible_dialog(self):
-        """Open combustible management via a simplified selection dialog."""
+        """Open combustible management with the current building's FC list."""
         if not self._params:
-            self._params = {}
+            return
+
+        facility = self._params.get("facility")
+        building_name = self._params.get("building")
+        ftype = self._params.get("type")
+        if not facility or not building_name:
+            return
+
+        # Collect fire_compartments as plain dicts for the dialog.
+        fcs: list[dict] = []
+        if ftype == "specialized":
+            bdata = self.facility_manager.get_building_data(facility, building_name)
+            for story in bdata.get("stories", []):
+                for fc in story.get("fire_compartments", []):
+                    fcs.append(fc)
+        else:
+            params_full = self.facility_manager.default_params(facility, building_name)
+            bld = self.facility_manager.load_equivalent(facility, building_name, params_full)
+            for story in bld.stories:
+                for fc in story.fire_compartments:
+                    fcs.append(fc.to_dict())
 
         from ui.dialogs import CombustibleSelectionDialog
 
@@ -656,7 +676,7 @@ class FacilityListPanel(QWidget):
         dlg = CombustibleSelectionDialog(
             self,
             current_sel,
-            fire_compartments=self._params.get("fire_compartments", []),
+            fire_compartments=fcs,
         )
         if dlg.exec() == QDialog.Accepted:
             self._params["combustible_selections"] = dlg.get_selections()
