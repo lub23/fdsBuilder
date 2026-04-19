@@ -399,66 +399,51 @@ class SimulationControlPanel(QWidget):
         layout = QVBoxLayout()
         layout.setSpacing(4)
 
-        # 运行按钮
-        btn_layout = QHBoxLayout()
-        self.run_fds_btn = QPushButton("▶️ 运行FDS仿真")
-        self.run_fds_btn.setFixedHeight(32)
-        self.run_fds_btn.setStyleSheet(
-            "QPushButton{background:#a6e3a1;color:#1e1e2e;font-weight:bold;"
-            "padding:4px 12px;border-radius:4px}"
-            "QPushButton:hover{background:#94e2d5}"
-        )
+        btn_row = QHBoxLayout()
+        btn_row.setSpacing(4)
+
+        def _mkbtn(text, bg_color, tooltip=""):
+            btn = QPushButton(text)
+            btn.setFixedHeight(30)
+            btn.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
+            btn.setStyleSheet(
+                f"QPushButton{{background:{bg_color};color:#1e1e2e;font-weight:bold;"
+                f"padding:3px 6px;border-radius:3px;font-size:12px}}"
+                f"QPushButton:disabled{{background:#45475a;color:#6c7086}}"
+            )
+            if tooltip:
+                btn.setToolTip(tooltip)
+            return btn
+
+        self.run_fds_btn = _mkbtn("▶️ 运行", "#a6e3a1", "运行FDS仿真")
         self.run_fds_btn.clicked.connect(self.run_fds_simulation)
-        btn_layout.addWidget(self.run_fds_btn)
+        btn_row.addWidget(self.run_fds_btn)
 
-        self.stop_fds_btn = QPushButton("⏹️ 停止")
-        self.stop_fds_btn.setFixedHeight(32)
+        self.stop_fds_btn = _mkbtn("⏹️ 停止", "#f38ba8", "停止当前仿真")
         self.stop_fds_btn.setEnabled(False)
-        self.stop_fds_btn.setStyleSheet(
-            "QPushButton{background:#f38ba8;color:#1e1e2e;font-weight:bold;"
-            "padding:4px 12px;border-radius:4px}"
-        )
         self.stop_fds_btn.clicked.connect(self.stop_fds_simulation)
-        btn_layout.addWidget(self.stop_fds_btn)
+        btn_row.addWidget(self.stop_fds_btn)
 
-        layout.addLayout(btn_layout)
+        self.smv_btn = _mkbtn("🔍 查看", "#89b4fa", "用Smokeview打开仿真结果")
+        self.smv_btn.setEnabled(False)
+        self.smv_btn.clicked.connect(self.open_smokeview)
+        btn_row.addWidget(self.smv_btn)
 
-        # 进度显示
+        self.predict_btn = _mkbtn("⚡ 预测", "#f9e2af", "工程快速预测(毁伤代理模型)")
+        self.predict_btn.clicked.connect(self.run_predict)
+        btn_row.addWidget(self.predict_btn)
+
+        layout.addLayout(btn_row)
+
         self.progress_label = QLabel("就绪")
         self.progress_label.setStyleSheet("color: #a6adc8; font-size: 12px;")
         layout.addWidget(self.progress_label)
 
-        # 输出显示
         self.output_text = QLabel("")
         self.output_text.setStyleSheet("color: #cdd6f4; font-size: 11px;")
         self.output_text.setWordWrap(True)
+        self.output_text.setMaximumHeight(40)
         layout.addWidget(self.output_text)
-
-        # Smokeview按钮
-        self.smv_btn = QPushButton("🔍 查看结果")
-        self.smv_btn.setFixedHeight(24)
-        self.smv_btn.setEnabled(False)
-        self.smv_btn.setStyleSheet(
-            "QPushButton{background:#89b4fa;color:#1e1e2e;font-weight:bold;"
-            "padding:2px 8px;border-radius:3px}"
-            "QPushButton:hover{background:#74c7ec}"
-        )
-        self.smv_btn.clicked.connect(self.open_smokeview)
-
-        # 工程快速预测按钮
-        self.predict_btn = QPushButton("⚡ 工程预测")
-        self.predict_btn.setFixedHeight(24)
-        self.predict_btn.setStyleSheet(
-            "QPushButton{background:#f9e2af;color:#1e1e2e;font-weight:bold;"
-            "padding:2px 8px;border-radius:3px}"
-            "QPushButton:hover{background:#f5d76e}"
-        )
-        self.predict_btn.clicked.connect(self.run_predict)
-
-        btn_row = QHBoxLayout()
-        btn_row.addWidget(self.smv_btn)
-        btn_row.addWidget(self.predict_btn)
-        layout.addLayout(btn_row)
 
         grp.content_layout.addLayout(layout)
         return grp
