@@ -155,28 +155,36 @@ class SimulationControlPanel(QWidget):
         g.addWidget(QLabel("时间:"), 0, 0)
         self.sim_time_spin = QDoubleSpinBox()
         self.sim_time_spin.setRange(1, 36000)
-        self.sim_time_spin.setValue(60)
+        self.sim_time_spin.setValue(600)
         self.sim_time_spin.setSuffix(" s")
-        self.sim_time_spin.valueChanged.connect(self._on_param_changed_debounced)
+        self.sim_time_spin.valueChanged.connect(
+            lambda v: self._on_param_changed_debounced("sim")
+        )
         g.addWidget(self.sim_time_spin, 0, 1)
 
         g.addWidget(QLabel("网格:"), 0, 2)
         self.grid_size_spin = QDoubleSpinBox()
         self.grid_size_spin.setRange(0.1, 2.0)
-        self.grid_size_spin.setValue(0.5)
+        self.grid_size_spin.setValue(1.0)
         self.grid_size_spin.setSingleStep(0.1)
         self.grid_size_spin.setToolTip("网格尺寸 (m)")
-        self.grid_size_spin.valueChanged.connect(self._on_param_changed_debounced)
+        self.grid_size_spin.valueChanged.connect(
+            lambda v: self._on_param_changed_debounced("sim")
+        )
         g.addWidget(self.grid_size_spin, 0, 3)
 
         self.output_slices_check = QCheckBox("切片输出")
         self.output_slices_check.setChecked(True)
-        self.output_slices_check.stateChanged.connect(self.on_param_changed)
+        self.output_slices_check.stateChanged.connect(
+            lambda _: self.on_param_changed("slice_device")
+        )
         g.addWidget(self.output_slices_check, 1, 0, 1, 2)
 
         self.output_devices_check = QCheckBox("测量点输出")
         self.output_devices_check.setChecked(True)
-        self.output_devices_check.stateChanged.connect(self.on_param_changed)
+        self.output_devices_check.stateChanged.connect(
+            lambda _: self.on_param_changed("slice_device")
+        )
         g.addWidget(self.output_devices_check, 1, 2, 1, 2)
 
         grp.content_layout.addLayout(g)
@@ -272,7 +280,7 @@ class SimulationControlPanel(QWidget):
         pos_spin.setValue(pos)
         pos_spin.setSuffix(" m")
         pos_spin.setMinimumWidth(70)
-        pos_spin.valueChanged.connect(self.on_param_changed)
+        pos_spin.valueChanged.connect(lambda v: self.on_param_changed("slice_device"))
         row.addWidget(pos_spin)
         qty_combo = QComboBox()
         qty_combo.addItems(
@@ -280,7 +288,7 @@ class SimulationControlPanel(QWidget):
         )
         qty_combo.setCurrentText(qty)
         qty_combo.setMinimumWidth(110)
-        qty_combo.currentIndexChanged.connect(self.on_param_changed)
+        qty_combo.currentIndexChanged.connect(lambda _: self.on_param_changed("slice_device"))
         row.addWidget(qty_combo)
 
         del_btn = QPushButton("删除")
@@ -306,9 +314,9 @@ class SimulationControlPanel(QWidget):
 
         self._slice_rows.append(entry)
         self._slice_container.addLayout(row)
-        axis_combo.currentIndexChanged.connect(self.on_param_changed)
+        axis_combo.currentIndexChanged.connect(lambda _: self.on_param_changed("slice_device"))
         if not default:
-            self.on_param_changed()
+            self.on_param_changed("slice_device")
 
     def _remove_slice_row(self, entry):
         if entry in self._slice_rows:
@@ -320,7 +328,7 @@ class SimulationControlPanel(QWidget):
                 if w:
                     w.deleteLater()
             self._slice_container.removeItem(layout)
-            self.on_param_changed()
+            self.on_param_changed("slice_device")
 
     def _add_device_row(self, default=False, x=0.0, y=0.0, z=0.0, qty="TEMPERATURE"):
         """Add a custom device row: X, Y, Z + quantity + remove btn."""
@@ -335,14 +343,14 @@ class SimulationControlPanel(QWidget):
             sp.setDecimals(2)
             sp.setValue(0)
             sp.setFixedWidth(60)
-            sp.valueChanged.connect(self.on_param_changed)
+            sp.valueChanged.connect(lambda v: self.on_param_changed("slice_device"))
             row.addWidget(sp)
             spins.append(sp)
 
         qty = QComboBox()
         qty.addItems(["TEMPERATURE", "HRRPUV", "VELOCITY", "VISIBILITY"])
         qty.setFixedWidth(100)
-        qty.currentIndexChanged.connect(self.on_param_changed)
+        qty.currentIndexChanged.connect(lambda _: self.on_param_changed("slice_device"))
         row.addWidget(qty)
 
         del_btn = QPushButton("X")
@@ -358,7 +366,7 @@ class SimulationControlPanel(QWidget):
 
         self._device_rows.append(entry)
         self._device_container.addLayout(row)
-        self.on_param_changed()
+        self.on_param_changed("slice_device")
 
     def _remove_device_row(self, entry):
         if entry in self._device_rows:
@@ -370,7 +378,7 @@ class SimulationControlPanel(QWidget):
                 if w:
                     w.deleteLater()
             self._device_container.removeItem(layout)
-            self.on_param_changed()
+            self.on_param_changed("slice_device")
 
     @staticmethod
     def _clear_custom_rows(rows_list, container_layout):
