@@ -10,6 +10,7 @@
 """
 
 import math
+from dataclasses import dataclass, field
 
 # 3D可视化
 try:
@@ -33,6 +34,57 @@ from models.building import (
 )
 from models.geometry import detect_coplanar_openings, is_coplanar
 from models.materials import MATERIAL_LIBRARY
+
+
+@dataclass
+class BuildingMeshBundle:
+    """Precomputed PyVista meshes for a single building, keyed by signature."""
+    walls: "pv.PolyData | None" = None
+    openings: "pv.PolyData | None" = None
+    firewalls: "pv.PolyData | None" = None
+    roofs: "pv.PolyData | None" = None
+    combustibles_per_material: dict = field(default_factory=dict)
+    actors: dict = field(default_factory=dict)
+
+
+def _signature(building):
+    """Build a stable geometry signature for cache keying."""
+
+    def _opening_sig(o):
+        return (o.wall, o.type, tuple(o.boundary))
+
+    def _fc_sig(fc):
+        return (
+            fc.name, tuple(fc.boundary), fc.firewall_thickness,
+            tuple(_opening_sig(o) for o in fc.openings),
+            tuple(
+                (c.get("key", ""), c.get("count", 1), c.get("rotation", 0))
+                for c in fc.combustibles if isinstance(c, dict)
+            ),
+            tuple(
+                (sc.get("key", ""), sc.get("count", 1))
+                for sc in fc.specialized_components if isinstance(sc, dict)
+            ),
+        )
+
+    def _story_sig(s):
+        return (
+            s.name, round(s.height, 4),
+            tuple(_opening_sig(o) for o in s.openings),
+            tuple(_fc_sig(fc) for fc in s.fire_compartments),
+            (round(s.roof.thickness, 4), s.roof.material),
+        )
+
+    return (
+        building.name,
+        round(building.length, 4),
+        round(building.width, 4),
+        round(building.height, 4),
+        round(building.wall_thickness, 4),
+        round(building.offset_x, 4),
+        round(building.offset_y, 4),
+        tuple(_story_sig(s) for s in building.stories),
+    )
 
 
 # ============================================================
@@ -65,6 +117,8 @@ class Viewer3D(QWidget):
             "devices": [],
             "origin": [],
         }
+        self._building_cache: dict = {}
+        self._cache_max = 100
         self._debounce_timer = None
         self._pending_update = False
         self.setup_ui()
@@ -172,18 +226,32 @@ class Viewer3D(QWidget):
         """Full render: buildings + combustibles + heat source + slices + origin + camera."""
         self.wall_actors.clear()
         self.opening_actors.clear()
-        for g in list(self._actor_groups):
-            self._clear_group(g)
-        self.plotter.clear()  # safety net until caching is in place
+        # Clear non-building groups; buildings handled by cache attach/detach.
+        self._clear_group("combustibles")
+        self._clear_group("heat_source")
+        self._clear_group("slices")
+        self._clear_group("devices")
+        self._clear_group("origin")
+        # NOTE: do NOT call self.plotter.clear() — it wipes cached building actors.
 
         bg = self._bg
         if bg is None:
             return
 
+        # Detach all bundles so attach-bundle re-adds cleanly in new order.
+        for bundle in self._building_cache.values():
+            if bundle.actors:
+                for a in bundle.actors.values():
+                    try:
+                        self.plotter.remove_actor(a)
+                    except Exception:
+                        pass
+                bundle.actors.clear()
+        self._clear_group("buildings")
+
         bbox = self._render_buildings_group(bg)
         if bbox is None:
             return
-        global_min_x, global_max_x, global_min_y, global_max_y, global_max_z = bbox
 
         self._render_heat_source_group(bg, bbox)
         self._render_slices_devices_group(bg, bbox)
@@ -191,6 +259,343 @@ class Viewer3D(QWidget):
         self._finalize_camera(bbox)
 
     def _render_buildings_group(self, bg):
+        """Render building bundles from cache; returns bbox tuple or None."""
+        buildings = bg.buildings
+        global_max_x = global_max_y = global_max_z = -float("inf")
+        global_min_x = global_min_y = float("inf")
+
+        active_sigs = set()
+        for bi, building in enumerate(buildings):
+            ox, L, oy, W = building.boundary
+            t = building.wall_thickness
+            is_highlighted = bi == self._highlighted_building
+            wall_opacity = 1.0 if is_highlighted else 0.6
+            edge_color = "#f97316" if is_highlighted else "#45475a"
+            edge_width = 3 if is_highlighted else 1
+
+            global_min_x = min(global_min_x, ox - t)
+            global_max_x = max(global_max_x, ox + L + t)
+            global_min_y = min(global_min_y, oy - t)
+            global_max_y = max(global_max_y, oy + W + t)
+            total_h = 0.0
+            for s in building.stories:
+                total_h = max(total_h, s.z_bottom + s.height)
+            if total_h == 0.0:
+                total_h = building.height
+            global_max_z = max(global_max_z, total_h)
+
+            sig = _signature(building)
+            active_sigs.add(sig)
+            bundle = self._building_cache.get(sig)
+            if bundle is None:
+                bundle = self._build_bundle(building)
+                self._building_cache[sig] = bundle
+                if len(self._building_cache) > self._cache_max:
+                    oldest = next(iter(self._building_cache))
+                    self._building_cache.pop(oldest)
+
+            self._attach_bundle(bundle, wall_opacity, edge_color, edge_width)
+
+        # Detach stale bundles (present in cache but not in current scene)
+        for sig, bundle in list(self._building_cache.items()):
+            if sig not in active_sigs and bundle.actors:
+                for a in bundle.actors.values():
+                    try:
+                        self.plotter.remove_actor(a)
+                    except Exception:
+                        pass
+                bundle.actors.clear()
+
+        if global_min_x == float("inf"):
+            if buildings:
+                b0 = buildings[0]
+                ox0, L0, oy0, W0 = b0.boundary
+                global_min_x, global_max_x = ox0, ox0 + L0
+                global_min_y, global_max_y = oy0, oy0 + W0
+            else:
+                return None
+        if global_max_z == -float("inf"):
+            global_max_z = 3.0
+        return (
+            global_min_x, global_max_x,
+            global_min_y, global_max_y,
+            global_max_z,
+        )
+
+    def _attach_bundle(self, bundle: BuildingMeshBundle,
+                       wall_opacity: float, edge_color: str, edge_width: int):
+        """Ensure bundle meshes are visible in the plotter; add to groups."""
+        if bundle.actors:
+            for key, actor in bundle.actors.items():
+                if key in ("walls", "firewalls"):
+                    actor.prop.opacity = wall_opacity
+                    actor.prop.edge_color = edge_color
+                    actor.prop.line_width = edge_width
+                group = "combustibles" if key.startswith("comb_") else "buildings"
+                self._add_to_group(group, actor)
+            return
+
+        if bundle.walls is not None:
+            a = self.plotter.add_mesh(
+                bundle.walls, color="#808080",
+                opacity=wall_opacity, show_edges=True,
+                edge_color=edge_color, line_width=edge_width,
+            )
+            bundle.actors["walls"] = a
+            self._add_to_group("buildings", a)
+        if bundle.firewalls is not None:
+            a = self.plotter.add_mesh(
+                bundle.firewalls, color="#808080",
+                opacity=0.6, show_edges=True,
+                edge_color="#45475a", line_width=1,
+            )
+            bundle.actors["firewalls"] = a
+            self._add_to_group("buildings", a)
+        if bundle.openings is not None:
+            a = self.plotter.add_mesh(bundle.openings, color="#4CAF50", opacity=0.8)
+            bundle.actors["openings"] = a
+            self._add_to_group("buildings", a)
+        if bundle.roofs is not None:
+            a = self.plotter.add_mesh(bundle.roofs, color="#888888", opacity=0.4)
+            bundle.actors["roofs"] = a
+            self._add_to_group("buildings", a)
+        for color, mesh in bundle.combustibles_per_material.items():
+            if mesh is None:
+                continue
+            a = self.plotter.add_mesh(mesh, color=color, opacity=0.8)
+            bundle.actors[f"comb_{color}"] = a
+            self._add_to_group("combustibles", a)
+
+    def _build_bundle(self, building) -> BuildingMeshBundle:
+        """Build a BuildingMeshBundle from a Building object."""
+        bundle = BuildingMeshBundle()
+        ox, L, oy, W = building.boundary
+        t = building.wall_thickness
+
+        def _box(bounds):
+            return pv.Box(bounds=bounds)
+
+        wall_boxes: list = []
+        opening_boxes: list = []
+        firewall_boxes: list = []
+        roof_boxes: list = []
+        combust_per_color: dict[str, list] = {}
+
+        for story in building.stories:
+            z0 = story.z_bottom
+            z1 = story.z_top
+
+            wall_boxes.extend([
+                _box([ox - t/2, ox + L + t/2, oy - t, oy, z0, z1]),
+                _box([ox - t/2, ox + L + t/2, oy + W, oy + W + t, z0, z1]),
+                _box([ox - t, ox, oy - t/2, oy + W + t/2, z0, z1]),
+                _box([ox + L, ox + L + t, oy - t/2, oy + W + t/2, z0, z1]),
+            ])
+
+            all_ext = list(story.openings) + detect_coplanar_openings(building, story)
+            for op in all_ext:
+                box = self._opening_box(op, building, z0, is_exterior=True)
+                if box is not None:
+                    opening_boxes.append(box)
+
+            for fc in story.fire_compartments:
+                firewall_boxes.extend(self._firewall_boxes(fc, building, z0, z1))
+                for op in fc.openings:
+                    if not is_coplanar(fc.boundary, L, W, op.wall):
+                        box = self._opening_box(
+                            op, building, z0,
+                            is_exterior=False, fc_boundary=fc.boundary,
+                        )
+                        if box is not None:
+                            opening_boxes.append(box)
+
+            if self.show_roof:
+                roof_boxes.append(
+                    _box([ox, ox + L, oy, oy + W, z1, z1 + story.roof.thickness])
+                )
+
+            for fc in story.fire_compartments:
+                self._collect_combustible_boxes(fc, ox, oy, z0, combust_per_color)
+
+        def _combine(boxes):
+            if not boxes:
+                return None
+            m = boxes[0].copy()
+            for b in boxes[1:]:
+                m = m.merge(b)
+            return m
+
+        bundle.walls = _combine(wall_boxes)
+        bundle.openings = _combine(opening_boxes)
+        bundle.firewalls = _combine(firewall_boxes)
+        bundle.roofs = _combine(roof_boxes)
+        bundle.combustibles_per_material = {
+            color: _combine(boxes) for color, boxes in combust_per_color.items()
+        }
+        return bundle
+
+    def _opening_box(self, opening, building, z0, is_exterior=True, fc_boundary=None):
+        """Return a pv.Box for an opening, or None if inputs invalid."""
+        ox, L, oy, W = building.boundary
+        w_off, w, h_off, h = opening.boundary
+
+        if is_exterior:
+            if opening.wall == "y_min":
+                b = [ox + w_off, ox + w_off + w, oy - 0.05, oy + 0.05,
+                     z0 + h_off, z0 + h_off + h]
+            elif opening.wall == "y_max":
+                b = [ox + w_off, ox + w_off + w, oy + W - 0.05, oy + W + 0.05,
+                     z0 + h_off, z0 + h_off + h]
+            elif opening.wall == "x_min":
+                b = [ox - 0.05, ox + 0.05, oy + w_off, oy + w_off + w,
+                     z0 + h_off, z0 + h_off + h]
+            else:  # x_max
+                b = [ox + L - 0.05, ox + L + 0.05, oy + w_off, oy + w_off + w,
+                     z0 + h_off, z0 + h_off + h]
+        else:
+            if fc_boundary is None:
+                return None
+            fx_min, fx_max, fy_min, fy_max = fc_boundary
+            if opening.wall == "y_min":
+                b = [ox + fx_min + w_off, ox + fx_min + w_off + w,
+                     oy + fy_min - 0.05, oy + fy_min + 0.05,
+                     z0 + h_off, z0 + h_off + h]
+            elif opening.wall == "y_max":
+                b = [ox + fx_min + w_off, ox + fx_min + w_off + w,
+                     oy + fy_max - 0.05, oy + fy_max + 0.05,
+                     z0 + h_off, z0 + h_off + h]
+            elif opening.wall == "x_min":
+                b = [ox + fx_min - 0.05, ox + fx_min + 0.05,
+                     oy + fy_min + w_off, oy + fy_min + w_off + w,
+                     z0 + h_off, z0 + h_off + h]
+            else:  # x_max
+                b = [ox + fx_max - 0.05, ox + fx_max + 0.05,
+                     oy + fy_min + w_off, oy + fy_min + w_off + w,
+                     z0 + h_off, z0 + h_off + h]
+        return pv.Box(bounds=b)
+
+    def _firewall_boxes(self, fc, building, z0, z1):
+        """Return list of pv.Box for a fire compartment's interior firewalls."""
+        ox, L, oy, W = building.boundary
+        x_min, x_max, y_min, y_max = fc.boundary
+        t = fc.firewall_thickness
+        boxes = []
+        if t <= 0:
+            return boxes
+        if x_min > 0 and not is_coplanar(fc.boundary, L, W, "x_min"):
+            boxes.append(pv.Box(bounds=[
+                ox + x_min - t/2, ox + x_min + t/2,
+                oy + y_min, oy + y_max, z0, z1,
+            ]))
+        if x_max < L and not is_coplanar(fc.boundary, L, W, "x_max"):
+            boxes.append(pv.Box(bounds=[
+                ox + x_max - t/2, ox + x_max + t/2,
+                oy + y_min, oy + y_max, z0, z1,
+            ]))
+        if y_min > 0 and not is_coplanar(fc.boundary, L, W, "y_min"):
+            boxes.append(pv.Box(bounds=[
+                ox + x_min, ox + x_max,
+                oy + y_min - t/2, oy + y_min + t/2, z0, z1,
+            ]))
+        if y_max < W and not is_coplanar(fc.boundary, L, W, "y_max"):
+            boxes.append(pv.Box(bounds=[
+                ox + x_min, ox + x_max,
+                oy + y_max - t/2, oy + y_max + t/2, z0, z1,
+            ]))
+        return boxes
+
+    def _collect_combustible_boxes(self, fc, ox, oy, z_offset, per_color: dict):
+        """Populate per_color dict: {hex_color: [pv.Box, ...]}."""
+        from models.materials import COMBUSTIBLE_LIBRARY
+        from models.combustibles import SPECIALIZED_COMPONENTS
+        from models.geometry import layout_items_in_fc
+
+        colors = {
+            "BROWN": "#8B4513", "RED": "#CD5C5C", "SALMON": "#FA8072",
+            "GRAY": "#808080", "KHAKI": "#BDB76B", "IVORY": "#FFFFF0",
+            "MAGENTA": "#FF00FF", "ORANGE": "#FFA500",
+        }
+        material_colors = {
+            "ALUMINUM": "#c0c0c0", "STEEL": "#4a5568",
+            "JET_FUEL": "#b45309", "SOLID_PROPELLANT": "#dc2626",
+            "GASOLINE": "#f59e0b", "ELECTROLYTE": "#06b6d4",
+            "WOOD": "#92400e",
+        }
+
+        all_items = []
+
+        for sc in fc.specialized_components:
+            if isinstance(sc, dict) and "key" in sc and "x" not in sc:
+                comp = SPECIALIZED_COMPONENTS.get(sc["key"])
+                if not comp:
+                    continue
+                for ci in range(sc.get("count", 1)):
+                    all_items.append({
+                        "length": comp.total_length,
+                        "width": comp.total_width,
+                        "height": comp.total_height,
+                        "color": "GRAY",
+                        "component_key": sc["key"],
+                        "_comp": comp,
+                        "_instance": ci,
+                    })
+
+        for cb in fc.combustibles:
+            if isinstance(cb, dict) and "key" in cb and "x" not in cb:
+                cb_def = COMBUSTIBLE_LIBRARY.get(cb["key"], {})
+                if not cb_def:
+                    continue
+                length = cb_def.get("length", 1.0)
+                width = cb_def.get("width", 0.8)
+                rotation = cb.get("rotation", 0)
+                if rotation == 90:
+                    length, width = width, length
+                for _ in range(cb.get("count", 1)):
+                    all_items.append({
+                        "length": length, "width": width,
+                        "height": cb_def.get("height", 0.5),
+                        "color": cb_def.get("color", "BROWN"),
+                        "component_key": None,
+                    })
+
+        placed = layout_items_in_fc(fc.boundary, all_items, margin=1.0, gap=0.5)
+
+        for item in placed:
+            comp_key = item.get("component_key")
+            comp = item.get("_comp")
+            if comp_key and comp:
+                for part in comp.parts:
+                    col = material_colors.get(part.material_key, "#CD853F")
+                    box = pv.Box(bounds=(
+                        ox + item["x"] + part.dx,
+                        ox + item["x"] + part.dx + part.length,
+                        oy + item["y"] + part.dy,
+                        oy + item["y"] + part.dy + part.width,
+                        part.dz + z_offset,
+                        part.dz + part.height + z_offset,
+                    ))
+                    per_color.setdefault(col, []).append(box)
+            else:
+                col = colors.get(item.get("color", "BROWN"), "#CD853F")
+                box = pv.Box(bounds=(
+                    ox + item["x"], ox + item["x"] + item["length"],
+                    oy + item["y"], oy + item["y"] + item["width"],
+                    item.get("z", 0) + z_offset,
+                    item.get("z", 0) + item["height"] + z_offset,
+                ))
+                per_color.setdefault(col, []).append(box)
+
+    def clear_cache(self):
+        """Drop all cached bundles and their actors."""
+        for bundle in self._building_cache.values():
+            for a in bundle.actors.values():
+                try:
+                    self.plotter.remove_actor(a)
+                except Exception:
+                    pass
+        self._building_cache.clear()
+
+    def _render_buildings_group_legacy(self, bg):
         """Render walls/openings/roofs/firewalls/combustibles. Returns bbox tuple or None."""
         buildings = bg.buildings
         global_max_x = global_max_y = global_max_z = -float("inf")

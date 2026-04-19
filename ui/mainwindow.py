@@ -298,6 +298,7 @@ class MainWindow(QMainWindow):
             QMessageBox.Yes | QMessageBox.No,
         )
         if reply == QMessageBox.Yes:
+            self.viewer_3d.clear_cache()
             self.model = BuildingGroup(buildings=[Building()])
             self.simulation_control.set_model(self.model)
             self._refresh_scene_list()
