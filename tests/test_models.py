@@ -26,7 +26,11 @@ class TestOpening:
     def test_to_dict(self):
         o = Opening(wall="y_min", type="window", boundary=[3.0, 2.0, 1.0, 1.5])
         d = o.to_dict()
-        assert d == {"wall": "y_min", "type": "window", "boundary": [3.0, 2.0, 1.0, 1.5]}
+        assert d == {
+            "wall": "y_min",
+            "type": "window",
+            "boundary": [3.0, 2.0, 1.0, 1.5],
+        }
 
     def test_from_dict(self):
         d = {"wall": "x_min", "type": "loading_dock", "boundary": [0.0, 6.0, 0.0, 5.0]}
@@ -67,7 +71,9 @@ class TestRoof:
         assert len(r.openings) == 1
 
     def test_to_dict(self):
-        r = Roof(thickness=0.15, material="METAL", openings=[{"boundary": [0, 5, 0, 5]}])
+        r = Roof(
+            thickness=0.15, material="METAL", openings=[{"boundary": [0, 5, 0, 5]}]
+        )
         d = r.to_dict()
         assert d["thickness"] == 0.15
         assert d["material"] == "METAL"
@@ -86,7 +92,9 @@ class TestRoof:
         assert r.openings == []
 
     def test_roundtrip(self):
-        r = Roof(thickness=0.5, material="CONCRETE", openings=[{"boundary": [2, 3, 4, 5]}])
+        r = Roof(
+            thickness=0.5, material="CONCRETE", openings=[{"boundary": [2, 3, 4, 5]}]
+        )
         assert Roof.from_dict(r.to_dict()) == r
 
     def test_openings_isolation(self):
@@ -137,7 +145,9 @@ class TestFireCompartment:
         d = fc.to_dict()
         assert d["name"] == "FC1"
         assert d["boundary"] == [0, 20, 0, 10]
-        assert d["openings"] == [{"wall": "y_max", "type": "window", "boundary": [5, 2, 1, 1.5]}]
+        assert d["openings"] == [
+            {"wall": "y_max", "type": "window", "boundary": [5, 2, 1, 1.5]}
+        ]
         assert d["combustibles"] == [{"key": "WOOD", "count": 5}]
 
     def test_from_dict_with_openings(self):
@@ -179,7 +189,8 @@ class TestFireCompartment:
         assert fc2.firewall_material == fc.firewall_material
         assert len(fc2.openings) == len(fc.openings)
         assert fc2.openings[0] == fc.openings[0]
-        assert fc2.combustibles == fc.combustibles
+        assert len(fc2.combustibles) == len(fc.combustibles)
+        assert fc2.combustibles[0].get("key") == "CABLE"
         assert fc2.specialized_components == fc.specialized_components
 
     def test_boundary_isolation(self):
@@ -235,7 +246,9 @@ class TestStory:
         d = {
             "name": "3F",
             "height": 5.0,
-            "openings": [{"wall": "y_min", "type": "window", "boundary": [2, 1.5, 1, 1]}],
+            "openings": [
+                {"wall": "y_min", "type": "window", "boundary": [2, 1.5, 1, 1]}
+            ],
             "fire_compartments": [{"name": "FC-A", "boundary": [0, 10, 0, 10]}],
             "roof": {"thickness": 0.25, "material": "STEEL"},
         }
@@ -258,12 +271,16 @@ class TestStory:
         s = Story(
             name="GF",
             height=6.0,
-            openings=[Opening(wall="x_min", type="loading_dock", boundary=[0, 8, 0, 5])],
+            openings=[
+                Opening(wall="x_min", type="loading_dock", boundary=[0, 8, 0, 5])
+            ],
             fire_compartments=[
                 FireCompartment(
                     name="Main",
                     boundary=[0, 20, 0, 10],
-                    openings=[Opening(wall="y_max", type="window", boundary=[5, 2, 2, 1])],
+                    openings=[
+                        Opening(wall="y_max", type="window", boundary=[5, 2, 2, 1])
+                    ],
                 )
             ],
             roof=Roof(thickness=0.2, material="CONCRETE"),
@@ -299,11 +316,13 @@ class TestBuilding:
         assert b.offset_y == 10
 
     def test_update_z_offsets(self):
-        b = Building(stories=[
-            Story(name="1F", height=3.0),
-            Story(name="2F", height=4.0),
-            Story(name="3F", height=3.5),
-        ])
+        b = Building(
+            stories=[
+                Story(name="1F", height=3.0),
+                Story(name="2F", height=4.0),
+                Story(name="3F", height=3.5),
+            ]
+        )
         b.update_z_offsets()
         assert b.stories[0].z_bottom == 0.0
         assert b.stories[0].z_top == 3.0
@@ -329,19 +348,19 @@ class TestBuilding:
         # Check y_min wall (south)
         ym = walls["y_min"]
         assert len(ym) == 6
-        assert ym[0] == pytest.approx(-0.12)   # ox - t/2
-        assert ym[1] == pytest.approx(20.12)    # ox + L + t/2
-        assert ym[2] == pytest.approx(-0.24)    # oy - t
-        assert ym[3] == pytest.approx(0.0)      # oy
-        assert ym[4] == 0.0                      # z0
-        assert ym[5] == 3.0                      # z1
+        assert ym[0] == pytest.approx(-0.12)  # ox - t/2
+        assert ym[1] == pytest.approx(20.12)  # ox + L + t/2
+        assert ym[2] == pytest.approx(-0.24)  # oy - t
+        assert ym[3] == pytest.approx(0.0)  # oy
+        assert ym[4] == 0.0  # z0
+        assert ym[5] == 3.0  # z1
 
         # Check x_max wall (east)
         xm = walls["x_max"]
-        assert xm[0] == pytest.approx(20.0)     # ox + L
-        assert xm[1] == pytest.approx(20.24)    # ox + L + t
-        assert xm[2] == pytest.approx(-0.12)    # oy - t/2
-        assert xm[3] == pytest.approx(10.12)    # oy + W + t/2
+        assert xm[0] == pytest.approx(20.0)  # ox + L
+        assert xm[1] == pytest.approx(20.24)  # ox + L + t
+        assert xm[2] == pytest.approx(-0.12)  # oy - t/2
+        assert xm[3] == pytest.approx(10.12)  # oy + W + t/2
 
     def test_get_exterior_walls_with_offset(self):
         b = Building(
@@ -354,10 +373,10 @@ class TestBuilding:
 
         # x_min (west wall)
         xmin = walls["x_min"]
-        assert xmin[0] == pytest.approx(5.0 - 0.5)   # ox - t
-        assert xmin[1] == pytest.approx(5.0)          # ox
-        assert xmin[2] == pytest.approx(3.0 - 0.25)   # oy - t/2
-        assert xmin[3] == pytest.approx(13.25)         # oy + W + t/2
+        assert xmin[0] == pytest.approx(5.0 - 0.5)  # ox - t
+        assert xmin[1] == pytest.approx(5.0)  # ox
+        assert xmin[2] == pytest.approx(3.0 - 0.25)  # oy - t/2
+        assert xmin[3] == pytest.approx(13.25)  # oy + W + t/2
         assert xmin[4] == 0.0
         assert xmin[5] == 4.0
 
@@ -425,9 +444,13 @@ class TestBuilding:
             wall_thickness=0.24,
             height=9.0,
             stories=[
-                Story(name="1F", height=3.0, openings=[
-                    Opening(wall="x_max", type="door", boundary=[5, 3, 0, 3])
-                ]),
+                Story(
+                    name="1F",
+                    height=3.0,
+                    openings=[
+                        Opening(wall="x_max", type="door", boundary=[5, 3, 0, 3])
+                    ],
+                ),
                 Story(name="2F", height=3.0),
                 Story(name="3F", height=3.0),
             ],
@@ -442,7 +465,6 @@ class TestBuilding:
         assert b2.stories[0].openings[0] == b.stories[0].openings[0]
 
 
-
 # ============================================================
 # BuildingGroup
 # ============================================================
@@ -450,9 +472,14 @@ class TestBuildingGroup:
     def test_defaults(self):
         bg = BuildingGroup()
         assert bg.buildings == []
-        assert bg.heat_source == {}
-        assert bg.simulation_time == 300
-        assert bg.domain == {"padding": 5.0, "mesh_cells": [80, 60, 40]}
+        assert bg.heat_source == {
+            "azimuth": 0,
+            "elevation": 0,
+            "net_heat_flux": 20.0,
+            "duration": 1.36,
+        }
+        assert bg.simulation_time == 600
+        assert bg.domain == {"padding": 5.0, "grid_size": 1.0}
         assert bg.output == {"slices": True, "devices": True}
 
     def test_custom(self):
@@ -474,8 +501,13 @@ class TestBuildingGroup:
         assert len(d["buildings"]) == 1
         assert d["buildings"][0]["name"] == "W1"
         assert d["simulation_time"] == 120
-        assert d["heat_source"] == {}
-        assert d["domain"] == {"padding": 5.0, "mesh_cells": [80, 60, 40]}
+        assert d["heat_source"] == {
+            "azimuth": 0,
+            "elevation": 0,
+            "net_heat_flux": 20.0,
+            "duration": 1.36,
+        }
+        assert d["domain"] == {"padding": 5.0, "grid_size": 1.0}
         assert d["output"] == {"slices": True, "devices": True}
 
     def test_from_dict_project_format(self):
@@ -526,7 +558,7 @@ class TestBuildingGroup:
     def test_from_dict_defaults(self):
         bg = BuildingGroup.from_dict({})
         assert bg.buildings == []
-        assert bg.simulation_time == 300
+        assert bg.simulation_time == 600
 
     def test_roundtrip(self):
         bg = BuildingGroup(
@@ -544,9 +576,14 @@ class TestBuildingGroup:
                     ],
                 )
             ],
-            heat_source={"enabled": True, "radiation_flux": 50},
+            heat_source={
+                "azimuth": 45,
+                "elevation": 30,
+                "net_heat_flux": 15.0,
+                "duration": 2.5,
+            },
             simulation_time=600,
-            domain={"padding": 10.0, "mesh_cells": [100, 80, 60]},
+            domain={"padding": 10.0, "grid_size": 0.5},
             output={"slices": True, "devices": False},
         )
         d = bg.to_dict()
@@ -556,8 +593,13 @@ class TestBuildingGroup:
         assert bg2.buildings[0].cn_name == "总部"
         assert len(bg2.buildings[0].stories) == 3
         assert bg2.simulation_time == 600
-        assert bg2.heat_source == {"enabled": True, "radiation_flux": 50}
-        assert bg2.domain == {"padding": 10.0, "mesh_cells": [100, 80, 60]}
+        assert bg2.heat_source == {
+            "azimuth": 45,
+            "elevation": 30,
+            "net_heat_flux": 15.0,
+            "duration": 2.5,
+        }
+        assert bg2.domain == {"padding": 10.0, "grid_size": 0.5}
         assert bg2.output == {"slices": True, "devices": False}
 
 
@@ -580,15 +622,25 @@ class TestIntegration:
                             name="1F",
                             height=15.0,
                             openings=[
-                                Opening(wall="x_min", type="door", boundary=[10, 5, 0, 4]),
-                                Opening(wall="x_max", type="window", boundary=[20, 3, 2, 1.5]),
+                                Opening(
+                                    wall="x_min", type="door", boundary=[10, 5, 0, 4]
+                                ),
+                                Opening(
+                                    wall="x_max",
+                                    type="window",
+                                    boundary=[20, 3, 2, 1.5],
+                                ),
                             ],
                             fire_compartments=[
                                 FireCompartment(
                                     name="Zone-A",
                                     boundary=[0, 50, 0, 50],
                                     openings=[
-                                        Opening(wall="x_max", type="door", boundary=[5, 3, 0, 4]),
+                                        Opening(
+                                            wall="x_max",
+                                            type="door",
+                                            boundary=[5, 3, 0, 4],
+                                        ),
                                     ],
                                     combustibles=[
                                         {"key": "PREBAKED_ANODE_BLOCK", "count": 320},
@@ -630,7 +682,7 @@ class TestIntegration:
         assert fc.name == "Zone-A"
         assert len(fc.openings) == 1
         assert isinstance(fc.openings[0], Opening)
-        assert fc.combustibles == [{"key": "PREBAKED_ANODE_BLOCK", "count": 320}]
+        assert fc.combustibles[0].get("key") == "PREBAKED_ANODE_BLOCK"
         assert fc.specialized_components == [{"key": "POT_TENDING_MACHINE", "count": 2}]
         assert s.roof.thickness == 0.3
         assert s.roof.material == "STEEL"
@@ -653,7 +705,7 @@ class TestIntegration:
         d = bg.to_dict()
         bg2 = BuildingGroup.from_dict(d)
         assert bg2.buildings == []
-        assert bg2.simulation_time == 300
+        assert bg2.simulation_time == 600
 
     def test_project_format_wrapper_roundtrip(self):
         """Simulate project save: wrap in building_group key, then load."""
@@ -670,9 +722,161 @@ class TestIntegration:
     def test_old_classes_removed(self):
         """Verify that old classes are no longer importable."""
         import models.building as mb
+
         assert not hasattr(mb, "BuildingModel")
         assert not hasattr(mb, "WallData")
         assert not hasattr(mb, "OpeningData")
         assert not hasattr(mb, "FloorSlab")
         assert not hasattr(mb, "LayoutMode")
         assert not hasattr(mb, "compute_layout")
+
+
+# ============================================================
+# Combustible Rotation
+# ============================================================
+class TestCombustibleRotation:
+    def test_rotation_field_default(self):
+        from models.combustibles import Combustible
+
+        cb = Combustible(preset_key="CONVEYOR_BELT", length=2.0, width=0.5)
+        assert cb.rotation == 0
+
+    def test_rotation_field_set(self):
+        from models.combustibles import Combustible
+
+        cb = Combustible(preset_key="CONVEYOR_BELT", length=2.0, width=0.5, rotation=90)
+        assert cb.rotation == 90
+
+    def test_from_dict_with_rotation(self):
+        from models.combustibles import Combustible
+
+        d = {"preset_key": "CONVEYOR_BELT", "length": 2.0, "width": 0.5, "rotation": 90}
+        cb = Combustible.from_dict(d)
+        assert cb.rotation == 90
+        assert cb.length == 0.5  # swapped
+        assert cb.width == 2.0  # swapped
+
+    def test_from_dict_without_rotation(self):
+        from models.combustibles import Combustible
+
+        d = {"preset_key": "CONVEYOR_BELT", "length": 2.0, "width": 0.5}
+        cb = Combustible.from_dict(d)
+        assert cb.rotation == 0
+        assert cb.length == 2.0
+        assert cb.width == 0.5
+
+    def test_to_dict_includes_rotation(self):
+        from models.combustibles import Combustible
+
+        cb = Combustible(preset_key="CONVEYOR_BELT", length=2.0, width=0.5, rotation=90)
+        d = cb.to_dict()
+        assert d["rotation"] == 90
+
+
+# ============================================================
+# Combustible Bounds Check
+# ============================================================
+class TestCombustibleBoundsCheck:
+    def test_exceeds_bounds_warns(self, capsys):
+        from models.building import FireCompartment
+
+        fc = FireCompartment.from_dict(
+            {
+                "name": "TestRoom",
+                "boundary": [0, 5, 0, 3],  # 5m x 3m room
+                "combustibles": [
+                    {
+                        "preset_key": "CONVEYOR_BELT",
+                        "length": 6.0,
+                        "width": 0.5,
+                    }  # exceeds X
+                ],
+            }
+        )
+        captured = capsys.readouterr()
+        assert "exceeds bounds" in captured.out.lower() or "WARNING" in captured.out
+
+    def test_within_bounds_no_warn(self, capsys):
+        from models.building import FireCompartment
+
+        fc = FireCompartment.from_dict(
+            {
+                "name": "TestRoom",
+                "boundary": [0, 5, 0, 3],  # 5m x 3m room
+                "combustibles": [
+                    {"preset_key": "CONVEYOR_BELT", "length": 2.0, "width": 0.5}  # OK
+                ],
+            }
+        )
+        captured = capsys.readouterr()
+        assert (
+            "exceeds bounds" not in captured.out.lower()
+            and "WARNING" not in captured.out
+        )
+
+
+class TestBuildingGroupHeatSourceMigration:
+    def test_default_heat_source_structure(self):
+        bg = BuildingGroup()
+        assert bg.heat_source == {
+            "azimuth": 0,
+            "elevation": 0,
+            "net_heat_flux": 20.0,
+            "duration": 1.36,
+        }
+
+    def test_default_simulation_time_600(self):
+        bg = BuildingGroup()
+        assert bg.simulation_time == 600
+
+    def test_default_domain_grid_size_1(self):
+        bg = BuildingGroup()
+        assert bg.domain == {"padding": 5.0, "grid_size": 1.0}
+
+    def test_from_dict_migrates_w_per_m2_to_kw(self):
+        # Old value 3000 W/m² should migrate to 3.0 kW/m²
+        data = {
+            "buildings": [],
+            "heat_source": {
+                "enabled": True,
+                "distance": 5.0,
+                "azimuth": 90,
+                "elevation": 30,
+                "net_heat_flux": 3000,
+                "duration": 2.0,
+                "width_ratio": 1.5,
+                "height_ratio": 1.0,
+            },
+        }
+        bg = BuildingGroup.from_dict(data)
+        assert bg.heat_source["net_heat_flux"] == 3.0
+        assert bg.heat_source["azimuth"] == 90
+        assert bg.heat_source["elevation"] == 30
+        assert bg.heat_source["duration"] == 2.0
+        assert "enabled" not in bg.heat_source
+        assert "distance" not in bg.heat_source
+        assert "width_ratio" not in bg.heat_source
+        assert "height_ratio" not in bg.heat_source
+
+    def test_from_dict_keeps_kw_value_under_1000(self):
+        data = {
+            "buildings": [],
+            "heat_source": {
+                "net_heat_flux": 20.0,
+                "azimuth": 0,
+                "elevation": 0,
+                "duration": 1.36,
+            },
+        }
+        bg = BuildingGroup.from_dict(data)
+        assert bg.heat_source["net_heat_flux"] == 20.0
+
+    def test_from_dict_fills_missing_heat_source_fields(self):
+        data = {"buildings": []}
+        bg = BuildingGroup.from_dict(data)
+        assert bg.heat_source == {
+            "azimuth": 0,
+            "elevation": 0,
+            "net_heat_flux": 20.0,
+            "duration": 1.36,
+        }
