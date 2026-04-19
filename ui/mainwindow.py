@@ -184,10 +184,14 @@ class MainWindow(QMainWindow):
         except Exception as e:
             self.statusBar().showMessage(f"3D错误: {str(e)}")
     
-    def _on_sim_param_changed(self):
-        """模拟参数变化时更新FDS文本和3D视图"""
+    def _on_sim_param_changed(self, kind: str = "sim"):
+        """Dispatch 3D update by event kind; FDS text always refreshes."""
         self.update_preview()
-        self.refresh_3d()
+        if kind == "heat_geom":
+            self.viewer_3d.update_heat_source(self.model)
+        elif kind == "slice_device":
+            self.viewer_3d.update_slices_devices(self.model)
+        # "heat_flux" and "sim" do not touch 3D
 
     def setup_menu(self):
         menubar = self.menuBar()
@@ -250,9 +254,6 @@ class MainWindow(QMainWindow):
         """更新FDS代码和状态栏"""
         try:
             model = self.model
-
-            # 3D preview
-            self.viewer_3d.update_model(model)
 
             # FDS preview
             generator = FDSGenerator(model)
@@ -363,6 +364,7 @@ class MainWindow(QMainWindow):
             self._refresh_scene_list()
             self.viewer_3d._first_render = True
             self.update_preview()
+            self.refresh_3d(first_render=True)
             self.statusBar().showMessage(
                 f"模型已生成 ({len(self.model.buildings)} 栋建筑)"
             )
@@ -396,6 +398,7 @@ class MainWindow(QMainWindow):
             self._refresh_scene_list()
             self.viewer_3d._first_render = True
             self.update_preview()
+            self.refresh_3d(first_render=True)
             self.statusBar().showMessage(
                 f"模型已生成 ({len(self.model.buildings)} 栋建筑)"
             )
