@@ -36,7 +36,7 @@ from ui.styles import CollapsibleGroup
 class SimulationControlPanel(QWidget):
     """模拟控制面板 - 包含热源和模拟参数"""
 
-    parameters_changed = Signal()
+    parameters_changed = Signal(str)  # kind: "heat_geom" | "heat_flux" | "sim" | "slice_device"
 
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -69,21 +69,18 @@ class SimulationControlPanel(QWidget):
 
     # ── 热源 ────────────────────────────────────────
     def _build_heat_section(self):
+        from models.heat_source import face_fluxes
+        self._face_fluxes = face_fluxes  # bound for label updates
+
         grp = CollapsibleGroup("外部热源")
 
-        self.heat_enabled_check = QCheckBox("启用外部热源（面源辐射）")
-        self.heat_enabled_check.stateChanged.connect(self.on_param_changed)
-        self.heat_enabled_check.stateChanged.connect(self._toggle_heat)
-        grp.content_layout.addWidget(self.heat_enabled_check)
-
-        self.heat_options = QWidget()
-        form = QGridLayout(self.heat_options)
+        form = QGridLayout()
         form.setContentsMargins(0, 2, 0, 0)
         form.setSpacing(4)
         form.setColumnStretch(1, 1)
         form.setColumnStretch(3, 1)
 
-        # Row 0: Azimuth slider + Distance
+        # Row 0: Azimuth slider | Elevation snap
         form.addWidget(QLabel("方位角:"), 0, 0)
         az_row = QHBoxLayout()
         az_row.setSpacing(4)
@@ -98,76 +95,51 @@ class SimulationControlPanel(QWidget):
         self.heat_azimuth_slider.sliderReleased.connect(self._on_azimuth_committed)
         az_row.addWidget(self.heat_azimuth_slider)
         self.azimuth_label = QLabel("0° (北)")
-        self.azimuth_label.setFixedWidth(60)
-        self.azimuth_label.setStyleSheet("color:#89b4fa;font-weight:bold;")
+        self.azimuth_label.setFixedWidth(140)
+        self.azimuth_label.setStyleSheet(
+            "color:#89b4fa;font-weight:bold;font-size:11px;"
+        )
         az_row.addWidget(self.azimuth_label)
         form.addLayout(az_row, 0, 1)
 
-        form.addWidget(QLabel("距离:"), 0, 2)
-        self.heat_distance_spin = QDoubleSpinBox()
-        self.heat_distance_spin.setRange(0.1, 50)
-        self.heat_distance_spin.setValue(3.0)
-        self.heat_distance_spin.setSuffix(" m")
-        self.heat_distance_spin.valueChanged.connect(self.on_param_changed)
-        form.addWidget(self.heat_distance_spin, 0, 3)
-
-        # Row 1: Elevation snap slider + Flux
-        form.addWidget(QLabel("俯仰角:"), 1, 0)
+        form.addWidget(QLabel("俯仰角:"), 0, 2)
         elev_row = QHBoxLayout()
         elev_row.setSpacing(4)
         self.heat_elevation_slider = QSlider(Qt.Horizontal)
-        self.heat_elevation_slider.setRange(0, 3)  # index into [0, 30, 45, 60]
+        self.heat_elevation_slider.setRange(0, 3)
         self.heat_elevation_slider.setValue(0)
         self.heat_elevation_slider.setTickPosition(QSlider.TicksBelow)
         self.heat_elevation_slider.setTickInterval(1)
         self.heat_elevation_slider.valueChanged.connect(self._on_elevation_changed)
+        self.heat_elevation_slider.sliderReleased.connect(self._on_azimuth_committed)
         elev_row.addWidget(self.heat_elevation_slider)
         self.elevation_label = QLabel("0°")
         self.elevation_label.setFixedWidth(40)
         self.elevation_label.setStyleSheet("color:#89b4fa;font-weight:bold;")
         elev_row.addWidget(self.elevation_label)
-        form.addLayout(elev_row, 1, 1)
+        form.addLayout(elev_row, 0, 3)
 
-        form.addWidget(QLabel("热通量:"), 1, 2)
+        # Row 1: Flux (kW/m²) | Duration (s)
+        form.addWidget(QLabel("热通量:"), 1, 0)
         self.heat_flux_spin = QDoubleSpinBox()
-        self.heat_flux_spin.setRange(1, 1000000)
-        self.heat_flux_spin.setValue(3000)
-        self.heat_flux_spin.setSuffix(" W/m²")
-        self.heat_flux_spin.valueChanged.connect(self.on_param_changed)
-        form.addWidget(self.heat_flux_spin, 1, 3)
+        self.heat_flux_spin.setRange(0.05, 20.0)
+        self.heat_flux_spin.setValue(20.0)
+        self.heat_flux_spin.setDecimals(2)
+        self.heat_flux_spin.setSingleStep(0.5)
+        self.heat_flux_spin.setSuffix(" kW/m²")
+        self.heat_flux_spin.valueChanged.connect(self._on_flux_changed)
+        form.addWidget(self.heat_flux_spin, 1, 1)
 
-        # Row 2: Width ratio + Height ratio
-        form.addWidget(QLabel("宽比:"), 2, 0)
-        self.heat_width_ratio_spin = QDoubleSpinBox()
-        self.heat_width_ratio_spin.setRange(0.1, 10)
-        self.heat_width_ratio_spin.setValue(1.5)
-        self.heat_width_ratio_spin.setSingleStep(0.1)
-        self.heat_width_ratio_spin.setToolTip("热源宽度 = 建筑对应面宽度 × 此比例")
-        self.heat_width_ratio_spin.valueChanged.connect(self.on_param_changed)
-        form.addWidget(self.heat_width_ratio_spin, 2, 1)
-
-        form.addWidget(QLabel("高比:"), 2, 2)
-        self.heat_height_ratio_spin = QDoubleSpinBox()
-        self.heat_height_ratio_spin.setRange(0.1, 10)
-        self.heat_height_ratio_spin.setValue(1.0)
-        self.heat_height_ratio_spin.setSingleStep(0.1)
-        self.heat_height_ratio_spin.setToolTip("热源高度 = 建筑高度 × 此比例")
-        self.heat_height_ratio_spin.valueChanged.connect(self.on_param_changed)
-        form.addWidget(self.heat_height_ratio_spin, 2, 3)
-
-        # Row 3: Duration
-        form.addWidget(QLabel("持续:"), 3, 0)
+        form.addWidget(QLabel("持续:"), 1, 2)
         self.heat_duration_spin = QDoubleSpinBox()
         self.heat_duration_spin.setRange(0, 36000)
         self.heat_duration_spin.setValue(1.36)
         self.heat_duration_spin.setDecimals(2)
         self.heat_duration_spin.setSuffix(" s")
-        self.heat_duration_spin.setToolTip("热源持续时间（秒）")
-        self.heat_duration_spin.valueChanged.connect(self.on_param_changed)
-        form.addWidget(self.heat_duration_spin, 3, 1)
+        self.heat_duration_spin.valueChanged.connect(self._on_flux_changed)
+        form.addWidget(self.heat_duration_spin, 1, 3)
 
-        self.heat_options.setVisible(False)
-        grp.content_layout.addWidget(self.heat_options)
+        grp.content_layout.addLayout(form)
         return grp
 
     _ELEV_VALUES = [0, 30, 45, 60]
@@ -498,41 +470,58 @@ class SimulationControlPanel(QWidget):
 
     # ── 事件处理 ────────────────────────────────────────
     def _toggle_heat(self, state):
-        visible = int(state) == 2  # Qt.CheckState.Checked
-        self.heat_options.setVisible(visible)
-        self.on_param_changed()
+        # Legacy — heat source is always enabled now.
+        self.on_param_changed("heat_geom")
 
     def _on_azimuth_label_update(self, value):
-        """Snap to 5° and update label while dragging (no model refresh)."""
+        """Snap to 5° and update label (no model refresh)."""
         snapped = round(value / 5) * 5
         if self.heat_azimuth_slider.value() != snapped:
             self.heat_azimuth_slider.setValue(snapped)
-            return  # setValue triggers another call with the snapped value
+            return
+        self._refresh_azimuth_label(snapped, self._current_elevation())
+
+    def _current_elevation(self) -> int:
+        return self._ELEV_VALUES[min(self.heat_elevation_slider.value(), 3)]
+
+    def _refresh_azimuth_label(self, azimuth: int, elevation: int):
         directions = {0: "北", 90: "东", 180: "南", 270: "西", 360: "北"}
-        closest = min(directions.keys(), key=lambda k: abs(k - snapped))
-        suffix = f" ({directions[closest]})" if abs(closest - snapped) <= 15 else ""
-        self.azimuth_label.setText(f"{snapped}°{suffix}")
+        closest = min(directions.keys(), key=lambda k: abs(k - azimuth))
+        dir_suffix = f" ({directions[closest]})" if abs(closest - azimuth) <= 15 else ""
+        fluxes = self._face_fluxes(azimuth, elevation, 1.0)
+        if len(fluxes) <= 1:
+            detail = ""
+        else:
+            parts = [f"{k}:{int(v * 100)}%" for k, v in fluxes.items()]
+            detail = " " + "+".join(parts)
+        self.azimuth_label.setText(f"{azimuth}°{dir_suffix}{detail}")
 
     def _on_azimuth_committed(self):
-        """Refresh model only when slider is released."""
-        self._on_param_changed_debounced()
+        """Slider released — emit heat_geom event."""
+        self.on_param_changed("heat_geom")
 
     def _on_elevation_changed(self, index):
-        """Update elevation label from snap slider."""
         val = self._ELEV_VALUES[min(index, len(self._ELEV_VALUES) - 1)]
         self.elevation_label.setText(f"{val}°")
-        self._on_param_changed_debounced()
+        self._refresh_azimuth_label(self.heat_azimuth_slider.value(), val)
+        self.on_param_changed("heat_geom")
 
-    def _on_param_changed_debounced(self):
+    def _on_flux_changed(self):
+        """Flux / duration — FDS-only, no 3D refresh."""
+        self._debounce_kind = "heat_flux"
+        self._debounce_timer.start(500)
+
+    def _on_param_changed_debounced(self, kind: str = "sim"):
+        self._debounce_kind = kind
         self._debounce_timer.start(500)
 
     def _on_debounce_timeout(self):
-        self.on_param_changed()
+        self.on_param_changed(getattr(self, "_debounce_kind", "sim"))
 
-    def on_param_changed(self):
+    def on_param_changed(self, kind: str = "sim"):
         if not self._syncing:
             self.sync_model_from_ui()
-            self.parameters_changed.emit()
+            self.parameters_changed.emit(kind)
 
     # ── FDS仿真执行 ─────────────────────────────────
     def run_fds_simulation(self):
@@ -824,30 +813,19 @@ class SimulationControlPanel(QWidget):
         """从模型同步UI状态"""
         self._syncing = True
         try:
-            # 热源设置
-            self.heat_enabled_check.setChecked(model.heat_source.get("enabled", True))
-            # loc = model.heat_source.get("location", "north")
-            # self.heat_location_combo.setCurrentText(
-            #     self._heat_loc_rmap.get(loc, "北"))
-            self.heat_distance_spin.setValue(model.heat_source.get("distance", 3.0))
-            self.heat_flux_spin.setValue(model.heat_source.get("net_heat_flux", 3000.0))
-            self.heat_width_ratio_spin.setValue(
-                model.heat_source.get("width_ratio", 1.5)
-            )
-            self.heat_height_ratio_spin.setValue(
-                model.heat_source.get("height_ratio", 1.0)
-            )
-            # Azimuth slider
-            self.heat_azimuth_slider.setValue(model.heat_source.get("azimuth", 0))
-            # Elevation snap slider
-            elev = model.heat_source.get("elevation", 0)
+            hs = model.heat_source
+            self.heat_flux_spin.setValue(hs.get("net_heat_flux", 20.0))
+            self.heat_azimuth_slider.setValue(hs.get("azimuth", 0))
+            elev = hs.get("elevation", 0)
             elev_idx = {0: 0, 30: 1, 45: 2, 60: 3}.get(elev, 0)
             self.heat_elevation_slider.setValue(elev_idx)
-            self.heat_duration_spin.setValue(model.heat_source.get("duration", 1.36))
+            self.heat_duration_spin.setValue(hs.get("duration", 1.36))
+            self.elevation_label.setText(f"{elev}°")
+            self._refresh_azimuth_label(hs.get("azimuth", 0), elev)
 
             # 模拟设置
             self.sim_time_spin.setValue(model.simulation_time)
-            self.grid_size_spin.setValue(model.domain.get("grid_size", 0.5))
+            self.grid_size_spin.setValue(model.domain.get("grid_size", 1.0))
             self.output_slices_check.setChecked(model.output.get("slices", True))
             self.output_devices_check.setChecked(model.output.get("devices", True))
 
@@ -869,8 +847,6 @@ class SimulationControlPanel(QWidget):
                 entry["y"].setValue(d.get("y", 0))
                 entry["z"].setValue(d.get("z", 0))
                 entry["qty"].setCurrentText(d.get("quantity", "TEMPERATURE"))
-
-            self._toggle_heat(2 if model.heat_source.get("enabled", True) else 0)
         finally:
             self._syncing = False
 
@@ -884,46 +860,34 @@ class SimulationControlPanel(QWidget):
         if not hasattr(self, "model"):
             return
         m = self.model
-        m.heat_source["enabled"] = self.heat_enabled_check.isChecked()
-        m.heat_source["azimuth"] = self.heat_azimuth_slider.value()
-        m.heat_source["distance"] = self.heat_distance_spin.value()
-        m.heat_source["net_heat_flux"] = self.heat_flux_spin.value()
-        m.heat_source["width_ratio"] = self.heat_width_ratio_spin.value()
-        m.heat_source["height_ratio"] = self.heat_height_ratio_spin.value()
-        m.heat_source["use_ramp"] = False
-        elev_idx = self.heat_elevation_slider.value()
-        m.heat_source["elevation"] = self._ELEV_VALUES[min(elev_idx, 3)]
-        m.heat_source["duration"] = self.heat_duration_spin.value()
-
+        m.heat_source = {
+            "azimuth": self.heat_azimuth_slider.value(),
+            "elevation": self._ELEV_VALUES[min(self.heat_elevation_slider.value(), 3)],
+            "net_heat_flux": self.heat_flux_spin.value(),
+            "duration": self.heat_duration_spin.value(),
+        }
         m.simulation_time = self.sim_time_spin.value()
         m.domain["grid_size"] = self.grid_size_spin.value()
         m.output["slices"] = self.output_slices_check.isChecked()
         m.output["devices"] = self.output_devices_check.isChecked()
 
-        # Custom slices
-        custom_slices = []
-        for entry in self._slice_rows:
-            custom_slices.append(
-                {
-                    "axis": entry["axis"].currentText(),
-                    "position": entry["pos"].value(),
-                    "quantity": entry["qty"].currentText(),
-                }
-            )
-        m.output["custom_slices"] = custom_slices
-
-        # Custom devices
-        custom_devices = []
-        for entry in self._device_rows:
-            custom_devices.append(
-                {
-                    "x": entry["x"].value(),
-                    "y": entry["y"].value(),
-                    "z": entry["z"].value(),
-                    "quantity": entry["qty"].currentText(),
-                }
-            )
-        m.output["custom_devices"] = custom_devices
+        m.output["custom_slices"] = [
+            {
+                "axis": e["axis"].currentText(),
+                "position": e["pos"].value(),
+                "quantity": e["qty"].currentText(),
+            }
+            for e in self._slice_rows
+        ]
+        m.output["custom_devices"] = [
+            {
+                "x": e["x"].value(),
+                "y": e["y"].value(),
+                "z": e["z"].value(),
+                "quantity": e["qty"].currentText(),
+            }
+            for e in self._device_rows
+        ]
 
     # ── 工程快速预测 ────────────────────────────────────────
     def run_predict(self):
@@ -961,7 +925,7 @@ class SimulationControlPanel(QWidget):
 
         # 1. Build heat source, clamping UI values to enum-valid options.
         # UI heat_flux uses W/m²; agent_damage expects the enum range (kW/m²).
-        ui_flux_kw = max(self.heat_flux_spin.value() / 1000.0, 1e-3)
+        ui_flux_kw = max(self.heat_flux_spin.value(), 1e-3)
         try:
             heat_source = HeatSourceParams(
                 elevation=ELEVATION_OPTIONS[min(self.heat_elevation_slider.value(), 3)],
