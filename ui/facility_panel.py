@@ -115,7 +115,7 @@ class FacilityListPanel(QWidget):
             s.setDecimals(1)
             s.setSuffix(sfx)
             s.setValue(val)
-            s.setFixedHeight(30)
+            s.setFixedHeight(26)
             s.setStyleSheet("font-size:13px;")
             if width:
                 s.setFixedWidth(width)
@@ -125,7 +125,7 @@ class FacilityListPanel(QWidget):
             s = QSpinBox()
             s.setRange(lo, hi)
             s.setValue(val)
-            s.setFixedHeight(30)
+            s.setFixedHeight(26)
             s.setStyleSheet("font-size:13px;")
             if width:
                 s.setFixedWidth(width)
@@ -204,6 +204,7 @@ class FacilityListPanel(QWidget):
         self._door_win_tabs.setStyleSheet(
             "QTabWidget::pane { border: 1px solid #45475a; }"
         )
+        self._door_win_tabs.setMaximumHeight(130)
 
         # Door tab
         door_tab = QWidget()
@@ -216,7 +217,7 @@ class FacilityListPanel(QWidget):
         self.cb_dwall = QComboBox()
         self.cb_dwall.addItems(WALL_NAMES)
         self.cb_dwall.setCurrentIndex(4)
-        self.cb_dwall.setFixedHeight(30)
+        self.cb_dwall.setFixedHeight(26)
         self.cb_dwall.setStyleSheet("font-size:13px;")
         dg.addWidget(self.cb_dwall, 0, 1)
         self.rng_dwall = _range_label(width=80)
@@ -248,7 +249,7 @@ class FacilityListPanel(QWidget):
         self.cb_wwall = QComboBox()
         self.cb_wwall.addItems(WALL_NAMES)
         self.cb_wwall.setCurrentIndex(4)
-        self.cb_wwall.setFixedHeight(30)
+        self.cb_wwall.setFixedHeight(26)
         self.cb_wwall.setStyleSheet("font-size:13px;")
         wg.addWidget(self.cb_wwall, 0, 1)
         self.rng_wwall = _range_label(width=80)
@@ -364,7 +365,7 @@ class FacilityListPanel(QWidget):
         bold_font.setBold(True)
         bold_font.setPointSize(bold_font.pointSize() + 1)
         equiv_color = QBrush(QColor("#a6e3a1"))  # green
-        spec_color = QBrush(QColor("#f9e2af"))   # yellow
+        spec_color = QBrush(QColor("#f9e2af"))  # yellow
 
         for root_item, color in [(equiv_root, equiv_color), (spec_root, spec_color)]:
             root_item.setFont(0, bold_font)
@@ -402,7 +403,13 @@ class FacilityListPanel(QWidget):
 
         self.facility_tree.addTopLevelItem(equiv_root)
         self.facility_tree.addTopLevelItem(spec_root)
-        self.facility_tree.expandAll()
+        self.facility_tree.expandItem(equiv_root)
+        self.facility_tree.expandItem(spec_root)
+
+        for i in range(equiv_root.childCount()):
+            self.facility_tree.expandItem(equiv_root.child(i))
+        for i in range(spec_root.childCount()):
+            self.facility_tree.expandItem(spec_root.child(i))
 
     # Alias for backward compatibility
     def load_facilities(self):
@@ -476,18 +483,16 @@ class FacilityListPanel(QWidget):
                 if lo == hi:
                     self._range_labels[field_name].setText("")
                 elif field_name == "stories":
-                    self._range_labels[field_name].setText(
-                        f"({int(lo)}~{int(hi)})"
-                    )
+                    self._range_labels[field_name].setText(f"({int(lo)}~{int(hi)})")
                 else:
-                    self._range_labels[field_name].setText(
-                        f"({lo:.1f}~{hi:.1f})"
-                    )
+                    self._range_labels[field_name].setText(f"({lo:.1f}~{hi:.1f})")
                 self._range_labels[field_name].setVisible(True)
 
             # Wall thickness and offsets remain editable
             self.sp_T.setEnabled(True)
-            bdata = self.facility_manager.get_building_data(facility_name, building_name)
+            bdata = self.facility_manager.get_building_data(
+                facility_name, building_name
+            )
             self.sp_T.setValue(bdata.get("wall_thickness", 0.24))
             self.sp_X_offset.setValue(0.0)
             self.sp_Y_offset.setValue(0.0)
@@ -633,9 +638,7 @@ class FacilityListPanel(QWidget):
             # Load all equivalent buildings with default params
             for bname in self.facility_manager.list_buildings(facility_name):
                 params = self.facility_manager.default_params(facility_name, bname)
-                b = self.facility_manager.load_equivalent(
-                    facility_name, bname, params
-                )
+                b = self.facility_manager.load_equivalent(facility_name, bname, params)
                 buildings.append(b)
 
         if buildings:
@@ -695,15 +698,11 @@ class FacilityListPanel(QWidget):
             name_item.setFlags(name_item.flags() & ~Qt.ItemIsEditable)
             self.scene_table.setItem(i, 0, name_item)
 
-            size_item = QTableWidgetItem(
-                f"{b.length:.1f}x{b.width:.1f}x{b.height:.1f}"
-            )
+            size_item = QTableWidgetItem(f"{b.length:.1f}x{b.width:.1f}x{b.height:.1f}")
             size_item.setFlags(size_item.flags() & ~Qt.ItemIsEditable)
             self.scene_table.setItem(i, 1, size_item)
 
-            pos_item = QTableWidgetItem(
-                f"({b.offset_x:.1f}, {b.offset_y:.1f})"
-            )
+            pos_item = QTableWidgetItem(f"({b.offset_x:.1f}, {b.offset_y:.1f})")
             pos_item.setFlags(pos_item.flags() & ~Qt.ItemIsEditable)
             self.scene_table.setItem(i, 2, pos_item)
 
@@ -799,9 +798,7 @@ class FacilityListPanel(QWidget):
         self.scene_table.removeCellWidget(row, 2)
         if row < len(buildings):
             b = buildings[row]
-            pos_item = QTableWidgetItem(
-                f"({b.offset_x:.1f}, {b.offset_y:.1f})"
-            )
+            pos_item = QTableWidgetItem(f"({b.offset_x:.1f}, {b.offset_y:.1f})")
             pos_item.setFlags(pos_item.flags() & ~Qt.ItemIsEditable)
             self.scene_table.setItem(row, 2, pos_item)
 
