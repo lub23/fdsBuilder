@@ -26,13 +26,11 @@ from PySide6.QtWidgets import (
     QMessageBox,
     QSplitter,
     QDialog,
-    QToolBar,
     QTableWidget,
     QTableWidgetItem,
     QHeaderView,
-    QToolButton,
 )
-from PySide6.QtCore import Qt, QTimer, QSize
+from PySide6.QtCore import Qt, QTimer
 from PySide6.QtGui import QAction, QKeySequence
 from models.building import BuildingGroup, Building, Story
 from models.materials import MATERIAL_LIBRARY
@@ -60,7 +58,6 @@ class MainWindow(QMainWindow):
         self.model = BuildingGroup(buildings=[Building()])
         self.setup_ui()
         self.setup_menu()
-        self.setup_toolbar()
         self._refresh_scene_list()
         self.refresh_3d()
         self.update_preview()
@@ -248,43 +245,6 @@ class MainWindow(QMainWindow):
         material_action = QAction("材料库", self)
         material_action.triggered.connect(self.show_materials)
         help_menu.addAction(material_action)
-
-    def setup_toolbar(self):
-        toolbar = QToolBar()
-        toolbar.setMovable(False)
-        toolbar.setIconSize(QSize(24, 24))
-        self.addToolBar(toolbar)
-
-        # 新建
-        new_btn = QToolButton()
-        new_btn.setText("📄 新建")
-        new_btn.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
-        new_btn.clicked.connect(self.new_project)
-        toolbar.addWidget(new_btn)
-
-        # 打开
-        open_btn = QToolButton()
-        open_btn.setText("📂 打开")
-        open_btn.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
-        open_btn.clicked.connect(self.open_config)
-        toolbar.addWidget(open_btn)
-
-        # 保存
-        save_btn = QToolButton()
-        save_btn.setText("💾 保存")
-        save_btn.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
-        save_btn.clicked.connect(self.save_config)
-        toolbar.addWidget(save_btn)
-
-        toolbar.addSeparator()
-
-        # 导出
-        export_btn = QToolButton()
-        export_btn.setText("📤 导出FDS")
-        export_btn.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
-        export_btn.setStyleSheet("QToolButton { color: #a6e3a1; font-weight: bold; }")
-        export_btn.clicked.connect(self.export_fds)
-        toolbar.addWidget(export_btn)
 
     def update_preview(self):
         """更新FDS代码和状态栏"""
