@@ -23,7 +23,14 @@ except ImportError:
 
 from PySide6.QtWidgets import QWidget, QVBoxLayout, QLabel
 from PySide6.QtCore import Qt, QTimer
-from models.building import BuildingGroup, Building, Story, Opening, FireCompartment, Roof
+from models.building import (
+    BuildingGroup,
+    Building,
+    Story,
+    Opening,
+    FireCompartment,
+    Roof,
+)
 from models.geometry import detect_coplanar_openings, is_coplanar
 from models.materials import MATERIAL_LIBRARY
 
@@ -50,9 +57,31 @@ class Viewer3D(QWidget):
         self._highlighted_building = -1  # index of highlighted building
 
         self._actor_registry = {}  # {(category, id): actor}
+        self._actor_groups: dict[str, list] = {
+            "buildings": [],
+            "combustibles": [],
+            "heat_source": [],
+            "slices": [],
+            "devices": [],
+            "origin": [],
+        }
         self._debounce_timer = None
         self._pending_update = False
         self.setup_ui()
+
+    def _add_to_group(self, group: str, actor):
+        if actor is None:
+            return
+        self._actor_groups.setdefault(group, []).append(actor)
+
+    def _clear_group(self, group: str):
+        actors = self._actor_groups.get(group, [])
+        for a in actors:
+            try:
+                self.plotter.remove_actor(a)
+            except Exception:
+                pass
+        self._actor_groups[group] = []
 
     def setup_ui(self):
         layout = QVBoxLayout(self)
@@ -105,17 +134,34 @@ class Viewer3D(QWidget):
             return True
         return False
 
-    def update_model(self, model, debounce=False):
+    def update_model(self, model, debounce=False, partial=False):
         """Update the model and trigger re-render.
 
         Accepts either a BuildingGroup directly or a legacy model object
         with a .building_group attribute.
+
+        Args:
+            model: BuildingGroup or compatible model
+            debounce: If True, debounce the update
+            partial: If True, only update changed components (faster for热通量-only changes)
         """
+        old_heat_flux = getattr(self, '_last_heat_flux', None)
+        new_heat_flux = None
+        if model and hasattr(model, 'heat_source'):
+            new_heat_flux = model.heat_source.get('net_heat_flux')
+
         self.model = model
         self._bg = self._resolve_building_group(model)
 
         if not HAS_PYVISTA or model is None:
             return
+
+        if partial and old_heat_flux is not None and new_heat_flux is not None and old_heat_flux == new_heat_flux:
+            return
+
+        if not partial and new_heat_flux is not None:
+            self._last_heat_flux = new_heat_flux
+
         if debounce:
             self._pending_update = True
             self._schedule_debounced_update()
@@ -123,16 +169,29 @@ class Viewer3D(QWidget):
             self._do_full_render()
 
     def _do_full_render(self):
-        """Perform full render using boundary-based wall rendering."""
+        """Full render: buildings + combustibles + heat source + slices + origin + camera."""
         self.wall_actors.clear()
         self.opening_actors.clear()
-        self.plotter.clear()
+        for g in list(self._actor_groups):
+            self._clear_group(g)
+        self.plotter.clear()  # safety net until caching is in place
 
         bg = self._bg
         if bg is None:
             return
 
-        # Render all buildings in the group
+        bbox = self._render_buildings_group(bg)
+        if bbox is None:
+            return
+        global_min_x, global_max_x, global_min_y, global_max_y, global_max_z = bbox
+
+        self._render_heat_source_group(bg, bbox)
+        self._render_slices_devices_group(bg, bbox)
+        self._render_origin(bg)
+        self._finalize_camera(bbox)
+
+    def _render_buildings_group(self, bg):
+        """Render walls/openings/roofs/firewalls/combustibles. Returns bbox tuple or None."""
         buildings = bg.buildings
         global_max_x = global_max_y = global_max_z = -float("inf")
         global_min_x = global_min_y = float("inf")
@@ -146,13 +205,11 @@ class Viewer3D(QWidget):
             edge_color = "#f97316" if is_highlighted else "#45475a"
             edge_width = 3 if is_highlighted else 1
 
-            # Track bounding box
             global_min_x = min(global_min_x, ox - t)
             global_max_x = max(global_max_x, ox + L + t)
             global_min_y = min(global_min_y, oy - t)
             global_max_y = max(global_max_y, oy + W + t)
 
-            # Compute total height for this building
             total_h = 0.0
             for s in building.stories:
                 total_h = max(total_h, s.z_bottom + s.height)
@@ -163,11 +220,9 @@ class Viewer3D(QWidget):
             for si, story in enumerate(building.stories):
                 if not self._is_story_visible(bi, si):
                     continue
-
                 z0 = story.z_bottom
                 z1 = story.z_top
 
-                # 1. Exterior walls (4 boxes from boundary)
                 self._draw_exterior_walls(
                     ox, L, oy, W, t, z0, z1,
                     wall_opacity=wall_opacity,
@@ -175,78 +230,68 @@ class Viewer3D(QWidget):
                     edge_width=edge_width,
                 )
 
-                # 2. Exterior openings (story.openings + coplanar FC openings)
                 all_ext_openings = list(story.openings)
                 all_ext_openings += detect_coplanar_openings(building, story)
                 for opening in all_ext_openings:
                     actor = self._draw_opening(opening, building, z0, is_exterior=True)
                     if actor:
                         self.opening_actors.append(((bi, si), actor))
+                        self._add_to_group("buildings", actor)
 
-                # 3. Fire compartment firewalls (non-coplanar boundaries, red semi-transparent)
                 for fc in story.fire_compartments:
                     self._draw_firewalls(fc, building, z0, z1)
-                    # 4. Internal openings (on non-coplanar walls)
                     for opening in fc.openings:
                         if not is_coplanar(fc.boundary, L, W, opening.wall):
-                            self._draw_opening(
-                                opening, building, z0, is_exterior=False,
-                                fc_boundary=fc.boundary,
+                            a = self._draw_opening(
+                                opening, building, z0,
+                                is_exterior=False, fc_boundary=fc.boundary,
                             )
+                            if a:
+                                self._add_to_group("buildings", a)
 
-                # 5. Roof
                 if self.show_roof:
                     self._draw_roof(story.roof, ox, L, oy, W, z1)
 
-                # 6. Combustibles per FC
                 for fc in story.fire_compartments:
                     self._draw_combustibles(fc, ox, oy, z0)
 
-        # Heat source (uses building group bounding box)
-        hs = bg.heat_source
-        if hs.get("enabled", False):
-            self._add_heat_source(
-                bg,
-                global_min_x,
-                global_max_x,
-                global_min_y,
-                global_max_y,
-                global_max_z,
-            )
-        # Slice planes and device points
-        self._draw_slices_and_devices(
-            bg,
-            buildings,
-            global_min_x,
-            global_max_x,
-            global_min_y,
-            global_max_y,
-            global_max_z,
-        )
-
-        # Origin + camera
-        self._draw_origin_marker(buildings)
-        if global_max_z == -float("inf"):
-            global_max_z = 3.0
         if global_min_x == float("inf"):
-            # Fallback: use first building or defaults
             if buildings:
                 b0 = buildings[0]
                 ox0, L0, oy0, W0 = b0.boundary
-                global_min_x = ox0
-                global_max_x = ox0 + L0
-                global_min_y = oy0
-                global_max_y = oy0 + W0
+                global_min_x, global_max_x = ox0, ox0 + L0
+                global_min_y, global_max_y = oy0, oy0 + W0
             else:
-                global_min_x, global_max_x = -10, 10
-                global_min_y, global_max_y = -5, 5
+                return None
+        if global_max_z == -float("inf"):
+            global_max_z = 3.0
+        return (
+            global_min_x, global_max_x,
+            global_min_y, global_max_y,
+            global_max_z,
+        )
 
-        bbox_w = global_max_x - global_min_x
-        bbox_d = global_max_y - global_min_y
-        self.max_dim = max(bbox_w, bbox_d, global_max_z)
-        self.cx = (global_min_x + global_max_x) / 2
-        self.cy = (global_min_y + global_max_y) / 2
-        self.cz = global_max_z / 2
+    def _render_heat_source_group(self, bg, bbox):
+        self._clear_group("heat_source")
+        self._add_heat_source(bg, *bbox)
+
+    def _render_slices_devices_group(self, bg, bbox):
+        self._clear_group("slices")
+        self._clear_group("devices")
+        self._draw_slices_and_devices(bg, bg.buildings, *bbox)
+
+    def _render_origin(self, bg):
+        self._clear_group("origin")
+        self._draw_origin_marker(bg.buildings)
+
+    def _finalize_camera(self, bbox):
+        xmin, xmax, ymin, ymax, zmax = bbox
+        bbox_w = xmax - xmin
+        bbox_d = ymax - ymin
+        self.max_dim = max(bbox_w, bbox_d, zmax)
+        self.cx = (xmin + xmax) / 2
+        self.cy = (ymin + ymax) / 2
+        self.cz = zmax / 2
         if self._first_render:
             self.plotter.reset_camera()
             self.setup_camera()
@@ -254,11 +299,78 @@ class Viewer3D(QWidget):
         else:
             self.plotter.reset_camera_clipping_range()
 
+    # ── Public partial-update API ─────────────────────────────
+    def update_buildings(self, model):
+        self.model = model
+        self._bg = self._resolve_building_group(model)
+        if not HAS_PYVISTA or model is None:
+            return
+        self._do_full_render()
+
+    def update_heat_source(self, model):
+        self.model = model
+        self._bg = self._resolve_building_group(model)
+        if not HAS_PYVISTA or model is None:
+            return
+        bbox = self._compute_bbox_only()
+        if bbox is None:
+            return
+        self._render_heat_source_group(self._bg, bbox)
+        self.plotter.render()
+
+    def update_slices_devices(self, model):
+        self.model = model
+        self._bg = self._resolve_building_group(model)
+        if not HAS_PYVISTA or model is None:
+            return
+        bbox = self._compute_bbox_only()
+        if bbox is None:
+            return
+        self._render_slices_devices_group(self._bg, bbox)
+        self.plotter.render()
+
+    def _compute_bbox_only(self):
+        """Compute (xmin, xmax, ymin, ymax, zmax) without drawing."""
+        bg = self._bg
+        if bg is None or not bg.buildings:
+            return None
+        xmin = ymin = float("inf")
+        xmax = ymax = zmax = -float("inf")
+        for b in bg.buildings:
+            ox, L, oy, W = b.boundary
+            t = b.wall_thickness
+            xmin = min(xmin, ox - t)
+            xmax = max(xmax, ox + L + t)
+            ymin = min(ymin, oy - t)
+            ymax = max(ymax, oy + W + t)
+            total_h = 0.0
+            for s in b.stories:
+                total_h = max(total_h, s.z_bottom + s.height)
+            if total_h == 0:
+                total_h = b.height
+            zmax = max(zmax, total_h)
+        if xmin == float("inf"):
+            return None
+        if zmax == -float("inf"):
+            zmax = 3.0
+        return (xmin, xmax, ymin, ymax, zmax)
+
     # ── Drawing helpers ─────────────────────────────────────
 
-    def _draw_exterior_walls(self, ox, L, oy, W, t, z0, z1,
-                             wall_color="#808080", wall_opacity=0.6,
-                             edge_color="#45475a", edge_width=1):
+    def _draw_exterior_walls(
+        self,
+        ox,
+        L,
+        oy,
+        W,
+        t,
+        z0,
+        z1,
+        wall_color="#808080",
+        wall_opacity=0.6,
+        edge_color="#45475a",
+        edge_width=1,
+    ):
         """Draw 4 exterior wall boxes using PyVista."""
         walls = [
             # South wall (y_min)
@@ -281,52 +393,117 @@ class Viewer3D(QWidget):
                 line_width=edge_width,
             )
             self.wall_actors.append(actor)
+            self._add_to_group("buildings", actor)
 
-    def _draw_opening(self, opening: Opening, building: Building, z0: float,
-                      is_exterior: bool = True, fc_boundary=None):
+    def _draw_opening(
+        self,
+        opening: Opening,
+        building: Building,
+        z0: float,
+        is_exterior: bool = True,
+        fc_boundary=None,
+    ):
         """Draw an opening as a colored box on the wall surface."""
         ox, L, oy, W = building.boundary
         w_off, w, h_off, h = opening.boundary
-        color = "#4CAF50" if opening.type == "door" else "#2196F3"  # green=door, blue=window
+        color = (
+            "#4CAF50" if opening.type == "door" else "#2196F3"
+        )  # green=door, blue=window
 
         if is_exterior:
             if opening.wall == "y_min":
-                box = pv.Box(bounds=[ox + w_off, ox + w_off + w,
-                                     oy - 0.05, oy + 0.05,
-                                     z0 + h_off, z0 + h_off + h])
+                box = pv.Box(
+                    bounds=[
+                        ox + w_off,
+                        ox + w_off + w,
+                        oy - 0.05,
+                        oy + 0.05,
+                        z0 + h_off,
+                        z0 + h_off + h,
+                    ]
+                )
             elif opening.wall == "y_max":
-                box = pv.Box(bounds=[ox + w_off, ox + w_off + w,
-                                     oy + W - 0.05, oy + W + 0.05,
-                                     z0 + h_off, z0 + h_off + h])
+                box = pv.Box(
+                    bounds=[
+                        ox + w_off,
+                        ox + w_off + w,
+                        oy + W - 0.05,
+                        oy + W + 0.05,
+                        z0 + h_off,
+                        z0 + h_off + h,
+                    ]
+                )
             elif opening.wall == "x_min":
-                box = pv.Box(bounds=[ox - 0.05, ox + 0.05,
-                                     oy + w_off, oy + w_off + w,
-                                     z0 + h_off, z0 + h_off + h])
+                box = pv.Box(
+                    bounds=[
+                        ox - 0.05,
+                        ox + 0.05,
+                        oy + w_off,
+                        oy + w_off + w,
+                        z0 + h_off,
+                        z0 + h_off + h,
+                    ]
+                )
             else:  # x_max
-                box = pv.Box(bounds=[ox + L - 0.05, ox + L + 0.05,
-                                     oy + w_off, oy + w_off + w,
-                                     z0 + h_off, z0 + h_off + h])
+                box = pv.Box(
+                    bounds=[
+                        ox + L - 0.05,
+                        ox + L + 0.05,
+                        oy + w_off,
+                        oy + w_off + w,
+                        z0 + h_off,
+                        z0 + h_off + h,
+                    ]
+                )
         else:
             # Interior opening on FC boundary
             if fc_boundary is None:
                 return None
             fx_min, fx_max, fy_min, fy_max = fc_boundary
             if opening.wall == "y_min":
-                box = pv.Box(bounds=[ox + fx_min + w_off, ox + fx_min + w_off + w,
-                                     oy + fy_min - 0.05, oy + fy_min + 0.05,
-                                     z0 + h_off, z0 + h_off + h])
+                box = pv.Box(
+                    bounds=[
+                        ox + fx_min + w_off,
+                        ox + fx_min + w_off + w,
+                        oy + fy_min - 0.05,
+                        oy + fy_min + 0.05,
+                        z0 + h_off,
+                        z0 + h_off + h,
+                    ]
+                )
             elif opening.wall == "y_max":
-                box = pv.Box(bounds=[ox + fx_min + w_off, ox + fx_min + w_off + w,
-                                     oy + fy_max - 0.05, oy + fy_max + 0.05,
-                                     z0 + h_off, z0 + h_off + h])
+                box = pv.Box(
+                    bounds=[
+                        ox + fx_min + w_off,
+                        ox + fx_min + w_off + w,
+                        oy + fy_max - 0.05,
+                        oy + fy_max + 0.05,
+                        z0 + h_off,
+                        z0 + h_off + h,
+                    ]
+                )
             elif opening.wall == "x_min":
-                box = pv.Box(bounds=[ox + fx_min - 0.05, ox + fx_min + 0.05,
-                                     oy + fy_min + w_off, oy + fy_min + w_off + w,
-                                     z0 + h_off, z0 + h_off + h])
+                box = pv.Box(
+                    bounds=[
+                        ox + fx_min - 0.05,
+                        ox + fx_min + 0.05,
+                        oy + fy_min + w_off,
+                        oy + fy_min + w_off + w,
+                        z0 + h_off,
+                        z0 + h_off + h,
+                    ]
+                )
             else:  # x_max
-                box = pv.Box(bounds=[ox + fx_max - 0.05, ox + fx_max + 0.05,
-                                     oy + fy_min + w_off, oy + fy_min + w_off + w,
-                                     z0 + h_off, z0 + h_off + h])
+                box = pv.Box(
+                    bounds=[
+                        ox + fx_max - 0.05,
+                        ox + fx_max + 0.05,
+                        oy + fy_min + w_off,
+                        oy + fy_min + w_off + w,
+                        z0 + h_off,
+                        z0 + h_off + h,
+                    ]
+                )
 
         return self.plotter.add_mesh(box, color=color, opacity=0.8)
 
@@ -341,32 +518,44 @@ class Viewer3D(QWidget):
         fw_color = "#808080"
         fw_opacity = 0.6
 
+        def _add(box):
+            actor = self.plotter.add_mesh(
+                box,
+                color=fw_color,
+                opacity=fw_opacity,
+                show_edges=True,
+                edge_color="#45475a",
+                line_width=1,
+            )
+            self._add_to_group("buildings", actor)
+
         # Only draw non-coplanar boundaries (interior partitions)
         if x_min > 0 and not is_coplanar(fc.boundary, L, W, "x_min"):
-            box = pv.Box(bounds=[ox + x_min - t / 2, ox + x_min + t / 2,
-                                  oy + y_min, oy + y_max, z0, z1])
-            self.plotter.add_mesh(box, color=fw_color, opacity=fw_opacity, show_edges=True,
-                                  edge_color="#45475a", line_width=1)
+            _add(pv.Box(bounds=[
+                ox + x_min - t / 2, ox + x_min + t / 2,
+                oy + y_min, oy + y_max, z0, z1,
+            ]))
         if x_max < L and not is_coplanar(fc.boundary, L, W, "x_max"):
-            box = pv.Box(bounds=[ox + x_max - t / 2, ox + x_max + t / 2,
-                                  oy + y_min, oy + y_max, z0, z1])
-            self.plotter.add_mesh(box, color=fw_color, opacity=fw_opacity, show_edges=True,
-                                  edge_color="#45475a", line_width=1)
+            _add(pv.Box(bounds=[
+                ox + x_max - t / 2, ox + x_max + t / 2,
+                oy + y_min, oy + y_max, z0, z1,
+            ]))
         if y_min > 0 and not is_coplanar(fc.boundary, L, W, "y_min"):
-            box = pv.Box(bounds=[ox + x_min, ox + x_max,
-                                  oy + y_min - t / 2, oy + y_min + t / 2, z0, z1])
-            self.plotter.add_mesh(box, color=fw_color, opacity=fw_opacity, show_edges=True,
-                                  edge_color="#45475a", line_width=1)
+            _add(pv.Box(bounds=[
+                ox + x_min, ox + x_max,
+                oy + y_min - t / 2, oy + y_min + t / 2, z0, z1,
+            ]))
         if y_max < W and not is_coplanar(fc.boundary, L, W, "y_max"):
-            box = pv.Box(bounds=[ox + x_min, ox + x_max,
-                                  oy + y_max - t / 2, oy + y_max + t / 2, z0, z1])
-            self.plotter.add_mesh(box, color=fw_color, opacity=fw_opacity, show_edges=True,
-                                  edge_color="#45475a", line_width=1)
+            _add(pv.Box(bounds=[
+                ox + x_min, ox + x_max,
+                oy + y_max - t / 2, oy + y_max + t / 2, z0, z1,
+            ]))
 
     def _draw_roof(self, roof: Roof, ox, L, oy, W, z_top):
         """Draw a roof slab above a story."""
         slab = pv.Box(bounds=[ox, ox + L, oy, oy + W, z_top, z_top + roof.thickness])
-        self.plotter.add_mesh(slab, color="#888888", opacity=0.4)
+        actor = self.plotter.add_mesh(slab, color="#888888", opacity=0.4)
+        self._add_to_group("buildings", actor)
 
     def _draw_combustibles(self, fc: FireCompartment, ox, oy, z_offset):
         """Draw combustible and specialized component items within a fire compartment."""
@@ -375,14 +564,23 @@ class Viewer3D(QWidget):
         from models.geometry import layout_items_in_fc
 
         colors = {
-            "BROWN": "#8B4513", "RED": "#CD5C5C", "SALMON": "#FA8072",
-            "GRAY": "#808080", "KHAKI": "#BDB76B", "IVORY": "#FFFFF0",
-            "MAGENTA": "#FF00FF", "ORANGE": "#FFA500",
+            "BROWN": "#8B4513",
+            "RED": "#CD5C5C",
+            "SALMON": "#FA8072",
+            "GRAY": "#808080",
+            "KHAKI": "#BDB76B",
+            "IVORY": "#FFFFF0",
+            "MAGENTA": "#FF00FF",
+            "ORANGE": "#FFA500",
         }
         material_colors = {
-            "ALUMINUM": "#c0c0c0", "STEEL": "#4a5568", "JET_FUEL": "#b45309",
-            "SOLID_PROPELLANT": "#dc2626", "GASOLINE": "#f59e0b",
-            "ELECTROLYTE": "#06b6d4", "WOOD": "#92400e",
+            "ALUMINUM": "#c0c0c0",
+            "STEEL": "#4a5568",
+            "JET_FUEL": "#b45309",
+            "SOLID_PROPELLANT": "#dc2626",
+            "GASOLINE": "#f59e0b",
+            "ELECTROLYTE": "#06b6d4",
+            "WOOD": "#92400e",
         }
 
         # Build unified item list: specialized components first (priority), then combustibles
@@ -395,15 +593,17 @@ class Viewer3D(QWidget):
                 if not comp:
                     continue
                 for ci in range(sc.get("count", 1)):
-                    all_items.append({
-                        "length": comp.total_length,
-                        "width": comp.total_width,
-                        "height": comp.total_height,
-                        "color": "GRAY",
-                        "component_key": sc["key"],
-                        "_comp": comp,
-                        "_instance": ci,
-                    })
+                    all_items.append(
+                        {
+                            "length": comp.total_length,
+                            "width": comp.total_width,
+                            "height": comp.total_height,
+                            "color": "GRAY",
+                            "component_key": sc["key"],
+                            "_comp": comp,
+                            "_instance": ci,
+                        }
+                    )
 
         # 2. Combustibles
         for cb in fc.combustibles:
@@ -411,14 +611,21 @@ class Viewer3D(QWidget):
                 cb_def = COMBUSTIBLE_LIBRARY.get(cb["key"], {})
                 if not cb_def:
                     continue
+                length = cb_def.get("length", 1.0)
+                width = cb_def.get("width", 0.8)
+                rotation = cb.get("rotation", 0)
+                if rotation == 90:
+                    length, width = width, length
                 for _ in range(cb.get("count", 1)):
-                    all_items.append({
-                        "length": cb_def.get("length", 1.0),
-                        "width": cb_def.get("width", 0.8),
-                        "height": cb_def.get("height", 0.5),
-                        "color": cb_def.get("color", "BROWN"),
-                        "component_key": None,
-                    })
+                    all_items.append(
+                        {
+                            "length": length,
+                            "width": width,
+                            "height": cb_def.get("height", 0.5),
+                            "color": cb_def.get("color", "BROWN"),
+                            "component_key": None,
+                        }
+                    )
 
         # Layout all items together
         placed = layout_items_in_fc(fc.boundary, all_items, margin=1.0, gap=0.5)
@@ -432,27 +639,33 @@ class Viewer3D(QWidget):
                 # Draw specialized component parts
                 for part in comp.parts:
                     color = material_colors.get(part.material_key, "#CD853F")
-                    box = pv.Box(bounds=(
-                        ox + item["x"] + part.dx,
-                        ox + item["x"] + part.dx + part.length,
-                        oy + item["y"] + part.dy,
-                        oy + item["y"] + part.dy + part.width,
-                        part.dz + z_offset,
-                        part.dz + part.height + z_offset,
-                    ))
-                    self.plotter.add_mesh(box, color=color, opacity=0.8)
+                    box = pv.Box(
+                        bounds=(
+                            ox + item["x"] + part.dx,
+                            ox + item["x"] + part.dx + part.length,
+                            oy + item["y"] + part.dy,
+                            oy + item["y"] + part.dy + part.width,
+                            part.dz + z_offset,
+                            part.dz + part.height + z_offset,
+                        )
+                    )
+                    actor = self.plotter.add_mesh(box, color=color, opacity=0.8)
+                    self._add_to_group("combustibles", actor)
             else:
                 # Draw combustible
                 color = colors.get(item.get("color", "BROWN"), "#CD853F")
-                box = pv.Box(bounds=(
-                    ox + item["x"],
-                    ox + item["x"] + item["length"],
-                    oy + item["y"],
-                    oy + item["y"] + item["width"],
-                    item.get("z", 0) + z_offset,
-                    item.get("z", 0) + item["height"] + z_offset,
-                ))
-                self.plotter.add_mesh(box, color=color, opacity=0.8)
+                box = pv.Box(
+                    bounds=(
+                        ox + item["x"],
+                        ox + item["x"] + item["length"],
+                        oy + item["y"],
+                        oy + item["y"] + item["width"],
+                        item.get("z", 0) + z_offset,
+                        item.get("z", 0) + item["height"] + z_offset,
+                    )
+                )
+                actor = self.plotter.add_mesh(box, color=color, opacity=0.8)
+                self._add_to_group("combustibles", actor)
 
     def _draw_origin_marker(self, buildings):
         """Draw origin marker axes using first building's position."""
@@ -461,18 +674,20 @@ class Viewer3D(QWidget):
         b0 = buildings[0]
         ox0, L0, oy0, W0 = b0.boundary
         a = max(L0, W0) * 0.1
-        self.plotter.add_mesh(
+        a1 = self.plotter.add_mesh(
             pv.Line((ox0, oy0, 0), (ox0 + a, oy0, 0)), color="red", line_width=4
         )
-        self.plotter.add_mesh(
+        a2 = self.plotter.add_mesh(
             pv.Line((ox0, oy0, 0), (ox0, oy0 + a, 0)), color="green", line_width=4
         )
-        self.plotter.add_mesh(
+        a3 = self.plotter.add_mesh(
             pv.Line((ox0, oy0, 0), (ox0, oy0, a)), color="blue", line_width=4
         )
-        self.plotter.add_mesh(
+        a4 = self.plotter.add_mesh(
             pv.Sphere(radius=a * 0.05, center=(ox0, oy0, 0)), color="white"
         )
+        for a_ in (a1, a2, a3, a4):
+            self._add_to_group("origin", a_)
 
     # Keep legacy name as alias
     def draw_origin_marker(self):
@@ -531,90 +746,61 @@ class Viewer3D(QWidget):
         self.selected_opening = index
         self.plotter.render()
 
-    def _add_heat_source(self, model, g_xmin, g_xmax, g_ymin, g_ymax, g_zmax):
-        hs = model.heat_source
-        dist = hs.get("distance", 3.0)
+    def _add_heat_source(self, bg, g_xmin, g_xmax, g_ymin, g_ymax, g_zmax):
+        """Paint MESH boundary faces with heat-flux-weighted colors."""
+        from models.heat_source import face_fluxes
+
+        hs = bg.heat_source or {}
+        Q = hs.get("net_heat_flux", 20.0)
         azimuth = hs.get("azimuth", 0)
         elevation = hs.get("elevation", 0)
-        width_ratio = hs.get("width_ratio", 1.5)
-        height_ratio = hs.get("height_ratio", 1.0)
+        fluxes = face_fluxes(azimuth, elevation, Q)
+        if not fluxes:
+            return
 
-        group_cx = (g_xmin + g_xmax) / 2
-        group_cy = (g_ymin + g_ymax) / 2
-        group_half_L = (g_xmax - g_xmin) / 2
-        group_half_W = (g_ymax - g_ymin) / 2
-        H = max(g_zmax, 1.0) * height_ratio
+        pad = bg.domain.get("padding", 5.0)
+        x0 = g_xmin - pad
+        x1 = g_xmax + pad
+        y0 = g_ymin - pad
+        y1 = g_ymax + pad
+        z0 = 0.0
+        z1 = max(g_zmax + pad, g_zmax + 1.0)
 
-        D = max(group_half_L, group_half_W) + dist
-        az_rad = math.radians(azimuth)
-        el_rad = math.radians(elevation)
+        Q_ref = max(20.0, Q)  # normalize to 20 kW/m² for consistent color scale
 
-        source_cx = group_cx + D * math.cos(el_rad) * math.sin(az_rad)
-        source_cy = group_cy - D * math.cos(el_rad) * math.cos(az_rad)
-        source_cz = D * math.sin(el_rad)
+        def flux_color(f):
+            # yellow → red ramp
+            t = max(0.0, min(1.0, f / Q_ref))
+            r = 255
+            g = int(255 * (1 - t))
+            b = 0
+            return (r / 255.0, g / 255.0, b / 255.0)
 
-        # Perpendicular direction (along source width)
-        perp_x = -math.sin(az_rad + math.pi / 2)
-        perp_y = math.cos(az_rad + math.pi / 2)
+        dx = x1 - x0
+        dy = y1 - y0
+        dz = z1 - z0
 
-        # Normal direction: from source toward building center
-        norm_x = -math.sin(az_rad)
-        norm_y = math.cos(az_rad)
-
-        source_W = 2 * (abs(group_half_L * perp_x) + abs(group_half_W * perp_y))
-        if width_ratio > 1.0:
-            source_W *= width_ratio
-        source_H = H
-
-        n_cols = 1 if azimuth % 90 == 0 else max(5, int(source_W / 0.5))
-        n_rows = 1 if elevation == 0 else max(5, int(source_H / 0.5))
-
-        strip_w = source_W / n_cols
-        dh = source_H / n_rows
-
-        if elevation > 0:
-            tan_alpha = math.tan(el_rad)
-            cos_alpha = math.cos(el_rad)
-            thickness = dh / cos_alpha if cos_alpha > 1e-10 else 0.2
-            for row in range(n_rows):
-                z_lo = row * dh
-                z_hi = (row + 1) * dh
-                # Forward offset along normal for this row
-                fwd_offset = row * dh / tan_alpha if tan_alpha > 1e-10 else 0
-                for col in range(n_cols):
-                    perp_pos = -source_W / 2 + (col + 0.5) * strip_w
-                    cx = source_cx + perp_x * perp_pos + norm_x * fwd_offset
-                    cy = source_cy + perp_y * perp_pos + norm_y * fwd_offset
-                    # Strip bounds: width along perp, depth = thickness along normal
-                    x1 = cx - perp_x * strip_w / 2 - norm_x * thickness / 2
-                    x2 = cx + perp_x * strip_w / 2 + norm_x * thickness / 2
-                    y1 = cy - perp_y * strip_w / 2 - norm_y * thickness / 2
-                    y2 = cy + perp_y * strip_w / 2 + norm_y * thickness / 2
-                    bx1, bx2 = min(x1, x2), max(x1, x2)
-                    by1, by2 = min(y1, y2), max(y1, y2)
-                    b = (bx1, bx2, by1, by2, source_cz + z_lo, source_cz + z_hi)
-                    self.plotter.add_mesh(
-                        pv.Box(bounds=b), color="#f97316", opacity=0.4
-                    )
-        else:
-            thickness = 0.2
-            for row in range(n_rows):
-                z_lo = row * dh
-                z_hi = (row + 1) * dh
-                for col in range(n_cols):
-                    perp_pos = -source_W / 2 + (col + 0.5) * strip_w
-                    cx = source_cx + perp_x * perp_pos
-                    cy = source_cy + perp_y * perp_pos
-                    x1 = cx - perp_x * strip_w / 2 - norm_x * thickness / 2
-                    x2 = cx + perp_x * strip_w / 2 + norm_x * thickness / 2
-                    y1 = cy - perp_y * strip_w / 2 - norm_y * thickness / 2
-                    y2 = cy + perp_y * strip_w / 2 + norm_y * thickness / 2
-                    bx1, bx2 = min(x1, x2), max(x1, x2)
-                    by1, by2 = min(y1, y2), max(y1, y2)
-                    b = (bx1, bx2, by1, by2, source_cz + z_lo, source_cz + z_hi)
-                    self.plotter.add_mesh(
-                        pv.Box(bounds=b), color="#f97316", opacity=0.4
-                    )
+        face_params = {
+            "XMIN": ((x0, (y0 + y1) / 2, (z0 + z1) / 2), (1, 0, 0), dy, dz),
+            "XMAX": ((x1, (y0 + y1) / 2, (z0 + z1) / 2), (1, 0, 0), dy, dz),
+            "YMIN": (((x0 + x1) / 2, y0, (z0 + z1) / 2), (0, 1, 0), dx, dz),
+            "YMAX": (((x0 + x1) / 2, y1, (z0 + z1) / 2), (0, 1, 0), dx, dz),
+            "ZMAX": (((x0 + x1) / 2, (y0 + y1) / 2, z1), (0, 0, 1), dx, dy),
+        }
+        for face_name, flux_val in fluxes.items():
+            center, direction, i_size, j_size = face_params[face_name]
+            plane = pv.Plane(
+                center=center, direction=direction,
+                i_size=i_size, j_size=j_size,
+            )
+            actor = self.plotter.add_mesh(
+                plane,
+                color=flux_color(flux_val),
+                opacity=0.35,
+                show_edges=True,
+                edge_color="#f97316",
+            )
+            self._add_to_group("heat_source", actor)
 
     def _draw_slices_and_devices(self, model, buildings, xmin, xmax, ymin, ymax, zmax):
         """Draw slice planes (semi-transparent) and device points (spheres)."""
@@ -668,7 +854,8 @@ class Viewer3D(QWidget):
                 i_size=dz,
                 j_size=dy,
             )
-            self.plotter.add_mesh(sx, color="#f9e2af", opacity=0.08, show_edges=False)
+            a_sx = self.plotter.add_mesh(sx, color="#f9e2af", opacity=0.08, show_edges=False)
+            self._add_to_group("slices", a_sx)
 
             # Y-slice plane
             sy = pv.Plane(
@@ -677,7 +864,8 @@ class Viewer3D(QWidget):
                 i_size=dx,
                 j_size=dz,
             )
-            self.plotter.add_mesh(sy, color="#a6e3a1", opacity=0.08, show_edges=False)
+            a_sy = self.plotter.add_mesh(sy, color="#a6e3a1", opacity=0.08, show_edges=False)
+            self._add_to_group("slices", a_sy)
 
             # Z-slice plane
             sz_val = cz + 0.5 if first_cb_center else zmax / 2
@@ -687,7 +875,8 @@ class Viewer3D(QWidget):
                 i_size=dx,
                 j_size=dy,
             )
-            self.plotter.add_mesh(sz, color="#89b4fa", opacity=0.08, show_edges=False)
+            a_sz = self.plotter.add_mesh(sz, color="#89b4fa", opacity=0.08, show_edges=False)
+            self._add_to_group("slices", a_sz)
         except Exception:
             pass  # pv.Plane may not be available in older versions
 
@@ -695,22 +884,24 @@ class Viewer3D(QWidget):
         if model.output.get("devices", True):
             if first_cb_center:
                 cx, cy, cz = first_cb_center
-                self.plotter.add_mesh(
+                a_dev = self.plotter.add_mesh(
                     pv.Sphere(radius=0.3, center=(cx, cy, cz + 0.1)),
                     color="#f38ba8",
                     opacity=0.9,
                 )
+                self._add_to_group("devices", a_dev)
             for b in buildings:
                 bx, bL, by, bW = b.boundary
                 b_cx = bx + bL / 2
                 b_cy = by + bW / 2
                 for story in b.stories:
                     z_mid = story.z_bottom + story.height / 2
-                    self.plotter.add_mesh(
+                    a_sp = self.plotter.add_mesh(
                         pv.Sphere(radius=0.2, center=(b_cx, b_cy, z_mid)),
                         color="#cba6f7",
                         opacity=0.7,
                     )
+                    self._add_to_group("devices", a_sp)
 
     def highlight_building(self, index: int):
         """Highlight a specific building by index in the 3D view."""
