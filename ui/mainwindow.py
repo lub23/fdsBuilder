@@ -337,8 +337,24 @@ class MainWindow(QMainWindow):
                 QMessageBox.critical(self, "错误", f"无法保存配置文件:\n{str(e)}")
 
     def export_fds(self):
+        # Compute CHID for default filename
+        bg = self.model
+        chid = bg.name or "building"
+        chid = chid.replace(" ", "_").replace(".", "_").replace("-", "_")
+        chid = "".join(c for c in chid if ord(c) < 128) or "building"
+
+        hs = bg.heat_source
+        heat_flux_kw = int(round(hs.get("net_heat_flux", 20.0) * 1000))
+        azimuth = int(hs.get("azimuth", 0))
+        elevation = int(hs.get("elevation", 0))
+        duration = int(hs.get("duration", 0) * 100)
+        sim_time = int(bg.simulation_time)
+
+        chid_suffix = f"q{heat_flux_kw}_a{azimuth}_e{elevation}_d{duration}_t{sim_time}"
+        default_filename = f"{chid}_{chid_suffix}.fds"
+
         file_path, _ = QFileDialog.getSaveFileName(
-            self, "导出FDS文件", "building.fds", "FDS文件 (*.fds)"
+            self, "导出FDS文件", default_filename, "FDS文件 (*.fds)"
         )
         if file_path:
             try:
@@ -375,7 +391,6 @@ class MainWindow(QMainWindow):
     def _on_building_added(self, building_obj):
         """追加或替换一栋子目标建筑到现有模型"""
         try:
-            from models.building import Building, BuildingGroup
             # building_obj is a Building instance emitted by FacilityPanel
             if isinstance(building_obj, Building):
                 new_bld = building_obj
