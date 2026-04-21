@@ -608,7 +608,7 @@ class FDSGenerator:
         hs = self.bg.heat_source
         azimuth = hs.get("azimuth", 0)
         elevation = hs.get("elevation", 0)
-        Q_kw = hs.get("net_heat_flux", 20.0)
+        Q_kw = hs.get("net_heat_flux", 1000)
         duration = hs.get("duration", 1.36)
 
         fluxes = face_fluxes(azimuth, elevation, Q_kw)
@@ -629,7 +629,7 @@ class FDSGenerator:
 
         lines.append(
             f"&SURF ID='radiation',\n"
-            f"      NET_HEAT_FLUX={Q_kw * 1000:.2f},\n"
+            f"      NET_HEAT_FLUX={Q_kw:.2f},\n"
             f"      COLOR='ORANGE' /\n\n"
         )
 
@@ -734,10 +734,10 @@ class FDSGenerator:
         chid = "".join(c for c in chid if ord(c) < 128) or "building"
 
         hs = bg.heat_source
-        heat_flux_kw = int(round(hs.get("net_heat_flux", 20.0) * 1000))
+        heat_flux_kw = int(hs.get("net_heat_flux", 1000))
         azimuth = int(hs.get("azimuth", 0))
         elevation = int(hs.get("elevation", 0))
-        duration = int(hs.get("duration", 0) * 100)
+        duration = int(hs.get("duration", 0) * 1000)
         sim_time = int(bg.simulation_time)
 
         chid_suffix = f"q{heat_flux_kw}_a{azimuth}_e{elevation}_d{duration}_t{sim_time}"

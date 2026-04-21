@@ -26,6 +26,8 @@ from PySide6.QtWidgets import (
     QDialog,
     QTextEdit,
     QSlider,
+    QFileDialog,
+    QMessageBox
 )
 from PySide6.QtCore import Qt, Signal, QProcess, QProcessEnvironment, QTimer
 import os
@@ -120,7 +122,7 @@ class SimulationControlPanel(QWidget):
         form.addWidget(QLabel("热通量:"), 1, 0)
         self.heat_flux_spin = QDoubleSpinBox()
         self.heat_flux_spin.setRange(50, 20000)
-        self.heat_flux_spin.setValue(3000)
+        self.heat_flux_spin.setValue(1000)
         self.heat_flux_spin.setDecimals(0)
         self.heat_flux_spin.setSingleStep(500)
         self.heat_flux_spin.setSuffix(" kW/m²")
@@ -507,11 +509,23 @@ class SimulationControlPanel(QWidget):
     # ── FDS仿真执行 ─────────────────────────────────
     def run_fds_simulation(self):
         """运行FDS仿真"""
-        from PySide6.QtWidgets import QFileDialog, QMessageBox
+        bg = self.model
+        chid = bg.name or "building"
+        chid = chid.replace(" ", "_").replace(".", "_").replace("-", "_")
+        chid = "".join(c for c in chid if ord(c) < 128) or "building"
 
+        hs = bg.heat_source
+        heat_flux_kw = int(hs.get("net_heat_flux", 1000))
+        azimuth = int(hs.get("azimuth", 0))
+        elevation = int(hs.get("elevation", 0))
+        duration = int(hs.get("duration", 0) * 1000)
+        sim_time = int(bg.simulation_time)
+
+        chid_suffix = f"q{heat_flux_kw}_a{azimuth}_e{elevation}_d{duration}_t{sim_time}"
+        default_filename = f"{chid}_{chid_suffix}.fds"
         # 1. 先导出FDS文件
         fds_path, _ = QFileDialog.getSaveFileName(
-            self, "保存FDS文件", "", "FDS文件 (*.fds)"
+            self, "保存FDS文件", default_filename, "FDS文件 (*.fds)"
         )
         if not fds_path:
             return
@@ -795,8 +809,8 @@ class SimulationControlPanel(QWidget):
         self._syncing = True
         try:
             hs = model.heat_source
-            # UI uses kW/m², model stores MW/m², convert.
-            self.heat_flux_spin.setValue(hs.get("net_heat_flux", 3.0) * 1000)
+            # uses kW/m²
+            self.heat_flux_spin.setValue(hs.get("net_heat_flux", 1000))
             self.heat_azimuth_slider.setValue(hs.get("azimuth", 0))
             elev = hs.get("elevation", 0)
             elev_idx = {0: 0, 30: 1, 45: 2, 60: 3}.get(elev, 0)
@@ -847,7 +861,7 @@ class SimulationControlPanel(QWidget):
         m.heat_source = {
             "azimuth": self.heat_azimuth_slider.value(),
             "elevation": self._ELEV_VALUES[min(self.heat_elevation_slider.value(), 3)],
-            "net_heat_flux": self.heat_flux_spin.value() / 1000.0,
+            "net_heat_flux": self.heat_flux_spin.value(),
             "duration": self.heat_duration_spin.value(),
         }
         m.simulation_time = self.sim_time_spin.value()

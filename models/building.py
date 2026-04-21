@@ -315,7 +315,7 @@ class BuildingGroup:
     heat_source: dict = field(default_factory=lambda: {
         "azimuth": 0,
         "elevation": 0,
-        "net_heat_flux": 3.0,
+        "net_heat_flux": 1000,
         "duration": 1.36,
     })
     simulation_time: float = 600
@@ -399,7 +399,7 @@ class BuildingGroup:
         hs = {
             "azimuth": raw_hs.get("azimuth", 0),
             "elevation": raw_hs.get("elevation", 0),
-            "net_heat_flux": float(raw_hs.get("net_heat_flux", 3.0)),
+            "net_heat_flux": float(raw_hs.get("net_heat_flux", 1000)),
             "duration": raw_hs.get("duration", 1.36),
         }
 

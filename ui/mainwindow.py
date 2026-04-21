@@ -9,7 +9,7 @@
 @Desc  : Defining constants and configurations for the GUI
 """
 
-import json
+import os, json
 
 # Qt GUI
 from PySide6.QtWidgets import (
@@ -344,10 +344,10 @@ class MainWindow(QMainWindow):
         chid = "".join(c for c in chid if ord(c) < 128) or "building"
 
         hs = bg.heat_source
-        heat_flux_kw = int(round(hs.get("net_heat_flux", 20.0) * 1000))
+        heat_flux_kw = int(hs.get("net_heat_flux", 1000))
         azimuth = int(hs.get("azimuth", 0))
         elevation = int(hs.get("elevation", 0))
-        duration = int(hs.get("duration", 0) * 100)
+        duration = int(hs.get("duration", 0) * 1000)
         sim_time = int(bg.simulation_time)
 
         chid_suffix = f"q{heat_flux_kw}_a{azimuth}_e{elevation}_d{duration}_t{sim_time}"
@@ -558,9 +558,6 @@ class MainWindow(QMainWindow):
 
     def _save_program_path(self, program: str, path: str):
         """保存程序路径到配置文件"""
-        import json
-        import os
-
         config_dir = os.path.join(os.path.dirname(__file__), "..")
         config_file = os.path.join(config_dir, "program_paths.json")
 
@@ -577,9 +574,6 @@ class MainWindow(QMainWindow):
     @staticmethod
     def _load_program_path(program: str) -> str:
         """加载程序路径"""
-        import json
-        import os
-
         config_dir = os.path.join(os.path.dirname(__file__), "..")
         config_file = os.path.join(config_dir, "program_paths.json")
 
