@@ -311,10 +311,11 @@ class BuildingGroup:
     """
 
     buildings: list[Building] = field(default_factory=list)
+    name: str = ""
     heat_source: dict = field(default_factory=lambda: {
         "azimuth": 0,
         "elevation": 0,
-        "net_heat_flux": 20.0,
+        "net_heat_flux": 3.0,
         "duration": 1.36,
     })
     simulation_time: float = 600
@@ -336,13 +337,6 @@ class BuildingGroup:
         if not self.buildings:
             return 0.0
         return max(sum(s.height for s in b.stories) for b in self.buildings)
-
-    @property
-    def chid(self) -> str:
-        """Derive a CHID from the first building name."""
-        if self.buildings and self.buildings[0].name:
-            return self.buildings[0].name
-        return "building"
 
     @property
     def num_stories(self) -> int:
@@ -381,6 +375,7 @@ class BuildingGroup:
     def to_dict(self) -> dict:
         return {
             "buildings": [b.to_dict() for b in self.buildings],
+            "name": self.name,
             "heat_source": dict(self.heat_source),
             "simulation_time": self.simulation_time,
             "domain": dict(self.domain),
@@ -392,7 +387,6 @@ class BuildingGroup:
         """Deserialize from dict, migrating legacy heat_source fields.
 
         Migration:
-          - ``net_heat_flux`` > 1000: treated as legacy W/m², divided by 1000.
           - Legacy fields ``enabled``, ``distance``, ``width_ratio``,
             ``height_ratio``, ``location``, ``use_ramp`` are dropped.
           - Missing fields get 2026-04-19 defaults.
@@ -402,13 +396,10 @@ class BuildingGroup:
             data = data["building_group"]
 
         raw_hs = data.get("heat_source", {}) or {}
-        flux = raw_hs.get("net_heat_flux", 20.0)
-        if flux > 1000:
-            flux = flux / 1000.0  # W/m² → kW/m²
         hs = {
             "azimuth": raw_hs.get("azimuth", 0),
             "elevation": raw_hs.get("elevation", 0),
-            "net_heat_flux": float(flux),
+            "net_heat_flux": float(raw_hs.get("net_heat_flux", 3.0)),
             "duration": raw_hs.get("duration", 1.36),
         }
 
@@ -416,9 +407,9 @@ class BuildingGroup:
         # Legacy configs may have mesh_cells; drop it in favor of grid_size.
         if "grid_size" not in domain:
             domain = {"padding": domain.get("padding", 5.0), "grid_size": 1.0}
-
         return cls(
             buildings=[Building.from_dict(b) for b in data.get("buildings", [])],
+            name=data.get("name", ""),
             heat_source=hs,
             simulation_time=data.get("simulation_time", 600),
             domain=domain,

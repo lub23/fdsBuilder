@@ -1,0 +1,40 @@
+{
+  "split": "test",
+  "per_model": {
+    "svm": {
+      "accuracy": 0.994,
+      "precision": 0.9941061946902655,
+      "recall": 0.994,
+      "f1": 0.9939995129870131
+    },
+    "rf": {
+      "accuracy": 1.0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0
+    },
+    "mlp": {
+      "accuracy": 1.0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0
+    },
+    "cnn1d": {
+      "accuracy": 1.0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0
+    }
+  },
+  "ensemble": {
+    "accuracy": 1.0,
+    "f1": 1.0,
+    "mean_uncertainty": 0.006983724128701569
+  },
+  "weights": {
+    "svm": 0.2494994994994995,
+    "rf": 0.2502502502502503,
+    "mlp": 0.2502502502502503,
+    "cnn1d": 0.25
+  }
+}

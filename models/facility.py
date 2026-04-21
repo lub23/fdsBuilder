@@ -22,11 +22,11 @@ from models.parameter_engine import ParameterEngine
 class FacilityManager:
     def __init__(self):
         self.facilities: Dict[str, dict] = {}
-        facilities_dir = os.path.join(os.path.dirname(__file__), "..", "data", "facilities")
+        facilities_dir = os.path.join(os.path.dirname(__file__), "..", "facilities")
         self._load_all(facilities_dir)
 
     def _load_all(self, data_dir: str):
-        """Load all JSON files from data/facilities/"""
+        """Load all JSON files from ./facilities/"""
         for filename in os.listdir(data_dir):
             if filename.endswith(".json"):
                 filepath = os.path.join(data_dir, filename)

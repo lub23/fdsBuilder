@@ -475,7 +475,7 @@ class TestBuildingGroup:
         assert bg.heat_source == {
             "azimuth": 0,
             "elevation": 0,
-            "net_heat_flux": 20.0,
+            "net_heat_flux": 3.0,
             "duration": 1.36,
         }
         assert bg.simulation_time == 600
@@ -504,7 +504,7 @@ class TestBuildingGroup:
         assert d["heat_source"] == {
             "azimuth": 0,
             "elevation": 0,
-            "net_heat_flux": 20.0,
+            "net_heat_flux": 3.0,
             "duration": 1.36,
         }
         assert d["domain"] == {"padding": 5.0, "grid_size": 1.0}
@@ -821,7 +821,7 @@ class TestBuildingGroupHeatSourceMigration:
         assert bg.heat_source == {
             "azimuth": 0,
             "elevation": 0,
-            "net_heat_flux": 20.0,
+            "net_heat_flux": 3.0,
             "duration": 1.36,
         }
 
@@ -833,8 +833,9 @@ class TestBuildingGroupHeatSourceMigration:
         bg = BuildingGroup()
         assert bg.domain == {"padding": 5.0, "grid_size": 1.0}
 
-    def test_from_dict_migrates_w_per_m2_to_kw(self):
-        # Old value 3000 W/m² should migrate to 3.0 kW/m²
+    def test_from_dict_drops_legacy_fields_and_keeps_flux(self):
+        # Legacy keys (enabled/distance/width_ratio/...) are silently dropped.
+        # net_heat_flux is stored as-is in MW/m² (model→FDS: multiply by 1000).
         data = {
             "buildings": [],
             "heat_source": {
@@ -842,7 +843,7 @@ class TestBuildingGroupHeatSourceMigration:
                 "distance": 5.0,
                 "azimuth": 90,
                 "elevation": 30,
-                "net_heat_flux": 3000,
+                "net_heat_flux": 3.0,
                 "duration": 2.0,
                 "width_ratio": 1.5,
                 "height_ratio": 1.0,
@@ -858,18 +859,18 @@ class TestBuildingGroupHeatSourceMigration:
         assert "width_ratio" not in bg.heat_source
         assert "height_ratio" not in bg.heat_source
 
-    def test_from_dict_keeps_kw_value_under_1000(self):
+    def test_from_dict_keeps_small_mw_value(self):
         data = {
             "buildings": [],
             "heat_source": {
-                "net_heat_flux": 20.0,
+                "net_heat_flux": 0.05,
                 "azimuth": 0,
                 "elevation": 0,
                 "duration": 1.36,
             },
         }
         bg = BuildingGroup.from_dict(data)
-        assert bg.heat_source["net_heat_flux"] == 20.0
+        assert bg.heat_source["net_heat_flux"] == 0.05
 
     def test_from_dict_fills_missing_heat_source_fields(self):
         data = {"buildings": []}
@@ -877,6 +878,6 @@ class TestBuildingGroupHeatSourceMigration:
         assert bg.heat_source == {
             "azimuth": 0,
             "elevation": 0,
-            "net_heat_flux": 20.0,
+            "net_heat_flux": 3.0,
             "duration": 1.36,
         }

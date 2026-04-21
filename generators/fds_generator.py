@@ -65,8 +65,6 @@ class FDSGenerator:
                 self.bg.domain = building_group.domain
             if hasattr(building_group, "output"):
                 self.bg.output = building_group.output
-            if hasattr(building_group, "chid"):
-                self._chid_override = building_group.chid
             if hasattr(building_group, "materials"):
                 self._materials_override = building_group.materials
         else:
@@ -598,9 +596,12 @@ class FDSGenerator:
     # Heat source
     # ------------------------------------------------------------------
     def _generate_heat_source(self, lines):
-        """Emit one &VENT per MESH face that receives a share of the heat flux.
-
-        Flux is decomposed by models.heat_source.face_fluxes.
+        """Generate heat source with timer DEVC and radiation SURF.
+        
+        Uses template:
+        - Timer DEVC to control duration
+        - Single radiation SURF 
+        - 6 domain VENTs (OPEN for non-heat faces, radiation for heat face)
         """
         from models.heat_source import face_fluxes
 
@@ -618,41 +619,34 @@ class FDSGenerator:
         x0, x1, y0, y1, z0, z1 = domain
 
         lines.append(
-            f"! ========== 外部热源 (azimuth={azimuth}°, elevation={elevation}°) ==========\n"
+            f"! ========== 外部强辐射热源 (azimuth={azimuth}°, elevation={elevation}°) ==========\n"
         )
 
-        # One SURF per face with its own NET_HEAT_FLUX, optionally ramped
-        # off after `duration` seconds.
-        for face_name, face_flux in fluxes.items():
-            surf_id = f"HEAT_SOURCE_{face_name}"
-            ramp_clause = ""
-            if duration > 0:
-                ramp_clause = f", RAMP_Q='RAMP_{face_name}'"
-            lines.append(
-                f"&SURF ID='{surf_id}', NET_HEAT_FLUX={face_flux:.2f}, "
-                f"COLOR='ORANGE'{ramp_clause} /\n"
-            )
-            if duration > 0:
-                lines.append(
-                    f"&RAMP ID='RAMP_{face_name}', T=0.00, F=1.0 /\n"
-                    f"&RAMP ID='RAMP_{face_name}', T={duration:.2f}, F=1.0 /\n"
-                    f"&RAMP ID='RAMP_{face_name}', T={duration + 0.01:.2f}, F=0.0 /\n"
-                )
+        lines.append("! 辐射控制定时器\n")
+        lines.append(
+            f"&DEVC ID='TIMER->OUT', QUANTITY='TIME', XYZ=0.0,0.0,0.0, SETPOINT={duration:.2f}, INITIAL_STATE=.TRUE. /\n\n"
+        )
 
+        lines.append(
+            f"&SURF ID='radiation',\n"
+            f"      NET_HEAT_FLUX={Q_kw * 1000:.2f},\n"
+            f"      COLOR='ORANGE' /\n\n"
+        )
+
+        lines.append("! Heat source boundary VENTs\n")
         face_xb = {
-            "XMIN": (x0, x0, y0, y1, z0, z1),
-            "XMAX": (x1, x1, y0, y1, z0, z1),
-            "YMIN": (x0, x1, y0, y0, z0, z1),
-            "YMAX": (x0, x1, y1, y1, z0, z1),
-            "ZMAX": (x0, x1, y0, y1, z1, z1),
+            "XMIN": ("OPEN", x0, x0, y0, y1, z0, z1),
+            "XMAX": ("OPEN", x1, x1, y0, y1, z0, z1),
+            "YMIN": ("OPEN", x0, x1, y0, y0, z0, z1),
+            "YMAX": ("radiation", x0, x1, y1, y1, z0, z1),
+            "ZMIN": ("OPEN", x0, x1, y0, y1, z0, z0),
+            "ZMAX": ("OPEN", x0, x1, y0, y1, z1, z1),
         }
-        for face_name in fluxes:
-            xb = face_xb[face_name]
+        for face_name in ("XMIN", "XMAX", "YMIN", "YMAX", "ZMIN", "ZMAX"):
+            surf, x1, x2, y1, y2, z1, z2 = face_xb[face_name]
             lines.append(
-                f"&VENT XB={xb[0]:.2f},{xb[1]:.2f},"
-                f"{xb[2]:.2f},{xb[3]:.2f},"
-                f"{xb[4]:.2f},{xb[5]:.2f}, "
-                f"SURF_ID='HEAT_SOURCE_{face_name}' /\n"
+                f"&VENT ID='Domain Vent [{face_name}]', SURF_ID='{surf}', "
+                f"XB={x1:.2f},{x2:.2f},{y1:.2f},{y2:.2f},{z1:.2f},{z2:.2f} /\n"
             )
         lines.append("\n")
 
@@ -673,11 +667,11 @@ class FDSGenerator:
         y_max = max(b.offset_y + b.width + b.wall_thickness for b in buildings)
         z_max = max(sum(s.height for s in b.stories) for b in buildings)
 
-        base_grid_size = bg.domain.get("grid_size", 1.0)
+        base_grid_size = bg.domain.get("grid_size", 0.1)  # 默认0.1m
 
-        expand_x = max((x_max - x_min) * 0.1, 2.0)
-        expand_y = max((y_max - y_min) * 0.1, 2.0)
-        expand_z = max(z_max * 0.1, 2.0)
+        expand_x = 2.0  # 固定2m
+        expand_y = 2.0
+        expand_z = 2.0
 
         domain = [
             x_min - expand_x,
@@ -692,14 +686,18 @@ class FDSGenerator:
         domain_d = domain[3] - domain[2]
         domain_h = domain[5] - domain[4]
 
-        max_cells_per_mesh = 150000
+        max_cells_per_mesh = 250000  # 每个mesh最大网格数
+        max_total_cells = 1000000  # 总网格上限
+        max_meshes = 4  # 最大mesh数
+        
         grid_size = base_grid_size
         nx = math.ceil(domain_w / grid_size)
         ny = math.ceil(domain_d / grid_size)
         nz = math.ceil(domain_h / grid_size)
         total_cells = nx * ny * nz
 
-        while total_cells > max_cells_per_mesh and grid_size < 5.0:
+        # 如果总cells超限,增大grid_size重试
+        while total_cells > max_total_cells and grid_size < 5.0:
             grid_size *= 1.5
             nx = math.ceil(domain_w / grid_size)
             ny = math.ceil(domain_d / grid_size)
@@ -707,12 +705,10 @@ class FDSGenerator:
             total_cells = nx * ny * nz
 
         num_meshes = 1
-        if total_cells > max_cells_per_mesh:
-            num_meshes = 2
-
-        if total_cells > max_cells_per_mesh:
-            nz = max(1, math.floor(max_cells_per_mesh / (nx * ny)))
-            domain[5] = domain[4] + nz * grid_size
+        if nx * ny * nz > max_cells_per_mesh:
+            # 单个mesh超限,需要拆分
+            num_meshes = math.ceil((nx * ny * nz) / max_cells_per_mesh)
+            num_meshes = min(num_meshes, max_meshes)
 
         domain = [round(x) for x in domain]
         nx = max(10, math.ceil(domain_w / grid_size))
@@ -733,17 +729,12 @@ class FDSGenerator:
             b.update_z_offsets()
 
         # Determine CHID with工况信息
-        chid = getattr(self, "_chid_override", "") or ""
-        if not chid:
-            if buildings:
-                chid = buildings[0].name or "building"
-            else:
-                chid = "building"
+        chid = bg.name or "building"
         chid = chid.replace(" ", "_").replace(".", "_").replace("-", "_")
         chid = "".join(c for c in chid if ord(c) < 128) or "building"
 
         hs = bg.heat_source
-        heat_flux_kw = int(round(hs.get("net_heat_flux", 20.0)))
+        heat_flux_kw = int(round(hs.get("net_heat_flux", 20.0) * 1000))
         azimuth = int(hs.get("azimuth", 0))
         elevation = int(hs.get("elevation", 0))
         duration = int(hs.get("duration", 0) * 100)
@@ -767,7 +758,7 @@ class FDSGenerator:
 
         # REAC
         lines.append("! ========== 燃烧反应 ==========\n")
-        lines.append("&REAC ID='METHANE', FUEL='METHANE', FORMULA='C1H4', SOOT_YIELD=0.01 /\n\n")
+        lines.append("&REAC ID='METHANE', FUEL='METHANE', FORMULA='C1H4' /\n\n")
 
         # MESH
         domain, grid_size, num_meshes = self._compute_mesh()
@@ -810,6 +801,12 @@ class FDSGenerator:
 
         # DUMP
         lines.append("&DUMP DT_RESTART=300.0, DT_SL3D=0.25 /\n\n")
+
+        # Heat source (SURF + RAMP + VENT) - 前置方便手动调整
+        self._generate_heat_source(lines)
+
+        # Output: measurement devices - 前置方便手动调整
+        self._generate_devices(lines)
 
         # Materials & Surfaces
         self._generate_materials(lines)
@@ -866,9 +863,6 @@ class FDSGenerator:
                 self._generate_roof(b, last_story, lines)
             lines.append("\n")
 
-        # Heat source
-        self._generate_heat_source(lines)
-
         # Output: slices
         output = bg.output
         if output.get("slices", True):
@@ -882,36 +876,44 @@ class FDSGenerator:
                 lines.append(f"&SLCF {axis}={pos:.2f}, QUANTITY='{qty}' /\n")
             lines.append("\n")
 
-        # Output: devices
-        if output.get("devices", True):
-            lines.append("! ========== 测量点 ==========\n")
-            if buildings:
-                g_xmin = min(b.offset_x for b in buildings)
-                g_xmax = max(b.offset_x + b.length for b in buildings)
-                g_ymin = min(b.offset_y for b in buildings)
-                g_ymax = max(b.offset_y + b.width for b in buildings)
-                dev_x = (g_xmin + g_xmax) / 2
-                dev_y = (g_ymin + g_ymax) / 2
-            else:
-                dev_x = dev_y = 0.0
-            dev_z = 1.5
-            lines.append(
-                f"&DEVC XYZ={dev_x:.2f},{dev_y:.2f},{dev_z:.2f}, QUANTITY='TEMPERATURE', ID='center_temp' /\n"
-            )
-            for i, cd in enumerate(output.get("custom_devices", [])):
-                x = cd.get("x", 0)
-                y = cd.get("y", 0)
-                z = cd.get("z", 0)
-                qty = cd.get("quantity", "TEMPERATURE")
-                lines.append(
-                    f"&DEVC XYZ={x:.2f},{y:.2f},{z:.2f}, QUANTITY='{qty}', ID='custom_dev_{i + 1}' /\n"
-                )
-            lines.append("\n")
-
         # TAIL
         lines.append("&TAIL /\n")
 
         return "".join(lines)
+
+    # ------------------------------------------------------------------
+    # Measurement devices (extracted for prepending)
+    # ------------------------------------------------------------------
+    def _generate_devices(self, lines):
+        """Generate measurement devices (DEVC) - called before geometry for easy adjustment."""
+        output = self.bg.output
+        buildings = self.bg.buildings
+        if not output.get("devices", True):
+            return
+
+        lines.append("! ========== 测量点 ==========\n")
+        if buildings:
+            g_xmin = min(b.offset_x for b in buildings)
+            g_xmax = max(b.offset_x + b.length for b in buildings)
+            g_ymin = min(b.offset_y for b in buildings)
+            g_ymax = max(b.offset_y + b.width for b in buildings)
+            dev_x = (g_xmin + g_xmax) / 2
+            dev_y = (g_ymin + g_ymax) / 2
+        else:
+            dev_x = dev_y = 0.0
+        dev_z = 1.5
+        lines.append(
+            f"&DEVC XYZ={dev_x:.2f},{dev_y:.2f},{dev_z:.2f}, QUANTITY='TEMPERATURE', ID='center_temp' /\n"
+        )
+        for i, cd in enumerate(output.get("custom_devices", [])):
+            x = cd.get("x", 0)
+            y = cd.get("y", 0)
+            z = cd.get("z", 0)
+            qty = cd.get("quantity", "TEMPERATURE")
+            lines.append(
+                f"&DEVC XYZ={x:.2f},{y:.2f},{z:.2f}, QUANTITY='{qty}', ID='custom_dev_{i + 1}' /\n"
+            )
+        lines.append("\n")
 
 
 # ============================================================

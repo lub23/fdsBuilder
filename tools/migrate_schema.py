@@ -20,7 +20,7 @@ from pathlib import Path
 # ---------------------------------------------------------------------------
 # Constants
 # ---------------------------------------------------------------------------
-FACILITIES_DIR = Path(__file__).resolve().parent.parent / "data" / "facilities"
+FACILITIES_DIR = Path(__file__).resolve().parent.parent / "facilities"
 BUILDING_CONFIG = Path(__file__).resolve().parent.parent / "building_config.json"
 BACKUP_DIR = FACILITIES_DIR / "_backup"
 

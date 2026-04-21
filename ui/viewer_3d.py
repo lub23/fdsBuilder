@@ -1152,60 +1152,80 @@ class Viewer3D(QWidget):
         self.plotter.render()
 
     def _add_heat_source(self, bg, g_xmin, g_xmax, g_ymin, g_ymax, g_zmax):
-        """Paint MESH boundary faces with heat-flux-weighted colors."""
+        """Render a single radiation panel on the MESH boundary face selected
+        by azimuth/elevation. Matches generators.fds_generator._generate_heat_source.
+
+        PyVista Plane convention (verified empirically):
+        - direction=(0,1,0): i_size → Z extent, j_size → X extent
+        - direction=(1,0,0): i_size → Z extent, j_size → Y extent
+        - direction=(0,0,1): i_size → X extent, j_size → Y extent
+        """
         from models.heat_source import face_fluxes
 
         hs = bg.heat_source or {}
-        Q = hs.get("net_heat_flux", 20.0)
         azimuth = hs.get("azimuth", 0)
         elevation = hs.get("elevation", 0)
-        fluxes = face_fluxes(azimuth, elevation, Q)
+        fluxes = face_fluxes(azimuth, elevation, 1.0)
         if not fluxes:
             return
+        rad_face = max(fluxes, key=fluxes.get)
 
-        pad = bg.domain.get("padding", 5.0)
-        x0 = g_xmin - pad
-        x1 = g_xmax + pad
-        y0 = g_ymin - pad
-        y1 = g_ymax + pad
-        z0 = 0.0
-        z1 = max(g_zmax + pad, g_zmax + 1.0)
-
-        Q_ref = max(20.0, Q)  # normalize to 20 kW/m² for consistent color scale
-
-        def flux_color(f):
-            # yellow → red ramp
-            t = max(0.0, min(1.0, f / Q_ref))
-            r = 255
-            g = int(255 * (1 - t))
-            b = 0
-            return (r / 255.0, g / 255.0, b / 255.0)
-
-        dx = x1 - x0
-        dy = y1 - y0
-        dz = z1 - z0
+        mx0, mx1, my0, my1, mz0, mz1 = self._mesh_domain(bg)
+        dx = mx1 - mx0
+        dy = my1 - my0
+        dz = mz1 - mz0
 
         face_params = {
-            "XMIN": ((x0, (y0 + y1) / 2, (z0 + z1) / 2), (1, 0, 0), dy, dz),
-            "XMAX": ((x1, (y0 + y1) / 2, (z0 + z1) / 2), (1, 0, 0), dy, dz),
-            "YMIN": (((x0 + x1) / 2, y0, (z0 + z1) / 2), (0, 1, 0), dx, dz),
-            "YMAX": (((x0 + x1) / 2, y1, (z0 + z1) / 2), (0, 1, 0), dx, dz),
-            "ZMAX": (((x0 + x1) / 2, (y0 + y1) / 2, z1), (0, 0, 1), dx, dy),
-        }
-        for face_name, flux_val in fluxes.items():
-            center, direction, i_size, j_size = face_params[face_name]
-            plane = pv.Plane(
-                center=center, direction=direction,
-                i_size=i_size, j_size=j_size,
-            )
-            actor = self.plotter.add_mesh(
-                plane,
-                color=flux_color(flux_val),
-                opacity=0.35,
-                show_edges=True,
-                edge_color="#f97316",
-            )
-            self._add_to_group("heat_source", actor)
+            "XMIN": {"center": (mx0, (my0 + my1) / 2, (mz0 + mz1) / 2),
+                     "direction": (1, 0, 0), "i_size": dz, "j_size": dy},
+            "XMAX": {"center": (mx1, (my0 + my1) / 2, (mz0 + mz1) / 2),
+                     "direction": (1, 0, 0), "i_size": dz, "j_size": dy},
+            "YMIN": {"center": ((mx0 + mx1) / 2, my0, (mz0 + mz1) / 2),
+                     "direction": (0, 1, 0), "i_size": dz, "j_size": dx},
+            "YMAX": {"center": ((mx0 + mx1) / 2, my1, (mz0 + mz1) / 2),
+                     "direction": (0, 1, 0), "i_size": dz, "j_size": dx},
+            "ZMIN": {"center": ((mx0 + mx1) / 2, (my0 + my1) / 2, mz0),
+                     "direction": (0, 0, 1), "i_size": dx, "j_size": dy},
+            "ZMAX": {"center": ((mx0 + mx1) / 2, (my0 + my1) / 2, mz1),
+                     "direction": (0, 0, 1), "i_size": dx, "j_size": dy},
+        }[rad_face]
+
+        plane = pv.Plane(**face_params)
+        actor = self.plotter.add_mesh(
+            plane,
+            color="#f97316",
+            opacity=0.45,
+            show_edges=True,
+            edge_color="#f97316",
+        )
+        self._add_to_group("heat_source", actor)
+
+    @staticmethod
+    def _mesh_domain(bg):
+        """Replicate generators.fds_generator._compute_mesh's domain expansion.
+
+        Returns (x0, x1, y0, y1, z0, z1). Keeps viewer 3D preview geometry in
+        sync with the MESH XB used by FDS.
+        """
+        buildings = bg.buildings
+        if not buildings:
+            return (0.0, 10.0, 0.0, 10.0, 0.0, 10.0)
+        x_min = min(b.offset_x - b.wall_thickness for b in buildings)
+        x_max = max(b.offset_x + b.length + b.wall_thickness for b in buildings)
+        y_min = min(b.offset_y - b.wall_thickness for b in buildings)
+        y_max = max(b.offset_y + b.width + b.wall_thickness for b in buildings)
+        z_max = max(sum(s.height for s in b.stories) for b in buildings)
+        expand_x = 2.0
+        expand_y = 2.0
+        expand_z = 2.0
+        return (
+            x_min - expand_x,
+            x_max + expand_x,
+            y_min - expand_y,
+            y_max + expand_y,
+            0.0,
+            z_max + expand_z,
+        )
 
     def _draw_slices_and_devices(self, model, buildings, xmin, xmax, ymin, ymax, zmax):
         """Draw slice planes (semi-transparent) and device points (spheres)."""
@@ -1241,20 +1261,24 @@ class Viewer3D(QWidget):
         if not model.output.get("slices", True):
             return
 
-        # Domain extent for slice visualization
-        dx = xmax - xmin + pad * 2
-        dy = ymax - ymin + pad * 2
-        dz = zmax + pad
+        # Use MESH domain for slice extent (matches what FDS will compute).
+        mx0, mx1, my0, my1, mz0, mz1 = self._mesh_domain(model)
+        dx = mx1 - mx0
+        dy = my1 - my0
+        dz = mz1 - mz0
 
         if first_cb_center:
             cx, cy, cz = first_cb_center
         else:
-            cx, cy, cz = 0, 0, zmax / 2
+            cx, cy, cz = 0, 0, (mz0 + mz1) / 2
 
-        # X-slice plane (thin box)
+        # PyVista Plane: for direction along X or Y, i_size maps to Z extent
+        # and j_size maps to the horizontal perpendicular axis.
         try:
+            # X-slice (PBX): normal (1,0,0), plane lies in YZ.
+            # i_size → Z, j_size → Y.
             sx = pv.Plane(
-                center=(cx, (ymin + ymax) / 2, dz / 2),
+                center=(cx, (my0 + my1) / 2, (mz0 + mz1) / 2),
                 direction=(1, 0, 0),
                 i_size=dz,
                 j_size=dy,
@@ -1262,20 +1286,22 @@ class Viewer3D(QWidget):
             a_sx = self.plotter.add_mesh(sx, color="#f9e2af", opacity=0.08, show_edges=False)
             self._add_to_group("slices", a_sx)
 
-            # Y-slice plane
+            # Y-slice (PBY): normal (0,1,0), plane lies in XZ.
+            # i_size → Z, j_size → X.
             sy = pv.Plane(
-                center=((xmin + xmax) / 2, cy, dz / 2),
+                center=((mx0 + mx1) / 2, cy, (mz0 + mz1) / 2),
                 direction=(0, 1, 0),
-                i_size=dx,
-                j_size=dz,
+                i_size=dz,
+                j_size=dx,
             )
             a_sy = self.plotter.add_mesh(sy, color="#a6e3a1", opacity=0.08, show_edges=False)
             self._add_to_group("slices", a_sy)
 
-            # Z-slice plane
-            sz_val = cz + 0.5 if first_cb_center else zmax / 2
+            # Z-slice (PBZ): normal (0,0,1), plane lies in XY.
+            # i_size → X, j_size → Y.
+            sz_val = cz + 0.5 if first_cb_center else (mz0 + mz1) / 2
             sz = pv.Plane(
-                center=((xmin + xmax) / 2, (ymin + ymax) / 2, sz_val),
+                center=((mx0 + mx1) / 2, (my0 + my1) / 2, sz_val),
                 direction=(0, 0, 1),
                 i_size=dx,
                 j_size=dy,

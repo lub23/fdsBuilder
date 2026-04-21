@@ -8,7 +8,7 @@ from typing import Iterator, List, Tuple
 
 ELEVATION_OPTIONS: Tuple[int, ...] = (0, 30, 45, 60)
 DURATION_OPTIONS: Tuple[float, ...] = (1.36, 2.1, 7.5)
-HEAT_FLUX_OPTIONS: Tuple[float, ...] = (0.05, 0.1, 0.5, 1, 2, 3, 5, 7, 10, 12, 15, 20)
+HEAT_FLUX_OPTIONS: Tuple[float, ...] = (50, 100, 500, 1000, 2000, 3000, 5000, 7000, 10000, 12000, 15000, 20000)
 AZIMUTH_OPTIONS: Tuple[int, ...] = tuple(range(0, 360, 5))
 
 
@@ -24,10 +24,14 @@ class HeatSourceParams:
             raise ValueError(
                 f"elevation {self.elevation} not in {ELEVATION_OPTIONS}"
             )
-        if self.duration not in DURATION_OPTIONS:
+        if self.duration <=0:
             raise ValueError(
-                f"duration {self.duration} not in {DURATION_OPTIONS}"
+                f"duration {self.duration} should be positive"
             )
+        # if self.duration not in DURATION_OPTIONS:
+        #     raise ValueError(
+        #         f"duration {self.duration} not in {DURATION_OPTIONS}"
+        #     )
         if self.heat_flux not in HEAT_FLUX_OPTIONS:
             raise ValueError(
                 f"heat_flux {self.heat_flux} not in {HEAT_FLUX_OPTIONS}"

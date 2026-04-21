@@ -21,8 +21,8 @@ from ..processing.enums import DamageLevel
 from ..processing.heat_source import HeatSourceParams
 
 
-LABEL_THRESHOLD_MEDIUM: float = 30.0
-LABEL_THRESHOLD_HIGH: float = 80.0
+LABEL_THRESHOLD_MEDIUM: float = 15.0
+LABEL_THRESHOLD_HIGH: float = 40.0
 
 _COMB_WEIGHTS: Sequence[float] = (1.2, 1.0, 1.5, 2.0, 1.3, 1.2, 0.8, 1.1)
 

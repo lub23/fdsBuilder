@@ -1,11 +1,19 @@
-"""Integration: FDSGenerator heat-source multi-face output."""
+"""Integration: FDSGenerator heat-source with 6 MESH-boundary VENTs.
+
+New scheme (2026-04-19):
+- One `&SURF ID='radiation'` with NET_HEAT_FLUX = internal Q (MW/m²) × 1000 (→ kW/m²).
+- Optional `&DEVC ID='TIMER->OUT'` (no SETVAL) when duration > 0.
+- Six `&VENT ID='Mesh Vent: Mesh01 [<FACE>]'` blocks, XB on the MESH domain
+  boundary. One face (determined by azimuth/elevation) gets SURF_ID='radiation',
+  the other five get SURF_ID='OPEN'.
+"""
 import re
 import pytest
 from models.building import Building, BuildingGroup, Story, FireCompartment, Roof
 from generators.fds_generator import FDSGenerator
 
 
-def _bg(azimuth, elevation, flux_kw=20.0):
+def _bg(azimuth, elevation, flux_mw=3.0, duration=1.36):
     b = Building(
         name="T",
         cn_name="T",
@@ -20,49 +28,129 @@ def _bg(azimuth, elevation, flux_kw=20.0):
     return BuildingGroup(
         buildings=[b],
         heat_source={"azimuth": azimuth, "elevation": elevation,
-                     "net_heat_flux": flux_kw, "duration": 1.36},
+                     "net_heat_flux": flux_mw, "duration": duration},
     )
 
 
-def _count_heat_vents(fds: str):
-    """Return list of (face_name, flux) tuples extracted from heat-source &VENT lines."""
-    matches = []
-    for m in re.finditer(r"SURF_ID='HEAT_SOURCE_(\w+)'", fds):
-        face = m.group(1)
-        # Find the matching &SURF line for its NET_HEAT_FLUX
-        surf_pattern = rf"&SURF ID='HEAT_SOURCE_{face}'[^/]*NET_HEAT_FLUX=([\d\.\-]+)"
-        sm = re.search(surf_pattern, fds)
-        if sm:
-            matches.append((face, float(sm.group(1))))
-    return matches
+_SURF_PATTERN = re.compile(
+    r"&SURF ID='radiation',\s*\n\s*NET_HEAT_FLUX=([\d.\-]+)",
+)
+_VENT_PATTERN = re.compile(
+    r"&VENT ID='Mesh Vent: Mesh\d+ \[(XMIN|XMAX|YMIN|YMAX|ZMIN|ZMAX)\]',\s*"
+    r"SURF_ID='([^']+)',\s*"
+    r"XB=([\d.\-]+),([\d.\-]+),([\d.\-]+),([\d.\-]+),([\d.\-]+),([\d.\-]+)\s*/"
+)
+
+
+def _surf_flux_kw(fds: str):
+    m = _SURF_PATTERN.search(fds)
+    return float(m.group(1)) if m else None
+
+
+def _vents(fds: str):
+    out = []
+    for m in _VENT_PATTERN.finditer(fds):
+        out.append({
+            "face": m.group(1),
+            "surf_id": m.group(2),
+            "xb": tuple(float(m.group(i)) for i in range(3, 9)),
+        })
+    return out
 
 
 class TestHeatSourceFDS:
-    def test_azimuth_0_single_ymax_face(self):
+    def test_surf_net_heat_flux_in_kw_converts_from_mw(self):
+        # Internal 3.0 MW/m² → FDS 3000.0 kW/m²
+        bg = _bg(0, 0, flux_mw=3.0)
+        fds = FDSGenerator(bg).generate()
+        assert _surf_flux_kw(fds) == pytest.approx(3000.0, abs=0.1)
+
+    def test_surf_net_heat_flux_converts_small_mw(self):
+        bg = _bg(0, 0, flux_mw=0.05)
+        fds = FDSGenerator(bg).generate()
+        assert _surf_flux_kw(fds) == pytest.approx(50.0, abs=0.1)
+
+    def test_six_mesh_vents_emitted(self):
         bg = _bg(0, 0)
         fds = FDSGenerator(bg).generate()
-        vents = _count_heat_vents(fds)
-        assert len(vents) == 1
-        assert vents[0][0] == "YMAX"
-        assert abs(vents[0][1] - 20.0) < 1e-3
+        vents = _vents(fds)
+        faces = {v["face"] for v in vents}
+        assert faces == {"XMIN", "XMAX", "YMIN", "YMAX", "ZMIN", "ZMAX"}
 
-    def test_azimuth_45_splits_two_side_faces(self):
-        bg = _bg(45, 0)
+    def test_azimuth_0_radiation_on_ymax_others_open(self):
+        bg = _bg(0, 0)
         fds = FDSGenerator(bg).generate()
-        vents = _count_heat_vents(fds)
-        faces = {v[0] for v in vents}
-        assert faces == {"YMAX", "XMAX"}
+        vents = _vents(fds)
+        rad = [v for v in vents if v["surf_id"] == "radiation"]
+        opens = [v for v in vents if v["surf_id"] == "OPEN"]
+        assert len(rad) == 1
+        assert len(opens) == 5
+        assert rad[0]["face"] == "YMAX"
 
-    def test_elevation_adds_zmax(self):
-        bg = _bg(0, 30)
+    def test_azimuth_90_radiation_on_xmax(self):
+        bg = _bg(90, 0)
         fds = FDSGenerator(bg).generate()
-        vents = _count_heat_vents(fds)
-        faces = {v[0] for v in vents}
-        assert "ZMAX" in faces
-        assert "YMAX" in faces
+        vents = _vents(fds)
+        rad = [v for v in vents if v["surf_id"] == "radiation"]
+        assert len(rad) == 1
+        assert rad[0]["face"] == "XMAX"
 
-    def test_flux_value_is_kw_per_m2(self):
-        bg = _bg(0, 0, flux_kw=12.5)
+    def test_azimuth_180_radiation_on_ymin(self):
+        bg = _bg(180, 0)
         fds = FDSGenerator(bg).generate()
-        vents = _count_heat_vents(fds)
-        assert abs(vents[0][1] - 12.5) < 1e-3
+        rad = [v for v in _vents(fds) if v["surf_id"] == "radiation"]
+        assert len(rad) == 1
+        assert rad[0]["face"] == "YMIN"
+
+    def test_azimuth_270_radiation_on_xmin(self):
+        bg = _bg(270, 0)
+        fds = FDSGenerator(bg).generate()
+        rad = [v for v in _vents(fds) if v["surf_id"] == "radiation"]
+        assert len(rad) == 1
+        assert rad[0]["face"] == "XMIN"
+
+    def test_elevation_60_radiation_on_zmax(self):
+        bg = _bg(0, 60)
+        fds = FDSGenerator(bg).generate()
+        rad = [v for v in _vents(fds) if v["surf_id"] == "radiation"]
+        assert len(rad) == 1
+        assert rad[0]["face"] == "ZMAX"
+
+    def test_vent_xb_matches_mesh_boundary_not_facility(self):
+        # facility bbox is x:[0,20] y:[0,10] z:[0,5]; MESH adds expand ≥2m.
+        # Verify a non-radiation VENT (ZMIN) sits on mesh XB, not facility.
+        bg = _bg(0, 0)
+        fds = FDSGenerator(bg).generate()
+        vents = _vents(fds)
+        zmin_vent = next(v for v in vents if v["face"] == "ZMIN")
+        xb = zmin_vent["xb"]
+        # ZMIN: x spans full mesh, y spans full mesh, z is degenerate at z0
+        assert xb[4] == xb[5]  # thickness 0 in Z
+        # Mesh x extent should at least include facility +/- expand (2 or 10%)
+        assert xb[0] <= -1.0  # well below facility x_min=0
+        assert xb[1] >= 21.0  # well above facility x_max=20
+        assert xb[2] <= -1.0
+        assert xb[3] >= 11.0
+
+    def test_ymax_radiation_vent_xb_on_mesh_y_max(self):
+        bg = _bg(0, 0)
+        fds = FDSGenerator(bg).generate()
+        rad = next(v for v in _vents(fds) if v["surf_id"] == "radiation")
+        xb = rad["xb"]
+        # YMAX face: y is degenerate at mesh y_max (> facility y_max=10)
+        assert xb[2] == xb[3]
+        assert xb[2] > 10.0
+
+    def test_timer_devc_emitted_without_setval_when_duration_positive(self):
+        bg = _bg(0, 0, duration=1.36)
+        fds = FDSGenerator(bg).generate()
+        assert "&DEVC ID='TIMER->OUT'" in fds
+        assert "SETPOINT=1.36" in fds
+        assert "INITIAL_STATE=.TRUE." in fds
+        # new reference drops SETVAL
+        assert "SETVAL=" not in fds
+
+    def test_no_timer_devc_when_duration_zero(self):
+        bg = _bg(0, 0, duration=0)
+        fds = FDSGenerator(bg).generate()
+        assert "&DEVC ID='TIMER->OUT'" not in fds

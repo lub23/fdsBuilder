@@ -1,16 +1,12 @@
 {
   "type": "specialized",
+  "name": "Alcoa Warrick Operations",
   "cn_name": "Alcoa Warrick Operations",
   "buildings": [
     {
       "name": "Bay_A1",
       "cn_name": "A1跨单元",
-      "boundary": [
-        0.0,
-        19,
-        16.0,
-        334
-      ],
+      "boundary": [0.0, 19, 16.0, 334],
       "wall_thickness": 0.3,
       "height": 15,
       "stories": [
@@ -21,136 +17,86 @@
           "fire_compartments": [
             {
               "name": "A1",
-              "boundary": [
-                0,
-                19.0,
-                0,
-                334.0
-              ],
+              "boundary": [0, 19.0, 0, 334.0],
               "firewall_thickness": 0.3,
               "firewall_material": "CONCRETE",
               "openings": [
                 {
                   "wall": "x_max",
                   "type": "window",
-                  "boundary": [
-                    268.9,
-                    30,
-                    1,
-                    5
-                  ]
+                  "boundary": [268.9, 30, 1, 5]
                 },
                 {
                   "wall": "x_max",
                   "type": "window",
-                  "boundary": [
-                    225.48,
-                    30,
-                    1,
-                    5
-                  ]
+                  "boundary": [225.48, 30, 1, 5]
                 },
                 {
                   "wall": "x_max",
                   "type": "window",
-                  "boundary": [
-                    182.06,
-                    30,
-                    1,
-                    5
-                  ]
+                  "boundary": [182.06, 30, 1, 5]
                 },
                 {
                   "wall": "x_max",
                   "type": "window",
-                  "boundary": [
-                    95.22,
-                    30,
-                    1,
-                    5
-                  ]
+                  "boundary": [95.22, 30, 1, 5]
                 },
                 {
                   "wall": "x_max",
                   "type": "window",
-                  "boundary": [
-                    51.8,
-                    30,
-                    1,
-                    5
-                  ]
+                  "boundary": [51.8, 30, 1, 5]
                 },
                 {
                   "wall": "x_max",
                   "type": "window",
-                  "boundary": [
-                    8.38,
-                    30,
-                    1,
-                    5
-                  ]
+                  "boundary": [8.38, 30, 1, 5]
                 },
                 {
                   "wall": "x_min",
                   "type": "door",
-                  "boundary": [
-                    143.962,
-                    8,
-                    0,
-                    15
-                  ]
+                  "boundary": [143.962, 8, 0, 15]
                 },
                 {
                   "wall": "x_max",
                   "type": "door",
-                  "boundary": [
-                    143.962,
-                    8,
-                    0,
-                    15
-                  ]
+                  "boundary": [143.962, 8, 0, 15]
                 },
                 {
                   "wall": "x_min",
                   "type": "door",
-                  "boundary": [
-                    301.952,
-                    16,
-                    0,
-                    15
-                  ]
+                  "boundary": [301.952, 16, 0, 15]
                 },
                 {
                   "wall": "x_max",
                   "type": "door",
-                  "boundary": [
-                    301.952,
-                    16,
-                    0,
-                    15
-                  ]
+                  "boundary": [301.952, 16, 0, 15]
+                },
+                {
+                  "wall": "y_min",
+                  "type": "door",
+                  "boundary": [7, 5, 0, 5]
                 }
               ],
               "combustibles": [
                 {
                   "key": "PREBAKED_ANODE_BLOCK",
-                  "count": 320
+                  "count": 24
                 },
                 {
                   "key": "CATHODE_CARBON_BLOCK",
-                  "count": 240
+                  "count": 10
                 },
                 {
                   "key": "TRANSFORMER_OIL_TANK",
-                  "count": 2
+                  "count": 1
                 },
                 {
                   "key": "CRANE_HYDRAULIC_TANK",
-                  "count": 2
+                  "count": 1
                 },
                 {
                   "key": "CABLE_BRIDGE",
-                  "count": 3
+                  "count": 1
                 }
               ],
               "specialized_components": [
@@ -172,12 +118,7 @@
     {
       "name": "Bay_A2",
       "cn_name": "A2跨单元",
-      "boundary": [
-        33.0,
-        19,
-        16.0,
-        334
-      ],
+      "boundary": [33.0, 19, 16.0, 334],
       "wall_thickness": 0.3,
       "height": 15,
       "stories": [
@@ -188,196 +129,116 @@
           "fire_compartments": [
             {
               "name": "A2",
-              "boundary": [
-                0,
-                19.0,
-                0,
-                334.0
-              ],
+              "boundary": [0, 19.0, 0, 334.0],
               "firewall_thickness": 0.3,
               "firewall_material": "CONCRETE",
               "openings": [
                 {
                   "wall": "x_min",
                   "type": "window",
-                  "boundary": [
-                    268.9,
-                    30,
-                    1,
-                    5
-                  ]
+                  "boundary": [268.9, 30, 1, 5]
                 },
                 {
                   "wall": "x_min",
                   "type": "window",
-                  "boundary": [
-                    225.48,
-                    30,
-                    1,
-                    5
-                  ]
+                  "boundary": [225.48, 30, 1, 5]
                 },
                 {
                   "wall": "x_min",
                   "type": "window",
-                  "boundary": [
-                    182.06,
-                    30,
-                    1,
-                    5
-                  ]
+                  "boundary": [182.06, 30, 1, 5]
                 },
                 {
                   "wall": "x_min",
                   "type": "window",
-                  "boundary": [
-                    95.22,
-                    30,
-                    1,
-                    5
-                  ]
+                  "boundary": [95.22, 30, 1, 5]
                 },
                 {
                   "wall": "x_min",
                   "type": "window",
-                  "boundary": [
-                    51.8,
-                    30,
-                    1,
-                    5
-                  ]
+                  "boundary": [51.8, 30, 1, 5]
                 },
                 {
                   "wall": "x_min",
                   "type": "window",
-                  "boundary": [
-                    8.38,
-                    30,
-                    1,
-                    5
-                  ]
+                  "boundary": [8.38, 30, 1, 5]
                 },
                 {
                   "wall": "x_max",
                   "type": "window",
-                  "boundary": [
-                    268.9,
-                    30,
-                    1,
-                    5
-                  ]
+                  "boundary": [268.9, 30, 1, 5]
                 },
                 {
                   "wall": "x_max",
                   "type": "window",
-                  "boundary": [
-                    225.48,
-                    30,
-                    1,
-                    5
-                  ]
+                  "boundary": [225.48, 30, 1, 5]
                 },
                 {
                   "wall": "x_max",
                   "type": "window",
-                  "boundary": [
-                    182.06,
-                    30,
-                    1,
-                    5
-                  ]
+                  "boundary": [182.06, 30, 1, 5]
                 },
                 {
                   "wall": "x_max",
                   "type": "window",
-                  "boundary": [
-                    95.22,
-                    30,
-                    1,
-                    5
-                  ]
+                  "boundary": [95.22, 30, 1, 5]
                 },
                 {
                   "wall": "x_max",
                   "type": "window",
-                  "boundary": [
-                    51.8,
-                    30,
-                    1,
-                    5
-                  ]
+                  "boundary": [51.8, 30, 1, 5]
                 },
                 {
                   "wall": "x_max",
                   "type": "window",
-                  "boundary": [
-                    8.38,
-                    30,
-                    1,
-                    5
-                  ]
+                  "boundary": [8.38, 30, 1, 5]
                 },
                 {
                   "wall": "x_min",
                   "type": "door",
-                  "boundary": [
-                    143.962,
-                    8,
-                    0,
-                    15
-                  ]
+                  "boundary": [143.962, 8, 0, 15]
                 },
                 {
                   "wall": "x_max",
                   "type": "door",
-                  "boundary": [
-                    143.962,
-                    8,
-                    0,
-                    15
-                  ]
+                  "boundary": [143.962, 8, 0, 15]
                 },
                 {
                   "wall": "x_min",
                   "type": "door",
-                  "boundary": [
-                    301.952,
-                    16,
-                    0,
-                    15
-                  ]
+                  "boundary": [301.952, 16, 0, 15]
                 },
                 {
                   "wall": "x_max",
                   "type": "door",
-                  "boundary": [
-                    301.952,
-                    16,
-                    0,
-                    15
-                  ]
+                  "boundary": [301.952, 16, 0, 15]
+                },
+                {
+                  "wall": "y_min",
+                  "type": "door",
+                  "boundary": [7, 5, 0, 5]
                 }
               ],
               "combustibles": [
                 {
                   "key": "PREBAKED_ANODE_BLOCK",
-                  "count": 320
+                  "count": 24
                 },
                 {
                   "key": "CATHODE_CARBON_BLOCK",
-                  "count": 240
+                  "count": 20
                 },
                 {
                   "key": "TRANSFORMER_OIL_TANK",
-                  "count": 2
+                  "count": 1
                 },
                 {
                   "key": "CRANE_HYDRAULIC_TANK",
-                  "count": 2
+                  "count": 1
                 },
                 {
                   "key": "CABLE_BRIDGE",
-                  "count": 3
+                  "count": 1
                 }
               ],
               "specialized_components": [
@@ -399,12 +260,7 @@
     {
       "name": "Bay_A3",
       "cn_name": "A3跨单元",
-      "boundary": [
-        66.0,
-        18,
-        126.0,
-        192
-      ],
+      "boundary": [66.0, 18, 126.0, 192],
       "wall_thickness": 0.3,
       "height": 15,
       "stories": [
@@ -414,67 +270,47 @@
           "openings": [],
           "fire_compartments": [
             {
-              "name": "A3南分区",
-              "boundary": [
-                0,
-                18.0,
-                0,
-                192.0
-              ],
+              "name": "A3",
+              "boundary": [0, 18.0, 0, 192.0],
               "firewall_thickness": 0.3,
               "firewall_material": "CONCRETE",
               "openings": [
                 {
                   "wall": "x_min",
                   "type": "door",
-                  "boundary": [
-                    34.016,
-                    8,
-                    0,
-                    15
-                  ]
+                  "boundary": [34.016, 8, 0, 15]
                 },
                 {
                   "wall": "x_max",
                   "type": "door",
-                  "boundary": [
-                    34.016,
-                    8,
-                    0,
-                    15
-                  ]
+                  "boundary": [34.016, 8, 0, 15]
                 },
                 {
-                  "wall": "y_max",
+                  "wall": "y_min",
                   "type": "door",
-                  "boundary": [
-                    5.0,
-                    8,
-                    0,
-                    5
-                  ]
+                  "boundary": [7, 5, 0, 5]
                 }
               ],
               "combustibles": [
                 {
                   "key": "PREBAKED_ANODE_BLOCK",
-                  "count": 320
+                  "count": 26
                 },
                 {
                   "key": "CATHODE_CARBON_BLOCK",
-                  "count": 240
+                  "count": 20
                 },
                 {
                   "key": "TRANSFORMER_OIL_TANK",
-                  "count": 2
+                  "count": 1
                 },
                 {
                   "key": "CRANE_HYDRAULIC_TANK",
-                  "count": 2
+                  "count": 1
                 },
                 {
                   "key": "CABLE_BRIDGE",
-                  "count": 3
+                  "count": 1
                 }
               ],
               "specialized_components": [
@@ -496,12 +332,7 @@
     {
       "name": "Bay_B1",
       "cn_name": "B1宽跨单元",
-      "boundary": [
-        0.0,
-        465,
-        0.0,
-        16
-      ],
+      "boundary": [0.0, 465, 0.0, 16],
       "wall_thickness": 0.3,
       "height": 15,
       "stories": [
@@ -512,53 +343,49 @@
           "fire_compartments": [
             {
               "name": "B1西一区",
-              "boundary": [
-                0,
-                151.125,
-                0,
-                16.0
-              ],
+              "boundary": [0, 150, 0, 16.0],
               "firewall_thickness": 0.3,
               "firewall_material": "CONCRETE",
               "openings": [
                 {
                   "wall": "y_min",
                   "type": "door",
-                  "boundary": [
-                    73.0625,
-                    5.0,
-                    0,
-                    4.5
-                  ]
+                  "boundary": [73.0625, 5.0, 0, 5]
+                },
+                {
+                  "wall": "x_max",
+                  "type": "door",
+                  "boundary": [5.5, 5.0, 0, 5]
                 }
               ],
               "combustibles": [
                 {
                   "key": "PREBAKED_ANODE_BLOCK",
-                  "count": 480
+                  "count": 20
                 },
                 {
                   "key": "CATHODE_CARBON_BLOCK",
-                  "count": 360
+                  "count": 10
                 }
               ],
               "specialized_components": []
             },
             {
               "name": "B1内嵌功能区",
-              "boundary": [
-                150.195,
-                326.895,
-                0,
-                16.0
-              ],
+              "boundary": [150, 327, 0, 16.0],
               "firewall_thickness": 0.3,
               "firewall_material": "CONCRETE",
-              "openings": [],
+              "openings": [
+                {
+                  "wall": "x_max",
+                  "type": "door",
+                  "boundary": [5.5, 5.0, 0, 5]
+                }
+              ],
               "combustibles": [
                 {
                   "key": "CABLE_BRIDGE",
-                  "count": 6
+                  "count": 4
                 },
                 {
                   "key": "HYDRAULIC_TANK",
@@ -566,7 +393,7 @@
                 },
                 {
                   "key": "LUBE_OIL_DRUM",
-                  "count": 6
+                  "count": 2
                 }
               ],
               "specialized_components": [
@@ -578,30 +405,14 @@
             },
             {
               "name": "B1东一区",
-              "boundary": [
-                326.895,
-                465.0,
-                0,
-                16.0
-              ],
+              "boundary": [327, 465.0, 0, 16.0],
               "firewall_thickness": 0.3,
               "firewall_material": "CONCRETE",
-              "openings": [
-                {
-                  "wall": "y_max",
-                  "type": "door",
-                  "boundary": [
-                    66.5525,
-                    5.0,
-                    0,
-                    4.5
-                  ]
-                }
-              ],
+              "openings": [],
               "combustibles": [
                 {
                   "key": "CABLE_BRIDGE",
-                  "count": 6
+                  "count": 4
                 },
                 {
                   "key": "HYDRAULIC_TANK",
@@ -609,7 +420,7 @@
                 },
                 {
                   "key": "LUBE_OIL_DRUM",
-                  "count": 6
+                  "count": 2
                 }
               ],
               "specialized_components": [
@@ -631,12 +442,7 @@
     {
       "name": "Bay_A4",
       "cn_name": "A4跨单元",
-      "boundary": [
-        98.0,
-        19,
-        16.0,
-        334
-      ],
+      "boundary": [98.0, 19, 16.0, 334],
       "wall_thickness": 0.3,
       "height": 15,
       "stories": [
@@ -647,196 +453,116 @@
           "fire_compartments": [
             {
               "name": "A4南分区",
-              "boundary": [
-                0,
-                19.0,
-                0,
-                334.0
-              ],
+              "boundary": [0, 19.0, 0, 334.0],
               "firewall_thickness": 0.3,
               "firewall_material": "CONCRETE",
               "openings": [
                 {
                   "wall": "x_min",
                   "type": "window",
-                  "boundary": [
-                    268.9,
-                    30,
-                    1,
-                    5
-                  ]
+                  "boundary": [268.9, 30, 1, 5]
                 },
                 {
                   "wall": "x_min",
                   "type": "window",
-                  "boundary": [
-                    225.48,
-                    30,
-                    1,
-                    5
-                  ]
+                  "boundary": [225.48, 30, 1, 5]
                 },
                 {
                   "wall": "x_min",
                   "type": "window",
-                  "boundary": [
-                    182.06,
-                    30,
-                    1,
-                    5
-                  ]
+                  "boundary": [182.06, 30, 1, 5]
                 },
                 {
                   "wall": "x_min",
                   "type": "window",
-                  "boundary": [
-                    95.22,
-                    30,
-                    1,
-                    5
-                  ]
+                  "boundary": [95.22, 30, 1, 5]
                 },
                 {
                   "wall": "x_min",
                   "type": "window",
-                  "boundary": [
-                    51.8,
-                    30,
-                    1,
-                    5
-                  ]
+                  "boundary": [51.8, 30, 1, 5]
                 },
                 {
                   "wall": "x_min",
                   "type": "window",
-                  "boundary": [
-                    8.38,
-                    30,
-                    1,
-                    5
-                  ]
+                  "boundary": [8.38, 30, 1, 5]
                 },
                 {
                   "wall": "x_max",
                   "type": "window",
-                  "boundary": [
-                    268.9,
-                    30,
-                    1,
-                    5
-                  ]
+                  "boundary": [268.9, 30, 1, 5]
                 },
                 {
                   "wall": "x_max",
                   "type": "window",
-                  "boundary": [
-                    225.48,
-                    30,
-                    1,
-                    5
-                  ]
+                  "boundary": [225.48, 30, 1, 5]
                 },
                 {
                   "wall": "x_max",
                   "type": "window",
-                  "boundary": [
-                    182.06,
-                    30,
-                    1,
-                    5
-                  ]
+                  "boundary": [182.06, 30, 1, 5]
                 },
                 {
                   "wall": "x_max",
                   "type": "window",
-                  "boundary": [
-                    95.22,
-                    30,
-                    1,
-                    5
-                  ]
+                  "boundary": [95.22, 30, 1, 5]
                 },
                 {
                   "wall": "x_max",
                   "type": "window",
-                  "boundary": [
-                    51.8,
-                    30,
-                    1,
-                    5
-                  ]
+                  "boundary": [51.8, 30, 1, 5]
                 },
                 {
                   "wall": "x_max",
                   "type": "window",
-                  "boundary": [
-                    8.38,
-                    30,
-                    1,
-                    5
-                  ]
+                  "boundary": [8.38, 30, 1, 5]
                 },
                 {
                   "wall": "x_min",
                   "type": "door",
-                  "boundary": [
-                    143.962,
-                    8,
-                    0,
-                    15
-                  ]
+                  "boundary": [143.962, 8, 0, 15]
                 },
                 {
                   "wall": "x_max",
                   "type": "door",
-                  "boundary": [
-                    143.962,
-                    8,
-                    0,
-                    15
-                  ]
+                  "boundary": [143.962, 8, 0, 15]
                 },
                 {
                   "wall": "x_min",
                   "type": "door",
-                  "boundary": [
-                    301.952,
-                    16,
-                    0,
-                    15
-                  ]
+                  "boundary": [301.952, 16, 0, 15]
                 },
                 {
                   "wall": "x_max",
                   "type": "door",
-                  "boundary": [
-                    301.952,
-                    16,
-                    0,
-                    15
-                  ]
+                  "boundary": [301.952, 16, 0, 15]
+                },
+                {
+                  "wall": "y_min",
+                  "type": "door",
+                  "boundary": [7, 5, 0, 5]
                 }
               ],
               "combustibles": [
                 {
                   "key": "PREBAKED_ANODE_BLOCK",
-                  "count": 320
+                  "count": 24
                 },
                 {
                   "key": "CATHODE_CARBON_BLOCK",
-                  "count": 240
+                  "count": 20
                 },
                 {
                   "key": "TRANSFORMER_OIL_TANK",
-                  "count": 2
+                  "count": 1
                 },
                 {
                   "key": "CRANE_HYDRAULIC_TANK",
-                  "count": 2
+                  "count": 1
                 },
                 {
                   "key": "CABLE_BRIDGE",
-                  "count": 3
+                  "count": 1
                 }
               ],
               "specialized_components": [
@@ -858,12 +584,7 @@
     {
       "name": "Bay_A5",
       "cn_name": "A5跨单元",
-      "boundary": [
-        131.0,
-        19,
-        16.0,
-        334
-      ],
+      "boundary": [131.0, 19, 16.0, 334],
       "wall_thickness": 0.3,
       "height": 15,
       "stories": [
@@ -874,196 +595,116 @@
           "fire_compartments": [
             {
               "name": "A5南分区",
-              "boundary": [
-                0,
-                19.0,
-                0,
-                334.0
-              ],
+              "boundary": [0, 19.0, 0, 334.0],
               "firewall_thickness": 0.3,
               "firewall_material": "CONCRETE",
               "openings": [
                 {
                   "wall": "x_min",
                   "type": "window",
-                  "boundary": [
-                    268.9,
-                    30,
-                    1,
-                    5
-                  ]
+                  "boundary": [268.9, 30, 1, 5]
                 },
                 {
                   "wall": "x_min",
                   "type": "window",
-                  "boundary": [
-                    225.48,
-                    30,
-                    1,
-                    5
-                  ]
+                  "boundary": [225.48, 30, 1, 5]
                 },
                 {
                   "wall": "x_min",
                   "type": "window",
-                  "boundary": [
-                    182.06,
-                    30,
-                    1,
-                    5
-                  ]
+                  "boundary": [182.06, 30, 1, 5]
                 },
                 {
                   "wall": "x_min",
                   "type": "window",
-                  "boundary": [
-                    95.22,
-                    30,
-                    1,
-                    5
-                  ]
+                  "boundary": [95.22, 30, 1, 5]
                 },
                 {
                   "wall": "x_min",
                   "type": "window",
-                  "boundary": [
-                    51.8,
-                    30,
-                    1,
-                    5
-                  ]
+                  "boundary": [51.8, 30, 1, 5]
                 },
                 {
                   "wall": "x_min",
                   "type": "window",
-                  "boundary": [
-                    8.38,
-                    30,
-                    1,
-                    5
-                  ]
+                  "boundary": [8.38, 30, 1, 5]
                 },
                 {
                   "wall": "x_max",
                   "type": "window",
-                  "boundary": [
-                    268.9,
-                    30,
-                    1,
-                    5
-                  ]
+                  "boundary": [268.9, 30, 1, 5]
                 },
                 {
                   "wall": "x_max",
                   "type": "window",
-                  "boundary": [
-                    225.48,
-                    30,
-                    1,
-                    5
-                  ]
+                  "boundary": [225.48, 30, 1, 5]
                 },
                 {
                   "wall": "x_max",
                   "type": "window",
-                  "boundary": [
-                    182.06,
-                    30,
-                    1,
-                    5
-                  ]
+                  "boundary": [182.06, 30, 1, 5]
                 },
                 {
                   "wall": "x_max",
                   "type": "window",
-                  "boundary": [
-                    95.22,
-                    30,
-                    1,
-                    5
-                  ]
+                  "boundary": [95.22, 30, 1, 5]
                 },
                 {
                   "wall": "x_max",
                   "type": "window",
-                  "boundary": [
-                    51.8,
-                    30,
-                    1,
-                    5
-                  ]
+                  "boundary": [51.8, 30, 1, 5]
                 },
                 {
                   "wall": "x_max",
                   "type": "window",
-                  "boundary": [
-                    8.38,
-                    30,
-                    1,
-                    5
-                  ]
+                  "boundary": [8.38, 30, 1, 5]
                 },
                 {
                   "wall": "x_min",
                   "type": "door",
-                  "boundary": [
-                    143.962,
-                    8,
-                    0,
-                    15
-                  ]
+                  "boundary": [143.962, 8, 0, 15]
                 },
                 {
                   "wall": "x_max",
                   "type": "door",
-                  "boundary": [
-                    143.962,
-                    8,
-                    0,
-                    15
-                  ]
+                  "boundary": [143.962, 8, 0, 15]
                 },
                 {
                   "wall": "x_min",
                   "type": "door",
-                  "boundary": [
-                    301.952,
-                    16,
-                    0,
-                    15
-                  ]
+                  "boundary": [301.952, 16, 0, 15]
                 },
                 {
                   "wall": "x_max",
                   "type": "door",
-                  "boundary": [
-                    301.952,
-                    16,
-                    0,
-                    15
-                  ]
+                  "boundary": [301.952, 16, 0, 15]
+                },
+                {
+                  "wall": "y_min",
+                  "type": "door",
+                  "boundary": [7, 5, 0, 5]
                 }
               ],
               "combustibles": [
                 {
                   "key": "PREBAKED_ANODE_BLOCK",
-                  "count": 320
+                  "count": 20
                 },
                 {
                   "key": "CATHODE_CARBON_BLOCK",
-                  "count": 240
+                  "count": 20
                 },
                 {
                   "key": "TRANSFORMER_OIL_TANK",
-                  "count": 2
+                  "count": 1
                 },
                 {
                   "key": "CRANE_HYDRAULIC_TANK",
-                  "count": 2
+                  "count": 1
                 },
                 {
                   "key": "CABLE_BRIDGE",
-                  "count": 3
+                  "count": 1
                 }
               ],
               "specialized_components": [
@@ -1085,12 +726,7 @@
     {
       "name": "Bay_A6",
       "cn_name": "A6跨单元",
-      "boundary": [
-        164.0,
-        19,
-        16.0,
-        302
-      ],
+      "boundary": [164.0, 19, 16.0, 302],
       "wall_thickness": 0.3,
       "height": 15,
       "stories": [
@@ -1101,206 +737,116 @@
           "fire_compartments": [
             {
               "name": "A6南分区",
-              "boundary": [
-                0,
-                19.0,
-                0,
-                302.0
-              ],
+              "boundary": [0, 19.0, 0, 302.0],
               "firewall_thickness": 0.3,
               "firewall_material": "CONCRETE",
               "openings": [
                 {
                   "wall": "x_min",
                   "type": "window",
-                  "boundary": [
-                    286.95,
-                    15,
-                    1,
-                    5
-                  ]
+                  "boundary": [286.95, 15, 1, 5]
                 },
                 {
                   "wall": "x_min",
                   "type": "window",
-                  "boundary": [
-                    241.7,
-                    30,
-                    1,
-                    5
-                  ]
+                  "boundary": [241.7, 30, 1, 5]
                 },
                 {
                   "wall": "x_min",
                   "type": "window",
-                  "boundary": [
-                    196.4,
-                    30,
-                    1,
-                    5
-                  ]
+                  "boundary": [196.4, 30, 1, 5]
                 },
                 {
                   "wall": "x_min",
                   "type": "window",
-                  "boundary": [
-                    157.14,
-                    30,
-                    1,
-                    5
-                  ]
+                  "boundary": [157.14, 30, 1, 5]
                 },
                 {
                   "wall": "x_min",
                   "type": "window",
-                  "boundary": [
-                    105.8,
-                    30,
-                    1,
-                    5
-                  ]
+                  "boundary": [105.8, 30, 1, 5]
                 },
                 {
                   "wall": "x_min",
                   "type": "window",
-                  "boundary": [
-                    60.5,
-                    30,
-                    1,
-                    5
-                  ]
+                  "boundary": [60.5, 30, 1, 5]
                 },
                 {
                   "wall": "x_min",
                   "type": "window",
-                  "boundary": [
-                    15.2,
-                    30,
-                    1,
-                    5
-                  ]
+                  "boundary": [15.2, 30, 1, 5]
                 },
                 {
                   "wall": "x_max",
                   "type": "window",
-                  "boundary": [
-                    286.95,
-                    15,
-                    1,
-                    5
-                  ]
+                  "boundary": [286.95, 15, 1, 5]
                 },
                 {
                   "wall": "x_max",
                   "type": "window",
-                  "boundary": [
-                    241.7,
-                    30,
-                    1,
-                    5
-                  ]
+                  "boundary": [241.7, 30, 1, 5]
                 },
                 {
                   "wall": "x_max",
                   "type": "window",
-                  "boundary": [
-                    196.4,
-                    30,
-                    1,
-                    5
-                  ]
+                  "boundary": [196.4, 30, 1, 5]
                 },
                 {
                   "wall": "x_max",
                   "type": "window",
-                  "boundary": [
-                    157.14,
-                    30,
-                    1,
-                    5
-                  ]
+                  "boundary": [157.14, 30, 1, 5]
                 },
                 {
                   "wall": "x_max",
                   "type": "window",
-                  "boundary": [
-                    105.8,
-                    30,
-                    1,
-                    5
-                  ]
+                  "boundary": [105.8, 30, 1, 5]
                 },
                 {
                   "wall": "x_max",
                   "type": "window",
-                  "boundary": [
-                    60.5,
-                    30,
-                    1,
-                    5
-                  ]
+                  "boundary": [60.5, 30, 1, 5]
                 },
                 {
                   "wall": "x_max",
                   "type": "window",
-                  "boundary": [
-                    15.2,
-                    30,
-                    1,
-                    5
-                  ]
+                  "boundary": [15.2, 30, 1, 5]
                 },
                 {
                   "wall": "x_min",
                   "type": "door",
-                  "boundary": [
-                    143.98,
-                    8,
-                    0,
-                    15
-                  ]
+                  "boundary": [143.98, 8, 0, 15]
                 },
                 {
                   "wall": "x_max",
                   "type": "door",
-                  "boundary": [
-                    143.98,
-                    8,
-                    0,
-                    15
-                  ]
+                  "boundary": [143.98, 8, 0, 15]
                 },
                 {
-                  "wall": "y_max",
+                  "wall": "y_min",
                   "type": "door",
-                  "boundary": [
-                    5.5,
-                    8,
-                    0,
-                    15
-                  ]
+                  "boundary": [7, 5, 0, 5]
                 }
               ],
               "combustibles": [
                 {
                   "key": "PREBAKED_ANODE_BLOCK",
-                  "count": 320
+                  "count": 20
                 },
                 {
                   "key": "CATHODE_CARBON_BLOCK",
-                  "count": 240
+                  "count": 20
                 },
                 {
                   "key": "TRANSFORMER_OIL_TANK",
-                  "count": 2
+                  "count": 1
                 },
                 {
                   "key": "CRANE_HYDRAULIC_TANK",
-                  "count": 2
+                  "count": 1
                 },
                 {
                   "key": "CABLE_BRIDGE",
-                  "count": 3
+                  "count": 1
                 }
               ],
               "specialized_components": [
@@ -1322,12 +868,7 @@
     {
       "name": "Bay_A7",
       "cn_name": "A7跨单元",
-      "boundary": [
-        197.0,
-        19,
-        16.0,
-        302
-      ],
+      "boundary": [197.0, 19, 16.0, 302],
       "wall_thickness": 0.3,
       "height": 15,
       "stories": [
@@ -1338,206 +879,116 @@
           "fire_compartments": [
             {
               "name": "A7南分区",
-              "boundary": [
-                0,
-                19.0,
-                0,
-                302.0
-              ],
+              "boundary": [0, 19.0, 0, 302.0],
               "firewall_thickness": 0.3,
               "firewall_material": "CONCRETE",
               "openings": [
                 {
                   "wall": "x_min",
                   "type": "window",
-                  "boundary": [
-                    286.95,
-                    15,
-                    1,
-                    5
-                  ]
+                  "boundary": [286.95, 15, 1, 5]
                 },
                 {
                   "wall": "x_min",
                   "type": "window",
-                  "boundary": [
-                    241.7,
-                    30,
-                    1,
-                    5
-                  ]
+                  "boundary": [241.7, 30, 1, 5]
                 },
                 {
                   "wall": "x_min",
                   "type": "window",
-                  "boundary": [
-                    196.4,
-                    30,
-                    1,
-                    5
-                  ]
+                  "boundary": [196.4, 30, 1, 5]
                 },
                 {
                   "wall": "x_min",
                   "type": "window",
-                  "boundary": [
-                    157.14,
-                    30,
-                    1,
-                    5
-                  ]
+                  "boundary": [157.14, 30, 1, 5]
                 },
                 {
                   "wall": "x_min",
                   "type": "window",
-                  "boundary": [
-                    105.8,
-                    30,
-                    1,
-                    5
-                  ]
+                  "boundary": [105.8, 30, 1, 5]
                 },
                 {
                   "wall": "x_min",
                   "type": "window",
-                  "boundary": [
-                    60.5,
-                    30,
-                    1,
-                    5
-                  ]
+                  "boundary": [60.5, 30, 1, 5]
                 },
                 {
                   "wall": "x_min",
                   "type": "window",
-                  "boundary": [
-                    15.2,
-                    30,
-                    1,
-                    5
-                  ]
+                  "boundary": [15.2, 30, 1, 5]
                 },
                 {
                   "wall": "x_max",
                   "type": "window",
-                  "boundary": [
-                    286.95,
-                    15,
-                    1,
-                    5
-                  ]
+                  "boundary": [286.95, 15, 1, 5]
                 },
                 {
                   "wall": "x_max",
                   "type": "window",
-                  "boundary": [
-                    241.7,
-                    30,
-                    1,
-                    5
-                  ]
+                  "boundary": [241.7, 30, 1, 5]
                 },
                 {
                   "wall": "x_max",
                   "type": "window",
-                  "boundary": [
-                    196.4,
-                    30,
-                    1,
-                    5
-                  ]
+                  "boundary": [196.4, 30, 1, 5]
                 },
                 {
                   "wall": "x_max",
                   "type": "window",
-                  "boundary": [
-                    157.14,
-                    30,
-                    1,
-                    5
-                  ]
+                  "boundary": [157.14, 30, 1, 5]
                 },
                 {
                   "wall": "x_max",
                   "type": "window",
-                  "boundary": [
-                    105.8,
-                    30,
-                    1,
-                    5
-                  ]
+                  "boundary": [105.8, 30, 1, 5]
                 },
                 {
                   "wall": "x_max",
                   "type": "window",
-                  "boundary": [
-                    60.5,
-                    30,
-                    1,
-                    5
-                  ]
+                  "boundary": [60.5, 30, 1, 5]
                 },
                 {
                   "wall": "x_max",
                   "type": "window",
-                  "boundary": [
-                    15.2,
-                    30,
-                    1,
-                    5
-                  ]
+                  "boundary": [15.2, 30, 1, 5]
                 },
                 {
                   "wall": "x_min",
                   "type": "door",
-                  "boundary": [
-                    143.98,
-                    8,
-                    0,
-                    15
-                  ]
+                  "boundary": [143.98, 8, 0, 15]
                 },
                 {
                   "wall": "x_max",
                   "type": "door",
-                  "boundary": [
-                    143.98,
-                    8,
-                    0,
-                    15
-                  ]
+                  "boundary": [143.98, 8, 0, 15]
                 },
                 {
-                  "wall": "y_max",
+                  "wall": "y_min",
                   "type": "door",
-                  "boundary": [
-                    5.5,
-                    8,
-                    0,
-                    15
-                  ]
+                  "boundary": [7, 5, 0, 5]
                 }
               ],
               "combustibles": [
                 {
                   "key": "PREBAKED_ANODE_BLOCK",
-                  "count": 320
+                  "count": 26
                 },
                 {
                   "key": "CATHODE_CARBON_BLOCK",
-                  "count": 240
+                  "count": 20
                 },
                 {
                   "key": "TRANSFORMER_OIL_TANK",
-                  "count": 2
+                  "count": 1
                 },
                 {
                   "key": "CRANE_HYDRAULIC_TANK",
-                  "count": 2
+                  "count": 1
                 },
                 {
                   "key": "CABLE_BRIDGE",
-                  "count": 3
+                  "count": 1
                 }
               ],
               "specialized_components": [
@@ -1559,12 +1010,7 @@
     {
       "name": "Bay_A8",
       "cn_name": "A8跨单元",
-      "boundary": [
-        230.0,
-        19,
-        16.0,
-        302
-      ],
+      "boundary": [230.0, 19, 16.0, 302],
       "wall_thickness": 0.3,
       "height": 15,
       "stories": [
@@ -1575,206 +1021,116 @@
           "fire_compartments": [
             {
               "name": "A8南分区",
-              "boundary": [
-                0,
-                19.0,
-                0,
-                302.0
-              ],
+              "boundary": [0, 19.0, 0, 302.0],
               "firewall_thickness": 0.3,
               "firewall_material": "CONCRETE",
               "openings": [
                 {
                   "wall": "x_min",
                   "type": "window",
-                  "boundary": [
-                    286.95,
-                    15,
-                    1,
-                    5
-                  ]
+                  "boundary": [286.95, 15, 1, 5]
                 },
                 {
                   "wall": "x_min",
                   "type": "window",
-                  "boundary": [
-                    241.7,
-                    30,
-                    1,
-                    5
-                  ]
+                  "boundary": [241.7, 30, 1, 5]
                 },
                 {
                   "wall": "x_min",
                   "type": "window",
-                  "boundary": [
-                    196.4,
-                    30,
-                    1,
-                    5
-                  ]
+                  "boundary": [196.4, 30, 1, 5]
                 },
                 {
                   "wall": "x_min",
                   "type": "window",
-                  "boundary": [
-                    157.14,
-                    30,
-                    1,
-                    5
-                  ]
+                  "boundary": [157.14, 30, 1, 5]
                 },
                 {
                   "wall": "x_min",
                   "type": "window",
-                  "boundary": [
-                    105.8,
-                    30,
-                    1,
-                    5
-                  ]
+                  "boundary": [105.8, 30, 1, 5]
                 },
                 {
                   "wall": "x_min",
                   "type": "window",
-                  "boundary": [
-                    60.5,
-                    30,
-                    1,
-                    5
-                  ]
+                  "boundary": [60.5, 30, 1, 5]
                 },
                 {
                   "wall": "x_min",
                   "type": "window",
-                  "boundary": [
-                    15.2,
-                    30,
-                    1,
-                    5
-                  ]
+                  "boundary": [15.2, 30, 1, 5]
                 },
                 {
                   "wall": "x_max",
                   "type": "window",
-                  "boundary": [
-                    286.95,
-                    15,
-                    1,
-                    5
-                  ]
+                  "boundary": [286.95, 15, 1, 5]
                 },
                 {
                   "wall": "x_max",
                   "type": "window",
-                  "boundary": [
-                    241.7,
-                    30,
-                    1,
-                    5
-                  ]
+                  "boundary": [241.7, 30, 1, 5]
                 },
                 {
                   "wall": "x_max",
                   "type": "window",
-                  "boundary": [
-                    196.4,
-                    30,
-                    1,
-                    5
-                  ]
+                  "boundary": [196.4, 30, 1, 5]
                 },
                 {
                   "wall": "x_max",
                   "type": "window",
-                  "boundary": [
-                    157.14,
-                    30,
-                    1,
-                    5
-                  ]
+                  "boundary": [157.14, 30, 1, 5]
                 },
                 {
                   "wall": "x_max",
                   "type": "window",
-                  "boundary": [
-                    105.8,
-                    30,
-                    1,
-                    5
-                  ]
+                  "boundary": [105.8, 30, 1, 5]
                 },
                 {
                   "wall": "x_max",
                   "type": "window",
-                  "boundary": [
-                    60.5,
-                    30,
-                    1,
-                    5
-                  ]
+                  "boundary": [60.5, 30, 1, 5]
                 },
                 {
                   "wall": "x_max",
                   "type": "window",
-                  "boundary": [
-                    15.2,
-                    30,
-                    1,
-                    5
-                  ]
+                  "boundary": [15.2, 30, 1, 5]
                 },
                 {
                   "wall": "x_min",
                   "type": "door",
-                  "boundary": [
-                    143.98,
-                    8,
-                    0,
-                    15
-                  ]
+                  "boundary": [143.98, 8, 0, 15]
                 },
                 {
                   "wall": "x_max",
                   "type": "door",
-                  "boundary": [
-                    143.98,
-                    8,
-                    0,
-                    15
-                  ]
+                  "boundary": [143.98, 8, 0, 15]
                 },
                 {
-                  "wall": "y_max",
+                  "wall": "y_min",
                   "type": "door",
-                  "boundary": [
-                    5.5,
-                    8,
-                    0,
-                    15
-                  ]
+                  "boundary": [7, 5, 0, 5]
                 }
               ],
               "combustibles": [
                 {
                   "key": "PREBAKED_ANODE_BLOCK",
-                  "count": 320
+                  "count": 26
                 },
                 {
                   "key": "CATHODE_CARBON_BLOCK",
-                  "count": 240
+                  "count": 20
                 },
                 {
                   "key": "TRANSFORMER_OIL_TANK",
-                  "count": 2
+                  "count": 1
                 },
                 {
                   "key": "CRANE_HYDRAULIC_TANK",
-                  "count": 2
+                  "count": 1
                 },
                 {
                   "key": "CABLE_BRIDGE",
-                  "count": 3
+                  "count": 1
                 }
               ],
               "specialized_components": [
@@ -1796,12 +1152,7 @@
     {
       "name": "Bay_A9",
       "cn_name": "A9跨单元",
-      "boundary": [
-        263.0,
-        19,
-        16.0,
-        302
-      ],
+      "boundary": [263.0, 19, 16.0, 302],
       "wall_thickness": 0.3,
       "height": 15,
       "stories": [
@@ -1812,206 +1163,116 @@
           "fire_compartments": [
             {
               "name": "A9南分区",
-              "boundary": [
-                0,
-                19.0,
-                0,
-                302.0
-              ],
+              "boundary": [0, 19.0, 0, 302.0],
               "firewall_thickness": 0.3,
               "firewall_material": "CONCRETE",
               "openings": [
                 {
                   "wall": "x_min",
                   "type": "window",
-                  "boundary": [
-                    286.95,
-                    15,
-                    1,
-                    5
-                  ]
+                  "boundary": [286.95, 15, 1, 5]
                 },
                 {
                   "wall": "x_min",
                   "type": "window",
-                  "boundary": [
-                    241.7,
-                    30,
-                    1,
-                    5
-                  ]
+                  "boundary": [241.7, 30, 1, 5]
                 },
                 {
                   "wall": "x_min",
                   "type": "window",
-                  "boundary": [
-                    196.4,
-                    30,
-                    1,
-                    5
-                  ]
+                  "boundary": [196.4, 30, 1, 5]
                 },
                 {
                   "wall": "x_min",
                   "type": "window",
-                  "boundary": [
-                    157.14,
-                    30,
-                    1,
-                    5
-                  ]
+                  "boundary": [157.14, 30, 1, 5]
                 },
                 {
                   "wall": "x_min",
                   "type": "window",
-                  "boundary": [
-                    105.8,
-                    30,
-                    1,
-                    5
-                  ]
+                  "boundary": [105.8, 30, 1, 5]
                 },
                 {
                   "wall": "x_min",
                   "type": "window",
-                  "boundary": [
-                    60.5,
-                    30,
-                    1,
-                    5
-                  ]
+                  "boundary": [60.5, 30, 1, 5]
                 },
                 {
                   "wall": "x_min",
                   "type": "window",
-                  "boundary": [
-                    15.2,
-                    30,
-                    1,
-                    5
-                  ]
+                  "boundary": [15.2, 30, 1, 5]
                 },
                 {
                   "wall": "x_max",
                   "type": "window",
-                  "boundary": [
-                    286.95,
-                    15,
-                    1,
-                    5
-                  ]
+                  "boundary": [286.95, 15, 1, 5]
                 },
                 {
                   "wall": "x_max",
                   "type": "window",
-                  "boundary": [
-                    241.7,
-                    30,
-                    1,
-                    5
-                  ]
+                  "boundary": [241.7, 30, 1, 5]
                 },
                 {
                   "wall": "x_max",
                   "type": "window",
-                  "boundary": [
-                    196.4,
-                    30,
-                    1,
-                    5
-                  ]
+                  "boundary": [196.4, 30, 1, 5]
                 },
                 {
                   "wall": "x_max",
                   "type": "window",
-                  "boundary": [
-                    157.14,
-                    30,
-                    1,
-                    5
-                  ]
+                  "boundary": [157.14, 30, 1, 5]
                 },
                 {
                   "wall": "x_max",
                   "type": "window",
-                  "boundary": [
-                    105.8,
-                    30,
-                    1,
-                    5
-                  ]
+                  "boundary": [105.8, 30, 1, 5]
                 },
                 {
                   "wall": "x_max",
                   "type": "window",
-                  "boundary": [
-                    60.5,
-                    30,
-                    1,
-                    5
-                  ]
+                  "boundary": [60.5, 30, 1, 5]
                 },
                 {
                   "wall": "x_max",
                   "type": "window",
-                  "boundary": [
-                    15.2,
-                    30,
-                    1,
-                    5
-                  ]
+                  "boundary": [15.2, 30, 1, 5]
                 },
                 {
                   "wall": "x_min",
                   "type": "door",
-                  "boundary": [
-                    143.98,
-                    8,
-                    0,
-                    15
-                  ]
+                  "boundary": [143.98, 8, 0, 15]
                 },
                 {
                   "wall": "x_max",
                   "type": "door",
-                  "boundary": [
-                    143.98,
-                    8,
-                    0,
-                    15
-                  ]
+                  "boundary": [143.98, 8, 0, 15]
                 },
                 {
-                  "wall": "y_max",
+                  "wall": "y_min",
                   "type": "door",
-                  "boundary": [
-                    5.5,
-                    8,
-                    0,
-                    15
-                  ]
+                  "boundary": [7, 5, 0, 5]
                 }
               ],
               "combustibles": [
                 {
                   "key": "PREBAKED_ANODE_BLOCK",
-                  "count": 320
+                  "count": 26
                 },
                 {
                   "key": "CATHODE_CARBON_BLOCK",
-                  "count": 240
+                  "count": 20
                 },
                 {
                   "key": "TRANSFORMER_OIL_TANK",
-                  "count": 2
+                  "count": 1
                 },
                 {
                   "key": "CRANE_HYDRAULIC_TANK",
-                  "count": 2
+                  "count": 1
                 },
                 {
                   "key": "CABLE_BRIDGE",
-                  "count": 3
+                  "count": 1
                 }
               ],
               "specialized_components": [
@@ -2033,12 +1294,7 @@
     {
       "name": "Bay_A10",
       "cn_name": "A10跨单元",
-      "boundary": [
-        327.0,
-        19,
-        16.0,
-        302
-      ],
+      "boundary": [327.0, 19, 16.0, 302],
       "wall_thickness": 0.3,
       "height": 15,
       "stories": [
@@ -2049,206 +1305,116 @@
           "fire_compartments": [
             {
               "name": "A10南分区",
-              "boundary": [
-                0,
-                19.0,
-                0,
-                302.0
-              ],
+              "boundary": [0, 19.0, 0, 302.0],
               "firewall_thickness": 0.3,
               "firewall_material": "CONCRETE",
               "openings": [
                 {
                   "wall": "x_min",
                   "type": "window",
-                  "boundary": [
-                    286.95,
-                    15,
-                    1,
-                    5
-                  ]
+                  "boundary": [286.95, 15, 1, 5]
                 },
                 {
                   "wall": "x_min",
                   "type": "window",
-                  "boundary": [
-                    241.7,
-                    30,
-                    1,
-                    5
-                  ]
+                  "boundary": [241.7, 30, 1, 5]
                 },
                 {
                   "wall": "x_min",
                   "type": "window",
-                  "boundary": [
-                    196.4,
-                    30,
-                    1,
-                    5
-                  ]
+                  "boundary": [196.4, 30, 1, 5]
                 },
                 {
                   "wall": "x_min",
                   "type": "window",
-                  "boundary": [
-                    157.14,
-                    30,
-                    1,
-                    5
-                  ]
+                  "boundary": [157.14, 30, 1, 5]
                 },
                 {
                   "wall": "x_min",
                   "type": "window",
-                  "boundary": [
-                    105.8,
-                    30,
-                    1,
-                    5
-                  ]
+                  "boundary": [105.8, 30, 1, 5]
                 },
                 {
                   "wall": "x_min",
                   "type": "window",
-                  "boundary": [
-                    60.5,
-                    30,
-                    1,
-                    5
-                  ]
+                  "boundary": [60.5, 30, 1, 5]
                 },
                 {
                   "wall": "x_min",
                   "type": "window",
-                  "boundary": [
-                    15.2,
-                    30,
-                    1,
-                    5
-                  ]
+                  "boundary": [15.2, 30, 1, 5]
                 },
                 {
                   "wall": "x_max",
                   "type": "window",
-                  "boundary": [
-                    286.95,
-                    15,
-                    1,
-                    5
-                  ]
+                  "boundary": [286.95, 15, 1, 5]
                 },
                 {
                   "wall": "x_max",
                   "type": "window",
-                  "boundary": [
-                    241.7,
-                    30,
-                    1,
-                    5
-                  ]
+                  "boundary": [241.7, 30, 1, 5]
                 },
                 {
                   "wall": "x_max",
                   "type": "window",
-                  "boundary": [
-                    196.4,
-                    30,
-                    1,
-                    5
-                  ]
+                  "boundary": [196.4, 30, 1, 5]
                 },
                 {
                   "wall": "x_max",
                   "type": "window",
-                  "boundary": [
-                    157.14,
-                    30,
-                    1,
-                    5
-                  ]
+                  "boundary": [157.14, 30, 1, 5]
                 },
                 {
                   "wall": "x_max",
                   "type": "window",
-                  "boundary": [
-                    105.8,
-                    30,
-                    1,
-                    5
-                  ]
+                  "boundary": [105.8, 30, 1, 5]
                 },
                 {
                   "wall": "x_max",
                   "type": "window",
-                  "boundary": [
-                    60.5,
-                    30,
-                    1,
-                    5
-                  ]
+                  "boundary": [60.5, 30, 1, 5]
                 },
                 {
                   "wall": "x_max",
                   "type": "window",
-                  "boundary": [
-                    15.2,
-                    30,
-                    1,
-                    5
-                  ]
+                  "boundary": [15.2, 30, 1, 5]
                 },
                 {
                   "wall": "x_min",
                   "type": "door",
-                  "boundary": [
-                    143.98,
-                    8,
-                    0,
-                    15
-                  ]
+                  "boundary": [143.98, 8, 0, 15]
                 },
                 {
                   "wall": "x_max",
                   "type": "door",
-                  "boundary": [
-                    143.98,
-                    8,
-                    0,
-                    15
-                  ]
+                  "boundary": [143.98, 8, 0, 15]
                 },
                 {
-                  "wall": "y_max",
+                  "wall": "y_min",
                   "type": "door",
-                  "boundary": [
-                    5.5,
-                    8,
-                    0,
-                    15
-                  ]
+                  "boundary": [7, 5, 0, 5]
                 }
               ],
               "combustibles": [
                 {
                   "key": "PREBAKED_ANODE_BLOCK",
-                  "count": 320
+                  "count": 26
                 },
                 {
                   "key": "CATHODE_CARBON_BLOCK",
-                  "count": 240
+                  "count": 20
                 },
                 {
                   "key": "TRANSFORMER_OIL_TANK",
-                  "count": 2
+                  "count": 1
                 },
                 {
                   "key": "CRANE_HYDRAULIC_TANK",
-                  "count": 2
+                  "count": 1
                 },
                 {
                   "key": "CABLE_BRIDGE",
-                  "count": 3
+                  "count": 1
                 }
               ],
               "specialized_components": [
@@ -2270,12 +1436,7 @@
     {
       "name": "Bay_A11",
       "cn_name": "A11跨单元",
-      "boundary": [
-        360.0,
-        19,
-        16.0,
-        302
-      ],
+      "boundary": [360.0, 19, 16.0, 302],
       "wall_thickness": 0.3,
       "height": 15,
       "stories": [
@@ -2286,206 +1447,116 @@
           "fire_compartments": [
             {
               "name": "A11南分区",
-              "boundary": [
-                0,
-                19.0,
-                0,
-                302.0
-              ],
+              "boundary": [0, 19.0, 0, 302.0],
               "firewall_thickness": 0.3,
               "firewall_material": "CONCRETE",
               "openings": [
                 {
                   "wall": "x_min",
                   "type": "window",
-                  "boundary": [
-                    286.95,
-                    15,
-                    1,
-                    5
-                  ]
+                  "boundary": [286.95, 15, 1, 5]
                 },
                 {
                   "wall": "x_min",
                   "type": "window",
-                  "boundary": [
-                    241.7,
-                    30,
-                    1,
-                    5
-                  ]
+                  "boundary": [241.7, 30, 1, 5]
                 },
                 {
                   "wall": "x_min",
                   "type": "window",
-                  "boundary": [
-                    196.4,
-                    30,
-                    1,
-                    5
-                  ]
+                  "boundary": [196.4, 30, 1, 5]
                 },
                 {
                   "wall": "x_min",
                   "type": "window",
-                  "boundary": [
-                    157.14,
-                    30,
-                    1,
-                    5
-                  ]
+                  "boundary": [157.14, 30, 1, 5]
                 },
                 {
                   "wall": "x_min",
                   "type": "window",
-                  "boundary": [
-                    105.8,
-                    30,
-                    1,
-                    5
-                  ]
+                  "boundary": [105.8, 30, 1, 5]
                 },
                 {
                   "wall": "x_min",
                   "type": "window",
-                  "boundary": [
-                    60.5,
-                    30,
-                    1,
-                    5
-                  ]
+                  "boundary": [60.5, 30, 1, 5]
                 },
                 {
                   "wall": "x_min",
                   "type": "window",
-                  "boundary": [
-                    15.2,
-                    30,
-                    1,
-                    5
-                  ]
+                  "boundary": [15.2, 30, 1, 5]
                 },
                 {
                   "wall": "x_max",
                   "type": "window",
-                  "boundary": [
-                    286.95,
-                    15,
-                    1,
-                    5
-                  ]
+                  "boundary": [286.95, 15, 1, 5]
                 },
                 {
                   "wall": "x_max",
                   "type": "window",
-                  "boundary": [
-                    241.7,
-                    30,
-                    1,
-                    5
-                  ]
+                  "boundary": [241.7, 30, 1, 5]
                 },
                 {
                   "wall": "x_max",
                   "type": "window",
-                  "boundary": [
-                    196.4,
-                    30,
-                    1,
-                    5
-                  ]
+                  "boundary": [196.4, 30, 1, 5]
                 },
                 {
                   "wall": "x_max",
                   "type": "window",
-                  "boundary": [
-                    157.14,
-                    30,
-                    1,
-                    5
-                  ]
+                  "boundary": [157.14, 30, 1, 5]
                 },
                 {
                   "wall": "x_max",
                   "type": "window",
-                  "boundary": [
-                    105.8,
-                    30,
-                    1,
-                    5
-                  ]
+                  "boundary": [105.8, 30, 1, 5]
                 },
                 {
                   "wall": "x_max",
                   "type": "window",
-                  "boundary": [
-                    60.5,
-                    30,
-                    1,
-                    5
-                  ]
+                  "boundary": [60.5, 30, 1, 5]
                 },
                 {
                   "wall": "x_max",
                   "type": "window",
-                  "boundary": [
-                    15.2,
-                    30,
-                    1,
-                    5
-                  ]
+                  "boundary": [15.2, 30, 1, 5]
                 },
                 {
                   "wall": "x_min",
                   "type": "door",
-                  "boundary": [
-                    143.98,
-                    8,
-                    0,
-                    15
-                  ]
+                  "boundary": [143.98, 8, 0, 15]
                 },
                 {
                   "wall": "x_max",
                   "type": "door",
-                  "boundary": [
-                    143.98,
-                    8,
-                    0,
-                    15
-                  ]
+                  "boundary": [143.98, 8, 0, 15]
                 },
                 {
-                  "wall": "y_max",
+                  "wall": "y_min",
                   "type": "door",
-                  "boundary": [
-                    5.5,
-                    8,
-                    0,
-                    15
-                  ]
+                  "boundary": [7, 5, 0, 5]
                 }
               ],
               "combustibles": [
                 {
                   "key": "PREBAKED_ANODE_BLOCK",
-                  "count": 320
+                  "count": 26
                 },
                 {
                   "key": "CATHODE_CARBON_BLOCK",
-                  "count": 240
+                  "count": 20
                 },
                 {
                   "key": "TRANSFORMER_OIL_TANK",
-                  "count": 2
+                  "count": 1
                 },
                 {
                   "key": "CRANE_HYDRAULIC_TANK",
-                  "count": 2
+                  "count": 1
                 },
                 {
                   "key": "CABLE_BRIDGE",
-                  "count": 3
+                  "count": 1
                 }
               ],
               "specialized_components": [
@@ -2507,12 +1578,7 @@
     {
       "name": "Bay_A12",
       "cn_name": "A12跨单元",
-      "boundary": [
-        393.0,
-        19,
-        16.0,
-        302
-      ],
+      "boundary": [393.0, 19, 16.0, 302],
       "wall_thickness": 0.3,
       "height": 15,
       "stories": [
@@ -2523,206 +1589,116 @@
           "fire_compartments": [
             {
               "name": "A12南分区",
-              "boundary": [
-                0,
-                19.0,
-                0,
-                302.0
-              ],
+              "boundary": [0, 19.0, 0, 302.0],
               "firewall_thickness": 0.3,
               "firewall_material": "CONCRETE",
               "openings": [
                 {
                   "wall": "x_min",
                   "type": "window",
-                  "boundary": [
-                    286.95,
-                    15,
-                    1,
-                    5
-                  ]
+                  "boundary": [286.95, 15, 1, 5]
                 },
                 {
                   "wall": "x_min",
                   "type": "window",
-                  "boundary": [
-                    241.7,
-                    30,
-                    1,
-                    5
-                  ]
+                  "boundary": [241.7, 30, 1, 5]
                 },
                 {
                   "wall": "x_min",
                   "type": "window",
-                  "boundary": [
-                    196.4,
-                    30,
-                    1,
-                    5
-                  ]
+                  "boundary": [196.4, 30, 1, 5]
                 },
                 {
                   "wall": "x_min",
                   "type": "window",
-                  "boundary": [
-                    157.14,
-                    30,
-                    1,
-                    5
-                  ]
+                  "boundary": [157.14, 30, 1, 5]
                 },
                 {
                   "wall": "x_min",
                   "type": "window",
-                  "boundary": [
-                    105.8,
-                    30,
-                    1,
-                    5
-                  ]
+                  "boundary": [105.8, 30, 1, 5]
                 },
                 {
                   "wall": "x_min",
                   "type": "window",
-                  "boundary": [
-                    60.5,
-                    30,
-                    1,
-                    5
-                  ]
+                  "boundary": [60.5, 30, 1, 5]
                 },
                 {
                   "wall": "x_min",
                   "type": "window",
-                  "boundary": [
-                    15.2,
-                    30,
-                    1,
-                    5
-                  ]
+                  "boundary": [15.2, 30, 1, 5]
                 },
                 {
                   "wall": "x_max",
                   "type": "window",
-                  "boundary": [
-                    286.95,
-                    15,
-                    1,
-                    5
-                  ]
+                  "boundary": [286.95, 15, 1, 5]
                 },
                 {
                   "wall": "x_max",
                   "type": "window",
-                  "boundary": [
-                    241.7,
-                    30,
-                    1,
-                    5
-                  ]
+                  "boundary": [241.7, 30, 1, 5]
                 },
                 {
                   "wall": "x_max",
                   "type": "window",
-                  "boundary": [
-                    196.4,
-                    30,
-                    1,
-                    5
-                  ]
+                  "boundary": [196.4, 30, 1, 5]
                 },
                 {
                   "wall": "x_max",
                   "type": "window",
-                  "boundary": [
-                    157.14,
-                    30,
-                    1,
-                    5
-                  ]
+                  "boundary": [157.14, 30, 1, 5]
                 },
                 {
                   "wall": "x_max",
                   "type": "window",
-                  "boundary": [
-                    105.8,
-                    30,
-                    1,
-                    5
-                  ]
+                  "boundary": [105.8, 30, 1, 5]
                 },
                 {
                   "wall": "x_max",
                   "type": "window",
-                  "boundary": [
-                    60.5,
-                    30,
-                    1,
-                    5
-                  ]
+                  "boundary": [60.5, 30, 1, 5]
                 },
                 {
                   "wall": "x_max",
                   "type": "window",
-                  "boundary": [
-                    15.2,
-                    30,
-                    1,
-                    5
-                  ]
+                  "boundary": [15.2, 30, 1, 5]
                 },
                 {
                   "wall": "x_min",
                   "type": "door",
-                  "boundary": [
-                    143.98,
-                    8,
-                    0,
-                    15
-                  ]
+                  "boundary": [143.98, 8, 0, 15]
                 },
                 {
                   "wall": "x_max",
                   "type": "door",
-                  "boundary": [
-                    143.98,
-                    8,
-                    0,
-                    15
-                  ]
+                  "boundary": [143.98, 8, 0, 15]
                 },
                 {
-                  "wall": "y_max",
+                  "wall": "y_min",
                   "type": "door",
-                  "boundary": [
-                    5.5,
-                    8,
-                    0,
-                    15
-                  ]
+                  "boundary": [7, 5, 0, 5]
                 }
               ],
               "combustibles": [
                 {
                   "key": "PREBAKED_ANODE_BLOCK",
-                  "count": 320
+                  "count": 26
                 },
                 {
                   "key": "CATHODE_CARBON_BLOCK",
-                  "count": 240
+                  "count": 20
                 },
                 {
                   "key": "TRANSFORMER_OIL_TANK",
-                  "count": 2
+                  "count": 1
                 },
                 {
                   "key": "CRANE_HYDRAULIC_TANK",
-                  "count": 2
+                  "count": 1
                 },
                 {
                   "key": "CABLE_BRIDGE",
-                  "count": 3
+                  "count": 1
                 }
               ],
               "specialized_components": [
@@ -2744,12 +1720,7 @@
     {
       "name": "Bay_A13",
       "cn_name": "A13跨单元",
-      "boundary": [
-        426.0,
-        19,
-        16.0,
-        302
-      ],
+      "boundary": [426.0, 19, 16.0, 302],
       "wall_thickness": 0.3,
       "height": 15,
       "stories": [
@@ -2760,206 +1731,116 @@
           "fire_compartments": [
             {
               "name": "A13南分区",
-              "boundary": [
-                0,
-                19.0,
-                0,
-                302.0
-              ],
+              "boundary": [0, 19.0, 0, 302.0],
               "firewall_thickness": 0.3,
               "firewall_material": "CONCRETE",
               "openings": [
                 {
                   "wall": "x_min",
                   "type": "window",
-                  "boundary": [
-                    286.95,
-                    15,
-                    1,
-                    5
-                  ]
+                  "boundary": [286.95, 15, 1, 5]
                 },
                 {
                   "wall": "x_min",
                   "type": "window",
-                  "boundary": [
-                    241.7,
-                    30,
-                    1,
-                    5
-                  ]
+                  "boundary": [241.7, 30, 1, 5]
                 },
                 {
                   "wall": "x_min",
                   "type": "window",
-                  "boundary": [
-                    196.4,
-                    30,
-                    1,
-                    5
-                  ]
+                  "boundary": [196.4, 30, 1, 5]
                 },
                 {
                   "wall": "x_min",
                   "type": "window",
-                  "boundary": [
-                    157.14,
-                    30,
-                    1,
-                    5
-                  ]
+                  "boundary": [157.14, 30, 1, 5]
                 },
                 {
                   "wall": "x_min",
                   "type": "window",
-                  "boundary": [
-                    105.8,
-                    30,
-                    1,
-                    5
-                  ]
+                  "boundary": [105.8, 30, 1, 5]
                 },
                 {
                   "wall": "x_min",
                   "type": "window",
-                  "boundary": [
-                    60.5,
-                    30,
-                    1,
-                    5
-                  ]
+                  "boundary": [60.5, 30, 1, 5]
                 },
                 {
                   "wall": "x_min",
                   "type": "window",
-                  "boundary": [
-                    15.2,
-                    30,
-                    1,
-                    5
-                  ]
+                  "boundary": [15.2, 30, 1, 5]
                 },
                 {
                   "wall": "x_max",
                   "type": "window",
-                  "boundary": [
-                    286.95,
-                    15,
-                    1,
-                    5
-                  ]
+                  "boundary": [286.95, 15, 1, 5]
                 },
                 {
                   "wall": "x_max",
                   "type": "window",
-                  "boundary": [
-                    241.7,
-                    30,
-                    1,
-                    5
-                  ]
+                  "boundary": [241.7, 30, 1, 5]
                 },
                 {
                   "wall": "x_max",
                   "type": "window",
-                  "boundary": [
-                    196.4,
-                    30,
-                    1,
-                    5
-                  ]
+                  "boundary": [196.4, 30, 1, 5]
                 },
                 {
                   "wall": "x_max",
                   "type": "window",
-                  "boundary": [
-                    157.14,
-                    30,
-                    1,
-                    5
-                  ]
+                  "boundary": [157.14, 30, 1, 5]
                 },
                 {
                   "wall": "x_max",
                   "type": "window",
-                  "boundary": [
-                    105.8,
-                    30,
-                    1,
-                    5
-                  ]
+                  "boundary": [105.8, 30, 1, 5]
                 },
                 {
                   "wall": "x_max",
                   "type": "window",
-                  "boundary": [
-                    60.5,
-                    30,
-                    1,
-                    5
-                  ]
+                  "boundary": [60.5, 30, 1, 5]
                 },
                 {
                   "wall": "x_max",
                   "type": "window",
-                  "boundary": [
-                    15.2,
-                    30,
-                    1,
-                    5
-                  ]
+                  "boundary": [15.2, 30, 1, 5]
                 },
                 {
                   "wall": "x_min",
                   "type": "door",
-                  "boundary": [
-                    143.98,
-                    8,
-                    0,
-                    15
-                  ]
+                  "boundary": [143.98, 8, 0, 15]
                 },
                 {
                   "wall": "x_max",
                   "type": "door",
-                  "boundary": [
-                    143.98,
-                    8,
-                    0,
-                    15
-                  ]
+                  "boundary": [143.98, 8, 0, 15]
                 },
                 {
-                  "wall": "y_max",
+                  "wall": "y_min",
                   "type": "door",
-                  "boundary": [
-                    5.5,
-                    8,
-                    0,
-                    15
-                  ]
+                  "boundary": [7, 5, 0, 5]
                 }
               ],
               "combustibles": [
                 {
                   "key": "PREBAKED_ANODE_BLOCK",
-                  "count": 320
+                  "count": 26
                 },
                 {
                   "key": "CATHODE_CARBON_BLOCK",
-                  "count": 240
+                  "count": 20
                 },
                 {
                   "key": "TRANSFORMER_OIL_TANK",
-                  "count": 2
+                  "count": 1
                 },
                 {
                   "key": "CRANE_HYDRAULIC_TANK",
-                  "count": 2
+                  "count": 1
                 },
                 {
                   "key": "CABLE_BRIDGE",
-                  "count": 3
+                  "count": 1
                 }
               ],
               "specialized_components": [
@@ -2980,13 +1861,8 @@
     },
     {
       "name": "Bay_A14",
-      "cn_name": "B2宽跨单元",
-      "boundary": [
-        465.0,
-        20,
-        0.0,
-        334
-      ],
+      "cn_name": "A14宽跨单元",
+      "boundary": [465.0, 20, 0.0, 334],
       "wall_thickness": 0.3,
       "height": 15,
       "stories": [
@@ -2997,112 +1873,67 @@
           "fire_compartments": [
             {
               "name": "南分区",
-              "boundary": [
-                0,
-                20.0,
-                0,
-                257.18
-              ],
+              "boundary": [0, 20.0, 0, 257],
               "firewall_thickness": 0.3,
               "firewall_material": "CONCRETE",
               "openings": [
                 {
                   "wall": "x_min",
                   "type": "door",
-                  "boundary": [
-                    0.1436,
-                    10.0,
-                    0,
-                    6
-                  ]
+                  "boundary": [0.1436, 10.0, 0, 6]
                 },
                 {
                   "wall": "x_max",
                   "type": "door",
-                  "boundary": [
-                    187.885,
-                    10.0,
-                    0,
-                    6
-                  ]
+                  "boundary": [247, 10.0, 0, 6]
                 },
                 {
                   "wall": "y_max",
                   "type": "door",
-                  "boundary": [
-                    7.0,
-                    6.0,
-                    0,
-                    6
-                  ]
+                  "boundary": [7.0, 6.0, 0, 6]
                 }
               ],
               "combustibles": [
                 {
                   "key": "PREBAKED_ANODE_BLOCK",
-                  "count": 480
+                  "count": 28
                 },
                 {
                   "key": "CATHODE_CARBON_BLOCK",
-                  "count": 360
+                  "count": 21
                 }
               ],
               "specialized_components": []
             },
             {
               "name": "北分区",
-              "boundary": [
-                0,
-                20.0,
-                257.18,
-                334.0
-              ],
+              "boundary": [0, 20.0, 257, 334.0],
               "firewall_thickness": 0.3,
               "firewall_material": "CONCRETE",
               "openings": [
                 {
                   "wall": "y_max",
                   "type": "door",
-                  "boundary": [
-                    14.5,
-                    5.0,
-                    0,
-                    5.0
-                  ]
-                },
-                {
-                  "wall": "x_min",
-                  "type": "door",
-                  "boundary": [
-                    70.2836,
-                    10.0,
-                    0,
-                    6.0
-                  ]
+                  "boundary": [14.5, 5.0, 0, 5.0]
                 },
                 {
                   "wall": "x_max",
                   "type": "door",
-                  "boundary": [
-                    70.2836,
-                    10.0,
-                    0,
-                    6.0
-                  ]
+                  "boundary": [64, 5.0, 0, 6.0]
                 }
               ],
               "combustibles": [
                 {
                   "key": "CABLE_BRIDGE",
-                  "count": 6
-                },
-                {
-                  "key": "HYDRAULIC_TANK",
                   "count": 4
                 },
                 {
+                  "key": "HYDRAULIC_TANK",
+                  "count": 2
+                },
+                {
                   "key": "LUBE_OIL_DRUM",
-                  "count": 6
+                  "count": 1
                 }
               ],
               "specialized_components": [
@@ -3124,12 +1955,7 @@
     {
       "name": "Material_storage_building",
       "cn_name": "西侧材料存储区",
-      "boundary": [
-        -129.0,
-        46,
-        250.0,
-        68
-      ],
+      "boundary": [-129.0, 46, 250.0, 68],
       "wall_thickness": 0.25,
       "height": 12,
       "stories": [
@@ -3140,62 +1966,42 @@
           "fire_compartments": [
             {
               "name": "左下分区",
-              "boundary": [
-                0,
-                13.8,
-                0,
-                29.92
-              ],
+              "boundary": [0, 14, 0, 30],
               "firewall_thickness": 0.25,
               "firewall_material": "CONCRETE",
               "openings": [
                 {
                   "wall": "y_min",
                   "type": "door",
-                  "boundary": [
-                    -0.43,
-                    5,
-                    0,
-                    3
-                  ]
+                  "boundary": [4.5, 5, 0, 5]
                 },
                 {
                   "wall": "y_max",
                   "type": "door",
-                  "boundary": [
-                    -0.154,
-                    5,
-                    0,
-                    3
-                  ]
+                  "boundary": [4.5, 5, 0, 5]
                 },
                 {
                   "wall": "x_min",
                   "type": "door",
-                  "boundary": [
-                    2.5424,
-                    38,
-                    0,
-                    12
-                  ]
+                  "boundary": [30, 38, 0, 12]
                 }
               ],
               "combustibles": [
                 {
                   "key": "PREBAKED_ANODE_BLOCK",
-                  "count": 480
+                  "count": 10
                 },
                 {
                   "key": "CATHODE_CARBON_BLOCK",
-                  "count": 360
+                  "count": 10
                 },
                 {
                   "key": "CABLE_BRIDGE",
-                  "count": 4
+                  "count": 1
                 },
                 {
                   "key": "LUBE_OIL_DRUM",
-                  "count": 8
+                  "count": 1
                 }
               ],
               "specialized_components": [
@@ -3207,142 +2013,92 @@
             },
             {
               "name": "右下分区",
-              "boundary": [
-                13.8,
-                46.0,
-                0,
-                14.96
-              ],
+              "boundary": [14, 46.0, 0, 15],
               "firewall_thickness": 0.25,
               "firewall_material": "CONCRETE",
               "openings": [
                 {
                   "wall": "y_min",
                   "type": "door",
-                  "boundary": [
-                    10.38,
-                    5,
-                    0,
-                    3
-                  ]
+                  "boundary": [8, 5, 0, 5]
                 },
                 {
                   "wall": "x_max",
                   "type": "door",
-                  "boundary": [
-                    -0.4568,
-                    6,
-                    0,
-                    3
-                  ]
+                  "boundary": [8, 6, 0, 6]
                 }
               ],
               "combustibles": [
                 {
                   "key": "LAB_EQUIPMENT",
-                  "count": 10
+                  "count": 3
                 },
                 {
                   "key": "CHEMICAL_SAMPLE",
-                  "count": 30
+                  "count": 2
                 }
               ],
               "specialized_components": []
             },
             {
               "name": "右中分区",
-              "boundary": [
-                13.8,
-                46.0,
-                14.96,
-                29.92
-              ],
+              "boundary": [14, 46.0, 15, 30],
               "firewall_thickness": 0.25,
               "firewall_material": "CONCRETE",
               "openings": [
                 {
                   "wall": "x_max",
                   "type": "door",
-                  "boundary": [
-                    2.24,
-                    3,
-                    0,
-                    3
-                  ]
+                  "boundary": [3.5, 3, 0, 3]
                 },
                 {
                   "wall": "x_max",
                   "type": "door",
-                  "boundary": [
-                    3.736,
-                    3,
-                    0,
-                    3
-                  ]
+                  "boundary": [8.5, 3, 0, 3]
                 }
               ],
               "combustibles": [
                 {
                   "key": "LAB_EQUIPMENT",
-                  "count": 10
+                  "count": 2
                 },
                 {
                   "key": "CHEMICAL_SAMPLE",
-                  "count": 30
+                  "count": 2
                 }
               ],
               "specialized_components": []
             },
             {
               "name": "右上分区",
-              "boundary": [
-                13.8,
-                46.0,
-                29.92,
-                68.0
-              ],
+              "boundary": [14, 46.0, 30, 68.0],
               "firewall_thickness": 0.25,
               "firewall_material": "CONCRETE",
               "openings": [
                 {
                   "wall": "x_max",
                   "type": "door",
-                  "boundary": [
-                    17.04,
-                    4,
-                    0,
-                    4
-                  ]
+                  "boundary": [2, 4, 0, 4]
                 },
                 {
                   "wall": "y_max",
                   "type": "door",
-                  "boundary": [
-                    24.26,
-                    3,
-                    0,
-                    3
-                  ]
+                  "boundary": [24, 3, 0, 3]
                 },
                 {
                   "wall": "y_max",
                   "type": "door",
-                  "boundary": [
-                    -2.17,
-                    14,
-                    0,
-                    12
-                  ]
+                  "boundary": [-14, 14, 0, 12]
                 }
               ],
               "combustibles": [
                 {
                   "key": "LAB_EQUIPMENT",
-                  "count": 10
+                  "count": 4
                 },
                 {
                   "key": "CHEMICAL_SAMPLE",
-                  "count": 30
+                  "count": 6
                 }
               ],
               "specialized_components": []
@@ -3359,12 +2115,7 @@
     {
       "name": "North_Corridor",
       "cn_name": "北侧贯通长廊",
-      "boundary": [
-        -115.0,
-        580,
-        318.0,
-        16
-      ],
+      "boundary": [-115.0, 580, 318.0, 16],
       "wall_thickness": 0.3,
       "height": 6,
       "stories": [
@@ -3375,110 +2126,236 @@
           "fire_compartments": [
             {
               "name": "西一区",
-              "boundary": [
-                0,
-                262.74,
-                0,
-                16.0
-              ],
+              "boundary": [0, 265, 0, 16.0],
               "firewall_thickness": 0.3,
               "firewall_material": "CONCRETE",
               "openings": [
                 {
                   "wall": "y_min",
                   "type": "door",
-                  "boundary": [
-                    128.87,
-                    5.0,
-                    0,
-                    4.5
-                  ]
+                  "boundary": [42, 3.0, 0, 3.5]
+                },
+                {
+                  "wall": "y_min",
+                  "type": "door",
+                  "boundary": [112, 3.0, 0, 3.5]
+                },
+                {
+                  "wall": "y_max",
+                  "type": "door",
+                  "boundary": [32, 3.0, 0, 3.5]
+                },
+                {
+                  "wall": "y_max",
+                  "type": "door",
+                  "boundary": [64, 3.0, 0, 3.5]
+                },
+                {
+                  "wall": "y_min",
+                  "type": "door",
+                  "boundary": [122, 5.0, 0, 5]
+                },
+                {
+                  "wall": "y_max",
+                  "type": "door",
+                  "boundary": [115, 19.0, 0, 6]
+                },
+                {
+                  "wall": "y_min",
+                  "type": "door",
+                  "boundary": [155, 5.0, 0, 5]
+                },
+                {
+                  "wall": "y_max",
+                  "type": "door",
+                  "boundary": [148, 19.0, 0, 6]
+                },
+                {
+                  "wall": "y_min",
+                  "type": "door",
+                  "boundary": [187.5, 5.0, 0, 5]
+                },
+                {
+                  "wall": "y_min",
+                  "type": "door",
+                  "boundary": [220, 5.0, 0, 5]
+                },
+                {
+                  "wall": "y_max",
+                  "type": "door",
+                  "boundary": [213, 19.0, 0, 6]
+                },
+                {
+                  "wall": "y_min",
+                  "type": "door",
+                  "boundary": [253, 5.0, 0, 5]
+                },
+                {
+                  "wall": "y_max",
+                  "type": "door",
+                  "boundary": [246, 19.0, 0, 6]
                 }
               ],
               "combustibles": [
                 {
                   "key": "PREBAKED_ANODE_BLOCK",
-                  "count": 480
+                  "count": 12
                 },
                 {
                   "key": "CATHODE_CARBON_BLOCK",
-                  "count": 360
+                  "count": 14
                 }
               ],
               "specialized_components": []
             },
             {
               "name": "内嵌功能区",
-              "boundary": [
-                262.74,
-                440.22,
-                0,
-                16.0
-              ],
+              "boundary": [265, 442, 0, 16.0],
               "firewall_thickness": 0.3,
               "firewall_material": "CONCRETE",
-              "openings": [],
+              "openings": [
+                {
+                  "wall": "y_min",
+                  "type": "door",
+                  "boundary": [21, 5.0, 0, 5]
+                },
+                {
+                  "wall": "y_min",
+                  "type": "door",
+                  "boundary": [54, 5.0, 0, 5]
+                },
+                {
+                  "wall": "y_max",
+                  "type": "door",
+                  "boundary": [62, 3.0, 0, 3.5]
+                },
+                {
+                  "wall": "y_min",
+                  "type": "door",
+                  "boundary": [87, 5.0, 0, 5]
+                },
+                {
+                  "wall": "y_max",
+                  "type": "door",
+                  "boundary": [84, 3.0, 0, 3.5]
+                },
+                {
+                  "wall": "y_min",
+                  "type": "door",
+                  "boundary": [120, 5.0, 0, 5]
+                },
+                {
+                  "wall": "y_max",
+                  "type": "door",
+                  "boundary": [122.5, 8.5, 0, 5]
+                },
+                {
+                  "wall": "y_min",
+                  "type": "door",
+                  "boundary": [154, 5.0, 0, 5]
+                },
+                {
+                  "wall": "y_max",
+                  "type": "door",
+                  "boundary": [168, 8.5, 0, 5]
+                }
+              ],
               "combustibles": [
                 {
                   "key": "CABLE_BRIDGE",
-                  "count": 6
-                },
-                {
-                  "key": "HYDRAULIC_TANK",
                   "count": 4
                 },
                 {
+                  "key": "HYDRAULIC_TANK",
+                  "count": 8
+                },
+                {
                   "key": "LUBE_OIL_DRUM",
-                  "count": 6
+                  "count": 2
                 }
               ],
               "specialized_components": [
                 {
                   "key": "CONTROL_ROOM",
-                  "count": 1
+                  "count": 2
                 }
               ]
             },
             {
               "name": "东一区",
-              "boundary": [
-                440.22,
-                580.0,
-                0,
-                16.0
-              ],
+              "boundary": [442, 580.0, 0, 16.0],
               "firewall_thickness": 0.3,
               "firewall_material": "CONCRETE",
               "openings": [
                 {
+                  "wall": "x_min",
+                  "type": "door",
+                  "boundary": [5.5, 5.0, 0, 5]
+                },
+                {
+                  "wall": "x_max",
+                  "type": "door",
+                  "boundary": [5.5, 5.0, 0, 5]
+                },
+                {
+                  "wall": "y_min",
+                  "type": "door",
+                  "boundary": [7, 5.0, 0, 5]
+                },
+                {
                   "wall": "y_max",
                   "type": "door",
-                  "boundary": [
-                    67.39,
-                    5.0,
-                    0,
-                    4.5
-                  ]
+                  "boundary": [1, 3.0, 0, 3.5]
+                },
+                {
+                  "wall": "y_min",
+                  "type": "door",
+                  "boundary": [40, 5.0, 0, 5]
+                },
+                {
+                  "wall": "y_max",
+                  "type": "door",
+                  "boundary": [42.5, 8.0, 0, 5]
+                },
+                {
+                  "wall": "y_min",
+                  "type": "door",
+                  "boundary": [73, 5.0, 0, 5]
+                },
+                {
+                  "wall": "y_max",
+                  "type": "door",
+                  "boundary": [67, 8.0, 0, 5]
+                },
+                {
+                  "wall": "y_min",
+                  "type": "door",
+                  "boundary": [106, 5.0, 0, 5]
+                },
+                {
+                  "wall": "y_max",
+                  "type": "door",
+                  "boundary": [108.5, 8.0, 0, 5]
                 }
               ],
               "combustibles": [
                 {
                   "key": "CABLE_BRIDGE",
-                  "count": 6
-                },
-                {
-                  "key": "HYDRAULIC_TANK",
                   "count": 4
                 },
                 {
+                  "key": "HYDRAULIC_TANK",
+                  "count": 8
+                },
+                {
                   "key": "LUBE_OIL_DRUM",
-                  "count": 6
+                  "count": 2
                 }
               ],
               "specialized_components": [
                 {
                   "key": "CONTROL_ROOM",
-                  "count": 1
+                  "count": 2
                 }
               ]
             }
@@ -3494,560 +2371,301 @@
     {
       "name": "Bay_B2",
       "cn_name": "中央横跨长廊",
-      "boundary": [
-        -50.0,
-        515,
-        160.0,
-        8
-      ],
+      "boundary": [-50.0, 515, 160.0, 8],
       "wall_thickness": 0.2,
       "height": 15,
       "stories": [
         {
           "name": "1F",
           "height": 15.0,
-          "openings": [],
+          "openings": [
+            {
+              "wall": "y_max",
+              "type": "door",
+              "boundary": [44, 6, 0, 5]
+            },
+            {
+              "wall": "x_max",
+              "type": "door",
+              "boundary": [0, 8, 0, 15]
+            }
+          ],
           "fire_compartments": [
             {
               "name": "A1交叉区",
-              "boundary": [
-                0,
-                515.0,
-                0,
-                8.0
-              ],
+              "boundary": [0, 515.0, 0, 8.0],
               "firewall_thickness": 0.2,
               "firewall_material": "CONCRETE",
               "openings": [
                 {
                   "wall": "y_max",
                   "type": "door",
-                  "boundary": [
-                    49.9825,
-                    19,
-                    0,
-                    15
-                  ]
+                  "boundary": [49.9825, 19, 0, 15]
                 },
                 {
                   "wall": "y_min",
                   "type": "door",
-                  "boundary": [
-                    49.9825,
-                    19,
-                    0,
-                    15
-                  ]
+                  "boundary": [49.9825, 19, 0, 15]
                 },
                 {
                   "wall": "y_max",
                   "type": "door",
-                  "boundary": [
-                    73.514,
-                    5,
-                    0,
-                    5
-                  ]
+                  "boundary": [73.514, 5, 0, 5]
                 },
                 {
                   "wall": "y_min",
                   "type": "door",
-                  "boundary": [
-                    73.514,
-                    5,
-                    0,
-                    5
-                  ]
+                  "boundary": [73.514, 5, 0, 5]
                 },
                 {
                   "wall": "y_max",
                   "type": "door",
-                  "boundary": [
-                    82.994,
-                    19,
-                    0,
-                    15
-                  ]
+                  "boundary": [82.994, 19, 0, 15]
                 },
                 {
                   "wall": "y_min",
                   "type": "door",
-                  "boundary": [
-                    82.994,
-                    19,
-                    0,
-                    15
-                  ]
+                  "boundary": [82.994, 19, 0, 15]
                 },
                 {
                   "wall": "y_max",
                   "type": "door",
-                  "boundary": [
-                    106.5255,
-                    5,
-                    0,
-                    5
-                  ]
+                  "boundary": [106.5255, 5, 0, 5]
                 },
                 {
                   "wall": "y_min",
                   "type": "door",
-                  "boundary": [
-                    106.5255,
-                    5,
-                    0,
-                    5
-                  ]
+                  "boundary": [106.5255, 5, 0, 5]
                 },
                 {
                   "wall": "y_max",
                   "type": "door",
-                  "boundary": [
-                    115.9905,
-                    18,
-                    0,
-                    15
-                  ]
+                  "boundary": [115.9905, 18, 0, 15]
                 },
                 {
                   "wall": "y_min",
                   "type": "door",
-                  "boundary": [
-                    115.9905,
-                    18,
-                    0,
-                    15
-                  ]
+                  "boundary": [115.9905, 18, 0, 15]
                 },
                 {
                   "wall": "y_max",
                   "type": "door",
-                  "boundary": [
-                    138.507,
-                    5,
-                    0,
-                    5
-                  ]
+                  "boundary": [138.507, 5, 0, 5]
                 },
                 {
                   "wall": "y_min",
                   "type": "door",
-                  "boundary": [
-                    138.507,
-                    5,
-                    0,
-                    5
-                  ]
+                  "boundary": [138.507, 5, 0, 5]
                 },
                 {
                   "wall": "y_max",
                   "type": "door",
-                  "boundary": [
-                    147.987,
-                    19,
-                    0,
-                    15
-                  ]
+                  "boundary": [147.987, 19, 0, 15]
                 },
                 {
                   "wall": "y_min",
                   "type": "door",
-                  "boundary": [
-                    147.987,
-                    19,
-                    0,
-                    15
-                  ]
+                  "boundary": [147.987, 19, 0, 15]
                 },
                 {
                   "wall": "y_max",
                   "type": "door",
-                  "boundary": [
-                    171.5185,
-                    5,
-                    0,
-                    5
-                  ]
+                  "boundary": [171.5185, 5, 0, 5]
                 },
                 {
                   "wall": "y_min",
                   "type": "door",
-                  "boundary": [
-                    171.5185,
-                    5,
-                    0,
-                    5
-                  ]
+                  "boundary": [171.5185, 5, 0, 5]
                 },
                 {
                   "wall": "y_max",
                   "type": "door",
-                  "boundary": [
-                    180.9985,
-                    19,
-                    0,
-                    15
-                  ]
+                  "boundary": [180.9985, 19, 0, 15]
                 },
                 {
                   "wall": "y_min",
                   "type": "door",
-                  "boundary": [
-                    180.9985,
-                    19,
-                    0,
-                    15
-                  ]
+                  "boundary": [180.9985, 19, 0, 15]
                 },
                 {
                   "wall": "y_max",
                   "type": "door",
-                  "boundary": [
-                    204.4785,
-                    5,
-                    0,
-                    5
-                  ]
+                  "boundary": [204.4785, 5, 0, 5]
                 },
                 {
                   "wall": "y_min",
                   "type": "door",
-                  "boundary": [
-                    204.4785,
-                    5,
-                    0,
-                    5
-                  ]
+                  "boundary": [204.4785, 5, 0, 5]
                 },
                 {
                   "wall": "y_max",
                   "type": "door",
-                  "boundary": [
-                    214.01,
-                    19,
-                    0,
-                    15
-                  ]
+                  "boundary": [214.01, 19, 0, 15]
                 },
                 {
                   "wall": "y_min",
                   "type": "door",
-                  "boundary": [
-                    214.01,
-                    19,
-                    0,
-                    15
-                  ]
+                  "boundary": [214.01, 19, 0, 15]
                 },
                 {
                   "wall": "y_max",
                   "type": "door",
-                  "boundary": [
-                    237.49,
-                    5,
-                    0,
-                    5
-                  ]
+                  "boundary": [237.49, 5, 0, 5]
                 },
                 {
                   "wall": "y_min",
                   "type": "door",
-                  "boundary": [
-                    237.49,
-                    5,
-                    0,
-                    5
-                  ]
+                  "boundary": [237.49, 5, 0, 5]
                 },
                 {
                   "wall": "y_max",
                   "type": "door",
-                  "boundary": [
-                    247.0215,
-                    19,
-                    0,
-                    15
-                  ]
+                  "boundary": [247.0215, 19, 0, 15]
                 },
                 {
                   "wall": "y_min",
                   "type": "door",
-                  "boundary": [
-                    247.0215,
-                    19,
-                    0,
-                    15
-                  ]
+                  "boundary": [247.0215, 19, 0, 15]
                 },
                 {
                   "wall": "y_max",
                   "type": "door",
-                  "boundary": [
-                    270.5015,
-                    5,
-                    0,
-                    5
-                  ]
+                  "boundary": [270.5015, 5, 0, 5]
                 },
                 {
                   "wall": "y_min",
                   "type": "door",
-                  "boundary": [
-                    270.5015,
-                    5,
-                    0,
-                    5
-                  ]
+                  "boundary": [270.5015, 5, 0, 5]
                 },
                 {
                   "wall": "y_max",
                   "type": "door",
-                  "boundary": [
-                    279.9815,
-                    19,
-                    0,
-                    15
-                  ]
+                  "boundary": [279.9815, 19, 0, 15]
                 },
                 {
                   "wall": "y_min",
                   "type": "door",
-                  "boundary": [
-                    279.9815,
-                    19,
-                    0,
-                    15
-                  ]
+                  "boundary": [279.9815, 19, 0, 15]
                 },
                 {
                   "wall": "y_max",
                   "type": "door",
-                  "boundary": [
-                    303.513,
-                    5,
-                    0,
-                    5
-                  ]
+                  "boundary": [303.513, 5, 0, 5]
                 },
                 {
                   "wall": "y_min",
                   "type": "door",
-                  "boundary": [
-                    303.513,
-                    5,
-                    0,
-                    5
-                  ]
+                  "boundary": [303.513, 5, 0, 5]
                 },
                 {
                   "wall": "y_max",
                   "type": "door",
-                  "boundary": [
-                    312.993,
-                    19,
-                    0,
-                    15
-                  ]
+                  "boundary": [312.993, 19, 0, 15]
                 },
                 {
                   "wall": "y_min",
                   "type": "door",
-                  "boundary": [
-                    312.993,
-                    19,
-                    0,
-                    15
-                  ]
+                  "boundary": [312.993, 19, 0, 15]
                 },
                 {
                   "wall": "y_max",
                   "type": "door",
-                  "boundary": [
-                    351.9745,
-                    5,
-                    0,
-                    5
-                  ]
+                  "boundary": [351.9745, 5, 0, 5]
                 },
                 {
                   "wall": "y_min",
                   "type": "door",
-                  "boundary": [
-                    351.9745,
-                    5,
-                    0,
-                    5
-                  ]
+                  "boundary": [351.9745, 5, 0, 5]
                 },
                 {
                   "wall": "y_max",
                   "type": "door",
-                  "boundary": [
-                    377.0075,
-                    19,
-                    0,
-                    15
-                  ]
+                  "boundary": [377.0075, 19, 0, 15]
                 },
                 {
                   "wall": "y_min",
                   "type": "door",
-                  "boundary": [
-                    377.0075,
-                    19,
-                    0,
-                    15
-                  ]
+                  "boundary": [377.0075, 19, 0, 15]
                 },
                 {
                   "wall": "y_max",
                   "type": "door",
-                  "boundary": [
-                    400.4875,
-                    5,
-                    0,
-                    5
-                  ]
+                  "boundary": [400.4875, 5, 0, 5]
                 },
                 {
                   "wall": "y_min",
                   "type": "door",
-                  "boundary": [
-                    400.4875,
-                    5,
-                    0,
-                    5
-                  ]
+                  "boundary": [400.4875, 5, 0, 5]
                 },
                 {
                   "wall": "y_max",
                   "type": "door",
-                  "boundary": [
-                    410.019,
-                    19,
-                    0,
-                    15
-                  ]
+                  "boundary": [410.019, 19, 0, 15]
                 },
                 {
                   "wall": "y_min",
                   "type": "door",
-                  "boundary": [
-                    410.019,
-                    19,
-                    0,
-                    15
-                  ]
+                  "boundary": [410.019, 19, 0, 15]
                 },
                 {
                   "wall": "y_max",
                   "type": "door",
-                  "boundary": [
-                    433.499,
-                    5,
-                    0,
-                    5
-                  ]
+                  "boundary": [433.499, 5, 0, 5]
                 },
                 {
                   "wall": "y_min",
                   "type": "door",
-                  "boundary": [
-                    433.499,
-                    5,
-                    0,
-                    5
-                  ]
+                  "boundary": [433.499, 5, 0, 5]
                 },
                 {
                   "wall": "y_max",
                   "type": "door",
-                  "boundary": [
-                    442.979,
-                    19,
-                    0,
-                    15
-                  ]
+                  "boundary": [442.979, 19, 0, 15]
                 },
                 {
                   "wall": "y_min",
                   "type": "door",
-                  "boundary": [
-                    442.979,
-                    19,
-                    0,
-                    15
-                  ]
+                  "boundary": [442.979, 19, 0, 15]
                 },
                 {
                   "wall": "y_max",
                   "type": "door",
-                  "boundary": [
-                    466.5105,
-                    5,
-                    0,
-                    5
-                  ]
+                  "boundary": [466.5105, 5, 0, 5]
                 },
                 {
                   "wall": "y_min",
                   "type": "door",
-                  "boundary": [
-                    466.5105,
-                    5,
-                    0,
-                    5
-                  ]
+                  "boundary": [466.5105, 5, 0, 5]
                 },
                 {
                   "wall": "y_max",
                   "type": "door",
-                  "boundary": [
-                    475.9905,
-                    19,
-                    0,
-                    15
-                  ]
+                  "boundary": [475.9905, 19, 0, 15]
                 },
                 {
                   "wall": "y_min",
                   "type": "door",
-                  "boundary": [
-                    475.9905,
-                    19,
-                    0,
-                    15
-                  ]
+                  "boundary": [475.9905, 19, 0, 15]
                 },
                 {
                   "wall": "y_max",
                   "type": "door",
-                  "boundary": [
-                    502.509,
-                    5,
-                    0,
-                    5
-                  ]
+                  "boundary": [502.509, 5, 0, 5]
                 },
                 {
                   "wall": "y_min",
                   "type": "door",
-                  "boundary": [
-                    502.509,
-                    5,
-                    0,
-                    5
-                  ]
+                  "boundary": [502.509, 5, 0, 5]
                 }
               ],
               "combustibles": [
                 {
                   "key": "CABLE_BRIDGE",
-                  "count": 2
+                  "count": 1
                 },
                 {
                   "key": "LUBE_OIL_DRUM",
-                  "count": 4
+                  "count": 1
                 }
               ],
               "specialized_components": []

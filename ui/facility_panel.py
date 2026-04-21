@@ -28,7 +28,6 @@ from PySide6.QtWidgets import (
     QGridLayout,
     QCheckBox,
     QScrollArea,
-    QTabWidget,
     QSizePolicy,
     QTableWidget,
     QTableWidgetItem,
@@ -98,11 +97,12 @@ class FacilityListPanel(QWidget):
         # Description label
         self.desc_label = QLabel("")
         self.desc_label.setWordWrap(True)
-        self.desc_label.setStyleSheet("color:#a6adc8; font-size:11px;")
+        self.desc_label.setMinimumHeight(42)
+        self.desc_label.setStyleSheet("color:#a6adc8; font-size:12px;")
         sec_tree.content_layout.addWidget(self.desc_label)
         outer.addWidget(sec_tree)
 
-        # -- 2. Building params --
+        # -- 2. Building + door/window params (merged) --
         sec_bld = CollapsibleSection("建筑参数")
         g = QGridLayout()
         g.setSpacing(3)
@@ -115,7 +115,7 @@ class FacilityListPanel(QWidget):
             s.setDecimals(1)
             s.setSuffix(sfx)
             s.setValue(val)
-            s.setFixedHeight(26)
+            s.setMinimumHeight(28)
             s.setStyleSheet("font-size:13px;")
             if width:
                 s.setFixedWidth(width)
@@ -125,7 +125,7 @@ class FacilityListPanel(QWidget):
             s = QSpinBox()
             s.setRange(lo, hi)
             s.setValue(val)
-            s.setFixedHeight(26)
+            s.setMinimumHeight(28)
             s.setStyleSheet("font-size:13px;")
             if width:
                 s.setFixedWidth(width)
@@ -138,9 +138,16 @@ class FacilityListPanel(QWidget):
 
         def _range_label(width=None):
             lbl = QLabel("")
-            lbl.setStyleSheet("color:#6c7086; font-size:10px;")
+            lbl.setStyleSheet("color:#6c7086; font-size:11px;")
             if width:
-                lbl.setFixedWidth(width)
+                lbl.setMinimumWidth(width)
+            return lbl
+
+        def _section_title(text):
+            lbl = QLabel(text)
+            lbl.setStyleSheet(
+                "color:#89b4fa; font-size:12px; font-weight:bold; padding-top:4px;"
+            )
             return lbl
 
         r = 0
@@ -195,85 +202,43 @@ class FacilityListPanel(QWidget):
             "stories": self.rng_N,
         }
 
-        outer.addWidget(sec_bld)
-
-        # -- 3. Door+Window merged with QTabWidget --
-        sec_door_win = CollapsibleSection("门窗设置")
-
-        self._door_win_tabs = QTabWidget()
-        self._door_win_tabs.setStyleSheet(
-            "QTabWidget::pane { border: 1px solid #45475a; }"
-        )
-        self._door_win_tabs.setMaximumHeight(130)
-
-        # Door tab
-        door_tab = QWidget()
-        dg = QGridLayout(door_tab)
-        dg.setSpacing(2)
-        dg.setContentsMargins(2, 2, 2, 2)
+        # -- Door subsection (inside 建筑参数) --
+        sec_bld.content_layout.addWidget(_section_title("门"))
+        dg = QGridLayout()
+        dg.setSpacing(3)
         dg.setColumnStretch(1, 1)
         dg.setColumnStretch(3, 1)
-        dg.addWidget(_lbl("分布:"), 0, 0)
-        self.cb_dwall = QComboBox()
-        self.cb_dwall.addItems(WALL_NAMES)
-        self.cb_dwall.setCurrentIndex(4)
-        self.cb_dwall.setFixedHeight(26)
-        self.cb_dwall.setStyleSheet("font-size:13px;")
-        dg.addWidget(self.cb_dwall, 0, 1)
-        self.rng_dwall = _range_label(width=80)
-        dg.addWidget(self.rng_dwall, 0, 2)
-        dg.addWidget(_lbl("数量:"), 0, 3)
+        dg.setColumnStretch(5, 1)
+        dg.addWidget(_lbl("数量:"), 0, 0)
         self.sp_dc = _isp(0, 500, 0, width=80)
-        dg.addWidget(self.sp_dc, 0, 4)
-        self.rng_dc = _range_label(width=80)
-        dg.addWidget(self.rng_dc, 0, 5)
-        dg.addWidget(_lbl("宽:"), 1, 0)
+        dg.addWidget(self.sp_dc, 0, 1)
+        dg.addWidget(_lbl("宽:"), 0, 2)
         self.sp_dw = _dsp(0.3, 20, 1.5, width=80)
-        dg.addWidget(self.sp_dw, 1, 1)
-        self.rng_dw = _range_label(width=80)
-        dg.addWidget(self.rng_dw, 1, 2)
-        dg.addWidget(_lbl("高:"), 1, 3)
+        dg.addWidget(self.sp_dw, 0, 3)
+        dg.addWidget(_lbl("高:"), 0, 4)
         self.sp_dh = _dsp(0.3, 20, 2.1, width=80)
-        dg.addWidget(self.sp_dh, 1, 4)
-        self.rng_dh = _range_label(width=80)
-        dg.addWidget(self.rng_dh, 1, 5)
+        dg.addWidget(self.sp_dh, 0, 5)
+        sec_bld.content_layout.addLayout(dg)
 
-        # Window tab
-        win_tab = QWidget()
-        wg = QGridLayout(win_tab)
-        wg.setSpacing(2)
-        wg.setContentsMargins(2, 2, 2, 2)
+        # -- Window subsection (inside 建筑参数) --
+        sec_bld.content_layout.addWidget(_section_title("窗"))
+        wg = QGridLayout()
+        wg.setSpacing(3)
         wg.setColumnStretch(1, 1)
         wg.setColumnStretch(3, 1)
-        wg.addWidget(_lbl("分布:"), 0, 0)
-        self.cb_wwall = QComboBox()
-        self.cb_wwall.addItems(WALL_NAMES)
-        self.cb_wwall.setCurrentIndex(4)
-        self.cb_wwall.setFixedHeight(26)
-        self.cb_wwall.setStyleSheet("font-size:13px;")
-        wg.addWidget(self.cb_wwall, 0, 1)
-        self.rng_wwall = _range_label(width=80)
-        wg.addWidget(self.rng_wwall, 0, 2)
-        wg.addWidget(_lbl("数量:"), 0, 3)
+        wg.setColumnStretch(5, 1)
+        wg.addWidget(_lbl("数量:"), 0, 0)
         self.sp_wc = _isp(0, 500, 0, width=80)
-        wg.addWidget(self.sp_wc, 0, 4)
-        self.rng_wc = _range_label(width=80)
-        wg.addWidget(self.rng_wc, 0, 5)
-        wg.addWidget(_lbl("宽:"), 1, 0)
+        wg.addWidget(self.sp_wc, 0, 1)
+        wg.addWidget(_lbl("宽:"), 0, 2)
         self.sp_ww = _dsp(0.3, 20, 1.5, width=80)
-        wg.addWidget(self.sp_ww, 1, 1)
-        self.rng_ww = _range_label(width=80)
-        wg.addWidget(self.rng_ww, 1, 2)
-        wg.addWidget(_lbl("高:"), 1, 3)
+        wg.addWidget(self.sp_ww, 0, 3)
+        wg.addWidget(_lbl("高:"), 0, 4)
         self.sp_wh = _dsp(0.3, 20, 1.5, width=80)
-        wg.addWidget(self.sp_wh, 1, 4)
-        self.rng_wh = _range_label(width=80)
-        wg.addWidget(self.rng_wh, 1, 5)
+        wg.addWidget(self.sp_wh, 0, 5)
+        sec_bld.content_layout.addLayout(wg)
 
-        self._door_win_tabs.addTab(door_tab, "门")
-        self._door_win_tabs.addTab(win_tab, "窗")
-        sec_door_win.content_layout.addWidget(self._door_win_tabs)
-        outer.addWidget(sec_door_win)
+        outer.addWidget(sec_bld)
 
         # -- 7. Combustible button --
         self.combustible_btn = QPushButton("可燃物管理…")
@@ -405,11 +370,6 @@ class FacilityListPanel(QWidget):
         self.facility_tree.addTopLevelItem(spec_root)
         self.facility_tree.expandItem(equiv_root)
         self.facility_tree.expandItem(spec_root)
-
-        for i in range(equiv_root.childCount()):
-            self.facility_tree.expandItem(equiv_root.child(i))
-        for i in range(spec_root.childCount()):
-            self.facility_tree.expandItem(spec_root.child(i))
 
     # Alias for backward compatibility
     def load_facilities(self):
@@ -564,11 +524,11 @@ class FacilityListPanel(QWidget):
             door_width=self.sp_dw.value(),
             door_height=self.sp_dh.value(),
             door_count=self.sp_dc.value(),
-            door_wall=self.cb_dwall.currentIndex(),
+            door_wall=WALL_NAMES.index("均匀分布"),
             window_width=self.sp_ww.value(),
             window_height=self.sp_wh.value(),
             window_count=self.sp_wc.value(),
-            window_wall=self.cb_wwall.currentIndex(),
+            window_wall=WALL_NAMES.index("均匀分布"),
         )
 
         # Combustible selections from stored params (set via dialog)
@@ -642,7 +602,7 @@ class FacilityListPanel(QWidget):
                 buildings.append(b)
 
         if buildings:
-            group = BuildingGroup(buildings=buildings)
+            group = BuildingGroup(name=facility_name, buildings=buildings)
             self.facility_selected.emit(group.to_dict())
 
     def _open_combustible_dialog(self):

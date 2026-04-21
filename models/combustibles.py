@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-'''
+"""
 @File  : combustibles.py
 @Author: Lubber
 @Date  : 2026-02-27
 @Version : 2.0
 @Desc  : Combustible model class for FDS generation
-'''
+"""
 
 import random
 import math
@@ -16,6 +16,7 @@ from enum import Enum
 from typing import List, Optional, Tuple
 from models.materials import COMBUSTIBLE_LIBRARY
 
+
 class DistributionMethod(Enum):
     UNIFORM_GRID = "均匀网格"
     RANDOM = "随机分布"
@@ -23,7 +24,6 @@ class DistributionMethod(Enum):
     CLUSTERED = "聚集分布"
     DIAGONAL = "对角线分布"
     RING = "环形分布"
-
 
 
 @dataclass
@@ -38,6 +38,7 @@ class ComponentPart:
     height: float
     material_key: str  # key into MATERIAL_LIBRARY or COMBUSTIBLE_LIBRARY
     surf_id: str = ""  # custom SURF if needed
+
 
 @dataclass
 class SpecializedComponent:
@@ -95,6 +96,8 @@ class SpecializedComponent:
             hrrpua=d.get("hrrpua", 300.0),
             ignition_temp=d.get("ignition_temp", 350.0),
         )
+
+
 SPECIALIZED_COMPONENTS = {
     # ══════════════════════════════════════════════
     # Aircraft (12-14 OBST per model)
@@ -1022,7 +1025,7 @@ SPECIALIZED_COMPONENTS = {
                 width=5.0,
                 height=8.0,
                 material_key="SOLID_PROPELLANT",
-                surf_id="PROPELLANT_SURF",
+                surf_id="SURF_SOLID_PROPELLANT",
             ),
             # 2. 级间段 #1
             ComponentPart(
@@ -1077,7 +1080,7 @@ SPECIALIZED_COMPONENTS = {
                 width=1.5,
                 height=7.0,
                 material_key="SOLID_PROPELLANT",
-                surf_id="PROPELLANT_SURF",
+                surf_id="SURF_SOLID_PROPELLANT",
             ),
             # 7. 助推器 #2 (右前)
             ComponentPart(
@@ -1088,7 +1091,7 @@ SPECIALIZED_COMPONENTS = {
                 width=1.5,
                 height=7.0,
                 material_key="SOLID_PROPELLANT",
-                surf_id="PROPELLANT_SURF",
+                surf_id="SURF_SOLID_PROPELLANT",
             ),
             # 8. 助推器 #3 (左后)
             ComponentPart(
@@ -1099,7 +1102,7 @@ SPECIALIZED_COMPONENTS = {
                 width=1.5,
                 height=7.0,
                 material_key="SOLID_PROPELLANT",
-                surf_id="PROPELLANT_SURF",
+                surf_id="SURF_SOLID_PROPELLANT",
             ),
             # 9. 助推器 #4 (右后)
             ComponentPart(
@@ -1110,7 +1113,7 @@ SPECIALIZED_COMPONENTS = {
                 width=1.5,
                 height=7.0,
                 material_key="SOLID_PROPELLANT",
-                surf_id="PROPELLANT_SURF",
+                surf_id="SURF_SOLID_PROPELLANT",
             ),
             # 10. 发动机喷管区
             ComponentPart(
@@ -1145,7 +1148,7 @@ SPECIALIZED_COMPONENTS = {
                 width=3.4,
                 height=5.5,
                 material_key="SOLID_PROPELLANT",
-                surf_id="PROPELLANT_SURF",
+                surf_id="SURF_SOLID_PROPELLANT",
             ),
             # 2. 级间段
             ComponentPart(
@@ -1189,7 +1192,7 @@ SPECIALIZED_COMPONENTS = {
                 width=1.0,
                 height=4.5,
                 material_key="SOLID_PROPELLANT",
-                surf_id="PROPELLANT_SURF",
+                surf_id="SURF_SOLID_PROPELLANT",
             ),
             # 6. 助推器 #2 (右)
             ComponentPart(
@@ -1200,7 +1203,7 @@ SPECIALIZED_COMPONENTS = {
                 width=1.0,
                 height=4.5,
                 material_key="SOLID_PROPELLANT",
-                surf_id="PROPELLANT_SURF",
+                surf_id="SURF_SOLID_PROPELLANT",
             ),
             # 7. 发动机喷管
             ComponentPart(
@@ -1235,7 +1238,7 @@ SPECIALIZED_COMPONENTS = {
                 width=1.3,
                 height=2.5,
                 material_key="SOLID_PROPELLANT",
-                surf_id="PROPELLANT_SURF",
+                surf_id="SURF_SOLID_PROPELLANT",
             ),
             # 2. 弹体中段（战斗部/载荷）
             ComponentPart(
@@ -1314,7 +1317,7 @@ SPECIALIZED_COMPONENTS = {
                 width=5.0,
                 height=12.0,
                 material_key="COAL_STACK",
-                surf_id="COAL_STACK_SURF",
+                surf_id="SURF_COAL_STACK",
             ),
             # 2. 煤粉仓
             ComponentPart(
@@ -1325,7 +1328,7 @@ SPECIALIZED_COMPONENTS = {
                 width=4.0,
                 height=8.0,
                 material_key="COAL_DUST_HOPPER",
-                surf_id="COAL_DUST_HOPPER_SURF",
+                surf_id="SURF_COAL_DUST_HOPPER",
             ),
             # 3. 给煤机皮带
             ComponentPart(
@@ -1336,7 +1339,7 @@ SPECIALIZED_COMPONENTS = {
                 width=0.8,
                 height=0.012,
                 material_key="CONVEYOR_BELT",
-                surf_id="CONVEYOR_BELT_SURF",
+                surf_id="SURF_CONVEYOR_BELT",
             ),
             # 4. 皮带支撑结构
             ComponentPart(
@@ -1371,7 +1374,7 @@ SPECIALIZED_COMPONENTS = {
                 width=2.5,
                 height=2.0,
                 material_key="LUBE_OIL_TANK",
-                surf_id="LUBE_OIL_TANK_SURF",
+                surf_id="SURF_LUBE_OIL_TANK",
             ),
             # 2. 液压油箱
             ComponentPart(
@@ -1382,7 +1385,7 @@ SPECIALIZED_COMPONENTS = {
                 width=1.2,
                 height=1.5,
                 material_key="HYDRAULIC_OIL_TANK",
-                surf_id="HYDRAULIC_OIL_TANK_SURF",
+                surf_id="SURF_HYDRAULIC_OIL_TANK",
             ),
             # 3. 密封油箱
             ComponentPart(
@@ -1393,7 +1396,7 @@ SPECIALIZED_COMPONENTS = {
                 width=1.0,
                 height=1.2,
                 material_key="SEAL_OIL_TANK",
-                surf_id="SEAL_OIL_TANK_SURF",
+                surf_id="SURF_SEAL_OIL_TANK",
             ),
             # 4. 油管路系统
             ComponentPart(
@@ -1428,7 +1431,7 @@ SPECIALIZED_COMPONENTS = {
                 width=2.0,
                 height=2.5,
                 material_key="OIL_TRANSFORMER",
-                surf_id="OIL_TRANSFORMER_SURF",
+                surf_id="SURF_OIL_TRANSFORMER",
             ),
             # 2. 开关柜1
             ComponentPart(
@@ -1439,7 +1442,7 @@ SPECIALIZED_COMPONENTS = {
                 width=1.2,
                 height=2.2,
                 material_key="SWITCH_CABINET",
-                surf_id="SWITCH_CABINET_SURF",
+                surf_id="SURF_SWITCH_CABINET",
             ),
             # 3. 开关柜2
             ComponentPart(
@@ -1450,7 +1453,7 @@ SPECIALIZED_COMPONENTS = {
                 width=1.2,
                 height=2.2,
                 material_key="SWITCH_CABINET",
-                surf_id="SWITCH_CABINET_SURF",
+                surf_id="SURF_SWITCH_CABINET",
             ),
             # 4. 油浸断路器
             ComponentPart(
@@ -1461,7 +1464,7 @@ SPECIALIZED_COMPONENTS = {
                 width=0.8,
                 height=2.2,
                 material_key="OIL_CIRCUIT_BREAKER",
-                surf_id="OIL_CIRCUIT_BREAKER_SURF",
+                surf_id="SURF_OIL_CIRCUIT_BREAKER",
             ),
             # 5. 电缆桥架
             ComponentPart(
@@ -1472,7 +1475,7 @@ SPECIALIZED_COMPONENTS = {
                 width=0.8,
                 height=0.2,
                 material_key="CABLE_BUNDLE",
-                surf_id="CABLE_BUNDLE_SURF",
+                surf_id="SURF_CABLE_BUNDLE",
             ),
         ],
     ),
@@ -1496,7 +1499,7 @@ SPECIALIZED_COMPONENTS = {
                 width=1.5,
                 height=1.8,
                 material_key="IGNITION_OIL_DEVICE",
-                surf_id="IGNITION_OIL_DEVICE_SURF",
+                surf_id="SURF_IGNITION_OIL_DEVICE",
             ),
             # 2. 日用油箱
             ComponentPart(
@@ -1507,7 +1510,7 @@ SPECIALIZED_COMPONENTS = {
                 width=1.0,
                 height=1.2,
                 material_key="DAILY_OIL_TANK",
-                surf_id="DAILY_OIL_TANK_SURF",
+                surf_id="SURF_DAILY_OIL_TANK",
             ),
             # 3. 供油管路
             ComponentPart(
@@ -1531,6 +1534,7 @@ SPECIALIZED_COMPONENTS = {
 @dataclass
 class Combustible:
     """单个可燃物"""
+
     id: str = ""
     preset_key: str = "WOOD_TABLE"
     name: str = "木桌"
@@ -1543,7 +1547,7 @@ class Combustible:
     width: float = 0.8
     height: float = 0.75
     # 燃烧参数
-    hrrpua: float = 300.0       # kW/m²
+    hrrpua: float = 300.0  # kW/m²
     ignition_temp: float = 350  # °C
     color: str = "BROWN"
     matl: dict = field(default_factory=dict)
@@ -1552,6 +1556,7 @@ class Combustible:
         ""  # key into SPECIALIZED_COMPONENTS if this is a component part
     )
     material_key: str = ""  # material for component parts (e.g., ALUMINUM, STEEL)
+    rotation: int = 0  # 0 or 90 degrees
 
     def __post_init__(self):
         if not self.id:
@@ -1579,16 +1584,48 @@ class Combustible:
 
     @property
     def bounds(self) -> Tuple[float, float, float, float, float, float]:
-        return (self.x, self.x + self.length,
-                self.y, self.y + self.width,
-                self.z, self.z + self.height)
+        return (
+            self.x,
+            self.x + self.length,
+            self.y,
+            self.y + self.width,
+            self.z,
+            self.z + self.height,
+        )
 
     def to_dict(self) -> dict:
         return asdict(self)
 
     @classmethod
     def from_dict(cls, d: dict) -> "Combustible":
-        return cls(**d)
+        rotation = d.get("rotation", 0)
+        if rotation != 90:
+            rotation = 0
+
+        cb = cls(
+            id=d.get("id", ""),
+            preset_key=d.get("preset_key", d.get("key", "WOOD_TABLE")),
+            name=d.get("name", ""),
+            x=d.get("x", 0.0),
+            y=d.get("y", 0.0),
+            z=d.get("z", 0.0),
+            length=d.get("length", 1.2),
+            width=d.get("width", 0.8),
+            height=d.get("height", 0.75),
+            hrrpua=d.get("hrrpua", 300.0),
+            ignition_temp=d.get("ignition_temp", 350),
+            color=d.get("color", "BROWN"),
+            matl=d.get("matl", {}),
+            compartment_id=d.get("compartment_id", ""),
+            component_key=d.get("component_key", ""),
+            material_key=d.get("material_key", ""),
+            rotation=rotation,
+        )
+
+        if rotation == 90:
+            cb.length, cb.width = cb.width, cb.length
+
+        return cb
 
 
 class CombustibleManager:
@@ -1618,13 +1655,18 @@ class CombustibleManager:
         self.items = [Combustible.from_dict(d) for d in data]
 
     # ── 分布生成 ─────────────────────────────────────────
-    def generate(self, preset_key: str, count: int,
-                method: DistributionMethod,
-                room_length: float, room_width: float,
-                wall_thickness: float = 0.2,
-                margin: float = 0.3,
-                seed: Optional[int] = None,
-                **kwargs) -> List[Combustible]:
+    def generate(
+        self,
+        preset_key: str,
+        count: int,
+        method: DistributionMethod,
+        room_length: float,
+        room_width: float,
+        wall_thickness: float = 0.2,
+        margin: float = 0.3,
+        seed: Optional[int] = None,
+        **kwargs,
+    ) -> List[Combustible]:
         if seed is not None:
             random.seed(seed)
 
@@ -1650,26 +1692,33 @@ class CombustibleManager:
 
         positions = {
             DistributionMethod.UNIFORM_GRID: self._grid,
-            DistributionMethod.RANDOM:       self._random,
-            DistributionMethod.ALONG_WALLS:  self._along_walls,
-            DistributionMethod.CLUSTERED:    self._clustered,
-            DistributionMethod.DIAGONAL:     self._diagonal,
-            DistributionMethod.RING:         self._ring,
+            DistributionMethod.RANDOM: self._random,
+            DistributionMethod.ALONG_WALLS: self._along_walls,
+            DistributionMethod.CLUSTERED: self._clustered,
+            DistributionMethod.DIAGONAL: self._diagonal,
+            DistributionMethod.RING: self._ring,
         }[method](
-            count, x_min, x_max, y_min, y_max, obj_l, obj_w,
+            count,
+            x_min,
+            x_max,
+            y_min,
+            y_max,
+            obj_l,
+            obj_w,
             # 沿墙分布需要内部边界
-            interior_x_min=interior_x_min, interior_x_max=interior_x_max,
-            interior_y_min=interior_y_min, interior_y_max=interior_y_max,
-            **kwargs
+            interior_x_min=interior_x_min,
+            interior_x_max=interior_x_max,
+            interior_y_min=interior_y_min,
+            interior_y_max=interior_y_max,
+            **kwargs,
         )
 
         new_items = []
-        for (x, y) in positions[:count]:
+        for x, y in positions[:count]:
             # 最终裁剪，确保不超出内部空间
             x = max(interior_x_min, min(x, interior_x_max - obj_l))
             y = max(interior_y_min, min(y, interior_y_max - obj_w))
-            cb = Combustible.from_preset(
-                preset_key, x=round(x, 2), y=round(y, 2), z=0)
+            cb = Combustible.from_preset(preset_key, x=round(x, 2), y=round(y, 2), z=0)
             self.items.append(cb)
             new_items.append(cb)
         return new_items
@@ -1677,7 +1726,9 @@ class CombustibleManager:
     # ── 分布算法 ─────────────────────────────────────────
     @staticmethod
     def _grid(count, x_min, x_max, y_min, y_max, ol, ow, **kw):
-        cols = max(1, int(math.ceil(math.sqrt(count * (x_max - x_min) / (y_max - y_min)))))
+        cols = max(
+            1, int(math.ceil(math.sqrt(count * (x_max - x_min) / (y_max - y_min))))
+        )
         rows = max(1, int(math.ceil(count / cols)))
         dx = (x_max - x_min) / max(cols, 1)
         dy = (y_max - y_min) / max(rows, 1)
@@ -1686,8 +1737,9 @@ class CombustibleManager:
             for c in range(cols):
                 if len(pts) >= count:
                     break
-                pts.append((x_min + c * dx + dx / 2 - ol / 2,
-                            y_min + r * dy + dy / 2 - ow / 2))
+                pts.append(
+                    (x_min + c * dx + dx / 2 - ol / 2, y_min + r * dy + dy / 2 - ow / 2)
+                )
         return pts
 
     @staticmethod
@@ -1700,16 +1752,26 @@ class CombustibleManager:
             x = random.uniform(x_min, x_max)
             y = random.uniform(y_min, y_max)
             # 简单防重叠
-            ok = all(abs(x - px) > ol * 0.8 or abs(y - py) > ow * 0.8
-                     for px, py in pts)
+            ok = all(abs(x - px) > ol * 0.8 or abs(y - py) > ow * 0.8 for px, py in pts)
             if ok:
                 pts.append((x, y))
         return pts
 
     @staticmethod
-    def _along_walls(count, x_min, x_max, y_min, y_max, ol, ow,
-                    interior_x_min=0, interior_x_max=0,
-                    interior_y_min=0, interior_y_max=0, **kw):
+    def _along_walls(
+        count,
+        x_min,
+        x_max,
+        y_min,
+        y_max,
+        ol,
+        ow,
+        interior_x_min=0,
+        interior_x_max=0,
+        interior_y_min=0,
+        interior_y_max=0,
+        **kw,
+    ):
         """沿墙分布：物体紧贴内墙面"""
         pts = []
         gap = 0.1  # 离墙面间隙
@@ -1721,28 +1783,28 @@ class CombustibleManager:
         wall_y = interior_y_min + gap
         x = interior_x_min + gap
         while x + ol <= interior_x_max - gap:
-            segments.append((x, wall_y, 'south'))
+            segments.append((x, wall_y, "south"))
             x += ol + 0.3
 
         # 北墙 (y_max侧)
         wall_y = interior_y_max - gap - ow
         x = interior_x_min + gap
         while x + ol <= interior_x_max - gap:
-            segments.append((x, wall_y, 'north'))
+            segments.append((x, wall_y, "north"))
             x += ol + 0.3
 
         # 西墙 (x_min侧)
         wall_x = interior_x_min + gap
         y = interior_y_min + gap + ow  # 跳过角落
         while y + ow <= interior_y_max - gap - ow:
-            segments.append((wall_x, y, 'west'))
+            segments.append((wall_x, y, "west"))
             y += ow + 0.3
 
         # 东墙 (x_max侧)
         wall_x = interior_x_max - gap - ol
         y = interior_y_min + gap + ow
         while y + ow <= interior_y_max - gap - ow:
-            segments.append((wall_x, y, 'east'))
+            segments.append((wall_x, y, "east"))
             y += ow + 0.3
 
         # 均匀选取
@@ -1755,12 +1817,14 @@ class CombustibleManager:
         return [(x, y) for x, y, _ in selected]
 
     @staticmethod
-    def _clustered(count, x_min, x_max, y_min, y_max, ol, ow,
-                   clusters=3, spread=1.5, **kw):
+    def _clustered(
+        count, x_min, x_max, y_min, y_max, ol, ow, clusters=3, spread=1.5, **kw
+    ):
         pts = []
-        centers = [(random.uniform(x_min + 1, x_max - 1),
-                     random.uniform(y_min + 1, y_max - 1))
-                    for _ in range(min(clusters, count))]
+        centers = [
+            (random.uniform(x_min + 1, x_max - 1), random.uniform(y_min + 1, y_max - 1))
+            for _ in range(min(clusters, count))
+        ]
         per_cluster = max(1, count // len(centers))
         for cx, cy in centers:
             for _ in range(per_cluster):
@@ -1776,8 +1840,7 @@ class CombustibleManager:
         pts = []
         for i in range(count):
             t = i / max(count - 1, 1)
-            pts.append((x_min + t * (x_max - x_min),
-                        y_min + t * (y_max - y_min)))
+            pts.append((x_min + t * (x_max - x_min), y_min + t * (y_max - y_min)))
         return pts
 
     @staticmethod
@@ -1789,8 +1852,7 @@ class CombustibleManager:
         pts = []
         for i in range(count):
             a = 2 * math.pi * i / count
-            pts.append((cx + rx * math.cos(a) - ol / 2,
-                        cy + ry * math.sin(a) - ow / 2))
+            pts.append((cx + rx * math.cos(a) - ol / 2, cy + ry * math.sin(a) - ow / 2))
         return pts
 
     # ── 碰撞检测 ─────────────────────────────────────────
@@ -1798,8 +1860,12 @@ class CombustibleManager:
         """返回所有重叠的可燃物id对"""
         overlaps = []
         for i, a in enumerate(self.items):
-            for b in self.items[i + 1:]:
-                if (a.x < b.x + b.length and a.x + a.length > b.x and
-                    a.y < b.y + b.width and a.y + a.width > b.y):
+            for b in self.items[i + 1 :]:
+                if (
+                    a.x < b.x + b.length
+                    and a.x + a.length > b.x
+                    and a.y < b.y + b.width
+                    and a.y + a.width > b.y
+                ):
                     overlaps.append((a.id, b.id))
         return overlaps

@@ -125,10 +125,12 @@ class ParameterEngine:
                 wall_len = ParameterEngine._wall_length(fc_boundary, wall_id)
                 w_offset = ot["w_offset_ratio"] * wall_len
                 w = ot["width_ratio"] * wall_len
+                # Clamp height to story height
+                h = min(ot["height"], story_height)
                 fc_openings.append({
                     "wall": wall_id,
                     "type": ot["type"],
-                    "boundary": [w_offset, w, ot["h_offset"], ot["height"]],
+                    "boundary": [w_offset, w, ot["h_offset"], h],
                 })
 
             fire_compartments.append({
@@ -206,6 +208,8 @@ class ParameterEngine:
             h = ParameterEngine.resolve_range(doors_tmpl["height"])
             count = int(ParameterEngine.resolve_range(doors_tmpl["count"]))
             wall_len = length  # y walls run along x -> length
+            # Clamp height to story height
+            h = min(h, story_height)
             # Skip if door wider than wall
             if w > 0 and h > 0 and w <= wall_len:
                 for wall_id in ("y_min", "y_max"):
@@ -231,6 +235,8 @@ class ParameterEngine:
             count = int(ParameterEngine.resolve_range(windows_tmpl["count"]))
             wall_len = width  # x walls run along y -> width
             h_offset = story_height * 0.4
+            # Clamp height to story height
+            h = min(h, story_height - h_offset)
             if w > 0 and h > 0 and w <= wall_len:
                 for wall_id in ("x_min", "x_max"):
                     if count > 0:

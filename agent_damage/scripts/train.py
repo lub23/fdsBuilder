@@ -22,6 +22,7 @@ from agent_damage.src.models.mlp import MLP
 from agent_damage.src.models.rf_model import RFDamageModel
 from agent_damage.src.models.svm_model import SVMDamageModel
 from agent_damage.src.training.evaluator import evaluate_classifier
+from agent_damage.src.training.plot_history import plot_training_curves
 from agent_damage.src.training.torch_trainer import TorchTrainConfig, train_torch_model
 
 
@@ -138,6 +139,8 @@ def main() -> int:
     with open(OUTPUT_DIR / "train_summary.json", "w", encoding="utf-8") as f:
         json.dump(summary, f, ensure_ascii=False, indent=2)
     print(f"[train] Summary saved to {OUTPUT_DIR / 'train_summary.json'}")
+
+    plot_training_curves(OUTPUT_DIR / "train_summary.json", OUTPUT_DIR / "training_curves.png")
     return 0
 
 

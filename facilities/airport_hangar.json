@@ -1,5 +1,6 @@
 {
   "type": "equivalent",
+  "name": "Airport Hangar",
   "cn_name": "机场机库",
   "buildings": [
     {
@@ -32,6 +33,7 @@
           },
           "fire_compartment_ratios": [
             {
+              
               "name": "主停机区",
               "boundary_ratio": [0, 0.65, 0, 1],
               "firewall_thickness": 0.3,

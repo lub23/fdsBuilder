@@ -96,9 +96,19 @@ class DamageResultDialog(QDialog):
 
     # ── header (overall level banner) ──────────────────────────────
     def _build_header(self) -> QFrame:
-        overall = self._result.get_overall_level(algorithm=self._algorithm).value
+        overall_level = self._result.get_overall_level(algorithm=self._algorithm)
+        overall = overall_level.value
         palette = LEVEL_COLORS[overall]
         bright, dark = palette["bright"], palette["dark"]
+
+        matching = [
+            r for r in self._result.building_results
+            if r.damage_level == overall_level
+        ]
+        overall_prob = (
+            sum(r.probability for r in matching) / len(matching)
+            if matching else 0.0
+        )
 
         banner = QFrame()
         banner.setStyleSheet(
@@ -125,12 +135,11 @@ class DamageResultDialog(QDialog):
         layout.addWidget(title)
 
         sub_parts = [
+            f"概率 {overall_prob * 100:.1f}%",
             f"不确定度 {self._result.overall_uncertainty:.3f}",
-            f"推理 {self._infer_time_ms:.1f} ms",
+            f"推理 {self._infer_time_ms / 1000.0:.2f} s",
             f"{len(self._result.building_results)} 栋单体建筑",
         ]
-        if self._model_names:
-            sub_parts.insert(0, "融合模型: " + " + ".join(self._model_names))
         sub = QLabel("   •   ".join(sub_parts))
         sub.setAlignment(Qt.AlignCenter)
         sub.setStyleSheet("font-size: 13px; font-weight: 500;")
