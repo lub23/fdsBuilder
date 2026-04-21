@@ -14,7 +14,7 @@
           "name": "1F",
           "height": 5.0,
           "openings": [
-            {"wall": "x_max", "type": "door", "boundary": [23, 4, 0, 5]},
+            {"wall": "x_max", "type": "door", "boundary": [23, 4, 0, 4]},
             {"wall": "y_min", "type": "window", "boundary": [9, 0.5, 3.0, 1.0]},
             {"wall": "y_min", "type": "window", "boundary": [1.5, 0.2, 3.0, 0.5]},
             {"wall": "y_min", "type": "window", "boundary": [2.5, 0.2, 3.0, 0.5]},
@@ -34,7 +34,6 @@
             {"wall": "y_max", "type": "window", "boundary": [10.5, 0.2, 3.0, 0.5]},
             {"wall": "y_max", "type": "window", "boundary": [13.5, 0.2, 3.0, 0.5]},
             {"wall": "y_max", "type": "window", "boundary": [16.5, 0.2, 3.0, 0.5]},
-            {"wall": "y_max", "type": "window", "boundary": [19.5, 0.2, 3.0, 0.5]},
             {"wall": "x_min", "type": "window", "boundary": [1.0, 0.2, 3.0, 0.5]},
             {"wall": "x_min", "type": "window", "boundary": [3.0, 0.2, 3.0, 0.5]},
             {"wall": "x_min", "type": "window", "boundary": [5.0, 0.2, 3.0, 0.5]},
@@ -84,10 +83,13 @@
                 }
               ],
               "combustibles": [
-                {"key": "WOOD_PALLET", "count": 4},
-                {"key": "CARDBOARD_BOX", "count": 5}
+                {"key": "WOOD_PALLET", "count": 3},
+                {"key": "CARDBOARD_BOX", "count": 3}
               ],
-              "specialized_components": []
+              "specialized_components": [
+                {"key": "ELECTRONICS_CONSOLE", "count": 1},
+                {"key": "CABLE_BUNDLE", "count": 2}
+              ]
             },
             {
               "name": "中部区左",
@@ -169,8 +171,8 @@
               "firewall_material": "CONCRETE",
               "openings": [],
               "combustibles": [
-                {"key": "WOOD_FURNITURE", "count": 3},
-                {"key": "PAPER_ARCHIVE", "count": 3}
+                {"key": "WOOD_FURNITURE", "count": 2},
+                {"key": "PAPER_ARCHIVE", "count": 2}
               ],
               "specialized_components": []
             },
@@ -217,7 +219,7 @@
           "roof": {
             "thickness": 0.2,
             "material": "CONCRETE",
-            "openings": []
+            "openings": [{"boundary": [14, 2, 32, 3]}]
           }
         },
         {
@@ -251,7 +253,6 @@
             {"wall": "x_min", "type": "window", "boundary": [12.4, 0.2, 3.0, 0.5]},
             {"wall": "x_min", "type": "window", "boundary": [15.1, 0.2, 3.0, 0.5]},
             {"wall": "x_min", "type": "window", "boundary": [17.9, 0.2, 3.0, 0.5]},
-            {"wall": "x_min", "type": "window", "boundary": [20.6, 0.2, 3.0, 0.5]},
             {"wall": "x_min", "type": "window", "boundary": [23.4, 0.2, 3.0, 0.5]},
             {"wall": "x_min", "type": "window", "boundary": [26.1, 0.2, 3.0, 0.5]},
             {"wall": "x_min", "type": "window", "boundary": [28.9, 0.2, 3.0, 0.5]},
@@ -268,7 +269,6 @@
             {"wall": "x_max", "type": "window", "boundary": [20.6, 0.2, 3.0, 0.5]},
             {"wall": "x_max", "type": "window", "boundary": [23.4, 0.2, 3.0, 0.5]},
             {"wall": "x_max", "type": "window", "boundary": [26.1, 0.2, 3.0, 0.5]},
-            {"wall": "x_max", "type": "window", "boundary": [28.9, 0.2, 3.0, 0.5]},
             {"wall": "x_max", "type": "window", "boundary": [31.6, 0.2, 3.0, 0.5]},
             {"wall": "x_max", "type": "window", "boundary": [34.4, 0.2, 3.0, 0.5]},
             {"wall": "x_max", "type": "window", "boundary": [37.1, 0.2, 3.0, 0.5]}
@@ -280,11 +280,7 @@
               "firewall_thickness": 0.25,
               "firewall_material": "CONCRETE",
               "openings": [],
-              "combustibles": [
-                {"key": "TEXTILE_ROLL", "count": 3},
-                {"key": "ORGANIC_SOLVENT_DRUM", "count": 3},
-                {"key": "PLASTIC_PACKAGING", "count": 3}
-              ],
+              "combustibles": [],
               "specialized_components": []
             },
             {
@@ -315,7 +311,9 @@
                 }
               ],
               "combustibles": [
-                {"key": "PLASTIC_BIN", "count": 4}
+                {"key": "PLASTIC_BIN", "count": 4},
+                {"key": "TEXTILE_ROLL", "count": 3},
+                {"key": "ORGANIC_SOLVENT_DRUM", "count": 3}
               ],
               "specialized_components": []
             },
@@ -326,7 +324,7 @@
               "firewall_material": "CONCRETE",
               "openings": [],
               "combustibles": [
-                {"key": "OFFICE_COMPOSITE_FURNITURE", "count": 3},
+                {"key": "OFFICE_COMPOSITE_FURNITURE", "count": 2},
                 {"key": "DENSE_ARCHIVE", "count": 2}
               ],
               "specialized_components": []
@@ -393,7 +391,7 @@
               "firewall_material": "CONCRETE",
               "openings": [
                 {
-                  "wall": "y_min",
+                  "wall": "x_max",
                   "type": "door",
                   "boundary": [9, 1.0, 0, 2]
                 }

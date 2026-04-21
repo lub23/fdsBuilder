@@ -1525,6 +1525,68 @@ SPECIALIZED_COMPONENTS = {
             ),
         ],
     ),
+    # ══════════════════════════════════════════════
+    # Electronics (2 OBST)
+    # ══════════════════════════════════════════════
+    "ELECTRONICS_CONSOLE": SpecializedComponent(
+        key="ELECTRONICS_CONSOLE",
+        name="电子控制台",
+        category="electronics",
+        size_class="medium",
+        total_length=3.0,
+        total_width=1.5,
+        total_height=2.0,
+        hrrpua=200,
+        ignition_temp=350,
+        parts=[
+            # 1. 主体柜体
+            ComponentPart(
+                dx=0,
+                dy=0,
+                dz=0,
+                length=3.0,
+                width=1.5,
+                height=1.8,
+                material_key="STEEL",
+                surf_id="STEEL_SURF",
+            ),
+            # 2. 显示屏
+            ComponentPart(
+                dx=0.1,
+                dy=0.1,
+                dz=1.8,
+                length=2.8,
+                width=1.3,
+                height=0.15,
+                material_key="GLASS",
+                surf_id="GLASS_SURF",
+            ),
+        ],
+    ),
+    "CABLE_BUNDLE": SpecializedComponent(
+        key="CABLE_BUNDLE",
+        name="电缆束",
+        category="electronics",
+        size_class="medium",
+        total_length=4.0,
+        total_width=0.5,
+        total_height=0.3,
+        hrrpua=500,
+        ignition_temp=300,
+        parts=[
+            # 1. 电缆束主体
+            ComponentPart(
+                dx=0,
+                dy=0,
+                dz=0,
+                length=2.0,
+                width=0.3,
+                height=0.15,
+                material_key="CABLE_BUNDLE",
+                surf_id="SURF_CABLE_BUNDLE",
+            ),
+        ],
+    ),
 }
 
 

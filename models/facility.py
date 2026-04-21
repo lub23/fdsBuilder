@@ -27,13 +27,13 @@ class FacilityManager:
 
     def _load_all(self, data_dir: str):
         """Load all JSON files from ./facilities/"""
-        for filename in os.listdir(data_dir):
-            if filename.endswith(".json"):
-                filepath = os.path.join(data_dir, filename)
-                with open(filepath, "r", encoding="utf-8") as f:
-                    data = json.load(f)
-                stem = filename[:-5]  # remove .json
-                self.facilities[stem] = data
+        filenames = sorted(f for f in os.listdir(data_dir) if f.endswith(".json"))
+        for filename in filenames:
+            filepath = os.path.join(data_dir, filename)
+            with open(filepath, "r", encoding="utf-8") as f:
+                data = json.load(f)
+            stem = filename[:-5]  # remove .json
+            self.facilities[stem] = data
 
     def get_type(self, facility_name: str) -> str:
         """Return 'specialized' or 'equivalent'"""

@@ -38,11 +38,11 @@ from models.materials import MATERIAL_LIBRARY
 
 @dataclass
 class BuildingMeshBundle:
-    """Precomputed PyVista meshes for a single building, keyed by signature."""
     walls: "pv.PolyData | None" = None
     openings: "pv.PolyData | None" = None
     firewalls: "pv.PolyData | None" = None
     roofs: "pv.PolyData | None" = None
+    roof_openings: "pv.PolyData | None" = None
     combustibles_per_material: dict = field(default_factory=dict)
     actors: dict = field(default_factory=dict)
 
@@ -359,6 +359,14 @@ class Viewer3D(QWidget):
             a = self.plotter.add_mesh(bundle.roofs, color="#888888", opacity=0.4)
             bundle.actors["roofs"] = a
             self._add_to_group("buildings", a)
+        if bundle.roof_openings is not None:
+            # Render roof openings as bright cyan boxes so they're visible
+            a = self.plotter.add_mesh(
+                bundle.roof_openings, color="#00ffff", opacity=0.9,
+                show_edges=True, edge_color="#ffffff", line_width=2
+            )
+            bundle.actors["roof_openings"] = a
+            self._add_to_group("buildings", a)
         for color, mesh in bundle.combustibles_per_material.items():
             if mesh is None:
                 continue
@@ -379,6 +387,7 @@ class Viewer3D(QWidget):
         opening_boxes: list = []
         firewall_boxes: list = []
         roof_boxes: list = []
+        roof_opening_boxes: list = []
         combust_per_color: dict[str, list] = {}
 
         for story in building.stories:
@@ -413,6 +422,16 @@ class Viewer3D(QWidget):
                 roof_boxes.append(
                     _box([ox, ox + L, oy, oy + W, z1, z1 + story.roof.thickness])
                 )
+                # Add roof openings as SEPARATE meshes (not merged with roof)
+                for opening in story.roof.openings:
+                    bnd = opening.get("boundary", opening.get("bnd", [0, 0, 0, 0]))
+                    roof_opening_boxes.append(
+                        _box([
+                            ox + bnd[0], ox + bnd[0] + bnd[1],
+                            oy + bnd[2], oy + bnd[2] + bnd[3],
+                            z1 - 0.05, z1 + story.roof.thickness + 0.05
+                        ])
+                    )
 
             for fc in story.fire_compartments:
                 self._collect_combustible_boxes(fc, ox, oy, z0, combust_per_color)
@@ -429,6 +448,7 @@ class Viewer3D(QWidget):
         bundle.openings = _combine(opening_boxes)
         bundle.firewalls = _combine(firewall_boxes)
         bundle.roofs = _combine(roof_boxes)
+        bundle.roof_openings = _combine(roof_opening_boxes)
         bundle.combustibles_per_material = {
             color: _combine(boxes) for color, boxes in combust_per_color.items()
         }
@@ -958,8 +978,28 @@ class Viewer3D(QWidget):
 
     def _draw_roof(self, roof: Roof, ox, L, oy, W, z_top):
         """Draw a roof slab above a story."""
+        # Draw roof openings first (so they appear 'below' the slab if there's overlap)
+        # Using bright color to make visible
+        for opening in roof.openings:
+            bnd = opening.get("boundary", opening.get("bnd", [0, 0, 0, 0]))
+            hole_z_top = z_top - 0.05
+            hole_z_bottom = z_top + roof.thickness + 0.05
+            # Make opening slightly taller than roof to ensure visibility
+            hole = pv.Box(bounds=[
+                ox + bnd[0], ox + bnd[0] + bnd[1],
+                oy + bnd[2], oy + bnd[2] + bnd[3],
+                hole_z_top, hole_z_bottom
+            ])
+            # Use bright cyan to make opening clearly visible
+            actor = self.plotter.add_mesh(
+                hole, color="#00ffff", opacity=0.9,
+                show_edges=True, edge_color="#ffffff", line_width=2
+            )
+            self._add_to_group("buildings", actor)
+
+        # Draw roof slab last (semi-transparent so openings show through)
         slab = pv.Box(bounds=[ox, ox + L, oy, oy + W, z_top, z_top + roof.thickness])
-        actor = self.plotter.add_mesh(slab, color="#888888", opacity=0.4)
+        actor = self.plotter.add_mesh(slab, color="#888888", opacity=0.3)
         self._add_to_group("buildings", actor)
 
     def _draw_combustibles(self, fc: FireCompartment, ox, oy, z_offset):
