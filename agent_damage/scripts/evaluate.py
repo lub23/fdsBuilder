@@ -14,6 +14,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import torch
+from sklearn.metrics import accuracy_score, confusion_matrix, f1_score, precision_score, recall_score
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 
@@ -22,7 +23,6 @@ from agent_damage.src.models.cnn1d import CNN1D
 from agent_damage.src.models.mlp import MLP
 from agent_damage.src.training.ensemble import WeightedEnsemble, prediction_uncertainty
 from agent_damage.src.training.evaluator import evaluate_classifier
-
 
 ROOT = Path(__file__).resolve().parents[1]
 DATA_DIR = ROOT / "data"
@@ -66,6 +66,7 @@ def main() -> int:
     df = pd.read_csv(DATA_DIR / f"{args.split}.csv")
     ds = DamageDataset(df, scaler=scaler)
     X, y = ds.as_numpy()
+    facility_names = df["facility_name"].to_numpy()
 
     models: Dict[str, Any] = {}
     if (CKPT_DIR / "svm_model.pkl").exists():
@@ -100,6 +101,29 @@ def main() -> int:
             f"Confusion: {name.upper()} ({args.split})",
         )
 
+    unique_facilities = np.unique(facility_names)
+    per_facility_metrics: Dict[str, Dict[str, Any]] = {}
+    for ftype in unique_facilities:
+        mask = facility_names == ftype
+        f_y = y[mask]
+        per_facility_metrics[ftype] = {}
+        for name in models:
+            f_probs = probas[name][mask]
+            f_preds = np.argmax(f_probs, axis=1)
+            per_facility_metrics[ftype][name] = {
+                "accuracy": float(np.mean(f_preds == f_y)),
+                "precision": float(precision_score(f_y, f_preds, average="weighted", zero_division=0)),
+                "recall": float(recall_score(f_y, f_preds, average="weighted", zero_division=0)),
+                "f1": float(f1_score(f_y, f_preds, average="weighted", zero_division=0)),
+            }
+        if len(models) >= 2:
+            avg_probs = np.mean([probas[n][mask] for n in models], axis=0)
+            f_ensemble_preds = np.argmax(avg_probs, axis=1)
+            per_facility_metrics[ftype]["ensemble"] = {
+                "accuracy": float(np.mean(f_ensemble_preds == f_y)),
+                "f1": float(f1_score(f_y, f_ensemble_preds, average="weighted", zero_division=0)),
+            }
+
     summary_path = OUTPUT_DIR / "train_summary.json"
     if summary_path.exists():
         summary = json.loads(summary_path.read_text())
@@ -117,8 +141,6 @@ def main() -> int:
     stack = np.stack(list(probas.values()), axis=0)
     uncertainty = prediction_uncertainty(stack)
 
-    from sklearn.metrics import accuracy_score, confusion_matrix, f1_score
-
     ensemble_metrics = {
         "accuracy": float(accuracy_score(y, preds)),
         "f1": float(f1_score(y, preds, average="weighted", zero_division=0)),
@@ -133,6 +155,7 @@ def main() -> int:
     report = {
         "split": args.split,
         "per_model": per_model_metrics,
+        "per_facility": per_facility_metrics,
         "ensemble": ensemble_metrics,
         "weights": ensemble.weights,
     }
