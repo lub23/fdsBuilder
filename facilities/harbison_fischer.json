@@ -213,7 +213,10 @@
                   "count": 4
                 }
               ],
-              "specialized_components": []
+              "specialized_components": [
+                {"key": "CABLE_BUNDLE", "count": 3},
+                {"key": "ELECTRONICS_CONSOLE", "count": 2}
+              ]
             }
           ],
           "roof": {
@@ -286,7 +289,10 @@
                   "count": 4
                 }
               ],
-              "specialized_components": []
+              "specialized_components": [
+                {"key": "CABLE_BUNDLE", "count": 3},
+                {"key": "ELECTRONICS_CONSOLE", "count": 2}
+              ]
             }
           ],
           "roof": {
@@ -346,7 +352,10 @@
                   "count": 3
                 }
               ],
-              "specialized_components": []
+              "specialized_components": [
+                {"key": "CABLE_BUNDLE", "count": 2},
+                {"key": "ELECTRONICS_CONSOLE", "count": 1}
+              ]
             }
           ],
           "roof": {
