@@ -14,6 +14,7 @@ from models.geometry import (
     opening_to_world_coords,
     validate_opening_bounds,
     validate_building,
+    layout_items_in_fc,
 )
 
 
@@ -647,3 +648,141 @@ class TestValidateBuilding:
         assert len(errors) == 2
         assert any("Story 1F" in e for e in errors)
         assert any("Story 2F" in e for e in errors)
+
+
+# ============================================================
+# layout_items_in_fc — exclusion zone tests
+# ============================================================
+
+
+def _combustible(key, length, width, height=0.5):
+    """Build a combustible-shaped item dict that layout_items_in_fc expects."""
+    return {
+        "key": key,
+        "length": length,
+        "width": width,
+        "height": height,
+        "_type": "combustible",
+    }
+
+
+def _specialized(key, length, width, height):
+    """Build a specialized-component-shaped item dict."""
+    return {
+        "key": key,
+        "length": length,
+        "width": width,
+        "height": height,
+        "_type": "component",
+        "_comp": None,
+        "_instance": 0,
+        "_horizontal": False,
+    }
+
+
+def _placed_rect(item):
+    return (
+        item["x"],
+        item["x"] + item["length"],
+        item["y"],
+        item["y"] + item["width"],
+    )
+
+
+def _boxes_overlap(a, b, tol=1e-6):
+    ax1, ax2, ay1, ay2 = a
+    bx1, bx2, by1, by2 = b
+    return (
+        ax1 < bx2 - tol
+        and ax2 > bx1 + tol
+        and ay1 < by2 - tol
+        and ay2 > by1 + tol
+    )
+
+
+class TestLayoutExclusions:
+    """layout_items_in_fc honors the exclusions parameter."""
+
+    def test_layout_skips_single_exclusion(self):
+        fc_boundary = [0, 10, 0, 10]
+        items = [_combustible("BOX", 1.0, 1.0) for _ in range(6)]
+        exclusions = [(5, 10, 0, 5)]
+
+        placed = layout_items_in_fc(
+            fc_boundary, items, margin=0.5, gap=0.5, exclusions=exclusions
+        )
+
+        assert placed, "at least one item should be placed"
+        for it in placed:
+            assert not _boxes_overlap(_placed_rect(it), exclusions[0]), (
+                f"item {it} overlaps exclusion zone"
+            )
+
+    def test_layout_skips_multiple_exclusions(self):
+        """A-1 geometry: 78x70 fc with two nested sibling rectangles."""
+        fc_boundary = [0, 78, 0, 70]
+        # WOODEN_PALLET-sized (2.4 x 1.0) after the earlier elongation task
+        items = [_combustible("WOODEN_PALLET", 2.4, 1.0, 0.15) for _ in range(40)]
+        exclusions = [(39, 78, 0, 32), (39, 78, 32, 42)]
+
+        placed = layout_items_in_fc(
+            fc_boundary, items, margin=1.0, gap=0.5, exclusions=exclusions
+        )
+
+        assert placed, "at least some items should fit in the L-shape"
+        for it in placed:
+            rect = _placed_rect(it)
+            for ex in exclusions:
+                assert not _boxes_overlap(rect, ex), (
+                    f"item {it} overlaps exclusion {ex}"
+                )
+
+    def test_layout_drops_when_exclusions_fill_space(self, capsys):
+        """If every grid cell hits an exclusion, items are dropped with WARNING."""
+        fc_boundary = [0, 5, 0, 5]
+        items = [_combustible("BOX", 0.5, 0.5) for _ in range(3)]
+        # Exclusion covers the entire fc interior
+        exclusions = [(0, 5, 0, 5)]
+
+        placed = layout_items_in_fc(
+            fc_boundary, items, margin=0.5, gap=0.5, exclusions=exclusions
+        )
+
+        assert placed == [], "no items should fit when exclusion covers fc"
+        captured = capsys.readouterr().out
+        assert captured.count("WARNING") >= 3
+
+    def test_layout_without_exclusions_unchanged(self):
+        """Regression: behavior with no exclusions matches a single known layout."""
+        fc_boundary = [0, 10, 0, 10]
+        items = [_combustible("BOX", 1.0, 1.0) for _ in range(4)]
+
+        baseline = layout_items_in_fc(fc_boundary, items, margin=0.5, gap=0.5)
+        explicit_none = layout_items_in_fc(
+            fc_boundary, items, margin=0.5, gap=0.5, exclusions=None
+        )
+        empty_list = layout_items_in_fc(
+            fc_boundary, items, margin=0.5, gap=0.5, exclusions=[]
+        )
+
+        # Coordinates match bit-for-bit with and without the new argument
+        def _coords(placed):
+            return [(round(p["x"], 6), round(p["y"], 6)) for p in placed]
+
+        assert _coords(baseline) == _coords(explicit_none) == _coords(empty_list)
+
+    def test_specialized_component_avoids_exclusion(self):
+        """A specialized component placed in a centered group falls back to
+        a free region when the center would overlap an exclusion."""
+        fc_boundary = [0, 20, 0, 10]
+        # One component, 4x2, with exclusion covering the center
+        items = [_specialized("GADGET", 4.0, 2.0, 1.0)]
+        exclusions = [(6, 14, 3, 7)]  # central strip
+
+        placed = layout_items_in_fc(
+            fc_boundary, items, margin=0.5, gap=0.5, exclusions=exclusions
+        )
+
+        assert len(placed) == 1
+        assert not _boxes_overlap(_placed_rect(placed[0]), exclusions[0])
+

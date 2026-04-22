@@ -33,6 +33,33 @@ from models.combustibles import SPECIALIZED_COMPONENTS
 REDUNDANCY = 0.05
 
 
+def _compute_sibling_overlaps(fc, siblings):
+    """Return [(x1, x2, y1, y2), ...] exclusion boxes for *fc*.
+
+    For each sibling compartment on the same story whose boundary area
+    is strictly smaller than *fc*'s, add the intersection of the two
+    rectangles as an exclusion zone. This keeps items placed in an
+    outer compartment from landing inside a nested smaller one.
+    """
+    def _area(b):
+        return (b[1] - b[0]) * (b[3] - b[2])
+
+    fx1, fx2, fy1, fy2 = fc.boundary
+    fc_area = _area(fc.boundary)
+    excl: list[tuple[float, float, float, float]] = []
+    for sib in siblings:
+        if sib is fc:
+            continue
+        if _area(sib.boundary) >= fc_area:
+            continue
+        sx1, sx2, sy1, sy2 = sib.boundary
+        ix1, ix2 = max(fx1, sx1), min(fx2, sx2)
+        iy1, iy2 = max(fy1, sy1), min(fy2, sy2)
+        if ix2 > ix1 + 1e-6 and iy2 > iy1 + 1e-6:
+            excl.append((ix1, ix2, iy1, iy2))
+    return excl
+
+
 # ============================================================
 # FDS Generator
 # ============================================================
@@ -539,7 +566,11 @@ class FDSGenerator:
                         }
                     )
 
-            placed = layout_items_in_fc(fc.boundary, all_items, margin=1.0, gap=0.5)
+            exclusions = _compute_sibling_overlaps(fc, story.fire_compartments)
+            placed = layout_items_in_fc(
+                fc.boundary, all_items, margin=1.0, gap=0.5,
+                exclusions=exclusions,
+            )
 
             lines.append(f"! -- 可燃物与组件 ({fc.name}) --\n")
             cb_idx = 0
@@ -634,14 +665,23 @@ class FDSGenerator:
         )
 
         lines.append("! Heat source boundary VENTs\n")
+        if azimuth == 90:
+            rad_face = "XMAX"
+        elif azimuth == 180:
+            rad_face = "YMIN"
+        elif azimuth == 270:
+            rad_face = "XMIN"
+        else:
+            rad_face = "YMAX"
         face_xb = {
             "XMIN": ("OPEN", x0, x0, y0, y1, z0, z1),
             "XMAX": ("OPEN", x1, x1, y0, y1, z0, z1),
             "YMIN": ("OPEN", x0, x1, y0, y0, z0, z1),
-            "YMAX": ("radiation", x0, x1, y1, y1, z0, z1),
+            "YMAX": ("OPEN", x0, x1, y1, y1, z0, z1),
             "ZMIN": ("OPEN", x0, x1, y0, y1, z0, z0),
             "ZMAX": ("OPEN", x0, x1, y0, y1, z1, z1),
         }
+        face_xb[rad_face] = ("radiation", *face_xb[rad_face][1:])
         for face_name in ("XMIN", "XMAX", "YMIN", "YMAX", "ZMIN", "ZMAX"):
             surf, x1, x2, y1, y2, z1, z2 = face_xb[face_name]
             lines.append(

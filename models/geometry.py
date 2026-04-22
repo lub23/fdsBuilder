@@ -241,11 +241,27 @@ def _is_specialized(item: dict) -> bool:
     return item.get("_type") == "component" or bool(item.get("component_key"))
 
 
+def _intersects_any(
+    rect: tuple[float, float, float, float],
+    exclusions: list[tuple[float, float, float, float]] | None,
+    tol: float = 1e-6,
+) -> bool:
+    """Return True if rect = (x1, x2, y1, y2) overlaps any exclusion box."""
+    if not exclusions:
+        return False
+    x1, x2, y1, y2 = rect
+    for ex1, ex2, ey1, ey2 in exclusions:
+        if x1 < ex2 - tol and x2 > ex1 + tol and y1 < ey2 - tol and y2 > ey1 + tol:
+            return True
+    return False
+
+
 def layout_items_in_fc(
     fc_boundary: list[float],
     items: list[dict],
     margin: float = 0.5,
     gap: float = 0.5,
+    exclusions: list[tuple[float, float, float, float]] | None = None,
 ) -> list[dict]:
     """Lay out rectangular items in a fire compartment.
 
@@ -254,6 +270,10 @@ def layout_items_in_fc(
 
     Each item in *items* must have keys: ``length``, ``width``, ``height``,
     plus any extra keys (``color``, ``key``, etc.) that will be passed through.
+
+    *exclusions* is an optional list of (x1, x2, y1, y2) rectangles (in
+    building-local coords) that items must not overlap — used to keep items
+    in an outer compartment out of nested sibling compartments.
 
     Returns a new list of dicts with ``x``, ``y``, ``z`` positions added
     (in building-local coordinates).
@@ -270,7 +290,7 @@ def layout_items_in_fc(
     # 1. Specialized components — compact placement, then centered
     if specialized:
         _place_centered(placed, specialized, x_min, y_min, fc_L, fc_W,
-                        margin, gap)
+                        margin, gap, exclusions=exclusions)
 
     # 2. Combustibles — spread evenly to fill the space
     if combustibles:
@@ -278,7 +298,7 @@ def layout_items_in_fc(
         if specialized and placed:
             spec_bounds = _bounding_box(placed)
         _place_spread(placed, combustibles, x_min, y_min, fc_L, fc_W,
-                      margin, spec_bounds)
+                      margin, spec_bounds, exclusions=exclusions)
 
     return placed
 
@@ -298,8 +318,14 @@ def _place_centered(
     x_min: float, y_min: float,
     fc_L: float, fc_W: float,
     margin: float, gap: float,
+    exclusions: list[tuple[float, float, float, float]] | None = None,
 ):
-    """Place items compactly, then shift the group to center in the FC."""
+    """Place items compactly, then shift the group to center in the FC.
+
+    If the centered group would overlap any exclusion zone, search for the
+    first grid offset (step 0.5 m) where the whole group fits; otherwise
+    drop the items with a WARNING.
+    """
     primary = "x" if fc_L >= fc_W else "y"
     temp: list[dict] = []
     _place_grid(temp, items, 0, 0, fc_L, fc_W, margin, gap, primary)
@@ -316,15 +342,55 @@ def _place_centered(
     group_w = gx_max - gx_min
     group_h = gy_max - gy_min
 
-    # Offset to center in FC
+    def _shift_fits(off_x: float, off_y: float) -> bool:
+        if exclusions is None:
+            return True
+        for it in temp:
+            rx1 = it["x"] + off_x
+            rx2 = rx1 + it["length"]
+            ry1 = it["y"] + off_y
+            ry2 = ry1 + it["width"]
+            if _intersects_any((rx1, rx2, ry1, ry2), exclusions):
+                return False
+        return True
+
+    def _apply(off_x: float, off_y: float):
+        for it in temp:
+            new_item = dict(it)
+            new_item["x"] = it["x"] + off_x
+            new_item["y"] = it["y"] + off_y
+            out.append(new_item)
+
+    # First try centered placement (current behavior)
     off_x = x_min + (fc_L - group_w) / 2 - gx_min
     off_y = y_min + (fc_W - group_h) / 2 - gy_min
+    if _shift_fits(off_x, off_y):
+        _apply(off_x, off_y)
+        return
 
+    # Fallback: scan grid positions on a 0.5 m step looking for a free slot
+    step = 0.5
+    max_ox = x_min + fc_L - group_w - margin
+    max_oy = y_min + fc_W - group_h - margin
+    oy_start = x_start = None
+    oy = y_min + margin
+    while oy <= max_oy + 1e-9:
+        ox = x_min + margin
+        while ox <= max_ox + 1e-9:
+            cand_off_x = ox - gx_min
+            cand_off_y = oy - gy_min
+            if _shift_fits(cand_off_x, cand_off_y):
+                _apply(cand_off_x, cand_off_y)
+                return
+            ox += step
+        oy += step
+
+    # Nothing fits — warn and drop all
     for it in temp:
-        new_item = dict(it)
-        new_item["x"] = it["x"] + off_x
-        new_item["y"] = it["y"] + off_y
-        out.append(new_item)
+        print(
+            f"WARNING: dropped specialized component "
+            f"{it.get('key', '?')} - no space after exclusions"
+        )
 
 
 def _place_spread(
@@ -334,10 +400,14 @@ def _place_spread(
     fc_L: float, fc_W: float,
     margin: float,
     spec_bounds: tuple[float, float, float, float] | None,
+    exclusions: list[tuple[float, float, float, float]] | None = None,
 ):
     """Distribute items evenly across the FC to fill the space.
 
     If *spec_bounds* is given, skip positions that overlap with that region.
+    If *exclusions* is given, skip positions that overlap any exclusion box
+    (e.g. nested sibling compartments); items that cannot be placed
+    anywhere are dropped with a WARNING.
     """
     if not items:
         return
@@ -390,17 +460,22 @@ def _place_spread(
             cx = start_x + gap_x + col * (avg_l + gap_x)
             cy = start_y + gap_y + row * (avg_w + gap_y)
 
+            item = items[idx]
+            ix1, ix2 = cx, cx + item["length"]
+            iy1, iy2 = cy, cy + item["width"]
+
             # Skip if overlapping with specialized component region
             if spec_bounds is not None:
-                item = items[idx]
                 sx1, sx2, sy1, sy2 = spec_bounds
-                ix1, ix2 = cx, cx + item["length"]
-                iy1, iy2 = cy, cy + item["width"]
                 if ix1 < sx2 and ix2 > sx1 and iy1 < sy2 and iy2 > sy1:
                     # Overlap — skip this grid cell, don't consume item
                     continue
 
-            new_item = dict(items[idx])
+            # Skip if overlapping any exclusion zone
+            if _intersects_any((ix1, ix2, iy1, iy2), exclusions):
+                continue
+
+            new_item = dict(item)
             new_item["x"] = cx
             new_item["y"] = cy
             new_item["z"] = 0
@@ -408,6 +483,70 @@ def _place_spread(
             idx += 1
         if idx >= n:
             break
+
+    # Any items that didn't fit in the grid after exclusions: try a fallback
+    # scan at 0.5 m step and greedily place each remaining item in the first
+    # free slot. Only items that still don't fit are dropped with WARNING.
+    if exclusions and idx < n:
+        placed_rects = [_placed_item_rect(p) for p in out]
+        step = 0.5
+        while idx < n:
+            item = items[idx]
+            L_i, W_i = item["length"], item["width"]
+            found = False
+            oy = y_min + margin
+            while oy + W_i <= y_min + fc_W - margin + 1e-9 and not found:
+                ox = x_min + margin
+                while ox + L_i <= x_min + fc_L - margin + 1e-9 and not found:
+                    rect = (ox, ox + L_i, oy, oy + W_i)
+                    # Reject if hits exclusion, spec region, or already-placed item
+                    if _intersects_any(rect, exclusions):
+                        ox += step
+                        continue
+                    if spec_bounds is not None:
+                        sx1, sx2, sy1, sy2 = spec_bounds
+                        if (rect[0] < sx2 and rect[1] > sx1
+                                and rect[2] < sy2 and rect[3] > sy1):
+                            ox += step
+                            continue
+                    if any(_boxes_overlap_rect(rect, pr) for pr in placed_rects):
+                        ox += step
+                        continue
+                    # Place it here
+                    new_item = dict(item)
+                    new_item["x"] = ox
+                    new_item["y"] = oy
+                    new_item["z"] = 0
+                    out.append(new_item)
+                    placed_rects.append(rect)
+                    found = True
+                oy += step
+            if not found:
+                print(
+                    f"WARNING: dropped {item.get('key', '?')} - "
+                    f"no space after exclusions"
+                )
+            idx += 1
+
+
+def _placed_item_rect(item):
+    return (
+        item["x"],
+        item["x"] + item["length"],
+        item["y"],
+        item["y"] + item["width"],
+    )
+
+
+def _boxes_overlap_rect(a, b, tol=1e-6):
+    ax1, ax2, ay1, ay2 = a
+    bx1, bx2, by1, by2 = b
+    return (
+        ax1 < bx2 - tol
+        and ax2 > bx1 + tol
+        and ay1 < by2 - tol
+        and ay2 > by1 + tol
+    )
 
 
 def _place_grid(
