@@ -36,8 +36,9 @@ _SURF_PATTERN = re.compile(
     r"&SURF ID='radiation',\s*\n\s*NET_HEAT_FLUX=([\d.\-]+)",
 )
 _VENT_PATTERN = re.compile(
-    r"&VENT ID='Mesh Vent: Mesh\d+ \[(XMIN|XMAX|YMIN|YMAX|ZMIN|ZMAX)\]',\s*"
+    r"&VENT ID='(Mesh Vent: Mesh\d+|Domain Vent) \[(XMIN|XMAX|YMIN|YMAX|ZMIN|ZMAX)\]',\s*"
     r"SURF_ID='([^']+)',\s*"
+    r"(?:DEVC_ID='[^']+',\s*)?"
     r"XB=([\d.\-]+),([\d.\-]+),([\d.\-]+),([\d.\-]+),([\d.\-]+),([\d.\-]+)\s*/"
 )
 
@@ -51,9 +52,9 @@ def _vents(fds: str):
     out = []
     for m in _VENT_PATTERN.finditer(fds):
         out.append({
-            "face": m.group(1),
-            "surf_id": m.group(2),
-            "xb": tuple(float(m.group(i)) for i in range(3, 9)),
+            "face": m.group(2),
+            "surf_id": m.group(3),
+            "xb": tuple(float(m.group(i)) for i in range(4, 10)),
         })
     return out
 
@@ -154,3 +155,74 @@ class TestHeatSourceFDS:
         bg = _bg(0, 0, duration=0)
         fds = FDSGenerator(bg).generate()
         assert "&DEVC ID='TIMER->OUT'" not in fds
+
+    def test_radiation_vent_carries_timer_devc_id(self):
+        bg = _bg(0, 0)
+        fds = FDSGenerator(bg).generate()
+        rad_line = next(
+            ln for ln in fds.splitlines() if "SURF_ID='radiation'" in ln
+        )
+        assert "DEVC_ID='TIMER->OUT'" in rad_line
+
+    def test_open_vents_do_not_carry_devc_id(self):
+        bg = _bg(0, 0)
+        fds = FDSGenerator(bg).generate()
+        open_lines = [
+            ln for ln in fds.splitlines()
+            if "SURF_ID='OPEN'" in ln and "Domain Vent" in ln
+        ]
+        assert open_lines, "expected at least one OPEN Domain Vent"
+        for ln in open_lines:
+            assert "DEVC_ID=" not in ln, ln
+
+
+class TestCombustibleProbes:
+    """Per-combustible DEVC probes attached to each item's top face."""
+
+    def _bg_with_combustible(self, key):
+        fc = FireCompartment(
+            name="FC1",
+            boundary=[0, 20, 0, 10],
+            combustibles=[{"key": key, "count": 1}],
+        )
+        b = Building(
+            name="T",
+            cn_name="T",
+            boundary=[0, 20, 0, 10],
+            wall_thickness=0.24,
+            height=5.0,
+            stories=[Story(name="1F", height=5.0, fire_compartments=[fc], roof=Roof())],
+        )
+        b.update_z_offsets()
+        return BuildingGroup(
+            buildings=[b],
+            heat_source={"azimuth": 0, "elevation": 0, "net_heat_flux": 3.0, "duration": 1.36},
+        )
+
+    def test_metal_combustible_emits_radiative_heat_flux_probe(self):
+        bg = self._bg_with_combustible("STEEL_PLATE")
+        fds = FDSGenerator(bg).generate()
+        probe = next(
+            ln for ln in fds.splitlines()
+            if "&DEVC" in ln and "STEEL_PLATE_01" in ln
+        )
+        assert "QUANTITY='RADIATIVE HEAT FLUX'" in probe
+        assert "IOR=3" in probe
+        assert "ORIENTATION" not in probe
+
+    def test_non_metal_combustible_emits_wall_temperature_probe(self):
+        bg = self._bg_with_combustible("WOODEN_PALLET")
+        fds = FDSGenerator(bg).generate()
+        probe = next(
+            ln for ln in fds.splitlines()
+            if "&DEVC" in ln and "WOODEN_PALLET_01" in ln
+        )
+        assert "QUANTITY='WALL TEMPERATURE'" in probe
+        assert "IOR=3" in probe
+        assert "ORIENTATION" not in probe
+
+    def test_probes_never_use_radiative_heat_flux_gas(self):
+        # Option A contract: no gas-phase directional probes anywhere.
+        bg = self._bg_with_combustible("STEEL_PLATE")
+        fds = FDSGenerator(bg).generate()
+        assert "RADIATIVE HEAT FLUX GAS" not in fds

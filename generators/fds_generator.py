@@ -33,6 +33,31 @@ from models.combustibles import SPECIALIZED_COMPONENTS
 REDUNDANCY = 0.05
 
 
+# Materials treated as metal (measured with RADIATIVE HEAT FLUX instead of temperature).
+# Includes MATERIAL_LIBRARY metal keys + any COMBUSTIBLE_LIBRARY key whose matl is dense,
+# low heat-of-combustion, or whose name clearly denotes metal.
+_METAL_MATERIAL_KEYS = {"STEEL", "ALUMINUM"}
+_METAL_NAME_HINTS = ("STEEL", "METAL", "ALUMINUM")
+
+
+def _is_metal_combustible(key: str) -> bool:
+    """Return True if *key* refers to a metal-based combustible/component part."""
+    if not key:
+        return False
+    if key in _METAL_MATERIAL_KEYS:
+        return True
+    if any(h in key for h in _METAL_NAME_HINTS):
+        return True
+    cb = COMBUSTIBLE_LIBRARY.get(key)
+    if cb is not None:
+        m = cb.get("matl", {})
+        hoc = m.get("HEAT_OF_COMBUSTION", 20000)
+        dens = m.get("DENSITY", 1000)
+        if hoc <= 10000 and dens >= 2000:
+            return True
+    return False
+
+
 def _compute_sibling_overlaps(fc, siblings):
     """Return [(x1, x2, y1, y2), ...] exclusion boxes for *fc*.
 
@@ -573,6 +598,8 @@ class FDSGenerator:
             )
 
             lines.append(f"! -- 可燃物与组件 ({fc.name}) --\n")
+            # Counter per combustible key so probe IDs read like "WOODEN_PALLET_01"
+            probe_counters: dict[str, int] = {}
             cb_idx = 0
             for item in placed:
                 if item.get("_type") == "component":
@@ -605,6 +632,25 @@ class FDSGenerator:
                             f"      SURF_ID='{surf}',\n"
                             f"      ID='{key}_{fc.name}_{ci}_{pi}' /\n"
                         )
+                        # Surface-attached probe on the part's top face (+z).
+                        # Metal → RADIATIVE HEAT FLUX; other → WALL TEMPERATURE.
+                        # Using IOR=3 (face normal +z) sidesteps gas-cell placement,
+                        # so no grid-size tuning or ORIENTATION vector is needed.
+                        probe_key = part.material_key or key
+                        probe_counters[probe_key] = probe_counters.get(probe_key, 0) + 1
+                        probe_idx = probe_counters[probe_key]
+                        probe_id = f"{probe_key}_{probe_idx:02d}"
+                        if _is_metal_combustible(probe_key):
+                            qty = "RADIATIVE HEAT FLUX"
+                        else:
+                            qty = "WALL TEMPERATURE"
+                        cx = px + part_length / 2
+                        cy = py + part_width / 2
+                        cz = pz + part_height
+                        lines.append(
+                            f"&DEVC XYZ={cx:.2f},{cy:.2f},{cz:.2f}, IOR=3, "
+                            f"QUANTITY='{qty}', ID='{probe_id}' /\n"
+                        )
                 else:
                     key = item["key"]
                     surf_id = f"SURF_{key}"
@@ -620,6 +666,21 @@ class FDSGenerator:
                         f"{z1:.2f},{z2:.2f},\n"
                         f"      SURF_IDS='{surf_id}','INERT','INERT',\n"
                         f"      ID='{cb_id}' /  ! {item.get('name', key)}\n"
+                    )
+                    # Surface-attached probe on the combustible's top face (+z).
+                    probe_counters[key] = probe_counters.get(key, 0) + 1
+                    probe_idx = probe_counters[key]
+                    probe_id = f"{key}_{probe_idx:02d}"
+                    if _is_metal_combustible(key):
+                        qty = "RADIATIVE HEAT FLUX"
+                    else:
+                        qty = "WALL TEMPERATURE"
+                    cx = (x1 + x2) / 2
+                    cy = (y1 + y2) / 2
+                    cz = z2
+                    lines.append(
+                        f"&DEVC XYZ={cx:.2f},{cy:.2f},{cz:.2f}, IOR=3, "
+                        f"QUANTITY='{qty}', ID='{probe_id}' /\n"
                     )
                     cb_idx += 1
 
@@ -684,8 +745,9 @@ class FDSGenerator:
         face_xb[rad_face] = ("radiation", *face_xb[rad_face][1:])
         for face_name in ("XMIN", "XMAX", "YMIN", "YMAX", "ZMIN", "ZMAX"):
             surf, x1, x2, y1, y2, z1, z2 = face_xb[face_name]
+            extra = ", DEVC_ID='TIMER->OUT'" if surf == "radiation" else ""
             lines.append(
-                f"&VENT ID='Domain Vent [{face_name}]', SURF_ID='{surf}', "
+                f"&VENT ID='Domain Vent [{face_name}]', SURF_ID='{surf}'{extra}, "
                 f"XB={x1:.2f},{x2:.2f},{y1:.2f},{y2:.2f},{z1:.2f},{z2:.2f} /\n"
             )
         lines.append("\n")
