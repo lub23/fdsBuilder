@@ -122,7 +122,11 @@
                   "boundary": [6, 1.5, 0, 3]
                 }
               ],
-              "combustibles": [],
+              "combustibles": [
+                {"key": "OFFICE_FURNITURE", "count": 8},
+                {"key": "CARDBOARD_BOX", "count": 6},
+                {"key": "CABLE_INSULATION", "count": 3}
+              ],
               "specialized_components": []
             },
             {
