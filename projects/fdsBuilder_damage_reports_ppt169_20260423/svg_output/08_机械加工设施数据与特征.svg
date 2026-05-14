@@ -1,0 +1,146 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 720" width="1280" height="720">
+<defs>
+<linearGradient id="cardGradP8" x1="0%" y1="0%" x2="0%" y2="100%">
+<stop offset="0%" stop-color="#F8FAFC"/>
+<stop offset="100%" stop-color="#FFFFFF"/>
+</linearGradient>
+</defs>
+
+<rect width="1280" height="720" fill="#FFFFFF"/>
+
+<!-- Header -->
+<rect x="0" y="0" width="1280" height="60" fill="#15803D"/>
+<text x="60" y="38" font-family="Microsoft YaHei, Arial, sans-serif" font-size="22" font-weight="bold" fill="#FFFFFF">
+<tspan>2.1 数据体系建设</tspan>
+</text>
+<text x="1220" y="38" font-family="Microsoft YaHei, Arial, sans-serif" font-size="14" fill="#86EFAC" text-anchor="end">
+<tspan>机械加工设施</tspan>
+</text>
+
+<!-- Left column: description -->
+<g transform="translate(60, 85)">
+<rect x="0" y="0" width="380" height="115" rx="8" fill="url(#cardGradP8)" stroke="#E5E7EB" stroke-width="1"/>
+<text x="20" y="28" font-family="Microsoft YaHei, Arial, sans-serif" font-size="14" font-weight="bold" fill="#15803D">
+<tspan>设施配置</tspan>
+</text>
+<text x="20" y="55" font-family="Microsoft YaHei, Arial, sans-serif" font-size="13" fill="#1A1A2E">
+<tspan>machinery_manufacturing.json</tspan>
+</text>
+<text x="20" y="77" font-family="Microsoft YaHei, Arial, sans-serif" font-size="13" fill="#6B7280">
+<tspan>总装车间 / 部装车间 / 机械加工车间</tspan>
+</text>
+<text x="20" y="99" font-family="Microsoft YaHei, Arial, sans-serif" font-size="12" fill="#9CA3AF">
+<tspan>3类子目标 · 完整记录几何、开口、楼层、可燃物</tspan>
+</text>
+
+<!-- Combustible characteristics card -->
+<rect x="0" y="130" width="380" height="110" rx="8" fill="url(#cardGradP8)" stroke="#E5E7EB" stroke-width="1"/>
+<text x="20" y="158" font-family="Microsoft YaHei, Arial, sans-serif" font-size="14" font-weight="bold" fill="#15803D">
+<tspan>可燃物特征</tspan>
+</text>
+<text x="20" y="182" font-family="Microsoft YaHei, Arial, sans-serif" font-size="13" fill="#1A1A2E">
+<tspan>• 工业油桶、涂料桶、橡胶聚合物</tspan>
+</text>
+<text x="20" y="202" font-family="Microsoft YaHei, Arial, sans-serif" font-size="13" fill="#1A1A2E">
+<tspan>• 有机溶剂桶、可燃气体钢瓶</tspan>
+</text>
+<text x="20" y="222" font-family="Microsoft YaHei, Arial, sans-serif" font-size="13" fill="#1A1A2E">
+<tspan>• 金属粉尘收集器（特殊风险）</tspan>
+</text>
+
+<!-- Dataset card -->
+<rect x="0" y="255" width="380" height="95" rx="8" fill="url(#cardGradP8)" stroke="#E5E7EB" stroke-width="1"/>
+<text x="20" y="283" font-family="Microsoft YaHei, Arial, sans-serif" font-size="14" font-weight="bold" fill="#15803D">
+<tspan>数据集规模</tspan>
+</text>
+<text x="20" y="312" font-family="Arial, sans-serif" font-size="26" font-weight="bold" fill="#16A34A">
+<tspan>7,000</tspan>
+</text>
+<text x="115" y="312" font-family="Microsoft YaHei, Arial, sans-serif" font-size="13" fill="#6B7280">
+<tspan>条（训练5000/验证1000/测试1000）</tspan>
+</text>
+<text x="20" y="335" font-family="Microsoft YaHei, Arial, sans-serif" font-size="12" fill="#9CA3AF">
+<tspan>Machinery Manufacturing子集约121条，占测试集12.1%</tspan>
+</text>
+
+<!-- Combustible details per building -->
+<text x="0" y="375" font-family="Microsoft YaHei, Arial, sans-serif" font-size="14" font-weight="bold" fill="#15803D">
+<tspan>各车间主要可燃物:</tspan>
+</text>
+
+<g transform="translate(0, 390)">
+<rect x="0" y="0" width="380" height="60" rx="6" fill="#F0FDF4" stroke="#16A34A" stroke-width="1"/>
+<text x="15" y="22" font-family="Microsoft YaHei, Arial, sans-serif" font-size="12" font-weight="bold" fill="#166534"><tspan>总装车间</tspan></text>
+<text x="15" y="42" font-family="Microsoft YaHei, Arial, sans-serif" font-size="11" fill="#1A1A2E"><tspan>木托盘(8)、纸箱(6)、工业油桶(4)、橡胶零件(4)</tspan></text>
+</g>
+
+<g transform="translate(0, 460)">
+<rect x="0" y="0" width="380" height="60" rx="6" fill="#F0FDF4" stroke="#16A34A" stroke-width="1"/>
+<text x="15" y="22" font-family="Microsoft YaHei, Arial, sans-serif" font-size="12" font-weight="bold" fill="#166534"><tspan>部装车间</tspan></text>
+<text x="15" y="42" font-family="Microsoft YaHei, Arial, sans-serif" font-size="11" fill="#1A1A2E"><tspan>木托盘(8)、纸箱(5)、工业油桶(3)、电气塑料(3)、有机溶剂桶(2)</tspan></text>
+</g>
+
+<g transform="translate(0, 530)">
+<rect x="0" y="0" width="380" height="60" rx="6" fill="#F0FDF4" stroke="#16A34A" stroke-width="1"/>
+<text x="15" y="22" font-family="Microsoft YaHei, Arial, sans-serif" font-size="12" font-weight="bold" fill="#166534"><tspan>机械加工车间</tspan></text>
+<text x="15" y="42" font-family="Microsoft YaHei, Arial, sans-serif" font-size="11" fill="#1A1A2E"><tspan>木托盘(5)、工业油桶(4)、金属粉尘收集器(4)、有机溶剂桶(3)</tspan></text>
+</g>
+</g>
+
+<!-- Right column: Building table -->
+<g transform="translate(460, 85)">
+<text x="0" y="20" font-family="Microsoft YaHei, Arial, sans-serif" font-size="16" font-weight="bold" fill="#15803D">
+<tspan>子目标建筑参数</tspan>
+</text>
+
+<rect x="0" y="35" width="760" height="36" rx="4" fill="#15803D"/>
+<text x="15" y="57" font-family="Microsoft YaHei, Arial, sans-serif" font-size="13" font-weight="bold" fill="#FFFFFF"><tspan>子目标建筑</tspan></text>
+<text x="240" y="57" font-family="Microsoft YaHei, Arial, sans-serif" font-size="13" font-weight="bold" fill="#FFFFFF"><tspan>长(m)</tspan></text>
+<text x="320" y="57" font-family="Microsoft YaHei, Arial, sans-serif" font-size="13" font-weight="bold" fill="#FFFFFF"><tspan>宽(m)</tspan></text>
+<text x="400" y="57" font-family="Microsoft YaHei, Arial, sans-serif" font-size="13" font-weight="bold" fill="#FFFFFF"><tspan>高(m)</tspan></text>
+<text x="480" y="57" font-family="Microsoft YaHei, Arial, sans-serif" font-size="13" font-weight="bold" fill="#FFFFFF"><tspan>楼层</tspan></text>
+<text x="560" y="57" font-family="Microsoft YaHei, Arial, sans-serif" font-size="13" font-weight="bold" fill="#FFFFFF"><tspan>门数量</tspan></text>
+<text x="660" y="57" font-family="Microsoft YaHei, Arial, sans-serif" font-size="13" font-weight="bold" fill="#FFFFFF"><tspan>主要可燃物</tspan></text>
+
+<rect x="0" y="71" width="760" height="60" fill="#F8FAFC"/>
+<text x="15" y="93" font-family="Microsoft YaHei, Arial, sans-serif" font-size="13" fill="#1A1A2E" font-weight="bold"><tspan>总装车间</tspan></text>
+<text x="240" y="93" font-family="Arial, sans-serif" font-size="13" fill="#1A1A2E"><tspan>157.5</tspan></text>
+<text x="320" y="93" font-family="Arial, sans-serif" font-size="13" fill="#1A1A2E"><tspan>86.0</tspan></text>
+<text x="400" y="93" font-family="Arial, sans-serif" font-size="13" fill="#1A1A2E"><tspan>8.0</tspan></text>
+<text x="480" y="93" font-family="Arial, sans-serif" font-size="13" fill="#1A1A2E"><tspan>1</tspan></text>
+<text x="560" y="93" font-family="Arial, sans-serif" font-size="13" fill="#1A1A2E"><tspan>5</tspan></text>
+<text x="660" y="93" font-family="Microsoft YaHei, Arial, sans-serif" font-size="12" fill="#6B7280"><tspan>工业油桶、涂料桶、橡胶零件</tspan></text>
+<text x="15" y="118" font-family="Microsoft YaHei, Arial, sans-serif" font-size="11" fill="#9CA3AF"><tspan>规模最大 · 门数量5个 · 停放卡车等大型交通工具</tspan></text>
+
+<rect x="0" y="136" width="760" height="60" fill="#FFFFFF"/>
+<text x="15" y="158" font-family="Microsoft YaHei, Arial, sans-serif" font-size="13" fill="#1A1A2E" font-weight="bold"><tspan>部装车间</tspan></text>
+<text x="240" y="158" font-family="Arial, sans-serif" font-size="13" fill="#1A1A2E"><tspan>130.0</tspan></text>
+<text x="320" y="158" font-family="Arial, sans-serif" font-size="13" fill="#1A1A2E"><tspan>70.0</tspan></text>
+<text x="400" y="158" font-family="Arial, sans-serif" font-size="13" fill="#1A1A2E"><tspan>7.0</tspan></text>
+<text x="480" y="158" font-family="Arial, sans-serif" font-size="13" fill="#1A1A2E"><tspan>1</tspan></text>
+<text x="560" y="158" font-family="Arial, sans-serif" font-size="13" fill="#1A1A2E"><tspan>4</tspan></text>
+<text x="660" y="158" font-family="Microsoft YaHei, Arial, sans-serif" font-size="12" fill="#6B7280"><tspan>有机溶剂桶、可燃气体钢瓶</tspan></text>
+<text x="15" y="183" font-family="Microsoft YaHei, Arial, sans-serif" font-size="11" fill="#9CA3AF"><tspan>门数量4个 · 可燃气体和有机溶剂高挥发/易燃性</tspan></text>
+
+<rect x="0" y="201" width="760" height="60" fill="#F8FAFC"/>
+<text x="15" y="223" font-family="Microsoft YaHei, Arial, sans-serif" font-size="13" fill="#1A1A2E" font-weight="bold"><tspan>机械加工车间</tspan></text>
+<text x="240" y="223" font-family="Arial, sans-serif" font-size="13" fill="#1A1A2E"><tspan>135.0</tspan></text>
+<text x="320" y="223" font-family="Arial, sans-serif" font-size="13" fill="#1A1A2E"><tspan>70.0</tspan></text>
+<text x="400" y="223" font-family="Arial, sans-serif" font-size="13" fill="#1A1A2E"><tspan>7.0</tspan></text>
+<text x="480" y="223" font-family="Arial, sans-serif" font-size="13" fill="#1A1A2E"><tspan>1</tspan></text>
+<text x="560" y="223" font-family="Arial, sans-serif" font-size="13" fill="#1A1A2E"><tspan>5</tspan></text>
+<text x="660" y="223" font-family="Microsoft YaHei, Arial, sans-serif" font-size="12" fill="#6B7280"><tspan>工业油品、有机溶剂、金属粉尘收集器</tspan></text>
+<text x="15" y="248" font-family="Microsoft YaHei, Arial, sans-serif" font-size="11" fill="#9CA3AF"><tspan>门数量5个 · 可燃物多样性最复杂 · 金属粉尘具爆炸风险</tspan></text>
+
+<!-- Building sizes image -->
+<text x="0" y="290" font-family="Microsoft YaHei, Arial, sans-serif" font-size="13" fill="#6B7280">
+<tspan>各建筑尺寸分布:</tspan>
+</text>
+<image href="../images/building_sizes.png" x="0" y="300" width="760" height="180" preserveAspectRatio="xMidYMid meet"/>
+</g>
+
+<!-- Footer -->
+<text x="60" y="700" font-family="Arial, sans-serif" font-size="12" fill="#9CA3AF">
+<tspan>08 / 16</tspan>
+</text>
+</svg>

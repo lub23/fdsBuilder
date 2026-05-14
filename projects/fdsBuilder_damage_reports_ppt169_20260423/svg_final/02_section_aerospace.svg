@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 720" width="1280" height="720">
+<defs>
+<linearGradient id="sectionGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+<stop offset="0%" stop-color="#1B3A6B" />
+<stop offset="100%" stop-color="#0F2540" />
+</linearGradient>
+</defs>
+
+<rect width="1280" height="720" fill="url(#sectionGradient)" />
+
+
+<text x="120" y="350" font-family="Arial, sans-serif" font-size="140" font-weight="bold" fill="#FFFFFF" fill-opacity="0.08">
+<tspan>01</tspan>
+</text>
+
+
+<path fill="#2196F3" d="M83,220 H83 A3,3 0 0 1 86,223 V417 A3,3 0 0 1 83,420 H83 A3,3 0 0 1 80,417 V223 A3,3 0 0 1 83,220 Z" />
+
+
+<text x="120" y="320" font-family="Microsoft YaHei, Arial, sans-serif" font-size="40" font-weight="bold" fill="#FFFFFF">
+<tspan>航空航天设施热毁伤代理模型</tspan>
+</text>
+
+
+<text x="120" y="370" font-family="Arial, sans-serif" font-size="20" fill="#4A90D9">
+<tspan>Aerospace &amp; Airport Hangar Facilities</tspan>
+</text>
+
+
+<path fill="#2196F3" fill-opacity="0.4" d="M121,395 H419 A1,1 0 0 1 420,396 V396 A1,1 0 0 1 419,397 H121 A1,1 0 0 1 120,396 V396 A1,1 0 0 1 121,395 Z" />
+
+
+<text x="120" y="430" font-family="Microsoft YaHei, Arial, sans-serif" font-size="16" fill="#6B7280">
+<tspan>数据体系 · 特征工程 · 模型性能</tspan>
+</text>
+
+
+<g transform="translate(1000, 300)">
+<circle cx="0" cy="0" r="80" fill="#2196F3" fill-opacity="0.05" />
+<circle cx="0" cy="0" r="50" fill="#2196F3" fill-opacity="0.08" />
+<circle cx="0" cy="0" r="25" fill="#2196F3" fill-opacity="0.15" />
+</g>
+
+
+<text x="1220" y="695" font-family="Arial, sans-serif" font-size="14" fill="#4A90D9" fill-opacity="0.6" text-anchor="end">
+<tspan>02 / 16</tspan>
+</text>
+</svg>
