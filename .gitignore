@@ -26,8 +26,14 @@ _backup/
 
 *.md
 
+# Agent damage training artifacts
+agent_damage/checkpoints/
+agent_damage/data/
+agent_damage/output/
+agent_damage/reports/
 
-
+# Project export artifacts
+projects/
 
 .*/
 !README.md

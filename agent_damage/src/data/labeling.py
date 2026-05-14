@@ -7,9 +7,9 @@ Formula (from outline.md):
     comb = 1.2*wood + 1.0*text + 1.5*plast + 2.0*fuel +
            1.3*elec + 1.2*chem + 0.8*metal + 1.1*comp
     thermal_load = base * (1 + comb)
-    low  : thermal_load < 30
-    med  : 30 <= thermal_load < 80
-    high : thermal_load >= 80
+low : thermal_load < 25
+med : 25 <= thermal_load < 70
+high : thermal_load >= 70
 """
 
 from __future__ import annotations
@@ -21,8 +21,8 @@ from ..processing.enums import DamageLevel
 from ..processing.heat_source import HeatSourceParams
 
 
-LABEL_THRESHOLD_MEDIUM: float = 15.0
-LABEL_THRESHOLD_HIGH: float = 40.0
+LABEL_THRESHOLD_MEDIUM: float = 25.0
+LABEL_THRESHOLD_HIGH: float = 70.0
 
 _COMB_WEIGHTS: Sequence[float] = (1.2, 1.0, 1.5, 2.0, 1.3, 1.2, 0.8, 1.1)
 
