@@ -68,10 +68,10 @@
       "name": "Workshop 2 - High Level",
       "cn_name": "中央二号厂房",
       "boundary": [
-        28.0,
         13,
-        48.0,
-        9
+        28.0,
+        9,
+        48.0
       ],
       "wall_thickness": 0.25,
       "height": 10,
@@ -155,10 +155,10 @@
       "name": "Central Core",
       "cn_name": "中央楼梯/核心筒",
       "boundary": [
-        32.0,
         8,
         32.0,
-        12
+        12,
+        32.0
       ],
       "wall_thickness": 0.3,
       "height": 10,
@@ -221,8 +221,8 @@
       "name": "Workshop 3",
       "cn_name": "东侧三号大厂房",
       "boundary": [
-        49.5,
         22,
+        49.5,
         13.5,
         35
       ],
@@ -296,9 +296,9 @@
       "name": "South Auxiliary",
       "cn_name": "南部辅助楼",
       "boundary": [
-        73.0,
         14,
-        -32.0,
+        73.0,
+        0,
         26
       ],
       "wall_thickness": 0.2,
@@ -338,8 +338,8 @@
       "boundary": [
         -7.0,
         4,
-        22.0,
-        10
+        10,
+        22.0
       ],
       "wall_thickness": 0.2,
       "height": 3.5,
@@ -387,10 +387,10 @@
       "name": "East Storage Wing",
       "cn_name": "厂房3-东北独立库房",
       "boundary": [
-        115.0,
         10,
-        33.0,
-        18
+        115.0,
+        18,
+        33.0
       ],
       "wall_thickness": 0.2,
       "height": 5,
@@ -438,10 +438,10 @@
       "name": "Southeast Corner Node",
       "cn_name": "厂房3-东南转角凸起",
       "boundary": [
-        118.5,
         3,
-        18.0,
-        4
+        118.5,
+        4,
+        18.0
       ],
       "wall_thickness": 0.15,
       "height": 4,
@@ -491,7 +491,7 @@
       "boundary": [
         7.0,
         26,
-        -29.0,
+        0,
         6
       ],
       "wall_thickness": 0.2,
@@ -531,7 +531,7 @@
       "boundary": [
         -6.0,
         12,
-        -42.0,
+        0,
         8
       ],
       "wall_thickness": 0.2,
@@ -569,9 +569,9 @@
       "name": "South Block B",
       "cn_name": "东南泵房",
       "boundary": [
-        76.0,
         8,
-        -44.0,
+        76.0,
+        0,
         12
       ],
       "wall_thickness": 0.2,
