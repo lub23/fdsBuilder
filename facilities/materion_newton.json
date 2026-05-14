@@ -7,9 +7,9 @@
       "name": "Workshop 1",
       "cn_name": "西侧一号厂房",
       "boundary": [
-        -12.5,
+        4,
         55,
-        12.5,
+        28,
         30
       ],
       "wall_thickness": 0.25,
@@ -68,10 +68,10 @@
       "name": "Workshop 2 - High Level",
       "cn_name": "中央二号厂房",
       "boundary": [
-        13,
-        28.0,
-        9,
-        48.0
+        62,
+        28,
+        28,
+        48
       ],
       "wall_thickness": 0.25,
       "height": 10,
@@ -85,9 +85,9 @@
               "name": "精密加工区",
               "boundary": [
                 0,
-                13.0,
+                28,
                 0,
-                9.0
+                9
               ],
               "firewall_thickness": 0.25,
               "firewall_material": "CONCRETE",
@@ -115,26 +115,28 @@
               ],
               "combustibles": [],
               "specialized_components": []
-            }
-          ],
-          "roof": {
-            "thickness": 0.2,
-            "material": "CONCRETE",
-            "openings": []
-          }
-        },
-        {
-          "name": "2F",
-          "height": 5.0,
-          "openings": [],
-          "fire_compartments": [
+            },
             {
-              "name": "default",
+              "name": "核心筒",
+              "boundary": [
+                10,
+                20,
+                15,
+                27
+              ],
+              "firewall_thickness": 0.3,
+              "firewall_material": "CONCRETE",
+              "openings": [],
+              "combustibles": [],
+              "specialized_components": []
+            },
+            {
+              "name": "主生产区",
               "boundary": [
                 0,
-                13,
-                0,
-                9
+                28,
+                9,
+                48
               ],
               "firewall_thickness": 0.25,
               "firewall_material": "CONCRETE",
@@ -148,46 +150,6 @@
             "material": "CONCRETE",
             "openings": []
           }
-        }
-      ]
-    },
-    {
-      "name": "Central Core",
-      "cn_name": "中央楼梯/核心筒",
-      "boundary": [
-        8,
-        32.0,
-        12,
-        32.0
-      ],
-      "wall_thickness": 0.3,
-      "height": 10,
-      "stories": [
-        {
-          "name": "1F",
-          "height": 5.0,
-          "openings": [],
-          "fire_compartments": [
-            {
-              "name": "核心筒主体",
-              "boundary": [
-                0,
-                8.0,
-                0,
-                12.0
-              ],
-              "firewall_thickness": 0.3,
-              "firewall_material": "CONCRETE",
-              "openings": [],
-              "combustibles": [],
-              "specialized_components": []
-            }
-          ],
-          "roof": {
-            "thickness": 0.2,
-            "material": "CONCRETE",
-            "openings": []
-          }
         },
         {
           "name": "2F",
@@ -195,14 +157,14 @@
           "openings": [],
           "fire_compartments": [
             {
-              "name": "default",
+              "name": "主生产区",
               "boundary": [
                 0,
-                8,
+                28,
                 0,
-                12
+                48
               ],
-              "firewall_thickness": 0.3,
+              "firewall_thickness": 0.25,
               "firewall_material": "CONCRETE",
               "openings": [],
               "combustibles": [],
@@ -221,9 +183,9 @@
       "name": "Workshop 3",
       "cn_name": "东侧三号大厂房",
       "boundary": [
-        22,
-        49.5,
-        13.5,
+        94,
+        50,
+        28,
         35
       ],
       "wall_thickness": 0.25,
@@ -238,7 +200,7 @@
               "name": "北部加工区",
               "boundary": [
                 0,
-                22.0,
+                50.0,
                 14.0,
                 35.0
               ],
@@ -252,7 +214,7 @@
               "name": "南部出货区",
               "boundary": [
                 0,
-                22.0,
+                50.0,
                 0,
                 14.0
               ],
@@ -296,10 +258,10 @@
       "name": "South Auxiliary",
       "cn_name": "南部辅助楼",
       "boundary": [
-        14,
-        73.0,
+        42,
+        55,
         0,
-        26
+        20
       ],
       "wall_thickness": 0.2,
       "height": 5,
@@ -313,9 +275,9 @@
               "name": "辅助区主体",
               "boundary": [
                 0,
-                14.0,
+                55.0,
                 0,
-                26.0
+                20.0
               ],
               "firewall_thickness": 0.2,
               "firewall_material": "CONCRETE",
@@ -336,10 +298,10 @@
       "name": "Workshop 1 - West Vestibule",
       "cn_name": "厂房1-西侧入口门斗",
       "boundary": [
-        -7.0,
+        0,
         4,
-        10,
-        22.0
+        35,
+        22
       ],
       "wall_thickness": 0.2,
       "height": 3.5,
@@ -355,7 +317,7 @@
                 0,
                 4.0,
                 0,
-                10.0
+                22.0
               ],
               "firewall_thickness": 0.2,
               "firewall_material": "CONCRETE",
@@ -387,10 +349,10 @@
       "name": "East Storage Wing",
       "cn_name": "厂房3-东北独立库房",
       "boundary": [
-        10,
-        115.0,
-        18,
-        33.0
+        94,
+        50,
+        63,
+        33
       ],
       "wall_thickness": 0.2,
       "height": 5,
@@ -404,9 +366,9 @@
               "name": "独立库房主体",
               "boundary": [
                 0,
-                10.0,
+                50.0,
                 0,
-                18.0
+                33.0
               ],
               "firewall_thickness": 0.2,
               "firewall_material": "CONCRETE",
@@ -438,10 +400,10 @@
       "name": "Southeast Corner Node",
       "cn_name": "厂房3-东南转角凸起",
       "boundary": [
-        3,
-        118.5,
-        4,
-        18.0
+        94,
+        50,
+        20,
+        8
       ],
       "wall_thickness": 0.15,
       "height": 4,
@@ -455,9 +417,9 @@
               "name": "转角节点主体",
               "boundary": [
                 0,
-                3.0,
+                50.0,
                 0,
-                4.0
+                8.0
               ],
               "firewall_thickness": 0.15,
               "firewall_material": "CONCRETE",
@@ -489,9 +451,9 @@
       "name": "Link Corridor",
       "cn_name": "连接长廊",
       "boundary": [
-        7.0,
-        26,
-        0,
+        37,
+        30,
+        20,
         6
       ],
       "wall_thickness": 0.2,
@@ -506,7 +468,7 @@
               "name": "长廊主体",
               "boundary": [
                 0,
-                26.0,
+                30.0,
                 0,
                 6.0
               ],
@@ -529,7 +491,7 @@
       "name": "South Block A",
       "cn_name": "底层配电室",
       "boundary": [
-        -6.0,
+        6,
         12,
         0,
         8
@@ -569,8 +531,8 @@
       "name": "South Block B",
       "cn_name": "东南泵房",
       "boundary": [
-        8,
-        76.0,
+        20,
+        18,
         0,
         12
       ],
@@ -586,7 +548,7 @@
               "name": "泵房主体",
               "boundary": [
                 0,
-                8.0,
+                18.0,
                 0,
                 12.0
               ],

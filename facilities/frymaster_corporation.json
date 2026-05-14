@@ -22,29 +22,40 @@
               "firewall_material": "CONCRETE",
               "openings": [
                 {
-                  "wall": "x_min",
+                  "wall": "y_min",
                   "type": "door",
-                  "boundary": [24.0, 3.0, 0, 3.5]
+                  "boundary": [0, 34, 0, 12]
                 },
                 {
                   "wall": "x_max",
                   "type": "door",
-                  "boundary": [13.8, 3.0, 0, 3.5]
+                  "boundary": [2, 5, 0, 5]
                 },
                 {
-                  "wall": "y_max",
+                  "wall": "x_max",
                   "type": "door",
-                  "boundary": [16.6, 2.0, 0, 3.0]
+                  "boundary": [29, 5, 0, 5]
+                },
+                {
+                  "wall": "x_max",
+                  "type": "door",
+                  "boundary": [36, 5, 0, 5]
+                },
+                {
+                  "wall": "x_min",
+                  "type": "door",
+                  "boundary": [40, 10.0, 0, 6.0]
+                },
+                {
+                  "wall": "x_min",
+                  "type": "door",
+                  "boundary": [27, 10.0, 0, 6.0]
                 }
               ],
               "combustibles": [
                 {
-                  "key": "STEEL_PLATE",
-                  "count": 50
-                },
-                {
                   "key": "WOODEN_PALLET",
-                  "count": 100
+                  "count": 120
                 }
               ],
               "specialized_components": []
@@ -56,19 +67,24 @@
               "firewall_material": "CONCRETE",
               "openings": [
                 {
-                  "wall": "x_min",
+                  "wall": "x_max",
                   "type": "door",
-                  "boundary": [30.0, 3.0, 0, 3.5]
+                  "boundary": [2, 5.0, 0, 5]
                 },
                 {
                   "wall": "x_max",
                   "type": "door",
-                  "boundary": [30.0, 3.0, 0, 3.5]
+                  "boundary": [29, 5, 0, 5]
                 },
                 {
-                  "wall": "y_min",
+                  "wall": "x_max",
                   "type": "door",
-                  "boundary": [23.14, 3.0, 0, 3.5]
+                  "boundary": [36, 5, 0, 5]
+                },
+                {
+                  "wall": "x_max",
+                  "type": "door",
+                  "boundary": [66, 4, 0, 12]
                 }
               ],
               "combustibles": [
@@ -77,8 +93,8 @@
                   "count": 30
                 },
                 {
-                  "key": "METAL_SCRAP",
-                  "count": 50
+                  "key": "WOODEN_PALLET",
+                  "count": 30
                 }
               ],
               "specialized_components": []
@@ -89,7 +105,12 @@
               "firewall_thickness": 0.3,
               "firewall_material": "CONCRETE",
               "openings": [],
-              "combustibles": [],
+              "combustibles": [
+                {
+                  "key": "ASSEMBLY_PARTS",
+                  "count": 10
+                }
+              ],
               "specialized_components": []
             },
             {
@@ -99,29 +120,34 @@
               "firewall_material": "CONCRETE",
               "openings": [
                 {
-                  "wall": "x_min",
+                  "wall": "y_max",
                   "type": "door",
-                  "boundary": [30.0, 3.0, 0, 3.5]
+                  "boundary": [0, 1.0, 0, 1.5]
                 },
                 {
                   "wall": "x_max",
                   "type": "door",
-                  "boundary": [30.0, 3.0, 0, 3.5]
+                  "boundary": [29, 5, 0, 5]
+                },
+                {
+                  "wall": "x_max",
+                  "type": "door",
+                  "boundary": [36, 5, 0, 5]
                 },
                 {
                   "wall": "y_min",
                   "type": "door",
-                  "boundary": [18.74, 3.0, 0, 3.5]
+                  "boundary": [17.5, 5.0, 0, 5]
                 }
               ],
               "combustibles": [
                 {
-                  "key": "WELDING_GAS",
-                  "count": 40
+                  "key": "ASSEMBLY_PARTS",
+                  "count": 80
                 },
                 {
-                  "key": "METAL_PARTS",
-                  "count": 100
+                  "key": "HYDRAULIC_OIL",
+                  "count": 10
                 }
               ],
               "specialized_components": []
@@ -133,36 +159,47 @@
               "firewall_material": "CONCRETE",
               "openings": [
                 {
-                  "wall": "x_min",
+                  "wall": "y_min",
                   "type": "door",
-                  "boundary": [30.0, 3.0, 0, 3.5]
+                  "boundary": [1, 4.0, 0, 4]
                 },
                 {
                   "wall": "y_min",
                   "type": "door",
-                  "boundary": [24.02, 3.0, 0, 3.5]
+                  "boundary": [17, 4.0, 0, 4]
+                },
+                {
+                  "wall": "y_min",
+                  "type": "door",
+                  "boundary": [21, 23.0, 0, 12]
                 },
                 {
                   "wall": "y_max",
                   "type": "door",
-                  "boundary": [24.02, 3.0, 0, 3.5]
+                  "boundary": [0, 1.0, 0, 1.5]
+                },
+                {
+                  "wall": "y_max",
+                  "type": "door",
+                  "boundary": [43, 1.0, 0, 1.5]
                 }
               ],
               "combustibles": [
                 {
                   "key": "ASSEMBLY_PARTS",
-                  "count": 300
+                  "count": 200
                 },
                 {
                   "key": "CABLE",
-                  "count": 100
-                },
-                {
-                  "key": "GAS_CYLINDER",
-                  "count": 20
+                  "count": 50
                 }
               ],
-              "specialized_components": []
+              "specialized_components": [
+                {
+                  "key": "ELECTRONICS_CONSOLE",
+                  "count": 1
+                }
+              ]
             },
             {
               "name": "总装/燃气与电力测试2",
@@ -170,8 +207,27 @@
               "firewall_thickness": 0.3,
               "firewall_material": "CONCRETE",
               "openings": [
+                {
+                  "wall": "y_min",
+                  "type": "door",
+                  "boundary": [2, 3.0, 0, 3]
+                },
+                {
+                  "wall": "y_min",
+                  "type": "door",
+                  "boundary": [10, 2.5, 0, 3]
+                },
+                {
+                  "wall": "y_min",
+                  "type": "door",
+                  "boundary": [14.5, 2.5, 0, 3]
+                }
               ],
               "combustibles": [
+                {
+                  "key": "ASSEMBLY_PARTS",
+                  "count": 40
+                }
               ],
               "specialized_components": []
             },
@@ -181,15 +237,26 @@
               "firewall_thickness": 0.3,
               "firewall_material": "CONCRETE",
               "openings": [
+                {
+                  "wall": "x_min",
+                  "type": "door",
+                  "boundary": [2, 4.0, 0, 4]
+                },
+                {
+                  "wall": "x_max",
+                  "type": "door",
+                  "boundary": [2, 4.0, 0, 4]
+                },
+                {
+                  "wall": "y_min",
+                  "type": "door",
+                  "boundary": [0, 19.0, 0, 12]
+                }
               ],
               "combustibles": [
                 {
-                  "key": "POWDER_COATING",
-                  "count": 30
-                },
-                {
                   "key": "SOLVENT",
-                  "count": 40
+                  "count": 50
                 }
               ],
               "specialized_components": []
@@ -203,30 +270,56 @@
                 {
                   "wall": "x_min",
                   "type": "door",
-                  "boundary": [15.25, 4.0, 0, 4.0]
+                  "boundary": [1, 3.0, 0, 3.0]
+                },
+                {
+                  "wall": "x_min",
+                  "type": "door",
+                  "boundary": [6, 3.0, 0, 3.0]
+                },
+                {
+                  "wall": "x_min",
+                  "type": "door",
+                  "boundary": [14, 3.0, 0, 3.0]
+                },
+                {
+                  "wall": "x_min",
+                  "type": "door",
+                  "boundary": [17, 3.0, 0, 3.0]
                 },
                 {
                   "wall": "y_min",
                   "type": "door",
-                  "boundary": [24.9, 3.0, 0, 3.5]
+                  "boundary": [65, 1.0, 0, 1.5]
                 },
                 {
-                  "wall": "y_max",
+                  "wall": "x_max",
                   "type": "door",
-                  "boundary": [24.9, 3.0, 0, 3.5]
+                  "boundary": [2, 1.0, 0, 1.5]
+                },
+                {
+                  "wall": "x_max",
+                  "type": "door",
+                  "boundary": [14, 4.0, 0, 4]
+                },
+                {
+                  "wall": "x_max",
+                  "type": "door",
+                  "boundary": [20, 4.0, 0, 4]
                 }
               ],
               "combustibles": [
                 {
-                  "key": "FINISHED_PRODUCT",
-                  "count": 100
-                },
-                {
-                  "key": "PACKING_MATERIAL",
-                  "count": 50
+                  "key": "CARDBOARD_BOX",
+                  "count": 80
                 }
               ],
-              "specialized_components": []
+              "specialized_components": [
+                {
+                  "key": "VEHICLE_TRUCK",
+                  "count": 1
+                }
+              ]
             },
             {
               "name": "终检/包装",
@@ -235,29 +328,15 @@
               "firewall_material": "CONCRETE",
               "openings": [
                 {
-                  "wall": "x_min",
-                  "type": "door",
-                  "boundary": [15.75, 3.0, 0, 3.5]
-                },
-                {
-                  "wall": "x_max",
-                  "type": "door",
-                  "boundary": [15.75, 3.0, 0, 3.5]
-                },
-                {
                   "wall": "y_min",
                   "type": "door",
-                  "boundary": [34.58, 3.0, 0, 3.5]
+                  "boundary": [14, 5.0, 0, 4]
                 }
               ],
               "combustibles": [
                 {
-                  "key": "PACKING_BOX",
-                  "count": 500
-                },
-                {
-                  "key": "PLASTIC_FILM",
-                  "count": 50
+                  "key": "CARDBOARD_BOX",
+                  "count": 200
                 }
               ],
               "specialized_components": []
@@ -281,43 +360,300 @@
         {
           "name": "1F",
           "height": 6.0,
-          "openings": [],
+          "openings": [
+            {
+              "wall": "y_max",
+              "type": "door",
+              "boundary": [44, 1.0, 0, 1.5]
+            }
+          ],
           "fire_compartments": [
             {
-              "name": "办公区",
-              "boundary": [0.0, 56, 0, 31],
+              "name": "办公区1",
+              "boundary": [0, 14, 0, 14],
+              "firewall_thickness": 0.3,
+              "firewall_material": "CONCRETE",
+              "openings": [
+                {
+                  "wall": "y_max",
+                  "type": "door",
+                  "boundary": [13, 1.0, 0, 1.5]
+                },
+                {
+                  "wall": "x_min",
+                  "type": "door",
+                  "boundary": [6, 1.0, 0, 1.5]
+                }
+              ],
+              "combustibles": [
+                {
+                  "key": "CARDBOARD_BOX",
+                  "count": 10
+                }
+              ],
+              "specialized_components": []
+            },
+            {
+              "name": "办公区2",
+              "boundary": [14, 28, 0, 14],
+              "firewall_thickness": 0.3,
+              "firewall_material": "CONCRETE",
+              "openings": [
+                {
+                  "wall": "y_max",
+                  "type": "door",
+                  "boundary": [0, 1.0, 0, 1.5]
+                },
+                {
+                  "wall": "y_max",
+                  "type": "door",
+                  "boundary": [13, 1.0, 0, 1.5]
+                }
+              ],
+              "combustibles": [
+                {
+                  "key": "CARDBOARD_BOX",
+                  "count": 10
+                }
+              ],
+              "specialized_components": []
+            },
+            {
+              "name": "办公区3",
+              "boundary": [28, 42, 0, 14],
+              "firewall_thickness": 0.3,
+              "firewall_material": "CONCRETE",
+              "openings": [
+                {
+                  "wall": "y_max",
+                  "type": "door",
+                  "boundary": [0, 1.0, 0, 1.5]
+                },
+                {
+                  "wall": "y_max",
+                  "type": "door",
+                  "boundary": [13, 1.0, 0, 1.5]
+                }
+              ],
+              "combustibles": [
+                {
+                  "key": "CARDBOARD_BOX",
+                  "count": 10
+                }
+              ],
+              "specialized_components": []
+            },
+            {
+              "name": "办公区4",
+              "boundary": [42, 56, 0, 14],
+              "firewall_thickness": 0.3,
+              "firewall_material": "CONCRETE",
+              "openings": [
+                {
+                  "wall": "y_max",
+                  "type": "door",
+                  "boundary": [0, 1.0, 0, 1.5]
+                },
+                {
+                  "wall": "y_max",
+                  "type": "door",
+                  "boundary": [13, 1.0, 0, 1.5]
+                }
+              ],
+              "combustibles": [
+                {
+                  "key": "CARDBOARD_BOX",
+                  "count": 10
+                }
+              ],
+              "specialized_components": []
+            },
+            {
+              "name": "办公区5",
+              "boundary": [0, 8, 17, 31],
               "firewall_thickness": 0.3,
               "firewall_material": "CONCRETE",
               "openings": [
                 {
                   "wall": "y_max",
                   "type": "window",
-                  "boundary": [0.8022, 2.0, 1, 1.5]
+                  "boundary": [5, 1, 2, 1.5]
                 },
                 {
                   "wall": "y_max",
                   "type": "window",
-                  "boundary": [4.4067, 2.0, 1, 1.5]
+                  "boundary": [7, 1.0, 2, 1.5]
                 },
                 {
-                  "wall": "y_max",
-                  "type": "window",
-                  "boundary": [8.0112, 2.0, 1, 1.5]
+                  "wall": "y_min",
+                  "type": "door",
+                  "boundary": [7, 1.0, 0, 1.5]
                 },
                 {
                   "wall": "x_min",
                   "type": "door",
-                  "boundary": [12.318, 1.5, 0, 2.5]
+                  "boundary": [8, 1.0, 0, 1.5]
                 }
               ],
               "combustibles": [
                 {
-                  "key": "OFFICE_FURNITURE",
-                  "count": 50
+                  "key": "CARDBOARD_BOX",
+                  "count": 5
+                }
+              ],
+              "specialized_components": []
+            },
+            {
+              "name": "办公区6",
+              "boundary": [8, 16, 17, 31],
+              "firewall_thickness": 0.3,
+              "firewall_material": "CONCRETE",
+              "openings": [
+                {
+                  "wall": "y_max",
+                  "type": "window",
+                  "boundary": [4, 1, 2, 1.5]
                 },
                 {
-                  "key": "PAPER_ARCHIVE",
-                  "count": 100
+                  "wall": "y_max",
+                  "type": "window",
+                  "boundary": [6, 1.0, 2, 1.5]
+                },
+                {
+                  "wall": "y_min",
+                  "type": "door",
+                  "boundary": [0, 1.0, 0, 1.5]
+                }
+              ],
+              "combustibles": [
+                {
+                  "key": "CARDBOARD_BOX",
+                  "count": 5
+                }
+              ],
+              "specialized_components": []
+            },
+            {
+              "name": "办公区7",
+              "boundary": [16, 24, 17, 31],
+              "firewall_thickness": 0.3,
+              "firewall_material": "CONCRETE",
+              "openings": [
+                {
+                  "wall": "y_max",
+                  "type": "window",
+                  "boundary": [4, 1, 2, 1.5]
+                },
+                {
+                  "wall": "y_max",
+                  "type": "window",
+                  "boundary": [6, 1.0, 2, 1.5]
+                },
+                {
+                  "wall": "y_min",
+                  "type": "door",
+                  "boundary": [7, 1.0, 0, 1.5]
+                }
+              ],
+              "combustibles": [
+                {
+                  "key": "CARDBOARD_BOX",
+                  "count": 5
+                }
+              ],
+              "specialized_components": []
+            },
+            {
+              "name": "办公区8",
+              "boundary": [24, 34, 17, 31],
+              "firewall_thickness": 0.3,
+              "firewall_material": "CONCRETE",
+              "openings": [
+                {
+                  "wall": "y_max",
+                  "type": "window",
+                  "boundary": [4, 1, 2, 1.5]
+                },
+                {
+                  "wall": "y_max",
+                  "type": "window",
+                  "boundary": [6, 1.0, 2, 1.5]
+                },
+                {
+                  "wall": "y_min",
+                  "type": "door",
+                  "boundary": [9, 1.0, 0, 1.5]
+                }
+              ],
+              "combustibles": [
+                {
+                  "key": "CARDBOARD_BOX",
+                  "count": 5
+                }
+              ],
+              "specialized_components": []
+            },
+            {
+              "name": "办公区9",
+              "boundary": [34, 44, 17, 31],
+              "firewall_thickness": 0.3,
+              "firewall_material": "CONCRETE",
+              "openings": [
+                {
+                  "wall": "y_max",
+                  "type": "window",
+                  "boundary": [1, 1, 2, 1.5]
+                },
+                {
+                  "wall": "y_max",
+                  "type": "window",
+                  "boundary": [3, 1.0, 2, 1.5]
+                },
+                {
+                  "wall": "y_max",
+                  "type": "window",
+                  "boundary": [5, 1.0, 2, 1.5]
+                },
+                {
+                  "wall": "y_min",
+                  "type": "door",
+                  "boundary": [0, 1.0, 0, 1.5]
+                },
+                {
+                  "wall": "x_max",
+                  "type": "door",
+                  "boundary": [0, 1.0, 0, 1.5]
+                }
+              ],
+              "combustibles": [
+                {
+                  "key": "CARDBOARD_BOX",
+                  "count": 5
+                }
+              ],
+              "specialized_components": []
+            },
+            {
+              "name": "办公区9",
+              "boundary": [48, 56, 17, 31],
+              "firewall_thickness": 0.3,
+              "firewall_material": "CONCRETE",
+              "openings": [
+                {
+                  "wall": "y_max",
+                  "type": "window",
+                  "boundary": [3, 1, 2, 1.5]
+                },
+                {
+                  "wall": "x_min",
+                  "type": "door",
+                  "boundary": [29.5, 1.0, 0, 1.5]
+                }
+              ],
+              "combustibles": [
+                {
+                  "key": "CARDBOARD_BOX",
+                  "count": 5
                 }
               ],
               "specialized_components": []
@@ -352,22 +688,22 @@
                 {
                   "wall": "x_min",
                   "type": "door",
-                  "boundary": [8.25, 1.5, 0, 2.5]
+                  "boundary": [14, 1, 0, 1.5]
                 },
                 {
                   "wall": "x_max",
                   "type": "door",
-                  "boundary": [8.25, 1.5, 0, 2.5]
+                  "boundary": [4, 4, 0, 4]
                 }
               ],
               "combustibles": [
                 {
-                  "key": "TEST_EQUIPMENT",
+                  "key": "CARDBOARD_BOX",
                   "count": 10
                 },
                 {
-                  "key": "CHEMICAL_REAGENT",
-                  "count": 10
+                  "key": "ASSEMBLY_PARTS",
+                  "count": 5
                 }
               ],
               "specialized_components": []
@@ -386,33 +722,382 @@
         {
           "name": "1F",
           "height": 12.0,
-          "openings": [],
+          "openings": [
+            {
+              "wall": "y_max",
+              "type": "door",
+              "boundary": [25, 1, 0, 1.5]
+            },
+            {
+              "wall": "y_min",
+              "type": "door",
+              "boundary": [25, 2, 0, 2]
+            },
+            {
+              "wall": "y_max",
+              "type": "door",
+              "boundary": [25, 1, 0, 1.5]
+            },
+            {
+              "wall": "y_max",
+              "type": "door",
+              "boundary": [113.5, 1, 0, 1.5]
+            }
+          ],
           "fire_compartments": [
             {
               "name": "质量/计量实验室",
-              "boundary": [0, 25, 0, 19],
+              "boundary": [0, 23, 0, 19],
+              "firewall_thickness": 0.3,
+              "firewall_material": "CONCRETE",
+              "openings": [
+                {
+                  "wall": "x_max",
+                  "type": "door",
+                  "boundary": [1, 2, 0, 2.5]
+                },
+                {
+                  "wall": "x_max",
+                  "type": "door",
+                  "boundary": [4, 2, 0, 2.5]
+                },
+                {
+                  "wall": "x_max",
+                  "type": "door",
+                  "boundary": [13, 2, 0, 2.5]
+                },
+                {
+                  "wall": "x_max",
+                  "type": "door",
+                  "boundary": [16, 2, 0, 2.5]
+                },
+                {
+                  "wall": "y_max",
+                  "type": "window",
+                  "boundary": [20, 1, 2, 1.5]
+                },
+                {
+                  "wall": "y_max",
+                  "type": "window",
+                  "boundary": [22, 1, 2, 1.5]
+                }
+              ],
+              "combustibles": [
+                {
+                  "key": "ASSEMBLY_PARTS",
+                  "count": 10
+                },
+                {
+                  "key": "CARDBOARD_BOX",
+                  "count": 5
+                }
+              ],
+              "specialized_components": []
+            },
+            {
+              "name": "工装维修/备件间1",
+              "boundary": [25, 40, 0, 8],
+              "firewall_thickness": 0.3,
+              "firewall_material": "CONCRETE",
+              "openings": [
+                {
+                  "wall": "y_max",
+                  "type": "door",
+                  "boundary": [0, 1, 0, 1.5]
+                },
+                {
+                  "wall": "y_max",
+                  "type": "door",
+                  "boundary": [14, 1, 0, 1.5]
+                }
+              ],
+              "combustibles": [
+                {
+                  "key": "ASSEMBLY_PARTS",
+                  "count": 30
+                },
+                {
+                  "key": "CARDBOARD_BOX",
+                  "count": 10
+                }
+              ],
+              "specialized_components": []
+            },
+            {
+              "name": "工装维修/备件间2",
+              "boundary": [40, 75, 0, 8],
+              "firewall_thickness": 0.3,
+              "firewall_material": "CONCRETE",
+              "openings": [
+                {
+                  "wall": "y_max",
+                  "type": "door",
+                  "boundary": [0, 1, 0, 1.5]
+                },
+                {
+                  "wall": "y_max",
+                  "type": "door",
+                  "boundary": [34, 1, 0, 1.5]
+                }
+              ],
+              "combustibles": [
+                {
+                  "key": "ASSEMBLY_PARTS",
+                  "count": 30
+                },
+                {
+                  "key": "CARDBOARD_BOX",
+                  "count": 10
+                }
+              ],
+              "specialized_components": []
+            },
+            {
+              "name": "工装维修/备件间3",
+              "boundary": [75, 120, 0, 8],
+              "firewall_thickness": 0.3,
+              "firewall_material": "CONCRETE",
+              "openings": [
+                {
+                  "wall": "y_max",
+                  "type": "door",
+                  "boundary": [0, 1, 0, 1.5]
+                },
+                {
+                  "wall": "y_max",
+                  "type": "door",
+                  "boundary": [44, 1, 0, 1.5]
+                }
+              ],
+              "combustibles": [
+                {
+                  "key": "ASSEMBLY_PARTS",
+                  "count": 30
+                },
+                {
+                  "key": "CARDBOARD_BOX",
+                  "count": 10
+                }
+              ],
+              "specialized_components": []
+            },
+            {
+              "name": "工装维修/备件间4",
+              "boundary": [25, 60, 10, 19],
+              "firewall_thickness": 0.3,
+              "firewall_material": "CONCRETE",
+              "openings": [
+                {
+                  "wall": "y_min",
+                  "type": "door",
+                  "boundary": [0.5, 1, 0, 1.5]
+                },
+                {
+                  "wall": "y_min",
+                  "type": "door",
+                  "boundary": [33.5, 1, 0, 1.5]
+                },
+                {
+                  "wall": "y_max",
+                  "type": "window",
+                  "boundary": [2, 1, 2, 1.5]
+                },
+                {
+                  "wall": "y_max",
+                  "type": "window",
+                  "boundary": [5, 1, 2, 1.5]
+                },
+                {
+                  "wall": "y_max",
+                  "type": "window",
+                  "boundary": [8, 1, 2, 1.5]
+                },
+                {
+                  "wall": "y_max",
+                  "type": "window",
+                  "boundary": [12, 1, 2, 1.5]
+                },
+                {
+                  "wall": "y_max",
+                  "type": "window",
+                  "boundary": [16, 1, 2, 1.5]
+                },
+                {
+                  "wall": "y_max",
+                  "type": "window",
+                  "boundary": [21, 1, 2, 1.5]
+                },
+                {
+                  "wall": "y_max",
+                  "type": "window",
+                  "boundary": [26, 1, 2, 1.5]
+                },
+                {
+                  "wall": "y_max",
+                  "type": "window",
+                  "boundary": [31, 1, 2, 1.5]
+                }
+              ],
+              "combustibles": [
+                {
+                  "key": "ASSEMBLY_PARTS",
+                  "count": 10
+                },
+                {
+                  "key": "CARDBOARD_BOX",
+                  "count": 5
+                }
+              ],
+              "specialized_components": []
+            },
+            {
+              "name": "工装维修/备件间5",
+              "boundary": [60, 95, 10, 19],
+              "firewall_thickness": 0.3,
+              "firewall_material": "CONCRETE",
+              "openings": [
+                {
+                  "wall": "y_min",
+                  "type": "door",
+                  "boundary": [0.5, 1, 0, 1.5]
+                },
+                {
+                  "wall": "y_min",
+                  "type": "door",
+                  "boundary": [33.5, 1, 0, 1.5]
+                },
+                {
+                  "wall": "y_max",
+                  "type": "window",
+                  "boundary": [2, 1, 2, 1.5]
+                },
+                {
+                  "wall": "y_max",
+                  "type": "window",
+                  "boundary": [5, 1, 2, 1.5]
+                },
+                {
+                  "wall": "y_max",
+                  "type": "window",
+                  "boundary": [8, 1, 2, 1.5]
+                },
+                {
+                  "wall": "y_max",
+                  "type": "window",
+                  "boundary": [12, 1, 2, 1.5]
+                },
+                {
+                  "wall": "y_max",
+                  "type": "window",
+                  "boundary": [16, 1, 2, 1.5]
+                },
+                {
+                  "wall": "y_max",
+                  "type": "window",
+                  "boundary": [21, 1, 2, 1.5]
+                },
+                {
+                  "wall": "y_max",
+                  "type": "window",
+                  "boundary": [26, 1, 2, 1.5]
+                },
+                {
+                  "wall": "y_max",
+                  "type": "window",
+                  "boundary": [31, 1, 2, 1.5]
+                }
+              ],
+              "combustibles": [
+                {
+                  "key": "ASSEMBLY_PARTS",
+                  "count": 10
+                },
+                {
+                  "key": "CARDBOARD_BOX",
+                  "count": 5
+                }
+              ],
+              "specialized_components": []
+            },
+            {
+              "name": "工装维修/备件间6",
+              "boundary": [95, 113, 10, 19],
+              "firewall_thickness": 0.3,
+              "firewall_material": "CONCRETE",
+              "openings": [
+                {
+                  "wall": "y_min",
+                  "type": "door",
+                  "boundary": [0.5, 1, 0, 1.5]
+                },
+                {
+                  "wall": "x_max",
+                  "type": "door",
+                  "boundary": [7.5, 1, 0, 1.5]
+                },
+                {
+                  "wall": "y_max",
+                  "type": "window",
+                  "boundary": [2, 1, 2, 1.5]
+                },
+                {
+                  "wall": "y_max",
+                  "type": "window",
+                  "boundary": [5, 1, 2, 1.5]
+                },
+                {
+                  "wall": "y_max",
+                  "type": "window",
+                  "boundary": [8, 1, 2, 1.5]
+                },
+                {
+                  "wall": "y_max",
+                  "type": "window",
+                  "boundary": [12, 1, 2, 1.5]
+                },
+                {
+                  "wall": "y_max",
+                  "type": "window",
+                  "boundary": [16, 1, 2, 1.5]
+                }
+              ],
+              "combustibles": [
+                {
+                  "key": "ASSEMBLY_PARTS",
+                  "count": 10
+                },
+                {
+                  "key": "CARDBOARD_BOX",
+                  "count": 5
+                }
+              ],
+              "specialized_components": []
+            },
+            {
+              "name": "工装维修/备件间7",
+              "boundary": [115, 120, 10, 19],
               "firewall_thickness": 0.3,
               "firewall_material": "CONCRETE",
               "openings": [
                 {
                   "wall": "x_min",
                   "type": "door",
-                  "boundary": [1.86, 1.5, 0, 2.5]
+                  "boundary": [7.5, 1, 0, 1.5]
                 },
                 {
-                  "wall": "x_max",
-                  "type": "door",
-                  "boundary": [1.86, 1.5, 0, 2.5]
+                  "wall": "y_max",
+                  "type": "window",
+                  "boundary": [2, 1, 2, 1.5]
                 }
               ],
               "combustibles": [
                 {
-                  "key": "TEST_EQUIPMENT",
-                  "count": 10
+                  "key": "ASSEMBLY_PARTS",
+                  "count": 5
                 },
                 {
-                  "key": "CHEMICAL_REAGENT",
-                  "count": 50
+                  "key": "CARDBOARD_BOX",
+                  "count": 2
                 }
               ],
               "specialized_components": []
@@ -443,24 +1128,19 @@
               "boundary": [0, 13, 0, 15.0],
               "firewall_thickness": 0.3,
               "firewall_material": "CONCRETE",
-              "openings": [
-                {
-                  "wall": "y_max",
-                  "type": "door",
-                  "boundary": [8.05, 1.5, 0, 2.5]
-                }
-              ],
+              "openings": [],
               "combustibles": [
                 {
-                  "key": "ELECTRICAL_CABINET",
-                  "count": 5
-                },
-                {
                   "key": "CABLE",
-                  "count": 20
+                  "count": 15
                 }
               ],
-              "specialized_components": []
+              "specialized_components": [
+                {
+                  "key": "CABLE_BUNDLE",
+                  "count": 2
+                }
+              ]
             }
           ],
           "roof": {
@@ -490,24 +1170,19 @@
               "firewall_material": "CONCRETE",
               "openings": [
                 {
-                  "wall": "y_max",
-                  "type": "door",
-                  "boundary": [21.0, 2.0, 0, 3.0]
-                },
-                {
                   "wall": "x_min",
                   "type": "door",
-                  "boundary": [6.75, 1.5, 0, 2.5]
+                  "boundary": [1, 3, 0, 3]
                 }
               ],
               "combustibles": [
                 {
-                  "key": "ACCESSORIES",
-                  "count": 100
+                  "key": "CARDBOARD_BOX",
+                  "count": 50
                 },
                 {
-                  "key": "PACKING_MATERIAL",
-                  "count": 50
+                  "key": "ASSEMBLY_PARTS",
+                  "count": 30
                 }
               ],
               "specialized_components": []
@@ -538,21 +1213,11 @@
               "boundary": [0, 20, 0, 20.0],
               "firewall_thickness": 0.3,
               "firewall_material": "CONCRETE",
-              "openings": [
-                {
-                  "wall": "y_max",
-                  "type": "door",
-                  "boundary": [12.45, 1.5, 0, 2.5]
-                }
-              ],
+              "openings": [],
               "combustibles": [
                 {
-                  "key": "HAZARDOUS_CHEMICAL",
+                  "key": "SOLVENT",
                   "count": 20
-                },
-                {
-                  "key": "FIRE_EXTINGUISHER",
-                  "count": 10
                 }
               ],
               "specialized_components": []
@@ -587,23 +1252,73 @@
                 {
                   "wall": "x_min",
                   "type": "door",
-                  "boundary": [15.75, 3.0, 0, 3.5]
+                  "boundary": [15, 3.0, 0, 3.5]
+                },
+                {
+                  "wall": "x_max",
+                  "type": "door",
+                  "boundary": [1, 1.0, 0, 1.5]
                 },
                 {
                   "wall": "y_min",
-                  "type": "door",
-                  "boundary": [24.02, 3.0, 0, 3.5]
+                  "type": "window",
+                  "boundary": [8.5, 1, 3, 2]
                 },
                 {
-                  "wall": "y_max",
-                  "type": "door",
-                  "boundary": [24.02, 3.0, 0, 3.5]
+                  "wall": "y_min",
+                  "type": "window",
+                  "boundary": [12, 1, 3, 2]
+                },
+                {
+                  "wall": "y_min",
+                  "type": "window",
+                  "boundary": [15.5, 1, 3, 2]
+                },
+                {
+                  "wall": "x_max",
+                  "type": "window",
+                  "boundary": [3, 1, 3, 2]
+                },
+                {
+                  "wall": "x_max",
+                  "type": "window",
+                  "boundary": [5, 1, 3, 2]
+                },
+                {
+                  "wall": "x_max",
+                  "type": "window",
+                  "boundary": [7, 1, 3, 2]
+                },
+                {
+                  "wall": "x_max",
+                  "type": "window",
+                  "boundary": [9, 1, 3, 2]
+                },
+                {
+                  "wall": "x_max",
+                  "type": "window",
+                  "boundary": [11, 1, 3, 2]
+                },
+                {
+                  "wall": "x_max",
+                  "type": "window",
+                  "boundary": [13, 1, 3, 2]
+                },
+                {
+                  "wall": "x_max",
+                  "type": "window",
+                  "boundary": [15, 1, 3, 2]
+                },
+                {
+                  "wall": "x_max",
+                  "type": "window",
+                  "boundary": [17, 1, 3, 2]
                 }
               ],
               "combustibles": [
                 {
-                  "key": "PAINT_DRUM",
-                  "count": 50
+                  "key": "SOLVENT",
+                  "count": 40
                 }
               ],
               "specialized_components": []

@@ -72,6 +72,14 @@ def _signature(building):
             s.name, round(s.height, 4),
             tuple(_opening_sig(o) for o in s.openings),
             tuple(_fc_sig(fc) for fc in s.fire_compartments),
+            tuple(
+                (c.get("key", ""), c.get("count", 1), tuple(c.get("boundary", [])))
+                for c in s.combustibles if isinstance(c, dict)
+            ),
+            tuple(
+                (sc.get("key", ""), sc.get("count", 1), tuple(sc.get("boundary", [])))
+                for sc in s.specialized_components if isinstance(sc, dict)
+            ),
             (round(s.roof.thickness, 4), s.roof.material),
         )
 
@@ -435,6 +443,7 @@ class Viewer3D(QWidget):
 
             for fc in story.fire_compartments:
                 self._collect_combustible_boxes(fc, ox, oy, z0, combust_per_color)
+            self._collect_story_combustible_boxes(story, ox, oy, z0, combust_per_color)
 
         def _combine(boxes):
             if not boxes:
@@ -605,6 +614,95 @@ class Viewer3D(QWidget):
                 ))
                 per_color.setdefault(col, []).append(box)
 
+    def _collect_story_combustible_boxes(self, story, ox, oy, z_offset, per_color: dict):
+        """Populate per_color dict from story-level combustibles/specialized_components.
+
+        Each entry carries its own ``boundary`` which defines the placement region.
+        """
+        from models.materials import COMBUSTIBLE_LIBRARY
+        from models.combustibles import SPECIALIZED_COMPONENTS
+        from models.geometry import layout_items_in_fc
+
+        colors = {
+            "BROWN": "#8B4513", "RED": "#CD5C5C", "SALMON": "#FA8072",
+            "GRAY": "#808080", "KHAKI": "#BDB76B", "IVORY": "#FFFFF0",
+            "MAGENTA": "#FF00FF", "ORANGE": "#FFA500",
+        }
+        material_colors = {
+            "ALUMINUM": "#c0c0c0", "STEEL": "#4a5568",
+            "JET_FUEL": "#b45309", "SOLID_PROPELLANT": "#dc2626",
+            "GASOLINE": "#f59e0b", "ELECTROLYTE": "#06b6d4",
+            "WOOD": "#92400e",
+        }
+
+        # Story-level specialized_components
+        for sc in story.specialized_components:
+            boundary = sc.get("boundary")
+            if not boundary or not (isinstance(sc, dict) and "key" in sc):
+                continue
+            comp = SPECIALIZED_COMPONENTS.get(sc["key"])
+            if not comp:
+                continue
+            items = []
+            for ci in range(sc.get("count", 1)):
+                items.append({
+                    "length": comp.total_length,
+                    "width": comp.total_width,
+                    "height": comp.total_height,
+                    "color": "GRAY",
+                    "component_key": sc["key"],
+                    "_comp": comp,
+                    "_instance": ci,
+                })
+            placed = layout_items_in_fc(boundary, items, margin=1.0, gap=0.5)
+            for item in placed:
+                comp_key = item.get("component_key")
+                comp_obj = item.get("_comp")
+                if comp_key and comp_obj:
+                    for part in comp_obj.parts:
+                        col = material_colors.get(part.material_key, "#CD853F")
+                        box = pv.Box(bounds=(
+                            ox + item["x"] + part.dx,
+                            ox + item["x"] + part.dx + part.length,
+                            oy + item["y"] + part.dy,
+                            oy + item["y"] + part.dy + part.width,
+                            part.dz + z_offset,
+                            part.dz + part.height + z_offset,
+                        ))
+                        per_color.setdefault(col, []).append(box)
+
+        # Story-level combustibles
+        for cb in story.combustibles:
+            boundary = cb.get("boundary")
+            if not boundary or not (isinstance(cb, dict) and "key" in cb):
+                continue
+            cb_def = COMBUSTIBLE_LIBRARY.get(cb["key"], {})
+            if not cb_def:
+                continue
+            length = cb_def.get("length", 1.0)
+            width = cb_def.get("width", 0.8)
+            rotation = cb.get("rotation", 0)
+            if rotation == 90:
+                length, width = width, length
+            items = []
+            for _ in range(cb.get("count", 1)):
+                items.append({
+                    "length": length, "width": width,
+                    "height": cb_def.get("height", 0.5),
+                    "color": cb_def.get("color", "BROWN"),
+                    "component_key": None,
+                })
+            placed = layout_items_in_fc(boundary, items, margin=1.0, gap=0.5)
+            for item in placed:
+                col = colors.get(item.get("color", "BROWN"), "#CD853F")
+                box = pv.Box(bounds=(
+                    ox + item["x"], ox + item["x"] + item["length"],
+                    oy + item["y"], oy + item["y"] + item["width"],
+                    item.get("z", 0) + z_offset,
+                    item.get("z", 0) + item["height"] + z_offset,
+                ))
+                per_color.setdefault(col, []).append(box)
+
     def clear_cache(self):
         """Drop all cached bundles and their actors."""
         for bundle in self._building_cache.values():
@@ -679,6 +777,7 @@ class Viewer3D(QWidget):
 
                 for fc in story.fire_compartments:
                     self._draw_combustibles(fc, ox, oy, z0)
+                self._draw_story_combustibles(story, ox, oy, z0)
 
         if global_min_x == float("inf"):
             if buildings:
@@ -1109,6 +1208,93 @@ class Viewer3D(QWidget):
                         item.get("z", 0) + item["height"] + z_offset,
                     )
                 )
+                actor = self.plotter.add_mesh(box, color=color, opacity=0.8)
+                self._add_to_group("combustibles", actor)
+
+    def _draw_story_combustibles(self, story, ox, oy, z_offset):
+        """Draw story-level combustibles/specialized_components with explicit boundary."""
+        from models.materials import COMBUSTIBLE_LIBRARY
+        from models.combustibles import SPECIALIZED_COMPONENTS
+        from models.geometry import layout_items_in_fc
+
+        colors = {
+            "BROWN": "#8B4513", "RED": "#CD5C5C", "SALMON": "#FA8072",
+            "GRAY": "#808080", "KHAKI": "#BDB76B", "IVORY": "#FFFFF0",
+            "MAGENTA": "#FF00FF", "ORANGE": "#FFA500",
+        }
+        material_colors = {
+            "ALUMINUM": "#c0c0c0", "STEEL": "#4a5568",
+            "JET_FUEL": "#b45309", "SOLID_PROPELLANT": "#dc2626",
+            "GASOLINE": "#f59e0b", "ELECTROLYTE": "#06b6d4",
+            "WOOD": "#92400e",
+        }
+
+        # Story-level specialized_components
+        for sc in story.specialized_components:
+            boundary = sc.get("boundary")
+            if not boundary or not (isinstance(sc, dict) and "key" in sc):
+                continue
+            comp = SPECIALIZED_COMPONENTS.get(sc["key"])
+            if not comp:
+                continue
+            items = []
+            for ci in range(sc.get("count", 1)):
+                items.append({
+                    "length": comp.total_length,
+                    "width": comp.total_width,
+                    "height": comp.total_height,
+                    "color": "GRAY",
+                    "component_key": sc["key"],
+                    "_comp": comp,
+                    "_instance": ci,
+                })
+            placed = layout_items_in_fc(boundary, items, margin=1.0, gap=0.5)
+            for item in placed:
+                comp_obj = item.get("_comp")
+                if comp_obj:
+                    for part in comp_obj.parts:
+                        color = material_colors.get(part.material_key, "#CD853F")
+                        box = pv.Box(bounds=(
+                            ox + item["x"] + part.dx,
+                            ox + item["x"] + part.dx + part.length,
+                            oy + item["y"] + part.dy,
+                            oy + item["y"] + part.dy + part.width,
+                            part.dz + z_offset,
+                            part.dz + part.height + z_offset,
+                        ))
+                        actor = self.plotter.add_mesh(box, color=color, opacity=0.8)
+                        self._add_to_group("combustibles", actor)
+
+        # Story-level combustibles
+        for cb in story.combustibles:
+            boundary = cb.get("boundary")
+            if not boundary or not (isinstance(cb, dict) and "key" in cb):
+                continue
+            cb_def = COMBUSTIBLE_LIBRARY.get(cb["key"], {})
+            if not cb_def:
+                continue
+            length = cb_def.get("length", 1.0)
+            width = cb_def.get("width", 0.8)
+            rotation = cb.get("rotation", 0)
+            if rotation == 90:
+                length, width = width, length
+            items = []
+            for _ in range(cb.get("count", 1)):
+                items.append({
+                    "length": length, "width": width,
+                    "height": cb_def.get("height", 0.5),
+                    "color": cb_def.get("color", "BROWN"),
+                    "component_key": None,
+                })
+            placed = layout_items_in_fc(boundary, items, margin=1.0, gap=0.5)
+            for item in placed:
+                color = colors.get(item.get("color", "BROWN"), "#CD853F")
+                box = pv.Box(bounds=(
+                    ox + item["x"], ox + item["x"] + item["length"],
+                    oy + item["y"], oy + item["y"] + item["width"],
+                    item.get("z", 0) + z_offset,
+                    item.get("z", 0) + item["height"] + z_offset,
+                ))
                 actor = self.plotter.add_mesh(box, color=color, opacity=0.8)
                 self._add_to_group("combustibles", actor)
 

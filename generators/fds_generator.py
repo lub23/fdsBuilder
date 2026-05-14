@@ -156,6 +156,7 @@ class FDSGenerator:
 
         for b in buildings:
             for story in b.stories:
+                # FC-level combustibles / components
                 for fc in story.fire_compartments:
                     for cb in fc.combustibles:
                         key = cb.get("key", "")
@@ -167,6 +168,17 @@ class FDSGenerator:
                             for part in comp.parts:
                                 if part.material_key:
                                     component_matl_keys.add(part.material_key)
+                # Story-level combustibles / components
+                for cb in story.combustibles:
+                    key = cb.get("key", "")
+                    if key:
+                        combustible_keys.add(key)
+                for sc_info in story.specialized_components:
+                    comp = SPECIALIZED_COMPONENTS.get(sc_info.get("key", ""))
+                    if comp:
+                        for part in comp.parts:
+                            if part.material_key:
+                                component_matl_keys.add(part.material_key)
 
         lines.append("! ========== 材料定义 ==========\n")
 
@@ -218,9 +230,22 @@ class FDSGenerator:
             if mat_key in comp_surfs_done:
                 continue
             if mat_key in COMBUSTIBLE_LIBRARY:
-                surf_id = f"SURF_{mat_key}"
-                if surf_id not in comp_surfs_done:
-                    comp_surfs_done.add(surf_id)
+                # Component parts reference surf_id="{mat_key}_SURF" —
+                # emit a SURF with HRRPUA/ignition from the combustible library
+                cb_def = COMBUSTIBLE_LIBRARY[mat_key]
+                surf_id = f"{mat_key}_SURF"
+                if surf_id in comp_surfs_done:
+                    continue
+                hrrpua = cb_def.get("hrrpua", 300)
+                ign_temp = cb_def.get("ignition_temp", 250)
+                color = cb_def.get("color", "RED")
+                lines.append(
+                    f"&SURF ID='{surf_id}',\n"
+                    f"      HRRPUA={hrrpua},\n"
+                    f"      IGNITION_TEMPERATURE={ign_temp},\n"
+                    f"      COLOR='{color}' /\n\n"
+                )
+                comp_surfs_done.add(surf_id)
                 continue
             surf_id = f"{mat_key}_SURF"
             mat = MATERIAL_LIBRARY.get(mat_key)
@@ -703,6 +728,180 @@ class FDSGenerator:
                     )
 
     # ------------------------------------------------------------------
+    # Story-level combustibles (with explicit boundary)
+    # ------------------------------------------------------------------
+    def _generate_story_combustibles(self, building, story, lines, grid_size: float = 0.1):
+        """Generate story-level combustibles/specialized_components with explicit boundary.
+
+        Each entry has its own ``boundary`` (in building-local coords) defining
+        where items of that type are distributed.  This is for areas that are not
+        covered by any fire compartment.
+        """
+        from models.geometry import layout_items_in_fc
+
+        ox, _L, oy, _W = building.boundary
+        z0 = story.z_bottom
+        subgrid_tol = 1e-6
+        PROBE_HEIGHT_OFFSET = 1.0
+
+        if not story.combustibles and not story.specialized_components:
+            return
+
+        lines.append(f"! -- Story-level 可燃物与组件 ({story.name}) --\n")
+        probe_counters: dict[str, int] = {}
+        cb_idx = 0
+
+        def _emit_placed(placed_items):
+            nonlocal cb_idx
+            for item in placed_items:
+                if item.get("_type") == "component":
+                    comp = item["_comp"]
+                    ci = item["_instance"]
+                    key = item["key"]
+                    horizontal = item.get("_horizontal", False)
+                    lines.append(f"! {comp.name} #{ci + 1} (story-level)\n")
+                    min_ignition_pi = 0
+                    min_ignition_temp = float("inf")
+                    for pi, part in enumerate(comp.parts):
+                        ign_temp = _get_part_ignition_temp(part, comp.ignition_temp)
+                        if ign_temp < min_ignition_temp:
+                            min_ignition_temp = ign_temp
+                            min_ignition_pi = pi
+                    crit_px = crit_py = crit_pz = 0.0
+                    crit_length = crit_width = crit_height = 0.0
+                    for pi, part in enumerate(comp.parts):
+                        if horizontal:
+                            px = ox + item["x"] + part.dz
+                            py = oy + item["y"] + part.dy
+                            pz = z0 + part.dx
+                            part_length = part.height
+                            part_width = part.width
+                            part_height = part.length
+                        else:
+                            px = ox + item["x"] + part.dx
+                            py = oy + item["y"] + part.dy
+                            pz = z0 + part.dz
+                            part_length = part.length
+                            part_width = part.width
+                            part_height = part.height
+                        surf = part.surf_id or "INERT"
+                        sg = (
+                            part_length < grid_size - subgrid_tol
+                            or part_width < grid_size - subgrid_tol
+                            or part_height < grid_size - subgrid_tol
+                        )
+                        thicken_kv = "THICKEN=.TRUE., " if sg else ""
+                        lines.append(
+                            f"&OBST XB={px:.2f},{px + part_length:.2f},"
+                            f"{py:.2f},{py + part_width:.2f},"
+                            f"{pz:.2f},{pz + part_height:.2f},\n"
+                            f"      {thicken_kv}SURF_ID='{surf}',\n"
+                            f"      ID='{key}_story_{ci}_{pi}' /\n"
+                        )
+                        if pi == min_ignition_pi:
+                            crit_px, crit_py, crit_pz = px, py, pz
+                            crit_length, crit_width, crit_height = part_length, part_width, part_height
+                    if not sg:
+                        cx = crit_px + crit_length / 2
+                        cy = crit_py + crit_width / 2
+                        cz = crit_pz + crit_height
+                        pk = f"{key}_CRIT"
+                        probe_counters[pk] = probe_counters.get(pk, 0) + 1
+                        pi2 = probe_counters[pk]
+                        lines.append(
+                            f"&DEVC XYZ={cx:.2f},{cy:.2f},{cz:.2f}, IOR=3, "
+                            f"QUANTITY='WALL TEMPERATURE', ID='STORY_{pk}_{pi2:02d}' /\n"
+                        )
+                else:
+                    key = item["key"]
+                    surf_id = f"SURF_{key}"
+                    x1 = ox + item["x"]
+                    x2 = x1 + item["length"]
+                    y1 = oy + item["y"]
+                    y2 = y1 + item["width"]
+                    z1 = z0
+                    z2 = z0 + item["height"]
+                    cb_id = f"{key}_story_{cb_idx}".replace(" ", "_")
+                    cb_idx += 1
+                    sg = (
+                        item["length"] < grid_size - subgrid_tol
+                        or item["width"] < grid_size - subgrid_tol
+                        or item["height"] < grid_size - subgrid_tol
+                    )
+                    thicken_kv = "THICKEN=.TRUE., " if sg else ""
+                    lines.append(
+                        f"&OBST XB={x1:.2f},{x2:.2f},{y1:.2f},{y2:.2f},"
+                        f"{z1:.2f},{z2:.2f},\n"
+                        f"      {thicken_kv}SURF_IDS='{surf_id}','INERT','INERT',\n"
+                        f"      ID='{cb_id}' /  ! {item.get('name', key)} (story-level)\n"
+                    )
+                    if sg:
+                        continue
+                    probe_counters[key] = probe_counters.get(key, 0) + 1
+                    pi2 = probe_counters[key]
+                    cx = (x1 + x2) / 2
+                    cy = (y1 + y2) / 2
+                    cz = z2 + PROBE_HEIGHT_OFFSET
+                    lines.append(
+                        f"&DEVC XYZ={cx:.2f},{cy:.2f},{cz:.2f}, "
+                        f"QUANTITY='WALL TEMPERATURE', ID='STORY_{key}_{pi2:02d}' /\n"
+                    )
+
+        # Story-level specialized_components
+        for sc_info in story.specialized_components:
+            boundary = sc_info.get("boundary")
+            if not boundary:
+                continue
+            sc_key = sc_info.get("key", "")
+            comp = SPECIALIZED_COMPONENTS.get(sc_key)
+            if not comp:
+                continue
+            is_rocket = sc_key.startswith("ROCKET_VEHICLE")
+            items = []
+            for ci in range(sc_info.get("count", 1)):
+                items.append({
+                    "length": comp.total_length,
+                    "width": comp.total_width,
+                    "height": comp.total_height,
+                    "key": sc_key,
+                    "_type": "component",
+                    "_comp": comp,
+                    "_instance": ci,
+                    "_horizontal": is_rocket,
+                })
+            placed = layout_items_in_fc(boundary, items, margin=1.0, gap=0.5)
+            _emit_placed(placed)
+
+        # Story-level combustibles
+        for cb_entry in story.combustibles:
+            boundary = cb_entry.get("boundary")
+            if not boundary:
+                continue
+            key = cb_entry.get("key", "")
+            count = cb_entry.get("count", 1)
+            if key not in COMBUSTIBLE_LIBRARY:
+                continue
+            cb_def = COMBUSTIBLE_LIBRARY[key]
+            length = cb_def.get("length", 1.0)
+            width = cb_def.get("width", 0.8)
+            height = cb_def.get("height", 0.5)
+            rotation = cb_entry.get("rotation", 0)
+            if rotation == 90:
+                length, width = width, length
+            items = []
+            for _ in range(count):
+                items.append({
+                    "length": length, "width": width, "height": height,
+                    "key": key, "name": cb_def.get("name", key),
+                    "_type": "combustible",
+                })
+            placed = layout_items_in_fc(boundary, items, margin=1.0, gap=0.5)
+            _emit_placed(placed)
+
+        lines.append("\n")
+
+
+    # ------------------------------------------------------------------
     # Heat source
     # ------------------------------------------------------------------
     def _generate_heat_source(self, lines, timer_x: float, timer_y: float, timer_z: float):
@@ -978,8 +1177,9 @@ class FDSGenerator:
                     lines.append("! -- 防火墙 --\n")
                     self._generate_firewalls(b, story, lines)
 
-                # Combustibles
+                # Combustibles (FC-level + story-level)
                 self._generate_combustibles(b, story, lines, grid_size=grid_size)
+                self._generate_story_combustibles(b, story, lines, grid_size=grid_size)
 
             # Roof: use the last story's roof
             if b.stories:

@@ -35,11 +35,11 @@
               "combustibles": [
                 {
                   "key": "WOODEN_PALLET",
-                  "count": 10
+                  "count": 20
                 },
                 {
-                  "key": "CUTTING_FLUID_IBC",
-                  "count": 4
+                  "key": "CARDBOARD_BOX",
+                  "count": 10
                 }
               ],
               "specialized_components": []
@@ -80,11 +80,11 @@
               "combustibles": [
                 {
                   "key": "WOODEN_PALLET",
-                  "count": 4
+                  "count": 8
                 },
                 {
-                  "key": "CUTTING_FLUID_IBC",
-                  "count": 4
+                  "key": "CARDBOARD_BOX",
+                  "count": 6
                 }
               ],
               "specialized_components": []
@@ -140,10 +140,15 @@
               "combustibles": [
                 {
                   "key": "ELECTRICAL_EQUIPMENT",
-                  "count": 6
+                  "count": 12
                 }
               ],
-              "specialized_components": []
+              "specialized_components": [
+                {
+                  "key": "CABLE_BUNDLE",
+                  "count": 2
+                }
+              ]
             },
             {
               "name": "配电间2",
@@ -160,10 +165,15 @@
               "combustibles": [
                 {
                   "key": "ELECTRICAL_EQUIPMENT",
-                  "count": 6
+                  "count": 8
                 }
               ],
-              "specialized_components": []
+              "specialized_components": [
+                {
+                  "key": "CABLE_BUNDLE",
+                  "count": 1
+                }
+              ]
             }
           ],
           "roof": {
@@ -185,6 +195,28 @@
           "name": "1F",
           "height": 10.0,
           "openings": [],
+          "combustibles": [
+            {
+              "key": "CUTTING_FLUID_IBC",
+              "count": 10,
+              "boundary": [0, 70, 60, 100]
+            },
+            {
+              "key": "INDUSTRIAL_OIL_DRUM",
+              "count": 4,
+              "boundary": [0, 70, 60, 100]
+            },
+            {
+              "key": "LUBRICATION_OIL",
+              "count": 8,
+              "boundary": [0, 70, 100, 140]
+            },
+            {
+              "key": "CUTTING_FLUID_IBC",
+              "count": 6,
+              "boundary": [0, 70, 100, 140]
+            }
+          ],
           "fire_compartments": [
             {
               "name": "原材料仓储区",
@@ -220,7 +252,7 @@
                 },
                 {
                   "key": "CUTTING_FLUID_IBC",
-                  "count": 4
+                  "count": 6
                 }
               ],
               "specialized_components": []
@@ -244,12 +276,12 @@
               ],
               "combustibles": [
                 {
-                  "key": "WOODEN_PALLET",
-                  "count": 8
+                  "key": "CARDBOARD_BOX",
+                  "count": 12
                 },
                 {
-                  "key": "RUST_PREVENTION_OIL",
-                  "count": 6
+                  "key": "WOODEN_PALLET",
+                  "count": 8
                 }
               ],
               "specialized_components": []
@@ -273,12 +305,12 @@
               ],
               "combustibles": [
                 {
-                  "key": "RUST_PREVENTION_OIL",
-                  "count": 4
+                  "key": "ELECTRICAL_EQUIPMENT",
+                  "count": 6
                 },
                 {
-                  "key": "ELECTRICAL_EQUIPMENT",
-                  "count": 3
+                  "key": "CUTTING_FLUID_IBC",
+                  "count": 2
                 }
               ],
               "specialized_components": []
@@ -298,11 +330,11 @@
               "combustibles": [
                 {
                   "key": "LUBRICATION_OIL",
-                  "count": 5
+                  "count": 10
                 },
                 {
-                  "key": "OILY_RAGS",
-                  "count": 2
+                  "key": "INDUSTRIAL_OIL_DRUM",
+                  "count": 4
                 }
               ],
               "specialized_components": []
@@ -322,11 +354,11 @@
               "combustibles": [
                 {
                   "key": "LUBRICATION_OIL",
-                  "count": 3
+                  "count": 4
                 },
                 {
-                  "key": "COATING_SOLVENT",
-                  "count": 4
+                  "key": "CUTTING_FLUID_IBC",
+                  "count": 3
                 }
               ],
               "specialized_components": []
@@ -345,11 +377,11 @@
               ],
               "combustibles": [
                 {
-                  "key": "SOLVENT_CLEANER",
+                  "key": "INDUSTRIAL_OIL_DRUM",
                   "count": 8
                 },
                 {
-                  "key": "COATING_SOLVENT",
+                  "key": "CUTTING_FLUID_IBC",
                   "count": 4
                 }
               ],
@@ -370,22 +402,27 @@
               "combustibles": [
                 {
                   "key": "LUBRICATION_OIL",
+                  "count": 6
+                },
+                {
+                  "key": "CUTTING_FLUID_IBC",
                   "count": 4
                 },
                 {
-                  "key": "SOLVENT_CLEANER",
-                  "count": 4
-                },
-                {
-                  "key": "OILY_RAGS",
+                  "key": "INDUSTRIAL_OIL_DRUM",
                   "count": 2
                 },
                 {
                   "key": "ELECTRICAL_EQUIPMENT",
-                  "count": 4
+                  "count": 3
                 }
               ],
-              "specialized_components": []
+              "specialized_components": [
+                {
+                  "key": "ELECTRONICS_CONSOLE",
+                  "count": 1
+                }
+              ]
             },
             {
               "name": "工具备件库",
@@ -401,8 +438,12 @@
               ],
               "combustibles": [
                 {
-                  "key": "ELECTRICAL_EQUIPMENT",
-                  "count": 10
+                  "key": "WOODEN_PALLET",
+                  "count": 6
+                },
+                {
+                  "key": "CARDBOARD_BOX",
+                  "count": 6
                 }
               ],
               "specialized_components": []
@@ -428,78 +469,57 @@
           "height": 8.0,
           "openings": [
             {
-              "wall": "y_min",
-              "type": "door",
-              "boundary": [0, 3, 0, 4]
+              "wall": "y_min", "type": "door", "boundary": [0, 3, 0, 4]
             },
             {
-              "wall": "y_min",
-              "type": "door",
-              "boundary": [38, 3, 0, 4]
+              "wall": "y_min", "type": "door", "boundary": [38, 3, 0, 4]
             },
             {
-              "wall": "x_min",
-              "type": "window",
-              "boundary": [2, 9, 4, 2]
+              "wall": "x_min", "type": "window", "boundary": [2, 9, 4, 2]
             },
             {
-              "wall": "x_max",
-              "type": "window",
-              "boundary": [2, 12, 4, 2]
+              "wall": "x_max", "type": "window", "boundary": [2, 12, 4, 2]
             }
           ],
           "fire_compartments": [
             {
-              "name": "南区1",
-              "boundary": [4, 18.0, 0, 13.0],
-              "firewall_thickness": 0.2,
-              "firewall_material": "CONCRETE",
+              "name": "南区1", "boundary": [4, 18.0, 0, 13.0],
+              "firewall_thickness": 0.2, "firewall_material": "CONCRETE",
               "openings": [
-                {
-                  "wall": "y_max",
-                  "type": "door",
-                  "boundary": [2, 2, 0, 4]
-                }
+                {"wall": "y_max", "type": "door", "boundary": [2, 2, 0, 4]}
               ],
-              "combustibles": [],
+              "combustibles": [
+                {"key": "CARDBOARD_BOX", "count": 4},
+                {"key": "ELECTRICAL_EQUIPMENT", "count": 2}
+              ],
               "specialized_components": []
             },
             {
-              "name": "南区2",
-              "boundary": [18, 28.0, 0, 13.0],
-              "firewall_thickness": 0.2,
-              "firewall_material": "CONCRETE",
+              "name": "南区2", "boundary": [18, 28.0, 0, 13.0],
+              "firewall_thickness": 0.2, "firewall_material": "CONCRETE",
               "openings": [
-                {
-                  "wall": "y_max",
-                  "type": "door",
-                  "boundary": [2, 2, 0, 4]
-                }
+                {"wall": "y_max", "type": "door", "boundary": [2, 2, 0, 4]}
               ],
-              "combustibles": [],
+              "combustibles": [
+                {"key": "CARDBOARD_BOX", "count": 3},
+                {"key": "ELECTRICAL_EQUIPMENT", "count": 2}
+              ],
               "specialized_components": []
             },
             {
-              "name": "南区3",
-              "boundary": [28, 38.0, 0, 13.0],
-              "firewall_thickness": 0.2,
-              "firewall_material": "CONCRETE",
+              "name": "南区3", "boundary": [28, 38.0, 0, 13.0],
+              "firewall_thickness": 0.2, "firewall_material": "CONCRETE",
               "openings": [
-                {
-                  "wall": "y_max",
-                  "type": "door",
-                  "boundary": [2, 2, 0, 4]
-                }
+                {"wall": "y_max", "type": "door", "boundary": [2, 2, 0, 4]}
               ],
-              "combustibles": [],
+              "combustibles": [
+                {"key": "CARDBOARD_BOX", "count": 3},
+                {"key": "ELECTRICAL_EQUIPMENT", "count": 2}
+              ],
               "specialized_components": []
             }
           ],
-          "roof": {
-            "thickness": 0.2,
-            "material": "CONCRETE",
-            "openings": []
-          }
+          "roof": {"thickness": 0.2, "material": "CONCRETE", "openings": []}
         }
       ]
     },
@@ -514,159 +534,91 @@
           "name": "1F",
           "height": 8.0,
           "openings": [
-            {
-              "wall": "x_min",
-              "type": "window",
-              "boundary": [0, 35, 4, 2]
-            },
-            {
-              "wall": "y_min",
-              "type": "window",
-              "boundary": [0, 22, 4, 2]
-            },
-            {
-              "wall": "y_min",
-              "type": "door",
-              "boundary": [26, 3, 0, 8]
-            },
-            {
-              "wall": "y_max",
-              "type": "window",
-              "boundary": [0, 26, 4, 2]
-            },
-            {
-              "wall": "x_max",
-              "type": "window",
-              "boundary": [24, 3, 4, 2]
-            },
-            {
-              "wall": "x_max",
-              "type": "door",
-              "boundary": [27, 4, 0, 3]
-            },
-            {
-              "wall": "x_max",
-              "type": "window",
-              "boundary": [31, 4, 4, 2]
-            }
+            {"wall": "x_min", "type": "window", "boundary": [0, 35, 4, 2]},
+            {"wall": "y_min", "type": "window", "boundary": [0, 22, 4, 2]},
+            {"wall": "y_min", "type": "door", "boundary": [26, 3, 0, 8]},
+            {"wall": "y_max", "type": "window", "boundary": [0, 26, 4, 2]},
+            {"wall": "x_max", "type": "window", "boundary": [24, 3, 4, 2]},
+            {"wall": "x_max", "type": "door", "boundary": [27, 4, 0, 3]},
+            {"wall": "x_max", "type": "window", "boundary": [31, 4, 4, 2]}
           ],
           "fire_compartments": [
             {
-              "name": "西区1",
-              "boundary": [0, 7.0, 0, 14.0],
-              "firewall_thickness": 0.2,
-              "firewall_material": "CONCRETE",
+              "name": "西区1", "boundary": [0, 7.0, 0, 14.0],
+              "firewall_thickness": 0.2, "firewall_material": "CONCRETE",
               "openings": [
-                {
-                  "wall": "x_max",
-                  "type": "door",
-                  "boundary": [0, 1, 0, 2]
-                },
-                {
-                  "wall": "x_max",
-                  "type": "door",
-                  "boundary": [13, 1, 0, 2]
-                }
+                {"wall": "x_max", "type": "door", "boundary": [0, 1, 0, 2]},
+                {"wall": "x_max", "type": "door", "boundary": [13, 1, 0, 2]}
               ],
-              "combustibles": [],
+              "combustibles": [
+                {"key": "CARDBOARD_BOX", "count": 2},
+                {"key": "ELECTRICAL_EQUIPMENT", "count": 2}
+              ],
               "specialized_components": []
             },
             {
-              "name": "西区2",
-              "boundary": [0, 7.0, 14, 28.0],
-              "firewall_thickness": 0.2,
-              "firewall_material": "CONCRETE",
+              "name": "西区2", "boundary": [0, 7.0, 14, 28.0],
+              "firewall_thickness": 0.2, "firewall_material": "CONCRETE",
               "openings": [
-                {
-                  "wall": "x_max",
-                  "type": "door",
-                  "boundary": [0, 1, 0, 2]
-                },
-                {
-                  "wall": "x_max",
-                  "type": "door",
-                  "boundary": [13, 1, 0, 2]
-                }
+                {"wall": "x_max", "type": "door", "boundary": [0, 1, 0, 2]},
+                {"wall": "x_max", "type": "door", "boundary": [13, 1, 0, 2]}
               ],
-              "combustibles": [],
+              "combustibles": [
+                {"key": "CARDBOARD_BOX", "count": 2},
+                {"key": "ELECTRICAL_EQUIPMENT", "count": 2}
+              ],
               "specialized_components": []
             },
             {
-              "name": "西区3",
-              "boundary": [0, 7.0, 28, 35.0],
-              "firewall_thickness": 0.2,
-              "firewall_material": "CONCRETE",
+              "name": "西区3", "boundary": [0, 7.0, 28, 35.0],
+              "firewall_thickness": 0.2, "firewall_material": "CONCRETE",
               "openings": [
-                {
-                  "wall": "x_max",
-                  "type": "door",
-                  "boundary": [0, 1, 0, 2]
-                }
+                {"wall": "x_max", "type": "door", "boundary": [0, 1, 0, 2]}
               ],
-              "combustibles": [],
+              "combustibles": [
+                {"key": "CARDBOARD_BOX", "count": 2}
+              ],
               "specialized_components": []
             },
             {
-              "name": "西区4",
-              "boundary": [7, 26.0, 31, 35.0],
-              "firewall_thickness": 0.2,
-              "firewall_material": "CONCRETE",
+              "name": "西区4", "boundary": [7, 26.0, 31, 35.0],
+              "firewall_thickness": 0.2, "firewall_material": "CONCRETE",
               "openings": [
-                {
-                  "wall": "x_max",
-                  "type": "door",
-                  "boundary": [0, 1, 0, 2]
-                },
-                {
-                  "wall": "y_min",
-                  "type": "door",
-                  "boundary": [1, 1, 0, 2]
-                }
+                {"wall": "x_max", "type": "door", "boundary": [0, 1, 0, 2]},
+                {"wall": "y_min", "type": "door", "boundary": [1, 1, 0, 2]}
               ],
-              "combustibles": [],
+              "combustibles": [
+                {"key": "CARDBOARD_BOX", "count": 2}
+              ],
               "specialized_components": []
             },
             {
-              "name": "西区5",
-              "boundary": [10, 26.0, 9, 28.0],
-              "firewall_thickness": 0.2,
-              "firewall_material": "CONCRETE",
+              "name": "西区5", "boundary": [10, 26.0, 9, 28.0],
+              "firewall_thickness": 0.2, "firewall_material": "CONCRETE",
               "openings": [
-                {
-                  "wall": "x_max",
-                  "type": "door",
-                  "boundary": [1, 2, 0, 2]
-                },
-                {
-                  "wall": "x_max",
-                  "type": "door",
-                  "boundary": [16, 2, 0, 2]
-                }
+                {"wall": "x_max", "type": "door", "boundary": [1, 2, 0, 2]},
+                {"wall": "x_max", "type": "door", "boundary": [16, 2, 0, 2]}
               ],
-              "combustibles": [],
+              "combustibles": [
+                {"key": "CARDBOARD_BOX", "count": 4},
+                {"key": "ELECTRICAL_EQUIPMENT", "count": 2}
+              ],
               "specialized_components": []
             },
             {
-              "name": "西区6",
-              "boundary": [10, 26.0, 0, 9.0],
-              "firewall_thickness": 0.2,
-              "firewall_material": "CONCRETE",
+              "name": "西区6", "boundary": [10, 26.0, 0, 9.0],
+              "firewall_thickness": 0.2, "firewall_material": "CONCRETE",
               "openings": [
-                {
-                  "wall": "x_max",
-                  "type": "door",
-                  "boundary": [7, 1, 0, 2]
-                }
+                {"wall": "x_max", "type": "door", "boundary": [7, 1, 0, 2]}
               ],
-              "combustibles": [],
+              "combustibles": [
+                {"key": "CARDBOARD_BOX", "count": 3},
+                {"key": "ELECTRICAL_EQUIPMENT", "count": 2}
+              ],
               "specialized_components": []
             }
           ],
-          "roof": {
-            "thickness": 0.2,
-            "material": "CONCRETE",
-            "openings": []
-          }
+          "roof": {"thickness": 0.2, "material": "CONCRETE", "openings": []}
         }
       ]
     },
@@ -683,76 +635,45 @@
           "openings": [],
           "fire_compartments": [
             {
-              "name": "中心区1",
-              "boundary": [0, 15.0, 0, 14.0],
-              "firewall_thickness": 0.2,
-              "firewall_material": "CONCRETE",
+              "name": "中心区1", "boundary": [0, 15.0, 0, 14.0],
+              "firewall_thickness": 0.2, "firewall_material": "CONCRETE",
               "openings": [
-                {
-                  "wall": "y_min",
-                  "type": "door",
-                  "boundary": [1, 3, 0, 3]
-                },
-                {
-                  "wall": "x_min",
-                  "type": "door",
-                  "boundary": [10, 3, 0, 3]
-                }
+                {"wall": "y_min", "type": "door", "boundary": [1, 3, 0, 3]},
+                {"wall": "x_min", "type": "door", "boundary": [10, 3, 0, 3]}
               ],
-              "combustibles": [],
+              "combustibles": [
+                {"key": "CARDBOARD_BOX", "count": 4},
+                {"key": "ELECTRICAL_EQUIPMENT", "count": 2}
+              ],
               "specialized_components": []
             },
             {
-              "name": "中心区2",
-              "boundary": [0, 15.0, 14, 21.0],
-              "firewall_thickness": 0.2,
-              "firewall_material": "CONCRETE",
+              "name": "中心区2", "boundary": [0, 15.0, 14, 21.0],
+              "firewall_thickness": 0.2, "firewall_material": "CONCRETE",
               "openings": [
-                {
-                  "wall": "y_max",
-                  "type": "door",
-                  "boundary": [0, 1, 0, 2]
-                },
-                {
-                  "wall": "y_max",
-                  "type": "door",
-                  "boundary": [13, 1, 0, 2]
-                }
+                {"wall": "y_max", "type": "door", "boundary": [0, 1, 0, 2]},
+                {"wall": "y_max", "type": "door", "boundary": [13, 1, 0, 2]}
               ],
-              "combustibles": [],
+              "combustibles": [
+                {"key": "CARDBOARD_BOX", "count": 3}
+              ],
               "specialized_components": []
             },
             {
-              "name": "中心区3",
-              "boundary": [0, 15.0, 21, 24.0],
-              "firewall_thickness": 0.2,
-              "firewall_material": "CONCRETE",
+              "name": "中心区3", "boundary": [0, 15.0, 21, 24.0],
+              "firewall_thickness": 0.2, "firewall_material": "CONCRETE",
               "openings": [
-                {
-                  "wall": "y_max",
-                  "type": "windows",
-                  "boundary": [0, 15, 4, 2]
-                },
-                {
-                  "wall": "x_max",
-                  "type": "door",
-                  "boundary": [0, 3, 0, 4]
-                },
-                {
-                  "wall": "x_min",
-                  "type": "door",
-                  "boundary": [0, 3, 0, 8]
-                }
+                {"wall": "y_max", "type": "windows", "boundary": [0, 15, 4, 2]},
+                {"wall": "x_max", "type": "door", "boundary": [0, 3, 0, 4]},
+                {"wall": "x_min", "type": "door", "boundary": [0, 3, 0, 8]}
               ],
-              "combustibles": [],
+              "combustibles": [
+                {"key": "CARDBOARD_BOX", "count": 2}
+              ],
               "specialized_components": []
             }
           ],
-          "roof": {
-            "thickness": 0.2,
-            "material": "CONCRETE",
-            "openings": []
-          }
+          "roof": {"thickness": 0.2, "material": "CONCRETE", "openings": []}
         }
       ]
     },
@@ -769,46 +690,23 @@
           "openings": [],
           "fire_compartments": [
             {
-              "name": "东区1",
-              "boundary": [0, 26.0, 0, 35.0],
-              "firewall_thickness": 0.2,
-              "firewall_material": "CONCRETE",
+              "name": "东区1", "boundary": [0, 26.0, 0, 35.0],
+              "firewall_thickness": 0.2, "firewall_material": "CONCRETE",
               "openings": [
-                {
-                  "wall": "y_min",
-                  "type": "window",
-                  "boundary": [19, 7, 4, 2]
-                },
-                {
-                  "wall": "y_max",
-                  "type": "window",
-                  "boundary": [0, 26, 4, 2]
-                },
-                {
-                  "wall": "x_min",
-                  "type": "window",
-                  "boundary": [24, 11, 4, 2]
-                },
-                {
-                  "wall": "x_max",
-                  "type": "window",
-                  "boundary": [0, 31, 4, 2]
-                },
-                {
-                  "wall": "x_max",
-                  "type": "door",
-                  "boundary": [7, 7, 0, 3]
-                }
+                {"wall": "y_min", "type": "window", "boundary": [19, 7, 4, 2]},
+                {"wall": "y_max", "type": "window", "boundary": [0, 26, 4, 2]},
+                {"wall": "x_min", "type": "window", "boundary": [24, 11, 4, 2]},
+                {"wall": "x_max", "type": "window", "boundary": [0, 31, 4, 2]},
+                {"wall": "x_max", "type": "door", "boundary": [7, 7, 0, 3]}
               ],
-              "combustibles": [],
+              "combustibles": [
+                {"key": "CARDBOARD_BOX", "count": 6},
+                {"key": "ELECTRICAL_EQUIPMENT", "count": 4}
+              ],
               "specialized_components": []
             }
           ],
-          "roof": {
-            "thickness": 0.2,
-            "material": "CONCRETE",
-            "openings": []
-          }
+          "roof": {"thickness": 0.2, "material": "CONCRETE", "openings": []}
         }
       ]
     }

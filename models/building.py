@@ -156,18 +156,22 @@ class Story:
     """A single story (floor) in a building.
 
     Attributes:
-        name:              Story label, e.g. "1F", "2F".
-        height:            Floor-to-ceiling height in metres.
-        openings:          Exterior openings on this story.
-        fire_compartments: Fire compartments within this story.
-        roof:              Roof/floor-slab above this story.
-        z_bottom:          Runtime-computed bottom elevation (set by Building.update_z_offsets).
+        name:                   Story label, e.g. "1F", "2F".
+        height:                 Floor-to-ceiling height in metres.
+        openings:               Exterior openings on this story.
+        fire_compartments:      Fire compartments within this story.
+        combustibles:           Story-level combustibles with explicit ``boundary``.
+        specialized_components: Story-level specialized components with explicit ``boundary``.
+        roof:                   Roof/floor-slab above this story.
+        z_bottom:               Runtime-computed bottom elevation (set by Building.update_z_offsets).
     """
 
     name: str = "1F"
     height: float = 3.0
     openings: list[Opening] = field(default_factory=list)
     fire_compartments: list[FireCompartment] = field(default_factory=list)
+    combustibles: list[dict] = field(default_factory=list)
+    specialized_components: list[dict] = field(default_factory=list)
     roof: Roof = field(default_factory=Roof)
     z_bottom: float = 0.0
 
@@ -181,6 +185,8 @@ class Story:
             "height": self.height,
             "openings": [o.to_dict() for o in self.openings],
             "fire_compartments": [fc.to_dict() for fc in self.fire_compartments],
+            "combustibles": list(self.combustibles),
+            "specialized_components": list(self.specialized_components),
             "roof": self.roof.to_dict(),
         }
 
@@ -193,6 +199,8 @@ class Story:
             fire_compartments=[
                 FireCompartment.from_dict(fc) for fc in d.get("fire_compartments", [])
             ],
+            combustibles=list(d.get("combustibles", [])),
+            specialized_components=list(d.get("specialized_components", [])),
             roof=Roof.from_dict(d.get("roof", {})),
         )
 
