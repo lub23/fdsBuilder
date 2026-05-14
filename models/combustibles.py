@@ -38,6 +38,7 @@ class ComponentPart:
     height: float
     material_key: str  # key into MATERIAL_LIBRARY or COMBUSTIBLE_LIBRARY
     surf_id: str = ""  # custom SURF if needed
+    ignition_temp: float = 0.0  # 0 means use component-level default
 
 
 @dataclass
@@ -71,6 +72,7 @@ class SpecializedComponent:
                     "height": p.height,
                     "material_key": p.material_key,
                     "surf_id": p.surf_id,
+                    "ignition_temp": p.ignition_temp,
                 }
                 for p in self.parts
             ],
@@ -1025,7 +1027,7 @@ SPECIALIZED_COMPONENTS = {
                 width=5.0,
                 height=8.0,
                 material_key="SOLID_PROPELLANT",
-                surf_id="SURF_SOLID_PROPELLANT",
+                surf_id="SOLID_PROPELLANT_SURF",
             ),
             # 2. 级间段 #1
             ComponentPart(
@@ -1080,7 +1082,7 @@ SPECIALIZED_COMPONENTS = {
                 width=1.5,
                 height=7.0,
                 material_key="SOLID_PROPELLANT",
-                surf_id="SURF_SOLID_PROPELLANT",
+                surf_id="SOLID_PROPELLANT_SURF",
             ),
             # 7. 助推器 #2 (右前)
             ComponentPart(
@@ -1091,7 +1093,7 @@ SPECIALIZED_COMPONENTS = {
                 width=1.5,
                 height=7.0,
                 material_key="SOLID_PROPELLANT",
-                surf_id="SURF_SOLID_PROPELLANT",
+                surf_id="SOLID_PROPELLANT_SURF",
             ),
             # 8. 助推器 #3 (左后)
             ComponentPart(
@@ -1102,7 +1104,7 @@ SPECIALIZED_COMPONENTS = {
                 width=1.5,
                 height=7.0,
                 material_key="SOLID_PROPELLANT",
-                surf_id="SURF_SOLID_PROPELLANT",
+                surf_id="SOLID_PROPELLANT_SURF",
             ),
             # 9. 助推器 #4 (右后)
             ComponentPart(
@@ -1113,7 +1115,7 @@ SPECIALIZED_COMPONENTS = {
                 width=1.5,
                 height=7.0,
                 material_key="SOLID_PROPELLANT",
-                surf_id="SURF_SOLID_PROPELLANT",
+                surf_id="SOLID_PROPELLANT_SURF",
             ),
             # 10. 发动机喷管区
             ComponentPart(
@@ -1148,7 +1150,7 @@ SPECIALIZED_COMPONENTS = {
                 width=3.4,
                 height=5.5,
                 material_key="SOLID_PROPELLANT",
-                surf_id="SURF_SOLID_PROPELLANT",
+                surf_id="SOLID_PROPELLANT_SURF",
             ),
             # 2. 级间段
             ComponentPart(
@@ -1192,7 +1194,7 @@ SPECIALIZED_COMPONENTS = {
                 width=1.0,
                 height=4.5,
                 material_key="SOLID_PROPELLANT",
-                surf_id="SURF_SOLID_PROPELLANT",
+                surf_id="SOLID_PROPELLANT_SURF",
             ),
             # 6. 助推器 #2 (右)
             ComponentPart(
@@ -1203,7 +1205,7 @@ SPECIALIZED_COMPONENTS = {
                 width=1.0,
                 height=4.5,
                 material_key="SOLID_PROPELLANT",
-                surf_id="SURF_SOLID_PROPELLANT",
+                surf_id="SOLID_PROPELLANT_SURF",
             ),
             # 7. 发动机喷管
             ComponentPart(
@@ -1238,7 +1240,7 @@ SPECIALIZED_COMPONENTS = {
                 width=1.3,
                 height=2.5,
                 material_key="SOLID_PROPELLANT",
-                surf_id="SURF_SOLID_PROPELLANT",
+                surf_id="SOLID_PROPELLANT_SURF",
             ),
             # 2. 弹体中段（战斗部/载荷）
             ComponentPart(
@@ -1317,7 +1319,7 @@ SPECIALIZED_COMPONENTS = {
                 width=5.0,
                 height=12.0,
                 material_key="COAL_STACK",
-                surf_id="SURF_COAL_STACK",
+                surf_id="COAL_STACK_SURF",
             ),
             # 2. 煤粉仓
             ComponentPart(
@@ -1328,7 +1330,7 @@ SPECIALIZED_COMPONENTS = {
                 width=4.0,
                 height=8.0,
                 material_key="COAL_DUST_HOPPER",
-                surf_id="SURF_COAL_DUST_HOPPER",
+                surf_id="COAL_DUST_HOPPER_SURF",
             ),
             # 3. 给煤机皮带
             ComponentPart(
@@ -1339,7 +1341,7 @@ SPECIALIZED_COMPONENTS = {
                 width=0.8,
                 height=0.012,
                 material_key="CONVEYOR_BELT",
-                surf_id="SURF_CONVEYOR_BELT",
+                surf_id="CONVEYOR_BELT_SURF",
             ),
             # 4. 皮带支撑结构
             ComponentPart(
@@ -1374,7 +1376,7 @@ SPECIALIZED_COMPONENTS = {
                 width=2.5,
                 height=2.0,
                 material_key="LUBE_OIL_TANK",
-                surf_id="SURF_LUBE_OIL_TANK",
+                surf_id="LUBE_OIL_TANK_SURF",
             ),
             # 2. 液压油箱
             ComponentPart(
@@ -1385,7 +1387,7 @@ SPECIALIZED_COMPONENTS = {
                 width=1.2,
                 height=1.5,
                 material_key="HYDRAULIC_OIL_TANK",
-                surf_id="SURF_HYDRAULIC_OIL_TANK",
+                surf_id="HYDRAULIC_OIL_TANK_SURF",
             ),
             # 3. 密封油箱
             ComponentPart(
@@ -1396,7 +1398,7 @@ SPECIALIZED_COMPONENTS = {
                 width=1.0,
                 height=1.2,
                 material_key="SEAL_OIL_TANK",
-                surf_id="SURF_SEAL_OIL_TANK",
+                surf_id="SEAL_OIL_TANK_SURF",
             ),
             # 4. 油管路系统
             ComponentPart(
@@ -1431,7 +1433,7 @@ SPECIALIZED_COMPONENTS = {
                 width=2.0,
                 height=2.5,
                 material_key="OIL_TRANSFORMER",
-                surf_id="SURF_OIL_TRANSFORMER",
+                surf_id="OIL_TRANSFORMER_SURF",
             ),
             # 2. 开关柜1
             ComponentPart(
@@ -1442,7 +1444,7 @@ SPECIALIZED_COMPONENTS = {
                 width=1.2,
                 height=2.2,
                 material_key="SWITCH_CABINET",
-                surf_id="SURF_SWITCH_CABINET",
+                surf_id="SWITCH_CABINET_SURF",
             ),
             # 3. 开关柜2
             ComponentPart(
@@ -1453,7 +1455,7 @@ SPECIALIZED_COMPONENTS = {
                 width=1.2,
                 height=2.2,
                 material_key="SWITCH_CABINET",
-                surf_id="SURF_SWITCH_CABINET",
+                surf_id="SWITCH_CABINET_SURF",
             ),
             # 4. 油浸断路器
             ComponentPart(
@@ -1464,7 +1466,7 @@ SPECIALIZED_COMPONENTS = {
                 width=0.8,
                 height=2.2,
                 material_key="OIL_CIRCUIT_BREAKER",
-                surf_id="SURF_OIL_CIRCUIT_BREAKER",
+                surf_id="OIL_CIRCUIT_BREAKER_SURF",
             ),
             # 5. 电缆桥架
             ComponentPart(
@@ -1475,7 +1477,7 @@ SPECIALIZED_COMPONENTS = {
                 width=0.8,
                 height=0.2,
                 material_key="CABLE_BUNDLE",
-                surf_id="SURF_CABLE_BUNDLE",
+                surf_id="CABLE_BUNDLE_SURF",
             ),
         ],
     ),
@@ -1499,7 +1501,7 @@ SPECIALIZED_COMPONENTS = {
                 width=1.5,
                 height=1.8,
                 material_key="IGNITION_OIL_DEVICE",
-                surf_id="SURF_IGNITION_OIL_DEVICE",
+                surf_id="IGNITION_OIL_DEVICE_SURF",
             ),
             # 2. 日用油箱
             ComponentPart(
@@ -1510,7 +1512,7 @@ SPECIALIZED_COMPONENTS = {
                 width=1.0,
                 height=1.2,
                 material_key="DAILY_OIL_TANK",
-                surf_id="SURF_DAILY_OIL_TANK",
+                surf_id="DAILY_OIL_TANK_SURF",
             ),
             # 3. 供油管路
             ComponentPart(
@@ -1583,7 +1585,7 @@ SPECIALIZED_COMPONENTS = {
                 width=0.3,
                 height=0.15,
                 material_key="CABLE_BUNDLE",
-                surf_id="SURF_CABLE_BUNDLE",
+                surf_id="CABLE_BUNDLE_SURF",
             ),
         ],
     ),

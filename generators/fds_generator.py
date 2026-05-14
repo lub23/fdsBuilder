@@ -33,29 +33,21 @@ from models.combustibles import SPECIALIZED_COMPONENTS
 REDUNDANCY = 0.05
 
 
-# Materials treated as metal (measured with RADIATIVE HEAT FLUX instead of temperature).
-# Includes MATERIAL_LIBRARY metal keys + any COMBUSTIBLE_LIBRARY key whose matl is dense,
-# low heat-of-combustion, or whose name clearly denotes metal.
-_METAL_MATERIAL_KEYS = {"STEEL", "ALUMINUM"}
-_METAL_NAME_HINTS = ("STEEL", "METAL", "ALUMINUM")
+def _get_part_ignition_temp(part, component_ignition_temp: float) -> float:
+    """Return effective ignition temperature for a component part.
 
-
-def _is_metal_combustible(key: str) -> bool:
-    """Return True if *key* refers to a metal-based combustible/component part."""
-    if not key:
-        return False
-    if key in _METAL_MATERIAL_KEYS:
-        return True
-    if any(h in key for h in _METAL_NAME_HINTS):
-        return True
-    cb = COMBUSTIBLE_LIBRARY.get(key)
+    Uses part.ignition_temp if set (> 0), otherwise falls back to
+    COMBUSTIBLE_LIBRARY entry, then to component_ignition_temp.
+    """
+    # Part has explicit ignition_temp set
+    if part.ignition_temp > 0:
+        return part.ignition_temp
+    # Check COMBUSTIBLE_LIBRARY for the material
+    cb = COMBUSTIBLE_LIBRARY.get(part.material_key)
     if cb is not None:
-        m = cb.get("matl", {})
-        hoc = m.get("HEAT_OF_COMBUSTION", 20000)
-        dens = m.get("DENSITY", 1000)
-        if hoc <= 10000 and dens >= 2000:
-            return True
-    return False
+        return cb.get("ignition_temp", component_ignition_temp)
+    # Fall back to component-level default
+    return component_ignition_temp
 
 
 def _compute_sibling_overlaps(fc, siblings):
@@ -263,7 +255,7 @@ class FDSGenerator:
                     f"&SURF ID='{surf_id}',\n"
                     f"      MATL_ID='{matl_id}',\n"
                     f"      THICKNESS=0.05,\n"
-                    f"      IGNITION_TEMPERATURE=250.0,\n"
+                    f"      IGNITION_TEMPERATURE={cb_def.get('ignition_temp', 250.0):.1f},\n"
                     f"      HRRPUA={hrrpua},\n"
                     f"      COLOR='{color}' /\n\n"
                 )
@@ -524,31 +516,39 @@ class FDSGenerator:
     # ------------------------------------------------------------------
     # Combustibles (from fire compartment data)
     # ------------------------------------------------------------------
-    def _generate_combustibles(self, building, story, lines):
+    def _generate_combustibles(self, building, story, lines, grid_size: float = 0.1):
         """Generate combustible and specialized component OBSTs per FC.
 
         Specialized components are laid out first (priority), then combustibles
         fill the remaining space. Both share the same layout grid.
+
+        Probe placement (simplified per user request):
+        - Specialized components: ONE probe on the part with lowest ignition temp
+        - Regular combustibles: ONE probe ABOVE the combustible (not on surface)
+
+        *grid_size* is the FDS cell size used by the current MESH. OBSTs whose
+        smallest dimension is below this size are emitted with
+        ``THICKEN=.TRUE.`` so FDS keeps them as at least one cell instead of
+        snapping them away, and their probe is skipped.
         """
         from models.geometry import layout_items_in_fc
 
         ox, L, oy, W = building.boundary
         z0 = story.z_bottom
+        subgrid_tol = 1e-6
+        PROBE_HEIGHT_OFFSET = 1.0
 
         for fc in story.fire_compartments:
             if not fc.combustibles and not fc.specialized_components:
                 continue
 
-            # Build unified item list: specialized first (priority), then combustibles
             all_items = []
 
-            # 1. Specialized components (priority)
             for sc_info in fc.specialized_components:
                 key = sc_info.get("key", "")
                 comp = SPECIALIZED_COMPONENTS.get(key)
                 if not comp:
                     continue
-                # Determine if rocket should be horizontal (not in launch site)
                 is_rocket = key.startswith("ROCKET_VEHICLE")
                 is_launch_site = "发射场" in fc.name or "Launch site" in fc.name
                 horizontal = is_rocket and not is_launch_site
@@ -566,7 +566,6 @@ class FDSGenerator:
                         }
                     )
 
-            # 2. Combustibles
             for cb_entry in fc.combustibles:
                 key = cb_entry.get("key", "")
                 count = cb_entry.get("count", 1)
@@ -598,7 +597,6 @@ class FDSGenerator:
             )
 
             lines.append(f"! -- 可燃物与组件 ({fc.name}) --\n")
-            # Counter per combustible key so probe IDs read like "WOODEN_PALLET_01"
             probe_counters: dict[str, int] = {}
             cb_idx = 0
             for item in placed:
@@ -608,15 +606,27 @@ class FDSGenerator:
                     key = item["key"]
                     horizontal = item.get("_horizontal", False)
                     lines.append(f"! {comp.name} #{ci + 1}\n")
+
+                    # Find part with minimum ignition temperature
+                    min_ignition_pi = 0
+                    min_ignition_temp = float("inf")
+                    for pi, part in enumerate(comp.parts):
+                        ign_temp = _get_part_ignition_temp(part, comp.ignition_temp)
+                        if ign_temp < min_ignition_temp:
+                            min_ignition_temp = ign_temp
+                            min_ignition_pi = pi
+
+                    # Output all OBSTs and track critical part coordinates
+                    crit_px = crit_py = crit_pz = 0.0
+                    crit_length = crit_width = crit_height = 0.0
                     for pi, part in enumerate(comp.parts):
                         if horizontal:
-                            # 水平放置：x方向变为长度，z方向变为高度（平躺在地面上）
-                            px = ox + item["x"] + part.dz  # 原dz变为dx
+                            px = ox + item["x"] + part.dz
                             py = oy + item["y"] + part.dy
-                            pz = z0 + part.dx  # 原dx变为dz，贴地
-                            part_length = part.height  # 原height变为length
+                            pz = z0 + part.dx
+                            part_length = part.height
                             part_width = part.width
-                            part_height = part.length  # 原length变为height
+                            part_height = part.length
                         else:
                             px = ox + item["x"] + part.dx
                             py = oy + item["y"] + part.dy
@@ -625,31 +635,36 @@ class FDSGenerator:
                             part_width = part.width
                             part_height = part.height
                         surf = part.surf_id or "INERT"
+                        is_subgrid = (
+                            part_length < grid_size - subgrid_tol
+                            or part_width < grid_size - subgrid_tol
+                            or part_height < grid_size - subgrid_tol
+                        )
+                        thicken_kv = "THICKEN=.TRUE., " if is_subgrid else ""
                         lines.append(
                             f"&OBST XB={px:.2f},{px + part_length:.2f},"
                             f"{py:.2f},{py + part_width:.2f},"
                             f"{pz:.2f},{pz + part_height:.2f},\n"
-                            f"      SURF_ID='{surf}',\n"
+                            f"      {thicken_kv}SURF_ID='{surf}',\n"
                             f"      ID='{key}_{fc.name}_{ci}_{pi}' /\n"
                         )
-                        # Surface-attached probe on the part's top face (+z).
-                        # Metal → RADIATIVE HEAT FLUX; other → WALL TEMPERATURE.
-                        # Using IOR=3 (face normal +z) sidesteps gas-cell placement,
-                        # so no grid-size tuning or ORIENTATION vector is needed.
-                        probe_key = part.material_key or key
+                        # Store coordinates for critical part
+                        if pi == min_ignition_pi:
+                            crit_px, crit_py, crit_pz = px, py, pz
+                            crit_length, crit_width, crit_height = part_length, part_width, part_height
+
+                    # Place ONE probe on the part with minimum ignition temp
+                    if not is_subgrid:
+                        cx = crit_px + crit_length / 2
+                        cy = crit_py + crit_width / 2
+                        cz = crit_pz + crit_height
+                        probe_key = f"{key}_CRIT"
                         probe_counters[probe_key] = probe_counters.get(probe_key, 0) + 1
                         probe_idx = probe_counters[probe_key]
                         probe_id = f"{probe_key}_{probe_idx:02d}"
-                        if _is_metal_combustible(probe_key):
-                            qty = "RADIATIVE HEAT FLUX"
-                        else:
-                            qty = "WALL TEMPERATURE"
-                        cx = px + part_length / 2
-                        cy = py + part_width / 2
-                        cz = pz + part_height
                         lines.append(
                             f"&DEVC XYZ={cx:.2f},{cy:.2f},{cz:.2f}, IOR=3, "
-                            f"QUANTITY='{qty}', ID='{probe_id}' /\n"
+                            f"QUANTITY='WALL TEMPERATURE', ID='{probe_id}' /\n"
                         )
                 else:
                     key = item["key"]
@@ -661,33 +676,36 @@ class FDSGenerator:
                     z1 = z0
                     z2 = z0 + item["height"]
                     cb_id = f"{key}_{fc.name}_{cb_idx}".replace(" ", "_")
+                    is_subgrid = (
+                        item["length"] < grid_size - subgrid_tol
+                        or item["width"] < grid_size - subgrid_tol
+                        or item["height"] < grid_size - subgrid_tol
+                    )
+                    thicken_kv = "THICKEN=.TRUE., " if is_subgrid else ""
                     lines.append(
                         f"&OBST XB={x1:.2f},{x2:.2f},{y1:.2f},{y2:.2f},"
                         f"{z1:.2f},{z2:.2f},\n"
-                        f"      SURF_IDS='{surf_id}','INERT','INERT',\n"
+                        f"      {thicken_kv}SURF_IDS='{surf_id}','INERT','INERT',\n"
                         f"      ID='{cb_id}' /  ! {item.get('name', key)}\n"
                     )
-                    # Surface-attached probe on the combustible's top face (+z).
+                    cb_idx += 1
+                    if is_subgrid:
+                        continue
                     probe_counters[key] = probe_counters.get(key, 0) + 1
                     probe_idx = probe_counters[key]
                     probe_id = f"{key}_{probe_idx:02d}"
-                    if _is_metal_combustible(key):
-                        qty = "RADIATIVE HEAT FLUX"
-                    else:
-                        qty = "WALL TEMPERATURE"
                     cx = (x1 + x2) / 2
                     cy = (y1 + y2) / 2
-                    cz = z2
+                    cz = z2 + PROBE_HEIGHT_OFFSET
                     lines.append(
-                        f"&DEVC XYZ={cx:.2f},{cy:.2f},{cz:.2f}, IOR=3, "
-                        f"QUANTITY='{qty}', ID='{probe_id}' /\n"
+                        f"&DEVC XYZ={cx:.2f},{cy:.2f},{cz:.2f}, "
+                        f"QUANTITY='WALL TEMPERATURE', ID='{probe_id}' /\n"
                     )
-                    cb_idx += 1
 
     # ------------------------------------------------------------------
     # Heat source
     # ------------------------------------------------------------------
-    def _generate_heat_source(self, lines):
+    def _generate_heat_source(self, lines, timer_x: float, timer_y: float, timer_z: float):
         """Generate heat source with timer DEVC and radiation SURF.
         
         Uses template:
@@ -716,7 +734,7 @@ class FDSGenerator:
 
         lines.append("! 辐射控制定时器\n")
         lines.append(
-            f"&DEVC ID='TIMER->OUT', QUANTITY='TIME', XYZ=0.0,0.0,0.0, SETPOINT={duration:.2f}, INITIAL_STATE=.TRUE. /\n\n"
+            f"&DEVC ID='TIMER->OUT', QUANTITY='TIME', XYZ={timer_x:.2f},{timer_y:.2f},{timer_z:.2f}, SETPOINT={duration:.2f}, INITIAL_STATE=.TRUE. /\n\n"
         )
 
         lines.append(
@@ -872,7 +890,10 @@ class FDSGenerator:
         nz = max(10, math.ceil(domain_h / grid_size))
 
         lines.append("! ========== 计算域 ==========\n")
+        timer_x = (domain[0] + domain[1]) / 2
+        timer_z = max(1.0, domain[4] + 1.0)
         if num_meshes == 1:
+            timer_y = (domain[2] + domain[3]) / 2
             lines.append(
                 f"&MESH IJK={nx},{ny},{nz}, "
                 f"XB={domain[0]:.2f},{domain[1]:.2f},"
@@ -885,6 +906,8 @@ class FDSGenerator:
             ny1 = half_ny
             ny2 = ny - half_ny
             y_mid = domain[2] + half_ny * grid_size
+            # Timer goes in Mesh01 center
+            timer_y = (domain[2] + y_mid) / 2
             lines.append(
                 f"&MESH ID='Mesh01', IJK={nx},{ny1},{nz}, "
                 f"XB={domain[0]:.2f},{domain[1]:.2f},"
@@ -905,7 +928,7 @@ class FDSGenerator:
         lines.append("&DUMP DT_RESTART=300.0, DT_SL3D=0.25 /\n\n")
 
         # Heat source (SURF + RAMP + VENT) - 前置方便手动调整
-        self._generate_heat_source(lines)
+        self._generate_heat_source(lines, timer_x, timer_y, timer_z)
 
         # Output: measurement devices - 前置方便手动调整
         self._generate_devices(lines)
@@ -956,7 +979,7 @@ class FDSGenerator:
                     self._generate_firewalls(b, story, lines)
 
                 # Combustibles
-                self._generate_combustibles(b, story, lines)
+                self._generate_combustibles(b, story, lines, grid_size=grid_size)
 
             # Roof: use the last story's roof
             if b.stories:
