@@ -6,25 +6,71 @@
     {
       "name": "Type 1",
       "cn_name": "小型固定翼与舰载机机库",
-      "boundary": [-14.48, 28.96, -36.0, 72.0],
-      "length_range": [28.96, 28.96, 28.96],
-      "width_range": [64.0, 80.0, 72.0],
-      "height_range": [9.9, 9.9, 9.9],
-      "stories_range": [1, 1, 1],
+      "boundary": [
+        -14.48,
+        28.96,
+        -36.0,
+        72.0
+      ],
+      "length_range": [
+        28.96,
+        28.96,
+        28.96
+      ],
+      "width_range": [
+        64.0,
+        80.0,
+        72.0
+      ],
+      "height_range": [
+        9.9,
+        9.9,
+        9.9
+      ],
+      "stories_range": [
+        1,
+        1,
+        1
+      ],
       "wall_thickness": 0.3,
       "stories_template": [
         {
           "name": "1F",
-          "height_range": [9.9, 9.9, 9.9],
+          "height_range": [
+            9.9,
+            9.9,
+            9.9
+          ],
           "doors": {
-            "width": [63.7, 79.1, 71.4],
-            "height": [7.6, 7.6, 7.6],
-            "count": [1, 1, 1]
+            "width": [
+              63.7,
+              79.1,
+              71.4
+            ],
+            "height": [
+              7.6,
+              7.6,
+              7.6
+            ],
+            "count": [
+              1,
+              1,
+              1
+            ]
           },
           "windows": {
-            "width": [0, 0],
-            "height": [0, 0],
-            "count": [0, 0]
+            "width": [
+              0,
+              0
+            ],
+            "height": [
+              0,
+              0
+            ],
+            "count": [
+              0,
+              0
+            ]
           },
           "roof": {
             "thickness": 0.2,
@@ -33,9 +79,13 @@
           },
           "fire_compartment_ratios": [
             {
-              
               "name": "主停机区",
-              "boundary_ratio": [0, 0.65, 0, 1],
+              "boundary_ratio": [
+                0,
+                0.65,
+                0,
+                1
+              ],
               "firewall_thickness": 0.3,
               "firewall_material": "CONCRETE",
               "combustibles": [
@@ -44,7 +94,7 @@
                   "count": 4
                 },
                 {
-                  "key": "INDUSTRIAL_OIL_DRUM",
+                  "key": "LUBE_OIL_DRUM",
                   "count": 2
                 }
               ],
@@ -67,12 +117,17 @@
             },
             {
               "name": "维修工具区",
-              "boundary_ratio": [0.65, 1.0, 0, 0.3],
+              "boundary_ratio": [
+                0.65,
+                1.0,
+                0,
+                0.3
+              ],
               "firewall_thickness": 0.3,
               "firewall_material": "CONCRETE",
               "combustibles": [
                 {
-                  "key": "WOOD_PALLET",
+                  "key": "WOODEN_PALLET",
                   "count": 4
                 },
                 {
@@ -80,12 +135,8 @@
                   "count": 3
                 },
                 {
-                  "key": "ADHESIVE_SEALANT_SET",
-                  "count": 2
-                },
-                {
-                  "key": "FOAM_PACKAGING",
-                  "count": 2
+                  "key": "PLASTIC_PACKAGING",
+                  "count": 4
                 }
               ],
               "specialized_components": [],
@@ -110,12 +161,17 @@
             },
             {
               "name": "备件存储区",
-              "boundary_ratio": [0.65, 1.0, 0.3, 1.0],
+              "boundary_ratio": [
+                0.65,
+                1.0,
+                0.3,
+                1.0
+              ],
               "firewall_thickness": 0.3,
               "firewall_material": "CONCRETE",
               "combustibles": [
                 {
-                  "key": "CARDBOARD_BOX",
+                  "key": "PAPER_STACK",
                   "count": 4
                 },
                 {
@@ -123,7 +179,7 @@
                   "count": 2
                 },
                 {
-                  "key": "FIBER_INSULATION_LAYER",
+                  "key": "SURFACE_COATING_LAYER",
                   "count": 2
                 }
               ],
@@ -147,25 +203,70 @@
     {
       "name": "Type 2",
       "cn_name": "大型旋翼与倾转机机库",
-      "boundary": [-18.15, 36.3, 50.45, 99.1],
-      "length_range": [36.3, 36.3, 36.3],
-      "width_range": [99.1, 99.1, 99.1],
-      "height_range": [13.4, 13.4, 13.4],
-      "stories_range": [1, 2],
+      "boundary": [
+        -18.15,
+        36.3,
+        50.45,
+        99.1
+      ],
+      "length_range": [
+        36.3,
+        36.3,
+        36.3
+      ],
+      "width_range": [
+        99.1,
+        99.1,
+        99.1
+      ],
+      "height_range": [
+        13.4,
+        13.4,
+        13.4
+      ],
+      "stories_range": [
+        1,
+        2
+      ],
       "wall_thickness": 0.3,
       "stories_template": [
         {
           "name": "1F",
-          "height_range": [13.4, 13.4, 13.4],
+          "height_range": [
+            13.4,
+            13.4,
+            13.4
+          ],
           "doors": {
-            "width": [98.1, 98.1, 98.1],
-            "height": [13.4, 13.4, 13.4],
-            "count": [1, 1, 1]
+            "width": [
+              98.1,
+              98.1,
+              98.1
+            ],
+            "height": [
+              13.4,
+              13.4,
+              13.4
+            ],
+            "count": [
+              1,
+              1,
+              1
+            ]
           },
           "windows": {
-            "width": [0, 0],
-            "height": [0, 0],
-            "count": [0, 0]
+            "width": [
+              0,
+              0
+            ],
+            "height": [
+              0,
+              0
+            ],
+            "count": [
+              0,
+              0
+            ]
           },
           "roof": {
             "thickness": 0.2,
@@ -175,7 +276,12 @@
           "fire_compartment_ratios": [
             {
               "name": "主停机区",
-              "boundary_ratio": [0, 1.0, 0, 0.8],
+              "boundary_ratio": [
+                0,
+                1.0,
+                0,
+                0.8
+              ],
               "firewall_thickness": 0.3,
               "firewall_material": "CONCRETE",
               "combustibles": [
@@ -188,7 +294,7 @@
                   "count": 2
                 },
                 {
-                  "key": "INDUSTRIAL_OIL_DRUM",
+                  "key": "LUBE_OIL_DRUM",
                   "count": 3
                 }
               ],
@@ -211,12 +317,17 @@
             },
             {
               "name": "维修辅助区",
-              "boundary_ratio": [0, 1.0, 0.8, 1.0],
+              "boundary_ratio": [
+                0,
+                1.0,
+                0.8,
+                1.0
+              ],
               "firewall_thickness": 0.3,
               "firewall_material": "CONCRETE",
               "combustibles": [
                 {
-                  "key": "WOOD_PALLET",
+                  "key": "WOODEN_PALLET",
                   "count": 5
                 },
                 {
@@ -228,7 +339,7 @@
                   "count": 3
                 },
                 {
-                  "key": "CARDBOARD_BOX",
+                  "key": "PAPER_STACK",
                   "count": 4
                 },
                 {
@@ -264,24 +375,65 @@
     {
       "name": "Type 3",
       "cn_name": "远程巡逻与运输机机库",
-      "length_range": [50.3, 50.3, 50.3],
-      "width_range": [50.3, 50.3, 50.3],
-      "height_range": [15.2, 15.2, 15.2],
-      "stories_range": [1, 1, 1],
+      "length_range": [
+        50.3,
+        50.3,
+        50.3
+      ],
+      "width_range": [
+        50.3,
+        50.3,
+        50.3
+      ],
+      "height_range": [
+        15.2,
+        15.2,
+        15.2
+      ],
+      "stories_range": [
+        1,
+        1,
+        1
+      ],
       "wall_thickness": 0.3,
       "stories_template": [
         {
           "name": "1F",
-          "height_range": [15.2, 15.2, 15.2],
+          "height_range": [
+            15.2,
+            15.2,
+            15.2
+          ],
           "doors": {
-            "width": [49.4, 49.4, 49.4],
-            "height": [15.2, 15.2, 15.2],
-            "count": [0, 1, 0]
+            "width": [
+              49.4,
+              49.4,
+              49.4
+            ],
+            "height": [
+              15.2,
+              15.2,
+              15.2
+            ],
+            "count": [
+              0,
+              1,
+              0
+            ]
           },
           "windows": {
-            "width": [0, 0],
-            "height": [0, 0],
-            "count": [0, 0]
+            "width": [
+              0,
+              0
+            ],
+            "height": [
+              0,
+              0
+            ],
+            "count": [
+              0,
+              0
+            ]
           },
           "roof": {
             "thickness": 0.2,
@@ -291,7 +443,12 @@
           "fire_compartment_ratios": [
             {
               "name": "主停机区",
-              "boundary_ratio": [0, 0.85, 0, 1],
+              "boundary_ratio": [
+                0,
+                0.85,
+                0,
+                1
+              ],
               "firewall_thickness": 0.3,
               "firewall_material": "CONCRETE",
               "combustibles": [
@@ -304,7 +461,7 @@
                   "count": 3
                 },
                 {
-                  "key": "INDUSTRIAL_OIL_DRUM",
+                  "key": "LUBE_OIL_DRUM",
                   "count": 4
                 }
               ],
@@ -327,29 +484,30 @@
             },
             {
               "name": "辅助服务区",
-              "boundary_ratio": [0.85, 1.0, 0, 1],
+              "boundary_ratio": [
+                0.85,
+                1.0,
+                0,
+                1
+              ],
               "firewall_thickness": 0.3,
               "firewall_material": "CONCRETE",
               "combustibles": [
                 {
-                  "key": "WOOD_PALLET",
+                  "key": "WOODEN_PALLET",
                   "count": 6
                 },
                 {
-                  "key": "CARDBOARD_BOX",
+                  "key": "PAPER_STACK",
                   "count": 5
                 },
                 {
-                  "key": "FOAM_PACKAGING",
+                  "key": "PLASTIC_PACKAGING",
                   "count": 3
                 },
                 {
-                  "key": "COATING_AGENT_DRUM",
-                  "count": 2
-                },
-                {
                   "key": "ORGANIC_SOLVENT_DRUM",
-                  "count": 2
+                  "count": 4
                 },
                 {
                   "key": "CABLE_BUNDLE",
@@ -372,29 +530,75 @@
         }
       ],
       "stories": [],
-      "boundary": [74.85, 50.3, -25.15, 50.3]
+      "boundary": [
+        74.85,
+        50.3,
+        -25.15,
+        50.3
+      ]
     },
     {
       "name": "Type 4",
       "cn_name": "大型无人机机库",
-      "length_range": [43.0, 43.0, 43.0],
-      "width_range": [49.1, 49.1, 49.1],
-      "height_range": [9.9, 9.9, 9.9],
-      "stories_range": [1, 1, 1],
+      "length_range": [
+        43.0,
+        43.0,
+        43.0
+      ],
+      "width_range": [
+        49.1,
+        49.1,
+        49.1
+      ],
+      "height_range": [
+        9.9,
+        9.9,
+        9.9
+      ],
+      "stories_range": [
+        1,
+        1,
+        1
+      ],
       "wall_thickness": 0.3,
       "stories_template": [
         {
           "name": "1F",
-          "height_range": [9.9, 9.9, 9.9],
+          "height_range": [
+            9.9,
+            9.9,
+            9.9
+          ],
           "doors": {
-            "width": [48.2, 48.2, 48.2],
-            "height": [7.6, 7.6, 7.6],
-            "count": [0, 0, 0]
+            "width": [
+              48.2,
+              48.2,
+              48.2
+            ],
+            "height": [
+              7.6,
+              7.6,
+              7.6
+            ],
+            "count": [
+              0,
+              0,
+              0
+            ]
           },
           "windows": {
-            "width": [0, 0],
-            "height": [0, 0],
-            "count": [0, 0]
+            "width": [
+              0,
+              0
+            ],
+            "height": [
+              0,
+              0
+            ],
+            "count": [
+              0,
+              0
+            ]
           },
           "roof": {
             "thickness": 0.2,
@@ -404,7 +608,12 @@
           "fire_compartment_ratios": [
             {
               "name": "无人机停放区",
-              "boundary_ratio": [0, 0.6, 0, 1],
+              "boundary_ratio": [
+                0,
+                0.6,
+                0,
+                1
+              ],
               "firewall_thickness": 0.3,
               "firewall_material": "CONCRETE",
               "combustibles": [
@@ -413,7 +622,7 @@
                   "count": 3
                 },
                 {
-                  "key": "INDUSTRIAL_OIL_DRUM",
+                  "key": "LUBE_OIL_DRUM",
                   "count": 2
                 }
               ],
@@ -436,7 +645,12 @@
             },
             {
               "name": "维修检测区",
-              "boundary_ratio": [0.6, 1.0, 0, 0.5],
+              "boundary_ratio": [
+                0.6,
+                1.0,
+                0,
+                0.5
+              ],
               "firewall_thickness": 0.3,
               "firewall_material": "CONCRETE",
               "combustibles": [
@@ -445,16 +659,12 @@
                   "count": 3
                 },
                 {
-                  "key": "COATING_AGENT_DRUM",
+                  "key": "ORGANIC_SOLVENT_DRUM",
                   "count": 2
                 },
                 {
-                  "key": "ADHESIVE_SEALANT_SET",
-                  "count": 2
-                },
-                {
-                  "key": "FOAM_PACKAGING",
-                  "count": 2
+                  "key": "PLASTIC_PACKAGING",
+                  "count": 4
                 }
               ],
               "specialized_components": [],
@@ -479,12 +689,17 @@
             },
             {
               "name": "办公备件区",
-              "boundary_ratio": [0.6, 1.0, 0.5, 1.0],
+              "boundary_ratio": [
+                0.6,
+                1.0,
+                0.5,
+                1.0
+              ],
               "firewall_thickness": 0.3,
               "firewall_material": "CONCRETE",
               "combustibles": [
                 {
-                  "key": "OFFICE_COMPOSITE_FURNITURE",
+                  "key": "WOODEN_FURNITURE",
                   "count": 4
                 },
                 {
@@ -492,12 +707,8 @@
                   "count": 3
                 },
                 {
-                  "key": "UPHOLSTERED_SEAT",
-                  "count": 2
-                },
-                {
-                  "key": "CARPET_FINISH",
-                  "count": 2
+                  "key": "TEXTILE_ROLL",
+                  "count": 4
                 }
               ],
               "specialized_components": [],
@@ -516,7 +727,12 @@
         }
       ],
       "stories": [],
-      "boundary": [78.5, 43.0, 75.45, 49.1]
+      "boundary": [
+        78.5,
+        43.0,
+        75.45,
+        49.1
+      ]
     }
   ]
 }

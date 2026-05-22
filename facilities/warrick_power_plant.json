@@ -6,7 +6,12 @@
     {
       "name": "Main powerhouse",
       "cn_name": "主厂房（厂房1）",
-      "boundary": [-106.0, 212, -8.0, 16],
+      "boundary": [
+        -106.0,
+        212,
+        -8.0,
+        16
+      ],
       "wall_thickness": 0.3,
       "height": 30,
       "stories": [
@@ -14,33 +19,87 @@
           "name": "1F",
           "height": 10.0,
           "openings": [
-            { "wall": "x_max","type": "door","boundary": [3.0, 3.0, 0, 4.5] },
-            { "wall": "x_max","type": "door","boundary": [10.0, 4.0, 0, 4.5] }
+            {
+              "wall": "x_max",
+              "type": "door",
+              "boundary": [
+                3.0,
+                3.0,
+                0,
+                4.5
+              ]
+            },
+            {
+              "wall": "x_max",
+              "type": "door",
+              "boundary": [
+                10.0,
+                4.0,
+                0,
+                4.5
+              ]
+            }
           ],
           "fire_compartments": [
             {
               "name": "设备检修间",
-              "boundary": [0, 24, 0, 16],
+              "boundary": [
+                0,
+                24,
+                0,
+                16
+              ],
               "firewall_thickness": 0.3,
               "firewall_material": "CONCRETE",
               "openings": [
-                { "wall": "x_min","type": "door","boundary": [3.0, 3.0, 0, 4.5] },
-                { "wall": "x_min","type": "door","boundary": [10.0, 4.0, 0, 4.5] },
-                { "wall": "x_max","type": "door","boundary": [10.0, 2.0, 0, 4.5] },
-                { "wall": "x_max","type": "door","boundary": [13.0, 1.0, 0, 4.5] }
-                
+                {
+                  "wall": "x_min",
+                  "type": "door",
+                  "boundary": [
+                    3.0,
+                    3.0,
+                    0,
+                    4.5
+                  ]
+                },
+                {
+                  "wall": "x_min",
+                  "type": "door",
+                  "boundary": [
+                    10.0,
+                    4.0,
+                    0,
+                    4.5
+                  ]
+                },
+                {
+                  "wall": "x_max",
+                  "type": "door",
+                  "boundary": [
+                    10.0,
+                    2.0,
+                    0,
+                    4.5
+                  ]
+                },
+                {
+                  "wall": "x_max",
+                  "type": "door",
+                  "boundary": [
+                    13.0,
+                    1.0,
+                    0,
+                    4.5
+                  ]
+                }
               ],
               "combustibles": [
                 {
                   "key": "CABLE_BUNDLE",
-                  "count": 6
+                  "count": 14
                 },
                 {
-                  "key": "CONTROL_CABLE",
-                  "count": 8
-                },
-                {
-                  "key": "RUBBER_CONVEYOR_BELT",
+                  "key": "RUBBER_MATERIAL",
                   "count": 2
                 }
               ],
@@ -48,14 +107,55 @@
             },
             {
               "name": "检修/电缆廊道",
-              "boundary": [24, 65, 0, 16],
+              "boundary": [
+                24,
+                65,
+                0,
+                16
+              ],
               "firewall_thickness": 0.3,
               "firewall_material": "CONCRETE",
               "openings": [
-                { "wall": "x_max","type": "door","boundary": [10.0, 2.0, 0, 4.5] },
-                { "wall": "x_max","type": "door","boundary": [13.0, 1.0, 0, 4.5] },
-                { "wall": "y_max","type": "door","boundary": [30.0, 3.0, 0, 4.5] },
-                { "wall": "y_max","type": "door","boundary": [29.0, 2.0, 0, 4.5] }
+                {
+                  "wall": "x_max",
+                  "type": "door",
+                  "boundary": [
+                    10.0,
+                    2.0,
+                    0,
+                    4.5
+                  ]
+                },
+                {
+                  "wall": "x_max",
+                  "type": "door",
+                  "boundary": [
+                    13.0,
+                    1.0,
+                    0,
+                    4.5
+                  ]
+                },
+                {
+                  "wall": "y_max",
+                  "type": "door",
+                  "boundary": [
+                    30.0,
+                    3.0,
+                    0,
+                    4.5
+                  ]
+                },
+                {
+                  "wall": "y_max",
+                  "type": "door",
+                  "boundary": [
+                    29.0,
+                    2.0,
+                    0,
+                    4.5
+                  ]
+                }
               ],
               "combustibles": [
                 {
@@ -63,11 +163,11 @@
                   "count": 4
                 },
                 {
-                  "key": "INDUSTRIAL_OIL_DRUM",
+                  "key": "LUBE_OIL_DRUM",
                   "count": 10
                 },
                 {
-                  "key": "RUBBER_CONVEYOR_BELT",
+                  "key": "RUBBER_MATERIAL",
                   "count": 2
                 }
               ],
@@ -75,13 +175,45 @@
             },
             {
               "name": "机组1",
-              "boundary": [65.0, 106.0, 0, 16],
+              "boundary": [
+                65.0,
+                106.0,
+                0,
+                16
+              ],
               "firewall_thickness": 0.3,
               "firewall_material": "CONCRETE",
               "openings": [
-                { "wall": "x_max","type": "door","boundary": [10.0, 2.0, 0, 4.5] },
-                { "wall": "x_max","type": "door","boundary": [13.0, 1.0, 0, 4.5] },
-                { "wall": "y_max","type": "door","boundary": [73.0, 3.0, 0, 4.5] }
+                {
+                  "wall": "x_max",
+                  "type": "door",
+                  "boundary": [
+                    10.0,
+                    2.0,
+                    0,
+                    4.5
+                  ]
+                },
+                {
+                  "wall": "x_max",
+                  "type": "door",
+                  "boundary": [
+                    13.0,
+                    1.0,
+                    0,
+                    4.5
+                  ]
+                },
+                {
+                  "wall": "y_max",
+                  "type": "door",
+                  "boundary": [
+                    73.0,
+                    3.0,
+                    0,
+                    4.5
+                  ]
+                }
               ],
               "combustibles": [
                 {
@@ -93,23 +225,15 @@
                   "count": 1
                 },
                 {
-                  "key": "CONVEYOR_BELT",
+                  "key": "RUBBER_MATERIAL",
                   "count": 2
                 },
                 {
-                  "key": "LUBE_OIL_TANK",
-                  "count": 1
+                  "key": "HYDRAULIC_TANK",
+                  "count": 4
                 },
                 {
-                  "key": "HYDRAULIC_OIL_TANK",
-                  "count": 2
-                },
-                {
-                  "key": "SEAL_OIL_TANK",
-                  "count": 1
-                },
-                {
-                  "key": "IGNITION_OIL_DEVICE",
+                  "key": "OIL_TRANSFORMER",
                   "count": 1
                 }
               ],
@@ -126,12 +250,35 @@
             },
             {
               "name": "2#机组锅炉-汽机岛",
-              "boundary": [106.0, 147.0, 0, 16],
+              "boundary": [
+                106.0,
+                147.0,
+                0,
+                16
+              ],
               "firewall_thickness": 0.3,
               "firewall_material": "CONCRETE",
               "openings": [
-                { "wall": "x_max","type": "door","boundary": [10.0, 2.0, 0, 4.5] },
-                { "wall": "x_max","type": "door","boundary": [13.0, 1.0, 0, 4.5] }
+                {
+                  "wall": "x_max",
+                  "type": "door",
+                  "boundary": [
+                    10.0,
+                    2.0,
+                    0,
+                    4.5
+                  ]
+                },
+                {
+                  "wall": "x_max",
+                  "type": "door",
+                  "boundary": [
+                    13.0,
+                    1.0,
+                    0,
+                    4.5
+                  ]
+                }
               ],
               "combustibles": [
                 {
@@ -143,23 +290,15 @@
                   "count": 1
                 },
                 {
-                  "key": "CONVEYOR_BELT",
+                  "key": "RUBBER_MATERIAL",
                   "count": 2
                 },
                 {
-                  "key": "LUBE_OIL_TANK",
-                  "count": 1
+                  "key": "HYDRAULIC_TANK",
+                  "count": 4
                 },
                 {
-                  "key": "HYDRAULIC_OIL_TANK",
-                  "count": 2
-                },
-                {
-                  "key": "SEAL_OIL_TANK",
-                  "count": 1
-                },
-                {
-                  "key": "IGNITION_OIL_DEVICE",
+                  "key": "OIL_TRANSFORMER",
                   "count": 1
                 }
               ],
@@ -176,12 +315,35 @@
             },
             {
               "name": "3#机组锅炉-汽机岛",
-              "boundary": [147.0, 188.0, 0, 16],
+              "boundary": [
+                147.0,
+                188.0,
+                0,
+                16
+              ],
               "firewall_thickness": 0.3,
               "firewall_material": "CONCRETE",
               "openings": [
-                { "wall": "x_max","type": "door","boundary": [10.0, 2.0, 0, 4.5] },
-                { "wall": "x_max","type": "door","boundary": [13.0, 1.0, 0, 4.5] }
+                {
+                  "wall": "x_max",
+                  "type": "door",
+                  "boundary": [
+                    10.0,
+                    2.0,
+                    0,
+                    4.5
+                  ]
+                },
+                {
+                  "wall": "x_max",
+                  "type": "door",
+                  "boundary": [
+                    13.0,
+                    1.0,
+                    0,
+                    4.5
+                  ]
+                }
               ],
               "combustibles": [
                 {
@@ -193,23 +355,15 @@
                   "count": 1
                 },
                 {
-                  "key": "CONVEYOR_BELT",
+                  "key": "RUBBER_MATERIAL",
                   "count": 2
                 },
                 {
-                  "key": "LUBE_OIL_TANK",
-                  "count": 1
+                  "key": "HYDRAULIC_TANK",
+                  "count": 4
                 },
                 {
-                  "key": "HYDRAULIC_OIL_TANK",
-                  "count": 2
-                },
-                {
-                  "key": "SEAL_OIL_TANK",
-                  "count": 1
-                },
-                {
-                  "key": "IGNITION_OIL_DEVICE",
+                  "key": "OIL_TRANSFORMER",
                   "count": 1
                 }
               ],
@@ -228,7 +382,12 @@
           "roof": {
             "thickness": 0.2,
             "material": "CONCRETE",
-            "openings": [206, 4, 4, 4]
+            "openings": [
+              206,
+              4,
+              4,
+              4
+            ]
           }
         },
         {
@@ -238,7 +397,12 @@
           "fire_compartments": [
             {
               "name": "default",
-              "boundary": [0, 212, 0, 16],
+              "boundary": [
+                0,
+                212,
+                0,
+                16
+              ],
               "firewall_thickness": 0.3,
               "firewall_material": "CONCRETE",
               "openings": [],
@@ -249,7 +413,12 @@
           "roof": {
             "thickness": 0.2,
             "material": "CONCRETE",
-            "openings": [206, 4, 4, 4]
+            "openings": [
+              206,
+              4,
+              4,
+              4
+            ]
           }
         },
         {
@@ -259,7 +428,12 @@
           "fire_compartments": [
             {
               "name": "default",
-              "boundary": [0, 212, 0, 16],
+              "boundary": [
+                0,
+                212,
+                0,
+                16
+              ],
               "firewall_thickness": 0.3,
               "firewall_material": "CONCRETE",
               "openings": [],
@@ -278,28 +452,65 @@
     {
       "name": "Auxiliary building",
       "cn_name": "辅助厂房（厂房3）",
-      "boundary": [-106.0, 212, 8.0, 18],
+      "boundary": [
+        -106.0,
+        212,
+        8.0,
+        18
+      ],
       "wall_thickness": 0.3,
       "height": 8,
       "stories": [
         {
           "name": "1F",
           "height": 8.0,
-          "openings": [ ],
+          "openings": [],
           "fire_compartments": [
             {
               "name": "左段",
-              "boundary": [0, 50.0, 0, 18],
+              "boundary": [
+                0,
+                50.0,
+                0,
+                18
+              ],
               "firewall_thickness": 0.3,
               "firewall_material": "CONCRETE",
               "openings": [
-                { "wall": "y_max","type": "window","boundary": [1.0, 5.0, 1.5, 5.0] },
-                { "wall": "y_max","type": "door","boundary": [18.0, 2.0, 0, 5.0] },
-                { "wall": "x_max","type": "door","boundary": [7.5, 5.0, 0, 5.0] }
+                {
+                  "wall": "y_max",
+                  "type": "window",
+                  "boundary": [
+                    1.0,
+                    5.0,
+                    1.5,
+                    5.0
+                  ]
+                },
+                {
+                  "wall": "y_max",
+                  "type": "door",
+                  "boundary": [
+                    18.0,
+                    2.0,
+                    0,
+                    5.0
+                  ]
+                },
+                {
+                  "wall": "x_max",
+                  "type": "door",
+                  "boundary": [
+                    7.5,
+                    5.0,
+                    0,
+                    5.0
+                  ]
+                }
               ],
               "combustibles": [
                 {
-                  "key": "HYDRAULIC_OIL_TANK",
+                  "key": "HYDRAULIC_TANK",
                   "count": 2
                 },
                 {
@@ -320,22 +531,63 @@
             },
             {
               "name": "中左",
-              "boundary": [50.0, 70.0, 0, 18],
+              "boundary": [
+                50.0,
+                70.0,
+                0,
+                18
+              ],
               "firewall_thickness": 0.3,
               "firewall_material": "CONCRETE",
               "openings": [
-                { "wall": "y_max","type": "window","boundary": [4.5, 5.0, 1.5, 5.0] },
-                { "wall": "y_max","type": "door","boundary": [2.0, 2.0, 0, 4.0] },
-                { "wall": "x_max","type": "door","boundary": [5, 2.0, 0, 4.0] },
-                { "wall": "x_max","type": "door","boundary": [9, 1.0, 0, 2.5] }
+                {
+                  "wall": "y_max",
+                  "type": "window",
+                  "boundary": [
+                    4.5,
+                    5.0,
+                    1.5,
+                    5.0
+                  ]
+                },
+                {
+                  "wall": "y_max",
+                  "type": "door",
+                  "boundary": [
+                    2.0,
+                    2.0,
+                    0,
+                    4.0
+                  ]
+                },
+                {
+                  "wall": "x_max",
+                  "type": "door",
+                  "boundary": [
+                    5,
+                    2.0,
+                    0,
+                    4.0
+                  ]
+                },
+                {
+                  "wall": "x_max",
+                  "type": "door",
+                  "boundary": [
+                    9,
+                    1.0,
+                    0,
+                    2.5
+                  ]
+                }
               ],
               "combustibles": [
                 {
-                  "key": "SWITCH_CABINET",
+                  "key": "ELECTRICAL_EQUIPMENT",
                   "count": 30
                 },
                 {
-                  "key": "OIL_CIRCUIT_BREAKER",
+                  "key": "OIL_TRANSFORMER",
                   "count": 20
                 },
                 {
@@ -347,14 +599,55 @@
             },
             {
               "name": "中右",
-              "boundary": [70, 140.0, 0, 18],
+              "boundary": [
+                70,
+                140.0,
+                0,
+                18
+              ],
               "firewall_thickness": 0.3,
               "firewall_material": "CONCRETE",
               "openings": [
-                { "wall": "y_max","type": "door","boundary": [5, 2.0, 0, 4.0] },
-                { "wall": "y_max","type": "door","boundary": [7.5, 2.0, 0, 4.0] },
-                { "wall": "x_max","type": "door","boundary": [4, 5.0, 0, 5.0] },
-                { "wall": "x_max","type": "door","boundary": [12, 3.0, 0, 4.5] }
+                {
+                  "wall": "y_max",
+                  "type": "door",
+                  "boundary": [
+                    5,
+                    2.0,
+                    0,
+                    4.0
+                  ]
+                },
+                {
+                  "wall": "y_max",
+                  "type": "door",
+                  "boundary": [
+                    7.5,
+                    2.0,
+                    0,
+                    4.0
+                  ]
+                },
+                {
+                  "wall": "x_max",
+                  "type": "door",
+                  "boundary": [
+                    4,
+                    5.0,
+                    0,
+                    5.0
+                  ]
+                },
+                {
+                  "wall": "x_max",
+                  "type": "door",
+                  "boundary": [
+                    12,
+                    3.0,
+                    0,
+                    4.5
+                  ]
+                }
               ],
               "combustibles": [
                 {
@@ -362,7 +655,7 @@
                   "count": 12
                 },
                 {
-                  "key": "SWITCH_CABINET",
+                  "key": "ELECTRICAL_EQUIPMENT",
                   "count": 14
                 },
                 {
@@ -379,21 +672,53 @@
             },
             {
               "name": "右段",
-              "boundary": [140.0, 212.0, 0, 18],
+              "boundary": [
+                140.0,
+                212.0,
+                0,
+                18
+              ],
               "firewall_thickness": 0.3,
               "firewall_material": "CONCRETE",
               "openings": [
-                { "wall": "y_max","type": "door","boundary": [7, 2.0, 0, 4.0] },
-                { "wall": "y_max","type": "door","boundary": [36.0, 2.0, 0, 4.0] },
-                { "wall": "y_max","type": "window","boundary": [66.5, 5.0, 1.5, 5.0] }
+                {
+                  "wall": "y_max",
+                  "type": "door",
+                  "boundary": [
+                    7,
+                    2.0,
+                    0,
+                    4.0
+                  ]
+                },
+                {
+                  "wall": "y_max",
+                  "type": "door",
+                  "boundary": [
+                    36.0,
+                    2.0,
+                    0,
+                    4.0
+                  ]
+                },
+                {
+                  "wall": "y_max",
+                  "type": "window",
+                  "boundary": [
+                    66.5,
+                    5.0,
+                    1.5,
+                    5.0
+                  ]
+                }
               ],
               "combustibles": [
                 {
-                  "key": "CONVEYOR_BELT",
+                  "key": "RUBBER_MATERIAL",
                   "count": 6
                 },
                 {
-                  "key": "INDUSTRIAL_OIL_DRUM",
+                  "key": "LUBE_OIL_DRUM",
                   "count": 40
                 }
               ],
@@ -411,7 +736,12 @@
     {
       "name": "Oil depot",
       "cn_name": "油库（厂房17）",
-      "boundary": [-9, 18, 26.0, 12],
+      "boundary": [
+        -9,
+        18,
+        26.0,
+        12
+      ],
       "wall_thickness": 0.3,
       "height": 12,
       "stories": [
@@ -422,18 +752,59 @@
           "fire_compartments": [
             {
               "name": "左房间",
-              "boundary": [0, 6.0, 0, 12],
+              "boundary": [
+                0,
+                6.0,
+                0,
+                12
+              ],
               "firewall_thickness": 0.3,
               "firewall_material": "CONCRETE",
               "openings": [
-                { "wall": "x_min","type": "door","boundary": [5, 2.0, 0, 3.0] },
-                { "wall": "x_min","type": "window","boundary": [8, 3, 1.5, 3.0] },
-                { "wall": "x_max","type": "door","boundary": [5, 1.0, 0, 2.0] },
-                { "wall": "y_max","type": "window","boundary": [2, 3, 1.5, 3.0] }
+                {
+                  "wall": "x_min",
+                  "type": "door",
+                  "boundary": [
+                    5,
+                    2.0,
+                    0,
+                    3.0
+                  ]
+                },
+                {
+                  "wall": "x_min",
+                  "type": "window",
+                  "boundary": [
+                    8,
+                    3,
+                    1.5,
+                    3.0
+                  ]
+                },
+                {
+                  "wall": "x_max",
+                  "type": "door",
+                  "boundary": [
+                    5,
+                    1.0,
+                    0,
+                    2.0
+                  ]
+                },
+                {
+                  "wall": "y_max",
+                  "type": "window",
+                  "boundary": [
+                    2,
+                    3,
+                    1.5,
+                    3.0
+                  ]
+                }
               ],
               "combustibles": [
                 {
-                  "key": "HEAVY_OIL_TANK",
+                  "key": "HYDRAULIC_TANK",
                   "count": 1
                 }
               ],
@@ -441,19 +812,33 @@
             },
             {
               "name": "中房间",
-              "boundary": [6.0, 12.0, 0, 12],
+              "boundary": [
+                6.0,
+                12.0,
+                0,
+                12
+              ],
               "firewall_thickness": 0.3,
               "firewall_material": "CONCRETE",
               "openings": [
-                { "wall": "x_max","type": "door","boundary": [5, 1.0, 0, 2.0] }
+                {
+                  "wall": "x_max",
+                  "type": "door",
+                  "boundary": [
+                    5,
+                    1.0,
+                    0,
+                    2.0
+                  ]
+                }
               ],
               "combustibles": [
                 {
-                  "key": "DAILY_OIL_TANK",
+                  "key": "HYDRAULIC_TANK",
                   "count": 2
                 },
                 {
-                  "key": "CABLE_REEL",
+                  "key": "CABLE_BUNDLE",
                   "count": 2
                 }
               ],
@@ -461,22 +846,54 @@
             },
             {
               "name": "右房间",
-              "boundary": [12.0, 18.0, 0, 12],
+              "boundary": [
+                12.0,
+                18.0,
+                0,
+                12
+              ],
               "firewall_thickness": 0.3,
               "firewall_material": "CONCRETE",
               "openings": [
-                { "wall": "x_max","type": "door","boundary": [4, 2.0, 0, 3.0] },
-                { "wall": "x_max","type": "door","boundary": [8, 2.0, 0, 3.0] },
-                { "wall": "y_max","type": "window","boundary": [0.5, 3, 1.5, 3.0] }
+                {
+                  "wall": "x_max",
+                  "type": "door",
+                  "boundary": [
+                    4,
+                    2.0,
+                    0,
+                    3.0
+                  ]
+                },
+                {
+                  "wall": "x_max",
+                  "type": "door",
+                  "boundary": [
+                    8,
+                    2.0,
+                    0,
+                    3.0
+                  ]
+                },
+                {
+                  "wall": "y_max",
+                  "type": "window",
+                  "boundary": [
+                    0.5,
+                    3,
+                    1.5,
+                    3.0
+                  ]
+                }
               ],
               "combustibles": [
                 {
-                  "key": "CONVEYOR_BELT",
+                  "key": "RUBBER_MATERIAL",
                   "count": 3,
                   "rotation": 90
                 },
                 {
-                  "key": "INDUSTRIAL_OIL_DRUM",
+                  "key": "LUBE_OIL_DRUM",
                   "count": 3
                 }
               ],
@@ -486,7 +903,12 @@
           "roof": {
             "thickness": 0.2,
             "material": "CONCRETE",
-            "openings": [1,4,1,4]
+            "openings": [
+              1,
+              4,
+              1,
+              4
+            ]
           }
         },
         {
@@ -496,13 +918,45 @@
           "fire_compartments": [
             {
               "name": "default",
-              "boundary": [0, 17, 0, 12],
+              "boundary": [
+                0,
+                17,
+                0,
+                12
+              ],
               "firewall_thickness": 0.3,
               "firewall_material": "CONCRETE",
               "openings": [
-                { "wall": "x_min","type": "window","boundary": [4, 3, 1.5, 3.0] },
-                { "wall": "x_max","type": "window","boundary": [3, 3, 1.5, 3.0] },
-                { "wall": "x_max","type": "window","boundary": [8, 3, 1.5, 3.0] }
+                {
+                  "wall": "x_min",
+                  "type": "window",
+                  "boundary": [
+                    4,
+                    3,
+                    1.5,
+                    3.0
+                  ]
+                },
+                {
+                  "wall": "x_max",
+                  "type": "window",
+                  "boundary": [
+                    3,
+                    3,
+                    1.5,
+                    3.0
+                  ]
+                },
+                {
+                  "wall": "x_max",
+                  "type": "window",
+                  "boundary": [
+                    8,
+                    3,
+                    1.5,
+                    3.0
+                  ]
+                }
               ],
               "combustibles": [],
               "specialized_components": []
@@ -519,7 +973,12 @@
     {
       "name": "Boiler auxiliary building",
       "cn_name": "锅炉辅助厂房（厂房2）",
-      "boundary": [-21.0, 42, -145.0, 40],
+      "boundary": [
+        -21.0,
+        42,
+        -145.0,
+        40
+      ],
       "wall_thickness": 0.3,
       "height": 28,
       "stories": [
@@ -530,39 +989,54 @@
             {
               "wall": "x_min",
               "type": "door",
-              "boundary": [10.0, 4.0, 0, 3.5]
+              "boundary": [
+                10.0,
+                4.0,
+                0,
+                3.5
+              ]
             }
           ],
           "fire_compartments": [
             {
               "name": "防火分区1",
-              "boundary": [0, 18.9, 0, 10.0],
+              "boundary": [
+                0,
+                18.9,
+                0,
+                10.0
+              ],
               "firewall_thickness": 0.3,
               "firewall_material": "CONCRETE",
               "openings": [
-                
                 {
                   "wall": "y_min",
                   "type": "door",
-                  "boundary": [3.67, 4.0, 0, 3.5]
+                  "boundary": [
+                    3.67,
+                    4.0,
+                    0,
+                    3.5
+                  ]
                 },
                 {
                   "wall": "y_max",
                   "type": "door",
-                  "boundary": [9.895, 1.0, 0, 3.5]
+                  "boundary": [
+                    9.895,
+                    1.0,
+                    0,
+                    3.5
+                  ]
                 }
               ],
               "combustibles": [
                 {
-                  "key": "CABLE_BRIDGE",
-                  "count": 2
+                  "key": "CABLE_BUNDLE",
+                  "count": 4
                 },
                 {
-                  "key": "CONTROL_CABLE_BRIDGE",
-                  "count": 2
-                },
-                {
-                  "key": "LUBE_OIL_TANK",
+                  "key": "HYDRAULIC_TANK",
                   "count": 1
                 }
               ],
@@ -570,27 +1044,33 @@
             },
             {
               "name": "防火分区2",
-              "boundary": [0, 18.9, 16.0, 22.0],
+              "boundary": [
+                0,
+                18.9,
+                16.0,
+                22.0
+              ],
               "firewall_thickness": 0.3,
               "firewall_material": "CONCRETE",
               "openings": [
                 {
                   "wall": "x_max",
                   "type": "door",
-                  "boundary": [2.8, 1.0, 0, 3.5]
+                  "boundary": [
+                    2.8,
+                    1.0,
+                    0,
+                    3.5
+                  ]
                 }
               ],
               "combustibles": [
                 {
-                  "key": "CABLE_BRIDGE",
-                  "count": 2
+                  "key": "CABLE_BUNDLE",
+                  "count": 6
                 },
                 {
-                  "key": "CONTROL_CABLE_BRIDGE",
-                  "count": 4
-                },
-                {
-                  "key": "RUBBER_CONVEYOR_BELT",
+                  "key": "RUBBER_MATERIAL",
                   "count": 2
                 }
               ],
@@ -598,36 +1078,47 @@
             },
             {
               "name": "防火分区3",
-              "boundary": [0, 18.9, 22.0, 40.0],
+              "boundary": [
+                0,
+                18.9,
+                22.0,
+                40.0
+              ],
               "firewall_thickness": 0.3,
               "firewall_material": "CONCRETE",
               "openings": [
                 {
                   "wall": "x_max",
                   "type": "door",
-                  "boundary": [9.4, 1.0, 0, 3.5]
+                  "boundary": [
+                    9.4,
+                    1.0,
+                    0,
+                    3.5
+                  ]
                 },
                 {
                   "wall": "x_max",
                   "type": "door",
-                  "boundary": [16.6, 1.0, 0, 3.5]
+                  "boundary": [
+                    16.6,
+                    1.0,
+                    0,
+                    3.5
+                  ]
                 }
               ],
               "combustibles": [
                 {
-                  "key": "CABLE_BRIDGE",
-                  "count": 2
+                  "key": "CABLE_BUNDLE",
+                  "count": 6
                 },
                 {
-                  "key": "CONTROL_CABLE_BRIDGE",
-                  "count": 4
-                },
-                {
-                  "key": "HYDRAULIC_OIL_TANK",
+                  "key": "HYDRAULIC_TANK",
                   "count": 1
                 },
                 {
-                  "key": "RUBBER_PIPE_INSULATION",
+                  "key": "RUBBER_MATERIAL",
                   "count": 1
                 }
               ],
@@ -635,45 +1126,57 @@
             },
             {
               "name": "防火分区4",
-              "boundary": [21.0, 42.0, 0, 22.0],
+              "boundary": [
+                21.0,
+                42.0,
+                0,
+                22.0
+              ],
               "firewall_thickness": 0.3,
               "firewall_material": "CONCRETE",
               "openings": [
                 {
                   "wall": "y_min",
                   "type": "door",
-                  "boundary": [13.75, 4.0, 0, 3.5]
+                  "boundary": [
+                    13.75,
+                    4.0,
+                    0,
+                    3.5
+                  ]
                 },
                 {
                   "wall": "x_min",
                   "type": "door",
-                  "boundary": [0.6, 1.0, 0, 3.5]
+                  "boundary": [
+                    0.6,
+                    1.0,
+                    0,
+                    3.5
+                  ]
                 },
                 {
                   "wall": "x_min",
                   "type": "door",
-                  "boundary": [11.6, 1.0, 0, 3.5]
+                  "boundary": [
+                    11.6,
+                    1.0,
+                    0,
+                    3.5
+                  ]
                 }
               ],
               "combustibles": [
                 {
-                  "key": "CABLE_BRIDGE",
-                  "count": 4
+                  "key": "CABLE_BUNDLE",
+                  "count": 10
                 },
                 {
-                  "key": "CONTROL_CABLE_BRIDGE",
-                  "count": 6
+                  "key": "HYDRAULIC_TANK",
+                  "count": 2
                 },
                 {
-                  "key": "LUBE_OIL_TANK",
-                  "count": 1
-                },
-                {
-                  "key": "RUBBER_CONVEYOR_BELT",
-                  "count": 1
-                },
-                {
-                  "key": "HYDRAULIC_OIL_TANK",
+                  "key": "RUBBER_MATERIAL",
                   "count": 1
                 }
               ],
@@ -681,33 +1184,53 @@
             },
             {
               "name": "防火分区5",
-              "boundary": [21.0, 42.0, 22.0, 40.0],
+              "boundary": [
+                21.0,
+                42.0,
+                22.0,
+                40.0
+              ],
               "firewall_thickness": 0.3,
               "firewall_material": "CONCRETE",
               "openings": [
                 {
                   "wall": "x_min",
                   "type": "door",
-                  "boundary": [0.4, 1.0, 0, 3.5]
+                  "boundary": [
+                    0.4,
+                    1.0,
+                    0,
+                    3.5
+                  ]
                 },
                 {
                   "wall": "x_min",
                   "type": "door",
-                  "boundary": [9.4, 1.0, 0, 3.5]
+                  "boundary": [
+                    9.4,
+                    1.0,
+                    0,
+                    3.5
+                  ]
                 },
                 {
                   "wall": "x_min",
                   "type": "door",
-                  "boundary": [16.6, 1.0, 0, 3.5]
+                  "boundary": [
+                    16.6,
+                    1.0,
+                    0,
+                    3.5
+                  ]
                 }
               ],
               "combustibles": [
                 {
-                  "key": "CABLE_BRIDGE",
+                  "key": "CABLE_BUNDLE",
                   "count": 6
                 },
                 {
-                  "key": "PAINT_THINNER_DRUM",
+                  "key": "ORGANIC_SOLVENT_DRUM",
                   "count": 20
                 }
               ],
@@ -725,7 +1248,12 @@
     {
       "name": "Power distribution building",
       "cn_name": "厂用配电/变压器室（厂房4）",
-      "boundary": [56.0, 18, -161.0, 32],
+      "boundary": [
+        56.0,
+        18,
+        -161.0,
+        32
+      ],
       "wall_thickness": 0.3,
       "height": 8,
       "stories": [
@@ -736,23 +1264,33 @@
           "fire_compartments": [
             {
               "name": "分区1（上）",
-              "boundary": [0, 18.0, 20.0, 32.0],
+              "boundary": [
+                0,
+                18.0,
+                20.0,
+                32.0
+              ],
               "firewall_thickness": 0.3,
               "firewall_material": "CONCRETE",
               "openings": [
                 {
                   "wall": "y_min",
                   "type": "door",
-                  "boundary": [10.0, 1.0, 0, 3]
+                  "boundary": [
+                    10.0,
+                    1.0,
+                    0,
+                    3
+                  ]
                 }
               ],
               "combustibles": [
                 {
-                  "key": "CABLE_BRIDGE",
+                  "key": "CABLE_BUNDLE",
                   "count": 2
                 },
                 {
-                  "key": "SWITCH_CABINET",
+                  "key": "ELECTRICAL_EQUIPMENT",
                   "count": 10
                 }
               ],
@@ -760,24 +1298,44 @@
             },
             {
               "name": "分区2（中左）2h",
-              "boundary": [0, 10.0, 8, 18],
+              "boundary": [
+                0,
+                10.0,
+                8,
+                18
+              ],
               "firewall_thickness": 0.3,
               "firewall_material": "CONCRETE",
               "openings": [
                 {
                   "wall": "x_min",
                   "type": "window",
-                  "boundary": [0, 1.0, 1, 1.0]
+                  "boundary": [
+                    0,
+                    1.0,
+                    1,
+                    1.0
+                  ]
                 },
                 {
                   "wall": "x_min",
                   "type": "window",
-                  "boundary": [1.5, 1.0, 1, 1.0]
+                  "boundary": [
+                    1.5,
+                    1.0,
+                    1,
+                    1.0
+                  ]
                 },
                 {
                   "wall": "x_max",
                   "type": "door",
-                  "boundary": [5, 1.5, 0, 2.5]
+                  "boundary": [
+                    5,
+                    1.5,
+                    0,
+                    2.5
+                  ]
                 }
               ],
               "combustibles": [
@@ -786,15 +1344,15 @@
                   "count": 2
                 },
                 {
-                  "key": "CABLE_BRIDGE",
+                  "key": "CABLE_BUNDLE",
                   "count": 2
                 },
                 {
-                  "key": "SWITCH_CABINET",
+                  "key": "ELECTRICAL_EQUIPMENT",
                   "count": 4
                 },
                 {
-                  "key": "HYDRAULIC_OIL_TANK",
+                  "key": "HYDRAULIC_TANK",
                   "count": 1
                 }
               ],
@@ -802,81 +1360,127 @@
             },
             {
               "name": "分区3（中右）2h",
-              "boundary": [12.0, 18.0, 8, 20.0],
+              "boundary": [
+                12.0,
+                18.0,
+                8,
+                20.0
+              ],
               "firewall_thickness": 0.3,
               "firewall_material": "CONCRETE",
               "openings": [
                 {
                   "wall": "x_max",
                   "type": "window",
-                  "boundary": [17.5, 1.0, 1, 1.0]
+                  "boundary": [
+                    17.5,
+                    1.0,
+                    1,
+                    1.0
+                  ]
                 },
                 {
                   "wall": "x_max",
                   "type": "window",
-                  "boundary": [19.0, 1.0, 1, 1.0]
+                  "boundary": [
+                    19.0,
+                    1.0,
+                    1,
+                    1.0
+                  ]
                 },
                 {
                   "wall": "x_min",
                   "type": "door",
-                  "boundary": [4.0, 1.5, 0, 2.5]
+                  "boundary": [
+                    4.0,
+                    1.5,
+                    0,
+                    2.5
+                  ]
                 }
               ],
               "combustibles": [
                 {
                   "key": "OIL_TRANSFORMER",
-                  "count": 2
-                },
-                {
-                  "key": "OIL_CIRCUIT_BREAKER",
-                  "count": 2
+                  "count": 4
                 }
               ],
               "specialized_components": []
             },
             {
               "name": "分区4（下）2h",
-              "boundary": [0, 18.0, 0, 8],
+              "boundary": [
+                0,
+                18.0,
+                0,
+                8
+              ],
               "firewall_thickness": 0.3,
               "firewall_material": "CONCRETE",
               "openings": [
                 {
                   "wall": "y_min",
                   "type": "door",
-                  "boundary": [7.0, 4.0, 0, 4.0]
+                  "boundary": [
+                    7.0,
+                    4.0,
+                    0,
+                    4.0
+                  ]
                 },
                 {
                   "wall": "y_max",
                   "type": "door",
-                  "boundary": [10.0, 2, 0, 4.0]
+                  "boundary": [
+                    10.0,
+                    2,
+                    0,
+                    4.0
+                  ]
                 },
                 {
                   "wall": "x_min",
                   "type": "window",
-                  "boundary": [8, 1.0, 2, 1.0]
+                  "boundary": [
+                    8,
+                    1.0,
+                    2,
+                    1.0
+                  ]
                 },
                 {
                   "wall": "x_min",
                   "type": "window",
-                  "boundary": [6.5, 1.0, 2, 1.0]
+                  "boundary": [
+                    6.5,
+                    1.0,
+                    2,
+                    1.0
+                  ]
                 },
                 {
                   "wall": "x_max",
                   "type": "door",
-                  "boundary": [8, 2.0, 0, 4.0]
+                  "boundary": [
+                    8,
+                    2.0,
+                    0,
+                    4.0
+                  ]
                 }
               ],
               "combustibles": [
                 {
-                  "key": "CABLE_BRIDGE",
+                  "key": "CABLE_BUNDLE",
                   "count": 4
                 },
                 {
-                  "key": "SWITCH_CABINET",
+                  "key": "ELECTRICAL_EQUIPMENT",
                   "count": 6
                 },
                 {
-                  "key": "HYDRAULIC_OIL_TANK",
+                  "key": "HYDRAULIC_TANK",
                   "count": 2
                 }
               ],
@@ -894,7 +1498,12 @@
     {
       "name": "Emergency diesel generator",
       "cn_name": "应急柴油发电机房（厂房5）",
-      "boundary": [74.0, 6, -169.0, 20],
+      "boundary": [
+        74.0,
+        6,
+        -169.0,
+        20
+      ],
       "wall_thickness": 0.2,
       "height": 4,
       "stories": [
@@ -905,63 +1514,103 @@
           "fire_compartments": [
             {
               "name": "主机间",
-              "boundary": [0, 6.0, 0, 20.0],
+              "boundary": [
+                0,
+                6.0,
+                0,
+                20.0
+              ],
               "firewall_thickness": 0.2,
               "firewall_material": "CONCRETE",
               "openings": [
                 {
                   "wall": "x_max",
                   "type": "window",
-                  "boundary": [2.75, 0.5, 1, 1.0]
+                  "boundary": [
+                    2.75,
+                    0.5,
+                    1,
+                    1.0
+                  ]
                 },
                 {
                   "wall": "x_max",
                   "type": "window",
-                  "boundary": [4.15, 0.5, 1, 1.0]
+                  "boundary": [
+                    4.15,
+                    0.5,
+                    1,
+                    1.0
+                  ]
                 },
                 {
                   "wall": "x_max",
                   "type": "window",
-                  "boundary": [5.55, 0.5, 1, 1.0]
+                  "boundary": [
+                    5.55,
+                    0.5,
+                    1,
+                    1.0
+                  ]
                 },
                 {
                   "wall": "x_max",
                   "type": "window",
-                  "boundary": [6.95, 0.5, 1, 1.0]
+                  "boundary": [
+                    6.95,
+                    0.5,
+                    1,
+                    1.0
+                  ]
                 },
                 {
                   "wall": "x_max",
                   "type": "window",
-                  "boundary": [11.75, 0.5, 1, 1.0]
+                  "boundary": [
+                    11.75,
+                    0.5,
+                    1,
+                    1.0
+                  ]
                 },
                 {
                   "wall": "x_max",
                   "type": "window",
-                  "boundary": [13.15, 0.5, 1, 1.0]
+                  "boundary": [
+                    13.15,
+                    0.5,
+                    1,
+                    1.0
+                  ]
                 },
                 {
                   "wall": "x_max",
                   "type": "window",
-                  "boundary": [14.55, 0.5, 1, 1.0]
+                  "boundary": [
+                    14.55,
+                    0.5,
+                    1,
+                    1.0
+                  ]
                 },
                 {
                   "wall": "x_max",
                   "type": "window",
-                  "boundary": [15.95, 0.5, 1, 1.0]
+                  "boundary": [
+                    15.95,
+                    0.5,
+                    1,
+                    1.0
+                  ]
                 }
               ],
               "combustibles": [
                 {
-                  "key": "DAILY_OIL_TANK",
-                  "count": 1
+                  "key": "HYDRAULIC_TANK",
+                  "count": 2
                 },
                 {
-                  "key": "LUBE_OIL_TANK",
-                  "count": 1,
-                  "rotation":90
-                },
-                {
-                  "key": "CABLE_BRIDGE",
+                  "key": "CABLE_BUNDLE",
                   "count": 2
                 }
               ],
@@ -979,7 +1628,12 @@
     {
       "name": "Chemical water treatment",
       "cn_name": "化学水辅助车间（厂房6）",
-      "boundary": [93.0, 14, -166.0, 30],
+      "boundary": [
+        93.0,
+        14,
+        -166.0,
+        30
+      ],
       "wall_thickness": 0.3,
       "height": 9,
       "stories": [
@@ -990,24 +1644,44 @@
           "fire_compartments": [
             {
               "name": "底部大分区",
-              "boundary": [0, 14.0, 0, 11.0],
+              "boundary": [
+                0,
+                14.0,
+                0,
+                11.0
+              ],
               "firewall_thickness": 0.3,
               "firewall_material": "CONCRETE",
               "openings": [
                 {
                   "wall": "x_min",
                   "type": "window",
-                  "boundary": [6, 5.0, 1.5, 5.0]
+                  "boundary": [
+                    6,
+                    5.0,
+                    1.5,
+                    5.0
+                  ]
                 },
                 {
                   "wall": "x_max",
                   "type": "window",
-                  "boundary": [1, 5.0, 1.5, 5.0]
+                  "boundary": [
+                    1,
+                    5.0,
+                    1.5,
+                    5.0
+                  ]
                 },
                 {
                   "wall": "y_max",
                   "type": "door",
-                  "boundary": [7.0, 2.0, 0, 4.0]
+                  "boundary": [
+                    7.0,
+                    2.0,
+                    0,
+                    4.0
+                  ]
                 }
               ],
               "combustibles": [
@@ -1016,7 +1690,7 @@
                   "count": 10
                 },
                 {
-                  "key": "CABLE_BRIDGE",
+                  "key": "CABLE_BUNDLE",
                   "count": 2
                 }
               ],
@@ -1024,37 +1698,57 @@
             },
             {
               "name": "左侧上分区",
-              "boundary": [0, 9.0, 12.5, 28],
+              "boundary": [
+                0,
+                9.0,
+                12.5,
+                28
+              ],
               "firewall_thickness": 0.3,
               "firewall_material": "CONCRETE",
               "openings": [
                 {
                   "wall": "x_min",
                   "type": "window",
-                  "boundary": [3, 5.0, 1.5, 5.0]
+                  "boundary": [
+                    3,
+                    5.0,
+                    1.5,
+                    5.0
+                  ]
                 },
                 {
                   "wall": "x_min",
                   "type": "window",
-                  "boundary": [9, 5.0, 1.5, 5.0]
+                  "boundary": [
+                    9,
+                    5.0,
+                    1.5,
+                    5.0
+                  ]
                 },
                 {
                   "wall": "x_max",
                   "type": "door",
-                  "boundary": [10, 1.5, 0, 3.0]
+                  "boundary": [
+                    10,
+                    1.5,
+                    0,
+                    3.0
+                  ]
                 }
               ],
               "combustibles": [
                 {
-                  "key": "RUBBER_LINED_PIPE",
+                  "key": "RUBBER_MATERIAL",
                   "count": 1
                 },
                 {
-                  "key": "WOODEN_BOX",
+                  "key": "WOODEN_PALLET",
                   "count": 10
                 },
                 {
-                  "key": "CABLE_BRIDGE",
+                  "key": "CABLE_BUNDLE",
                   "count": 2
                 }
               ],
@@ -1062,23 +1756,33 @@
             },
             {
               "name": "右侧中分区",
-              "boundary": [10.5, 14.0, 11.0, 19.5],
+              "boundary": [
+                10.5,
+                14.0,
+                11.0,
+                19.5
+              ],
               "firewall_thickness": 0.3,
               "firewall_material": "CONCRETE",
               "openings": [
                 {
                   "wall": "x_min",
                   "type": "door",
-                  "boundary": [4, 1.5, 0, 2.5]
+                  "boundary": [
+                    4,
+                    1.5,
+                    0,
+                    2.5
+                  ]
                 }
               ],
               "combustibles": [
                 {
-                  "key": "ELECTRICAL_PANEL",
+                  "key": "ELECTRICAL_EQUIPMENT",
                   "count": 2
                 },
                 {
-                  "key": "CABLE_TRAY",
+                  "key": "CABLE_BUNDLE",
                   "count": 4
                 }
               ],
@@ -1086,19 +1790,34 @@
             },
             {
               "name": "右侧上分区",
-              "boundary": [10.5, 14.0, 19.5, 28.0],
+              "boundary": [
+                10.5,
+                14.0,
+                19.5,
+                28.0
+              ],
               "firewall_thickness": 0.3,
               "firewall_material": "CONCRETE",
               "openings": [
                 {
                   "wall": "x_max",
                   "type": "window",
-                  "boundary": [2, 5, 1, 5]
+                  "boundary": [
+                    2,
+                    5,
+                    1,
+                    5
+                  ]
                 },
                 {
                   "wall": "x_min",
                   "type": "door",
-                  "boundary": [2, 1.5, 0, 2.5]
+                  "boundary": [
+                    2,
+                    1.5,
+                    0,
+                    2.5
+                  ]
                 }
               ],
               "combustibles": [
@@ -1121,7 +1840,12 @@
     {
       "name": "Oil storage control",
       "cn_name": "附属油品/控制间（厂房7）",
-      "boundary": [94, 13, -136.0, 8],
+      "boundary": [
+        94,
+        13,
+        -136.0,
+        8
+      ],
       "wall_thickness": 0.2,
       "height": 4,
       "stories": [
@@ -1132,19 +1856,34 @@
           "fire_compartments": [
             {
               "name": "油品储存间",
-              "boundary": [0, 5.0, 0, 8.0],
+              "boundary": [
+                0,
+                5.0,
+                0,
+                8.0
+              ],
               "firewall_thickness": 0.2,
               "firewall_material": "CONCRETE",
               "openings": [
                 {
                   "wall": "y_min",
                   "type": "door",
-                  "boundary": [2, 2.0, 0, 2.0]
+                  "boundary": [
+                    2,
+                    2.0,
+                    0,
+                    2.0
+                  ]
                 },
                 {
                   "wall": "y_max",
                   "type": "window",
-                  "boundary": [2.0, 1.0, 1.5, 1.0]
+                  "boundary": [
+                    2.0,
+                    1.0,
+                    1.5,
+                    1.0
+                  ]
                 }
               ],
               "combustibles": [
@@ -1157,7 +1896,7 @@
                   "count": 10
                 },
                 {
-                  "key": "CABLE_BRIDGE",
+                  "key": "CABLE_BUNDLE",
                   "count": 2
                 }
               ],
@@ -1165,37 +1904,57 @@
             },
             {
               "name": "控制间",
-              "boundary": [5.0, 13.0, 0, 8.0],
+              "boundary": [
+                5.0,
+                13.0,
+                0,
+                8.0
+              ],
               "firewall_thickness": 0.2,
               "firewall_material": "CONCRETE",
               "openings": [
                 {
                   "wall": "y_min",
                   "type": "door",
-                  "boundary": [0.5, 2.0, 0, 4.0]
+                  "boundary": [
+                    0.5,
+                    2.0,
+                    0,
+                    4.0
+                  ]
                 },
                 {
                   "wall": "x_max",
                   "type": "door",
-                  "boundary": [4.5, 3.0, 0, 3.0]
+                  "boundary": [
+                    4.5,
+                    3.0,
+                    0,
+                    3.0
+                  ]
                 },
                 {
                   "wall": "y_max",
                   "type": "window",
-                  "boundary": [6, 1.0, 1.5, 2.0]
+                  "boundary": [
+                    6,
+                    1.0,
+                    1.5,
+                    2.0
+                  ]
                 }
               ],
               "combustibles": [
                 {
-                  "key": "CONTROL_CABINET",
+                  "key": "ELECTRICAL_EQUIPMENT",
                   "count": 4
                 },
                 {
-                  "key": "PAPER_ARCHIVE",
+                  "key": "PAPER_STACK",
                   "count": 4
                 },
                 {
-                  "key": "RUBBER_HOSE_ASSEMBLY",
+                  "key": "RUBBER_MATERIAL",
                   "count": 4
                 }
               ],
@@ -1213,7 +1972,12 @@
     {
       "name": "Industrial water pump",
       "cn_name": "工业水泵房/药剂间（厂房8）",
-      "boundary": [154.0, 22, -173.0, 14],
+      "boundary": [
+        154.0,
+        22,
+        -173.0,
+        14
+      ],
       "wall_thickness": 0.3,
       "height": 6,
       "stories": [
@@ -1224,38 +1988,63 @@
           "fire_compartments": [
             {
               "name": "水泵房",
-              "boundary": [0, 12.0, 0, 8.0],
+              "boundary": [
+                0,
+                12.0,
+                0,
+                8.0
+              ],
               "firewall_thickness": 0.3,
               "firewall_material": "CONCRETE",
               "openings": [
                 {
                   "wall": "x_max",
                   "type": "door",
-                  "boundary": [3, 2.0, 0, 3.0]
+                  "boundary": [
+                    3,
+                    2.0,
+                    0,
+                    3.0
+                  ]
                 },
                 {
                   "wall": "y_min",
                   "type": "door",
-                  "boundary": [6, 1.0, 0, 2.0]
+                  "boundary": [
+                    6,
+                    1.0,
+                    0,
+                    2.0
+                  ]
                 },
                 {
                   "wall": "y_max",
                   "type": "door",
-                  "boundary": [3, 1.0, 0, 2.0]
+                  "boundary": [
+                    3,
+                    1.0,
+                    0,
+                    2.0
+                  ]
                 },
                 {
                   "wall": "y_max",
                   "type": "door",
-                  "boundary": [8, 1.0, 0, 2.0]
+                  "boundary": [
+                    8,
+                    1.0,
+                    0,
+                    2.0
+                  ]
                 }
               ],
               "combustibles": [
                 {
-                  "key": "LUBE_OIL_TANK",
+                  "key": "HYDRAULIC_TANK",
                   "count": 2
                 },
                 {
-                  "key": "CABLE_BRIDGE",
+                  "key": "CABLE_BUNDLE",
                   "count": 2
                 }
               ],
@@ -1263,14 +2052,24 @@
             },
             {
               "name": "药剂间",
-              "boundary": [12.0, 22.0, 0, 8.0],
+              "boundary": [
+                12.0,
+                22.0,
+                0,
+                8.0
+              ],
               "firewall_thickness": 0.3,
               "firewall_material": "CONCRETE",
               "openings": [
                 {
                   "wall": "y_min",
                   "type": "door",
-                  "boundary": [4, 4.0, 0, 5.0]
+                  "boundary": [
+                    4,
+                    4.0,
+                    0,
+                    5.0
+                  ]
                 }
               ],
               "combustibles": [
@@ -1279,11 +2078,11 @@
                   "count": 20
                 },
                 {
-                  "key": "RUBBER_LINED_PIPE",
+                  "key": "RUBBER_MATERIAL",
                   "count": 1
                 },
                 {
-                  "key": "WOODEN_BOX",
+                  "key": "WOODEN_PALLET",
                   "count": 10
                 }
               ],
@@ -1301,7 +2100,12 @@
     {
       "name": "Chemical water main",
       "cn_name": "化学水处理主车间（厂房9）",
-      "boundary": [150.0, 30, -118.0, 25],
+      "boundary": [
+        150.0,
+        30,
+        -118.0,
+        25
+      ],
       "wall_thickness": 0.3,
       "height": 9,
       "stories": [
@@ -1312,19 +2116,34 @@
           "fire_compartments": [
             {
               "name": "加药间",
-              "boundary": [0, 18.0, 0, 10.0],
+              "boundary": [
+                0,
+                18.0,
+                0,
+                10.0
+              ],
               "firewall_thickness": 0.3,
               "firewall_material": "CONCRETE",
               "openings": [
                 {
                   "wall": "y_min",
                   "type": "door",
-                  "boundary": [6, 4.0, 0, 3.0]
+                  "boundary": [
+                    6,
+                    4.0,
+                    0,
+                    3.0
+                  ]
                 },
                 {
                   "wall": "y_max",
                   "type": "door",
-                  "boundary": [10.0, 1.0, 1, 2.0]
+                  "boundary": [
+                    10.0,
+                    1.0,
+                    1,
+                    2.0
+                  ]
                 }
               ],
               "combustibles": [
@@ -1337,41 +2156,61 @@
             },
             {
               "name": "主功能区",
-              "boundary": [0, 18.0, 12.0, 25.0],
+              "boundary": [
+                0,
+                18.0,
+                12.0,
+                25.0
+              ],
               "firewall_thickness": 0.3,
               "firewall_material": "CONCRETE",
               "openings": [
                 {
                   "wall": "x_min",
                   "type": "door",
-                  "boundary": [0.5, 1.0, 0, 2.0]
+                  "boundary": [
+                    0.5,
+                    1.0,
+                    0,
+                    2.0
+                  ]
                 },
                 {
                   "wall": "x_min",
                   "type": "door",
-                  "boundary": [2.5, 4.0, 0, 5.0]
+                  "boundary": [
+                    2.5,
+                    4.0,
+                    0,
+                    5.0
+                  ]
                 },
                 {
                   "wall": "x_max",
                   "type": "door",
-                  "boundary": [3, 1.0, 0, 2.0]
+                  "boundary": [
+                    3,
+                    1.0,
+                    0,
+                    2.0
+                  ]
                 }
               ],
               "combustibles": [
                 {
-                  "key": "CABLE_BRIDGE",
+                  "key": "CABLE_BUNDLE",
                   "count": 4
                 },
                 {
-                  "key": "RUBBER_LINED_PIPE",
+                  "key": "RUBBER_MATERIAL",
                   "count": 1
                 },
                 {
-                  "key": "PAPER_ARCHIVE",
+                  "key": "PAPER_STACK",
                   "count": 4
                 },
                 {
-                  "key": "LUBE_OIL_TANK",
+                  "key": "HYDRAULIC_TANK",
                   "count": 2
                 }
               ],
@@ -1379,34 +2218,64 @@
             },
             {
               "name": "右侧下分区",
-              "boundary": [20.0, 30.0, 0, 18.0],
+              "boundary": [
+                20.0,
+                30.0,
+                0,
+                18.0
+              ],
               "firewall_thickness": 0.3,
               "firewall_material": "CONCRETE",
               "openings": [
                 {
                   "wall": "x_max",
                   "type": "door",
-                  "boundary": [12.0, 0.8, 0, 3.0]
+                  "boundary": [
+                    12.0,
+                    0.8,
+                    0,
+                    3.0
+                  ]
                 },
                 {
                   "wall": "x_max",
                   "type": "window",
-                  "boundary": [3.5, 1.0, 1.5, 1.0]
+                  "boundary": [
+                    3.5,
+                    1.0,
+                    1.5,
+                    1.0
+                  ]
                 },
                 {
                   "wall": "x_max",
                   "type": "window",
-                  "boundary": [7.0, 1.0, 1.5, 1.0]
+                  "boundary": [
+                    7.0,
+                    1.0,
+                    1.5,
+                    1.0
+                  ]
                 },
                 {
                   "wall": "x_max",
                   "type": "window",
-                  "boundary": [10.5, 1.0, 1.5, 1.0]
+                  "boundary": [
+                    10.5,
+                    1.0,
+                    1.5,
+                    1.0
+                  ]
                 },
                 {
                   "wall": "x_max",
                   "type": "window",
-                  "boundary": [14.0, 1.0, 1.5, 1.0]
+                  "boundary": [
+                    14.0,
+                    1.0,
+                    1.5,
+                    1.0
+                  ]
                 }
               ],
               "combustibles": [
@@ -1415,7 +2284,7 @@
                   "count": 20
                 },
                 {
-                  "key": "PLASTIC_SHEETS",
+                  "key": "PLASTIC_PACKAGING",
                   "count": 10
                 }
               ],
@@ -1423,24 +2292,44 @@
             },
             {
               "name": "右侧上分区",
-              "boundary": [20.0, 30.0, 18.0, 25.0],
+              "boundary": [
+                20.0,
+                30.0,
+                18.0,
+                25.0
+              ],
               "firewall_thickness": 0.3,
               "firewall_material": "CONCRETE",
               "openings": [
                 {
                   "wall": "x_min",
                   "type": "door",
-                  "boundary": [4.5, 1.5, 0, 2.5]
+                  "boundary": [
+                    4.5,
+                    1.5,
+                    0,
+                    2.5
+                  ]
                 },
                 {
                   "wall": "x_max",
                   "type": "window",
-                  "boundary": [3, 1.0, 1.5, 1.0]
+                  "boundary": [
+                    3,
+                    1.0,
+                    1.5,
+                    1.0
+                  ]
                 },
                 {
                   "wall": "y_min",
                   "type": "door",
-                  "boundary": [5, 1.5, 0, 2.5]
+                  "boundary": [
+                    5,
+                    1.5,
+                    0,
+                    2.5
+                  ]
                 }
               ],
               "combustibles": [
@@ -1449,7 +2338,7 @@
                   "count": 10
                 },
                 {
-                  "key": "PAPER_BOX",
+                  "key": "PAPER_STACK",
                   "count": 20
                 }
               ],
@@ -1467,7 +2356,12 @@
     {
       "name": "Control office",
       "cn_name": "运行控制室/办公楼（厂房10）",
-      "boundary": [150.0, 31, -90.0, 46],
+      "boundary": [
+        150.0,
+        31,
+        -90.0,
+        46
+      ],
       "wall_thickness": 0.25,
       "height": 9,
       "stories": [
@@ -1478,46 +2372,71 @@
           "fire_compartments": [
             {
               "name": "控制室1",
-              "boundary": [0, 12.0, 0, 16.0],
+              "boundary": [
+                0,
+                12.0,
+                0,
+                16.0
+              ],
               "firewall_thickness": 0.25,
               "firewall_material": "CONCRETE",
               "openings": [
                 {
                   "wall": "x_max",
                   "type": "door",
-                  "boundary": [10, 1.5, 0, 2]
+                  "boundary": [
+                    10,
+                    1.5,
+                    0,
+                    2
+                  ]
                 },
                 {
                   "wall": "x_min",
                   "type": "window",
-                  "boundary": [3, 2, 2, 2]
+                  "boundary": [
+                    3,
+                    2,
+                    2,
+                    2
+                  ]
                 },
                 {
                   "wall": "x_min",
                   "type": "door",
-                  "boundary": [7, 0.8, 0, 2]
+                  "boundary": [
+                    7,
+                    0.8,
+                    0,
+                    2
+                  ]
                 },
                 {
                   "wall": "x_min",
                   "type": "door",
-                  "boundary": [10, 4, 0, 6]
+                  "boundary": [
+                    10,
+                    4,
+                    0,
+                    6
+                  ]
                 }
               ],
               "combustibles": [
                 {
-                  "key": "PAPER_ARCHIVE",
+                  "key": "PAPER_STACK",
                   "count": 6
                 },
                 {
-                  "key": "WOOD_FURNITURE",
+                  "key": "WOODEN_FURNITURE",
                   "count": 10
                 },
                 {
-                  "key": "NETWORK_CABLE",
+                  "key": "CABLE_BUNDLE",
                   "count": 6
                 },
                 {
-                  "key": "SERVER_CABINET",
+                  "key": "ELECTRICAL_EQUIPMENT",
                   "count": 8
                 }
               ],
@@ -1525,75 +2444,125 @@
             },
             {
               "name": "none",
-              "boundary": [0, 12.0, 16, 30.0],
+              "boundary": [
+                0,
+                12.0,
+                16,
+                30.0
+              ],
               "firewall_thickness": 0.25,
               "firewall_material": "CONCRETE",
               "openings": [
                 {
                   "wall": "x_min",
                   "type": "door",
-                  "boundary": [0, 14, 0, 9]
+                  "boundary": [
+                    0,
+                    14,
+                    0,
+                    9
+                  ]
                 }
               ],
               "combustibles": []
             },
             {
               "name": "控制室2",
-              "boundary": [0, 12.0, 30, 46.0],
+              "boundary": [
+                0,
+                12.0,
+                30,
+                46.0
+              ],
               "firewall_thickness": 0.25,
               "firewall_material": "CONCRETE",
               "openings": [
                 {
                   "wall": "x_max",
                   "type": "door",
-                  "boundary": [5, 1, 0, 2]
+                  "boundary": [
+                    5,
+                    1,
+                    0,
+                    2
+                  ]
                 },
                 {
                   "wall": "x_max",
                   "type": "door",
-                  "boundary": [6, 1, 0, 2]
+                  "boundary": [
+                    6,
+                    1,
+                    0,
+                    2
+                  ]
                 },
                 {
                   "wall": "x_min",
                   "type": "window",
-                  "boundary": [3, 2, 2, 2]
+                  "boundary": [
+                    3,
+                    2,
+                    2,
+                    2
+                  ]
                 },
                 {
                   "wall": "x_min",
                   "type": "window",
-                  "boundary": [12, 2, 2, 2]
+                  "boundary": [
+                    12,
+                    2,
+                    2,
+                    2
+                  ]
                 },
                 {
                   "wall": "x_min",
                   "type": "door",
-                  "boundary": [6, 4, 0, 6]
+                  "boundary": [
+                    6,
+                    4,
+                    0,
+                    6
+                  ]
                 },
                 {
                   "wall": "y_max",
                   "type": "window",
-                  "boundary": [2, 2, 2, 2]
+                  "boundary": [
+                    2,
+                    2,
+                    2,
+                    2
+                  ]
                 },
                 {
                   "wall": "y_max",
                   "type": "window",
-                  "boundary": [7, 2, 2, 2]
+                  "boundary": [
+                    7,
+                    2,
+                    2,
+                    2
+                  ]
                 }
               ],
               "combustibles": [
                 {
-                  "key": "PAPER_ARCHIVE",
+                  "key": "PAPER_STACK",
                   "count": 10
                 },
                 {
-                  "key": "WOOD_FURNITURE",
+                  "key": "WOODEN_FURNITURE",
                   "count": 8
                 },
                 {
-                  "key": "NETWORK_CABLE",
+                  "key": "CABLE_BUNDLE",
                   "count": 6
                 },
                 {
-                  "key": "SERVER_CABINET",
+                  "key": "ELECTRICAL_EQUIPMENT",
                   "count": 10
                 }
               ],
@@ -1601,19 +2570,34 @@
             },
             {
               "name": "右侧大区1",
-              "boundary": [14, 31.0, 0, 16],
+              "boundary": [
+                14,
+                31.0,
+                0,
+                16
+              ],
               "firewall_thickness": 0.25,
               "firewall_material": "CONCRETE",
               "openings": [
                 {
                   "wall": "x_max",
                   "type": "door",
-                  "boundary": [10, 4, 0, 6]
+                  "boundary": [
+                    10,
+                    4,
+                    0,
+                    6
+                  ]
                 },
                 {
                   "wall": "x_min",
                   "type": "door",
-                  "boundary": [16, 1.5, 0, 2]
+                  "boundary": [
+                    16,
+                    1.5,
+                    0,
+                    2
+                  ]
                 }
               ],
               "combustibles": [
@@ -1622,7 +2606,7 @@
                   "count": 1
                 },
                 {
-                  "key": "NETWORK_CABLE",
+                  "key": "CABLE_BUNDLE",
                   "count": 4
                 }
               ],
@@ -1630,29 +2614,54 @@
             },
             {
               "name": "右侧大区2",
-              "boundary": [14, 31.0, 16.0, 31],
+              "boundary": [
+                14,
+                31.0,
+                16.0,
+                31
+              ],
               "firewall_thickness": 0.25,
               "firewall_material": "CONCRETE",
               "openings": [
                 {
                   "wall": "x_min",
                   "type": "door",
-                  "boundary": [2, 1.5, 0, 2]
+                  "boundary": [
+                    2,
+                    1.5,
+                    0,
+                    2
+                  ]
                 },
                 {
                   "wall": "x_min",
                   "type": "door",
-                  "boundary": [11.5, 1.5, 0, 2]
+                  "boundary": [
+                    11.5,
+                    1.5,
+                    0,
+                    2
+                  ]
                 },
                 {
                   "wall": "x_max",
                   "type": "window",
-                  "boundary": [4, 2, 1, 2]
+                  "boundary": [
+                    4,
+                    2,
+                    1,
+                    2
+                  ]
                 },
                 {
                   "wall": "x_max",
                   "type": "window",
-                  "boundary": [10, 2, 1, 2]
+                  "boundary": [
+                    10,
+                    2,
+                    1,
+                    2
+                  ]
                 }
               ],
               "combustibles": [
@@ -1661,7 +2670,7 @@
                   "count": 1
                 },
                 {
-                  "key": "NETWORK_CABLE",
+                  "key": "CABLE_BUNDLE",
                   "count": 4
                 }
               ],
@@ -1669,34 +2678,64 @@
             },
             {
               "name": "右侧大区3",
-              "boundary": [14, 31.0, 31, 46.0],
+              "boundary": [
+                14,
+                31.0,
+                31,
+                46.0
+              ],
               "firewall_thickness": 0.25,
               "firewall_material": "CONCRETE",
               "openings": [
                 {
                   "wall": "y_max",
                   "type": "door",
-                  "boundary": [0.1, 4, 0, 6]
+                  "boundary": [
+                    0.1,
+                    4,
+                    0,
+                    6
+                  ]
                 },
                 {
                   "wall": "y_max",
                   "type": "window",
-                  "boundary": [5, 2, 2, 2]
+                  "boundary": [
+                    5,
+                    2,
+                    2,
+                    2
+                  ]
                 },
                 {
                   "wall": "y_max",
                   "type": "window",
-                  "boundary": [11, 2, 2, 2]
+                  "boundary": [
+                    11,
+                    2,
+                    2,
+                    2
+                  ]
                 },
                 {
                   "wall": "x_min",
                   "type": "door",
-                  "boundary": [10, 3, 0, 5]
+                  "boundary": [
+                    10,
+                    3,
+                    0,
+                    5
+                  ]
                 },
                 {
                   "wall": "x_min",
                   "type": "door",
-                  "boundary": [7, 1.5, 0, 2.5]
+                  "boundary": [
+                    7,
+                    1.5,
+                    0,
+                    2.5
+                  ]
                 }
               ],
               "combustibles": [
@@ -1705,7 +2744,7 @@
                   "count": 1
                 },
                 {
-                  "key": "NETWORK_CABLE",
+                  "key": "CABLE_BUNDLE",
                   "count": 4
                 }
               ],
@@ -1723,7 +2762,12 @@
     {
       "name": "Gatehouse",
       "cn_name": "门卫室/应急物资库（厂房11）",
-      "boundary": [189.0, 7, -77.0, 20],
+      "boundary": [
+        189.0,
+        7,
+        -77.0,
+        20
+      ],
       "wall_thickness": 0.2,
       "height": 4,
       "stories": [
@@ -1734,34 +2778,64 @@
           "fire_compartments": [
             {
               "name": "应急物资库1h",
-              "boundary": [0, 7.0, 0, 10.0],
+              "boundary": [
+                0,
+                7.0,
+                0,
+                10.0
+              ],
               "firewall_thickness": 0.25,
               "firewall_material": "CONCRETE",
               "openings": [
                 {
                   "wall": "x_max",
                   "type": "door",
-                  "boundary": [8, 1, 0, 2.5]
+                  "boundary": [
+                    8,
+                    1,
+                    0,
+                    2.5
+                  ]
                 },
                 {
                   "wall": "x_max",
                   "type": "window",
-                  "boundary": [6, 1, 1, 1.5]
+                  "boundary": [
+                    6,
+                    1,
+                    1,
+                    1.5
+                  ]
                 },
                 {
                   "wall": "x_max",
                   "type": "window",
-                  "boundary": [3.0, 1, 1, 1.5]
+                  "boundary": [
+                    3.0,
+                    1,
+                    1,
+                    1.5
+                  ]
                 },
                 {
                   "wall": "y_max",
                   "type": "door",
-                  "boundary": [3.5, 1.5, 0, 2.5]
+                  "boundary": [
+                    3.5,
+                    1.5,
+                    0,
+                    2.5
+                  ]
                 },
                 {
                   "wall": "x_min",
                   "type": "window",
-                  "boundary": [7, 1, 1, 1.5]
+                  "boundary": [
+                    7,
+                    1,
+                    1,
+                    1.5
+                  ]
                 }
               ],
               "combustibles": [
@@ -1778,42 +2852,67 @@
             },
             {
               "name": "门卫室",
-              "boundary": [0, 7.0, 10.0, 20.0],
+              "boundary": [
+                0,
+                7.0,
+                10.0,
+                20.0
+              ],
               "firewall_thickness": 0.2,
               "firewall_material": "CONCRETE",
               "openings": [
                 {
                   "wall": "x_min",
                   "type": "window",
-                  "boundary": [1, 1, 1, 1.5]
+                  "boundary": [
+                    1,
+                    1,
+                    1,
+                    1.5
+                  ]
                 },
                 {
                   "wall": "x_min",
                   "type": "window",
-                  "boundary": [4, 1, 1, 1.5]
+                  "boundary": [
+                    4,
+                    1,
+                    1,
+                    1.5
+                  ]
                 },
                 {
                   "wall": "x_min",
                   "type": "door",
-                  "boundary": [6, 1, 0, 2.5]
+                  "boundary": [
+                    6,
+                    1,
+                    0,
+                    2.5
+                  ]
                 },
                 {
                   "wall": "x_max",
                   "type": "window",
-                  "boundary": [8, 1, 1, 1.5]
+                  "boundary": [
+                    8,
+                    1,
+                    1,
+                    1.5
+                  ]
                 }
               ],
               "combustibles": [
                 {
-                  "key": "WOOD_FURNITURE",
+                  "key": "WOODEN_FURNITURE",
                   "count": 2
                 },
                 {
-                  "key": "MONITOR_CABLE",
+                  "key": "CABLE_BUNDLE",
                   "count": 2
                 },
                 {
-                  "key": "PLASTIC_EQUIPMENT",
+                  "key": "PLASTIC_PACKAGING",
                   "count": 4
                 }
               ],
@@ -1831,7 +2930,12 @@
     {
       "name": "Hazardous chemical storage",
       "cn_name": "危化品/油品储存间（厂房15）",
-      "boundary": [122.0, 10, -70.5, 7],
+      "boundary": [
+        122.0,
+        10,
+        -70.5,
+        7
+      ],
       "wall_thickness": 0.3,
       "height": 8,
       "stories": [
@@ -1842,34 +2946,64 @@
           "fire_compartments": [
             {
               "name": "危化品/油品储存间",
-              "boundary": [0, 10.0, 0, 7.0],
+              "boundary": [
+                0,
+                10.0,
+                0,
+                7.0
+              ],
               "firewall_thickness": 0.3,
               "firewall_material": "CONCRETE",
               "openings": [
                 {
                   "wall": "x_max",
                   "type": "door",
-                  "boundary": [0.5, 3.0, 0, 4.0]
+                  "boundary": [
+                    0.5,
+                    3.0,
+                    0,
+                    4.0
+                  ]
                 },
                 {
                   "wall": "y_max",
                   "type": "window",
-                  "boundary": [2, 1.0, 2, 1.2]
+                  "boundary": [
+                    2,
+                    1.0,
+                    2,
+                    1.2
+                  ]
                 },
                 {
                   "wall": "y_max",
                   "type": "window",
-                  "boundary": [7, 1.0, 2, 1.2]
+                  "boundary": [
+                    7,
+                    1.0,
+                    2,
+                    1.2
+                  ]
                 },
                 {
                   "wall": "x_min",
                   "type": "window",
-                  "boundary": [5.5, 1.0, 2, 1.2]
+                  "boundary": [
+                    5.5,
+                    1.0,
+                    2,
+                    1.2
+                  ]
                 },
                 {
                   "wall": "y_min",
                   "type": "window",
-                  "boundary": [1, 1.0, 2, 1.2]
+                  "boundary": [
+                    1,
+                    1.0,
+                    2,
+                    1.2
+                  ]
                 }
               ],
               "combustibles": [
@@ -1896,7 +3030,12 @@
     {
       "name": "Fire pump room",
       "cn_name": "消防水泵房/消防控制室（厂房16）",
-      "boundary": [119.0, 13, -51.5, 20],
+      "boundary": [
+        119.0,
+        13,
+        -51.5,
+        20
+      ],
       "wall_thickness": 0.3,
       "height": 5,
       "stories": [
@@ -1907,29 +3046,49 @@
             {
               "wall": "x_max",
               "type": "window",
-              "boundary": [3, 3.0, 1, 3.0]
+              "boundary": [
+                3,
+                3.0,
+                1,
+                3.0
+              ]
             },
             {
               "wall": "y_min",
               "type": "window",
-              "boundary": [4, 3.0, 1, 3.0]
+              "boundary": [
+                4,
+                3.0,
+                1,
+                3.0
+              ]
             },
             {
               "wall": "y_min",
               "type": "window",
-              "boundary": [8, 3.0, 1, 3.0]
+              "boundary": [
+                8,
+                3.0,
+                1,
+                3.0
+              ]
             }
           ],
           "fire_compartments": [
             {
               "name": "楼梯间",
-              "boundary": [0, 10, 11.0, 16.0],
+              "boundary": [
+                0,
+                10,
+                11.0,
+                16.0
+              ],
               "firewall_thickness": 0.3,
               "firewall_material": "CONCRETE",
               "openings": [],
               "combustibles": [
                 {
-                  "key": "FIRE_PUMP_CABLE",
+                  "key": "CABLE_BUNDLE",
                   "count": 2
                 }
               ],
@@ -1937,34 +3096,59 @@
             },
             {
               "name": "消防水泵房",
-              "boundary": [10, 13.0, 8.0, 16.0],
+              "boundary": [
+                10,
+                13.0,
+                8.0,
+                16.0
+              ],
               "firewall_thickness": 0.3,
               "firewall_material": "CONCRETE",
               "openings": [
                 {
                   "wall": "x_max",
                   "type": "door",
-                  "boundary": [2.8, 4.0, 0, 4]
+                  "boundary": [
+                    2.8,
+                    4.0,
+                    0,
+                    4
+                  ]
                 },
                 {
                   "wall": "x_min",
                   "type": "door",
-                  "boundary": [0.7, 1.0, 0, 2.5]
+                  "boundary": [
+                    0.7,
+                    1.0,
+                    0,
+                    2.5
+                  ]
                 },
                 {
                   "wall": "x_min",
                   "type": "door",
-                  "boundary": [5.65, 1.5, 0, 2.5]
+                  "boundary": [
+                    5.65,
+                    1.5,
+                    0,
+                    2.5
+                  ]
                 },
                 {
                   "wall": "y_max",
                   "type": "door",
-                  "boundary": [1.58, 1.0, 0, 2.5]
+                  "boundary": [
+                    1.58,
+                    1.0,
+                    0,
+                    2.5
+                  ]
                 }
               ],
               "combustibles": [
                 {
-                  "key": "FIRE_PUMP_CABLE",
+                  "key": "CABLE_BUNDLE",
                   "count": 4
                 },
                 {
@@ -1976,33 +3160,53 @@
             },
             {
               "name": "消防控制室",
-              "boundary": [0, 13.0, 16.0, 20.0],
+              "boundary": [
+                0,
+                13.0,
+                16.0,
+                20.0
+              ],
               "firewall_thickness": 0.3,
               "firewall_material": "CONCRETE",
               "openings": [
                 {
                   "wall": "y_max",
                   "type": "window",
-                  "boundary": [1.1, 3.0, 1, 3.0]
+                  "boundary": [
+                    1.1,
+                    3.0,
+                    1,
+                    3.0
+                  ]
                 },
                 {
                   "wall": "y_max",
                   "type": "window",
-                  "boundary": [5.0, 3.0, 1, 3.0]
+                  "boundary": [
+                    5.0,
+                    3.0,
+                    1,
+                    3.0
+                  ]
                 },
                 {
                   "wall": "y_max",
                   "type": "window",
-                  "boundary": [8.9, 3.0, 1, 3.0]
+                  "boundary": [
+                    8.9,
+                    3.0,
+                    1,
+                    3.0
+                  ]
                 }
               ],
               "combustibles": [
                 {
-                  "key": "FIRE_CONTROL_HOST",
+                  "key": "ELECTRICAL_EQUIPMENT",
                   "count": 4
                 },
                 {
-                  "key": "PAPER_ARCHIVE",
+                  "key": "PAPER_STACK",
                   "count": 2
                 }
               ],
@@ -2020,7 +3224,12 @@
     {
       "name": "Maintenance workshop",
       "cn_name": "检修维护车间/备品库（厂房12）",
-      "boundary": [149.0, 32, -31.0, 47],
+      "boundary": [
+        149.0,
+        32,
+        -31.0,
+        47
+      ],
       "wall_thickness": 0.3,
       "height": 8,
       "stories": [
@@ -2031,68 +3240,123 @@
           "fire_compartments": [
             {
               "name": "左侧分区1",
-              "boundary": [0, 13, 0, 32],
+              "boundary": [
+                0,
+                13,
+                0,
+                32
+              ],
               "firewall_thickness": 0.3,
               "firewall_material": "CONCRETE",
               "openings": [
                 {
                   "wall": "x_min",
                   "type": "window",
-                  "boundary": [4, 3.0, 4, 3.0]
+                  "boundary": [
+                    4,
+                    3.0,
+                    4,
+                    3.0
+                  ]
                 },
                 {
                   "wall": "x_min",
                   "type": "window",
-                  "boundary": [7.5, 3.0, 4, 3.0]
+                  "boundary": [
+                    7.5,
+                    3.0,
+                    4,
+                    3.0
+                  ]
                 },
                 {
                   "wall": "x_min",
                   "type": "window",
-                  "boundary": [11, 3.0, 4, 3.0]
+                  "boundary": [
+                    11,
+                    3.0,
+                    4,
+                    3.0
+                  ]
                 },
                 {
                   "wall": "x_min",
                   "type": "window",
-                  "boundary": [14.5, 3.0, 4, 3.0]
+                  "boundary": [
+                    14.5,
+                    3.0,
+                    4,
+                    3.0
+                  ]
                 },
                 {
                   "wall": "x_min",
                   "type": "window",
-                  "boundary": [18, 3.0, 4, 3.0]
+                  "boundary": [
+                    18,
+                    3.0,
+                    4,
+                    3.0
+                  ]
                 },
                 {
                   "wall": "x_min",
                   "type": "window",
-                  "boundary": [21.5, 3.0, 4, 3.0]
+                  "boundary": [
+                    21.5,
+                    3.0,
+                    4,
+                    3.0
+                  ]
                 },
                 {
                   "wall": "x_min",
                   "type": "window",
-                  "boundary": [25, 3.0, 4, 3.0]
+                  "boundary": [
+                    25,
+                    3.0,
+                    4,
+                    3.0
+                  ]
                 },
                 {
                   "wall": "x_min",
                   "type": "window",
-                  "boundary": [28.5, 3.0, 4, 3.0]
+                  "boundary": [
+                    28.5,
+                    3.0,
+                    4,
+                    3.0
+                  ]
                 },
                 {
                   "wall": "x_min",
                   "type": "door",
-                  "boundary": [22.5, 2.0, 0, 3.5]
+                  "boundary": [
+                    22.5,
+                    2.0,
+                    0,
+                    3.5
+                  ]
                 },
                 {
                   "wall": "x_max",
                   "type": "door",
-                  "boundary": [18, 1, 0, 3.0]
+                  "boundary": [
+                    18,
+                    1,
+                    0,
+                    3.0
+                  ]
                 }
               ],
               "combustibles": [
                 {
-                  "key": "WOODEN_BOX",
+                  "key": "WOODEN_PALLET",
                   "count": 15
                 },
                 {
-                  "key": "CABLE_BRIDGE",
+                  "key": "CABLE_BUNDLE",
                   "count": 4
                 },
                 {
@@ -2104,63 +3368,113 @@
             },
             {
               "name": "左侧分区2",
-              "boundary": [0, 13, 32, 47.0],
+              "boundary": [
+                0,
+                13,
+                32,
+                47.0
+              ],
               "firewall_thickness": 0.3,
               "firewall_material": "CONCRETE",
               "openings": [
                 {
                   "wall": "x_min",
                   "type": "door",
-                  "boundary": [0.5, 2.0, 0, 3.0]
+                  "boundary": [
+                    0.5,
+                    2.0,
+                    0,
+                    3.0
+                  ]
                 },
                 {
                   "wall": "x_min",
                   "type": "door",
-                  "boundary": [6.5, 2.0, 0, 3.0]
+                  "boundary": [
+                    6.5,
+                    2.0,
+                    0,
+                    3.0
+                  ]
                 },
                 {
                   "wall": "x_max",
                   "type": "door",
-                  "boundary": [6.5, 1.0, 0, 3.0]
+                  "boundary": [
+                    6.5,
+                    1.0,
+                    0,
+                    3.0
+                  ]
                 },
                 {
                   "wall": "y_max",
                   "type": "window",
-                  "boundary": [1, 1, 1.5, 1.0]
+                  "boundary": [
+                    1,
+                    1,
+                    1.5,
+                    1.0
+                  ]
                 },
                 {
                   "wall": "y_max",
                   "type": "window",
-                  "boundary": [3, 1, 1.5, 1.0]
+                  "boundary": [
+                    3,
+                    1,
+                    1.5,
+                    1.0
+                  ]
                 },
                 {
                   "wall": "y_max",
                   "type": "window",
-                  "boundary": [5, 1, 1.5, 1.0]
+                  "boundary": [
+                    5,
+                    1,
+                    1.5,
+                    1.0
+                  ]
                 },
                 {
                   "wall": "y_max",
                   "type": "window",
-                  "boundary": [7, 1, 1.5, 1.0]
+                  "boundary": [
+                    7,
+                    1,
+                    1.5,
+                    1.0
+                  ]
                 },
                 {
                   "wall": "y_max",
                   "type": "window",
-                  "boundary": [9, 1, 1.5, 1.0]
+                  "boundary": [
+                    9,
+                    1,
+                    1.5,
+                    1.0
+                  ]
                 },
                 {
                   "wall": "y_max",
                   "type": "window",
-                  "boundary": [11, 1, 1.5, 1.0]
+                  "boundary": [
+                    11,
+                    1,
+                    1.5,
+                    1.0
+                  ]
                 }
               ],
               "combustibles": [
                 {
-                  "key": "WOODEN_BOX",
+                  "key": "WOODEN_PALLET",
                   "count": 10
                 },
                 {
-                  "key": "CABLE_BRIDGE",
+                  "key": "CABLE_BUNDLE",
                   "count": 4
                 },
                 {
@@ -2172,67 +3486,117 @@
             },
             {
               "name": "右侧分区1",
-              "boundary": [15.0, 32.0, 0, 10],
+              "boundary": [
+                15.0,
+                32.0,
+                0,
+                10
+              ],
               "firewall_thickness": 0.3,
               "firewall_material": "CONCRETE",
               "openings": [
                 {
                   "wall": "y_min",
                   "type": "door",
-                  "boundary": [8.5, 3.0, 0, 2.5]
+                  "boundary": [
+                    8.5,
+                    3.0,
+                    0,
+                    2.5
+                  ]
                 },
                 {
                   "wall": "y_min",
                   "type": "window",
-                  "boundary": [1, 0.8, 1, 1.0]
+                  "boundary": [
+                    1,
+                    0.8,
+                    1,
+                    1.0
+                  ]
                 },
                 {
                   "wall": "y_min",
                   "type": "window",
-                  "boundary": [3, 0.8, 1, 1.0]
+                  "boundary": [
+                    3,
+                    0.8,
+                    1,
+                    1.0
+                  ]
                 },
                 {
                   "wall": "y_min",
                   "type": "window",
-                  "boundary": [6, 0.8, 1, 1.0]
+                  "boundary": [
+                    6,
+                    0.8,
+                    1,
+                    1.0
+                  ]
                 },
                 {
                   "wall": "y_min",
                   "type": "window",
-                  "boundary": [14, 0.8, 1, 1.0]
+                  "boundary": [
+                    14,
+                    0.8,
+                    1,
+                    1.0
+                  ]
                 },
                 {
                   "wall": "y_max",
                   "type": "door",
-                  "boundary": [8.5, 1.0, 0, 2.5]
+                  "boundary": [
+                    8.5,
+                    1.0,
+                    0,
+                    2.5
+                  ]
                 },
                 {
                   "wall": "x_max",
                   "type": "window",
-                  "boundary": [0.5, 0.8, 1, 1.0]
+                  "boundary": [
+                    0.5,
+                    0.8,
+                    1,
+                    1.0
+                  ]
                 },
                 {
                   "wall": "x_max",
                   "type": "window",
-                  "boundary": [5, 0.8, 1, 1.0]
+                  "boundary": [
+                    5,
+                    0.8,
+                    1,
+                    1.0
+                  ]
                 },
                 {
                   "wall": "x_max",
                   "type": "window",
-                  "boundary": [8.7, 0.8, 1, 1.0]
+                  "boundary": [
+                    8.7,
+                    0.8,
+                    1,
+                    1.0
+                  ]
                 }
               ],
               "combustibles": [
                 {
-                  "key": "PAINT_THINNER_DRUM",
+                  "key": "ORGANIC_SOLVENT_DRUM",
                   "count": 10
                 },
                 {
-                  "key": "RUBBER_CONVEYOR_BELT",
+                  "key": "RUBBER_MATERIAL",
                   "count": 6
                 },
                 {
-                  "key": "CABLE_BRIDGE",
+                  "key": "CABLE_BUNDLE",
                   "count": 2
                 }
               ],
@@ -2240,42 +3604,67 @@
             },
             {
               "name": "右侧分区2",
-              "boundary": [15.0, 32.0, 10, 20],
+              "boundary": [
+                15.0,
+                32.0,
+                10,
+                20
+              ],
               "firewall_thickness": 0.3,
               "firewall_material": "CONCRETE",
               "openings": [
                 {
                   "wall": "x_min",
                   "type": "door",
-                  "boundary": [6, 2.0, 0, 2.5]
+                  "boundary": [
+                    6,
+                    2.0,
+                    0,
+                    2.5
+                  ]
                 },
                 {
                   "wall": "x_max",
                   "type": "window",
-                  "boundary": [2.5, 0.8, 1, 1.0]
+                  "boundary": [
+                    2.5,
+                    0.8,
+                    1,
+                    1.0
+                  ]
                 },
                 {
                   "wall": "x_max",
                   "type": "door",
-                  "boundary": [4.5, 2, 0, 2.5]
+                  "boundary": [
+                    4.5,
+                    2,
+                    0,
+                    2.5
+                  ]
                 },
                 {
                   "wall": "x_max",
                   "type": "window",
-                  "boundary": [7.5, 0.8, 1, 1.0]
+                  "boundary": [
+                    7.5,
+                    0.8,
+                    1,
+                    1.0
+                  ]
                 }
               ],
               "combustibles": [
                 {
-                  "key": "PAINT_THINNER_DRUM",
+                  "key": "ORGANIC_SOLVENT_DRUM",
                   "count": 10
                 },
                 {
-                  "key": "RUBBER_CONVEYOR_BELT",
+                  "key": "RUBBER_MATERIAL",
                   "count": 6
                 },
                 {
-                  "key": "CABLE_BRIDGE",
+                  "key": "CABLE_BUNDLE",
                   "count": 2
                 }
               ],
@@ -2283,21 +3672,26 @@
             },
             {
               "name": "右侧分区3",
-              "boundary": [15.0, 32.0, 20, 27],
+              "boundary": [
+                15.0,
+                32.0,
+                20,
+                27
+              ],
               "firewall_thickness": 0.3,
               "firewall_material": "CONCRETE",
               "openings": [],
               "combustibles": [
                 {
-                  "key": "PAINT_THINNER_DRUM",
+                  "key": "ORGANIC_SOLVENT_DRUM",
                   "count": 8
                 },
                 {
-                  "key": "RUBBER_CONVEYOR_BELT",
+                  "key": "RUBBER_MATERIAL",
                   "count": 4
                 },
                 {
-                  "key": "CABLE_BRIDGE",
+                  "key": "CABLE_BUNDLE",
                   "count": 1
                 }
               ],
@@ -2305,42 +3699,67 @@
             },
             {
               "name": "右侧分区1",
-              "boundary": [15.04, 32.0, 27.26, 47.0],
+              "boundary": [
+                15.04,
+                32.0,
+                27.26,
+                47.0
+              ],
               "firewall_thickness": 0.3,
               "firewall_material": "CONCRETE",
               "openings": [
                 {
                   "wall": "y_min",
                   "type": "door",
-                  "boundary": [6, 1.0, 0, 2.5]
+                  "boundary": [
+                    6,
+                    1.0,
+                    0,
+                    2.5
+                  ]
                 },
                 {
                   "wall": "x_min",
                   "type": "door",
-                  "boundary": [4, 2.0, 0, 3]
+                  "boundary": [
+                    4,
+                    2.0,
+                    0,
+                    3
+                  ]
                 },
                 {
                   "wall": "x_min",
                   "type": "door",
-                  "boundary": [14, 2.0, 0, 3]
+                  "boundary": [
+                    14,
+                    2.0,
+                    0,
+                    3
+                  ]
                 },
                 {
                   "wall": "x_max",
                   "type": "window",
-                  "boundary": [3, 0.8, 1, 1.0]
+                  "boundary": [
+                    3,
+                    0.8,
+                    1,
+                    1.0
+                  ]
                 }
               ],
               "combustibles": [
                 {
-                  "key": "PAINT_THINNER_DRUM",
+                  "key": "ORGANIC_SOLVENT_DRUM",
                   "count": 20
                 },
                 {
-                  "key": "RUBBER_CONVEYOR_BELT",
+                  "key": "RUBBER_MATERIAL",
                   "count": 10
                 },
                 {
-                  "key": "CABLE_BRIDGE",
+                  "key": "CABLE_BUNDLE",
                   "count": 4
                 }
               ],
@@ -2358,7 +3777,12 @@
     {
       "name": "Administrative office",
       "cn_name": "行政办公/会议室/接待室（厂房13）",
-      "boundary": [151.0, 30, 36.0, 13],
+      "boundary": [
+        151.0,
+        30,
+        36.0,
+        13
+      ],
       "wall_thickness": 0.25,
       "height": 5,
       "stories": [
@@ -2369,56 +3793,82 @@
             {
               "wall": "y_min",
               "type": "door",
-              "boundary": [17, 1, 0, 2]
+              "boundary": [
+                17,
+                1,
+                0,
+                2
+              ]
             }
           ],
           "fire_compartments": [
             {
               "name": "办公区",
-              "boundary": [0, 3.6, 9.1, 13.0],
+              "boundary": [
+                0,
+                3.6,
+                9.1,
+                13.0
+              ],
               "firewall_thickness": 0.25,
               "firewall_material": "CONCRETE",
               "openings": [
                 {
                   "wall": "x_min",
                   "type": "window",
-                  "boundary": [1, 0.8, 1.0, 1.5]
+                  "boundary": [
+                    1,
+                    0.8,
+                    1.0,
+                    1.5
+                  ]
                 },
                 {
                   "wall": "y_min",
                   "type": "door",
-                  "boundary": [2.5, 1, 0, 2]
+                  "boundary": [
+                    2.5,
+                    1,
+                    0,
+                    2
+                  ]
                 },
                 {
                   "wall": "y_max",
                   "type": "window",
-                  "boundary": [0.2, 0.8, 1, 1.5]
+                  "boundary": [
+                    0.2,
+                    0.8,
+                    1,
+                    1.5
+                  ]
                 },
                 {
                   "wall": "y_max",
                   "type": "window",
-                  "boundary": [2, 0.8, 1, 1.5]
+                  "boundary": [
+                    2,
+                    0.8,
+                    1,
+                    1.5
+                  ]
                 }
               ],
               "combustibles": [
                 {
-                  "key": "PAPER_ARCHIVE",
+                  "key": "PAPER_STACK",
                   "count": 1
                 },
                 {
-                  "key": "WOOD_FURNITURE",
+                  "key": "WOODEN_FURNITURE",
                   "count": 1
                 },
                 {
-                  "key": "OFFICE_CHAIR",
-                  "count": 2
+                  "key": "OFFICE_SUPPLIES",
+                  "count": 3
                 },
                 {
-                  "key": "NETWORK_CABLE",
-                  "count": 1
-                },
-                {
-                  "key": "OFFICE_EQUIPMENT",
+                  "key": "CABLE_BUNDLE",
                   "count": 1
                 }
               ],
@@ -2426,40 +3876,51 @@
             },
             {
               "name": "办公区",
-              "boundary": [3.6, 7.2, 9.1, 13.0],
+              "boundary": [
+                3.6,
+                7.2,
+                9.1,
+                13.0
+              ],
               "firewall_thickness": 0.25,
               "firewall_material": "CONCRETE",
               "openings": [
                 {
                   "wall": "y_min",
                   "type": "door",
-                  "boundary": [0.004, 1, 0, 2]
+                  "boundary": [
+                    0.004,
+                    1,
+                    0,
+                    2
+                  ]
                 },
                 {
                   "wall": "y_max",
                   "type": "window",
-                  "boundary": [0.2, 0.8, 1, 1.5]
+                  "boundary": [
+                    0.2,
+                    0.8,
+                    1,
+                    1.5
+                  ]
                 }
               ],
               "combustibles": [
                 {
-                  "key": "PAPER_ARCHIVE",
+                  "key": "PAPER_STACK",
                   "count": 1
                 },
                 {
-                  "key": "WOOD_FURNITURE",
+                  "key": "WOODEN_FURNITURE",
                   "count": 1
                 },
                 {
-                  "key": "OFFICE_CHAIR",
-                  "count": 2
+                  "key": "OFFICE_SUPPLIES",
+                  "count": 3
                 },
                 {
-                  "key": "NETWORK_CABLE",
-                  "count": 1
-                },
-                {
-                  "key": "OFFICE_EQUIPMENT",
+                  "key": "CABLE_BUNDLE",
                   "count": 1
                 }
               ],
@@ -2467,40 +3928,51 @@
             },
             {
               "name": "办公区",
-              "boundary": [7.2, 10.8, 9.1, 13.0],
+              "boundary": [
+                7.2,
+                10.8,
+                9.1,
+                13.0
+              ],
               "firewall_thickness": 0.25,
               "firewall_material": "CONCRETE",
               "openings": [
                 {
                   "wall": "y_min",
                   "type": "door",
-                  "boundary": [0.724, 1, 0, 2]
+                  "boundary": [
+                    0.724,
+                    1,
+                    0,
+                    2
+                  ]
                 },
                 {
                   "wall": "y_max",
                   "type": "window",
-                  "boundary": [0.788, 0.8, 1, 1.5]
+                  "boundary": [
+                    0.788,
+                    0.8,
+                    1,
+                    1.5
+                  ]
                 }
               ],
               "combustibles": [
                 {
-                  "key": "PAPER_ARCHIVE",
+                  "key": "PAPER_STACK",
                   "count": 1
                 },
                 {
-                  "key": "WOOD_FURNITURE",
+                  "key": "WOODEN_FURNITURE",
                   "count": 1
                 },
                 {
-                  "key": "OFFICE_CHAIR",
-                  "count": 2
+                  "key": "OFFICE_SUPPLIES",
+                  "count": 3
                 },
                 {
-                  "key": "NETWORK_CABLE",
-                  "count": 1
-                },
-                {
-                  "key": "OFFICE_EQUIPMENT",
+                  "key": "CABLE_BUNDLE",
                   "count": 1
                 }
               ],
@@ -2508,40 +3980,51 @@
             },
             {
               "name": "办公区",
-              "boundary": [10.8, 14.4, 9.1, 13.0],
+              "boundary": [
+                10.8,
+                14.4,
+                9.1,
+                13.0
+              ],
               "firewall_thickness": 0.25,
               "firewall_material": "CONCRETE",
               "openings": [
                 {
                   "wall": "y_min",
                   "type": "door",
-                  "boundary": [0.868, 1, 0, 2]
+                  "boundary": [
+                    0.868,
+                    1,
+                    0,
+                    2
+                  ]
                 },
                 {
                   "wall": "y_max",
                   "type": "window",
-                  "boundary": [1.004, 0.8, 1, 1.5]
+                  "boundary": [
+                    1.004,
+                    0.8,
+                    1,
+                    1.5
+                  ]
                 }
               ],
               "combustibles": [
                 {
-                  "key": "PAPER_ARCHIVE",
+                  "key": "PAPER_STACK",
                   "count": 1
                 },
                 {
-                  "key": "WOOD_FURNITURE",
+                  "key": "WOODEN_FURNITURE",
                   "count": 1
                 },
                 {
-                  "key": "OFFICE_CHAIR",
-                  "count": 2
+                  "key": "OFFICE_SUPPLIES",
+                  "count": 3
                 },
                 {
-                  "key": "NETWORK_CABLE",
-                  "count": 1
-                },
-                {
-                  "key": "OFFICE_EQUIPMENT",
+                  "key": "CABLE_BUNDLE",
                   "count": 1
                 }
               ],
@@ -2549,40 +4032,51 @@
             },
             {
               "name": "办公区",
-              "boundary": [14.4, 18.0, 9.1, 13.0],
+              "boundary": [
+                14.4,
+                18.0,
+                9.1,
+                13.0
+              ],
               "firewall_thickness": 0.25,
               "firewall_material": "CONCRETE",
               "openings": [
                 {
                   "wall": "y_min",
                   "type": "door",
-                  "boundary": [1.444, 1, 0, 2]
+                  "boundary": [
+                    1.444,
+                    1,
+                    0,
+                    2
+                  ]
                 },
                 {
                   "wall": "y_max",
                   "type": "window",
-                  "boundary": [1.436, 0.8, 1, 1.5]
+                  "boundary": [
+                    1.436,
+                    0.8,
+                    1,
+                    1.5
+                  ]
                 }
               ],
               "combustibles": [
                 {
-                  "key": "PAPER_ARCHIVE",
+                  "key": "PAPER_STACK",
                   "count": 1
                 },
                 {
-                  "key": "WOOD_FURNITURE",
+                  "key": "WOODEN_FURNITURE",
                   "count": 1
                 },
                 {
-                  "key": "OFFICE_CHAIR",
-                  "count": 2
+                  "key": "OFFICE_SUPPLIES",
+                  "count": 3
                 },
                 {
-                  "key": "NETWORK_CABLE",
-                  "count": 1
-                },
-                {
-                  "key": "OFFICE_EQUIPMENT",
+                  "key": "CABLE_BUNDLE",
                   "count": 1
                 }
               ],
@@ -2590,40 +4084,51 @@
             },
             {
               "name": "办公区",
-              "boundary": [21.0, 25.5, 9.1, 13.0],
+              "boundary": [
+                21.0,
+                25.5,
+                9.1,
+                13.0
+              ],
               "firewall_thickness": 0.25,
               "firewall_material": "CONCRETE",
               "openings": [
                 {
                   "wall": "y_min",
                   "type": "door",
-                  "boundary": [1.5, 1, 0, 2]
+                  "boundary": [
+                    1.5,
+                    1,
+                    0,
+                    2
+                  ]
                 },
                 {
                   "wall": "y_max",
                   "type": "window",
-                  "boundary": [1, 0.8, 1, 1.5]
+                  "boundary": [
+                    1,
+                    0.8,
+                    1,
+                    1.5
+                  ]
                 }
               ],
               "combustibles": [
                 {
-                  "key": "PAPER_ARCHIVE",
+                  "key": "PAPER_STACK",
                   "count": 1
                 },
                 {
-                  "key": "WOOD_FURNITURE",
+                  "key": "WOODEN_FURNITURE",
                   "count": 1
                 },
                 {
-                  "key": "OFFICE_CHAIR",
-                  "count": 2
+                  "key": "OFFICE_SUPPLIES",
+                  "count": 3
                 },
                 {
-                  "key": "NETWORK_CABLE",
-                  "count": 1
-                },
-                {
-                  "key": "OFFICE_EQUIPMENT",
+                  "key": "CABLE_BUNDLE",
                   "count": 1
                 }
               ],
@@ -2631,40 +4136,51 @@
             },
             {
               "name": "办公区",
-              "boundary": [25.5, 30.0, 9.1, 13.0],
+              "boundary": [
+                25.5,
+                30.0,
+                9.1,
+                13.0
+              ],
               "firewall_thickness": 0.25,
               "firewall_material": "CONCRETE",
               "openings": [
                 {
                   "wall": "y_min",
                   "type": "door",
-                  "boundary": [0.5, 1, 0, 2]
+                  "boundary": [
+                    0.5,
+                    1,
+                    0,
+                    2
+                  ]
                 },
                 {
                   "wall": "y_max",
                   "type": "window",
-                  "boundary": [1, 0.8, 1, 1.5]
+                  "boundary": [
+                    1,
+                    0.8,
+                    1,
+                    1.5
+                  ]
                 }
               ],
               "combustibles": [
                 {
-                  "key": "PAPER_ARCHIVE",
+                  "key": "PAPER_STACK",
                   "count": 1
                 },
                 {
-                  "key": "WOOD_FURNITURE",
+                  "key": "WOODEN_FURNITURE",
                   "count": 1
                 },
                 {
-                  "key": "OFFICE_CHAIR",
-                  "count": 2
+                  "key": "OFFICE_SUPPLIES",
+                  "count": 3
                 },
                 {
-                  "key": "NETWORK_CABLE",
-                  "count": 1
-                },
-                {
-                  "key": "OFFICE_EQUIPMENT",
+                  "key": "CABLE_BUNDLE",
                   "count": 1
                 }
               ],
@@ -2672,41 +4188,57 @@
             },
             {
               "name": "会议室",
-              "boundary": [0, 3.0, 0, 7.8],
+              "boundary": [
+                0,
+                3.0,
+                0,
+                7.8
+              ],
               "firewall_thickness": 0.25,
               "firewall_material": "CONCRETE",
               "openings": [
                 {
                   "wall": "y_max",
                   "type": "door",
-                  "boundary": [0.5, 1, 0, 2]
+                  "boundary": [
+                    0.5,
+                    1,
+                    0,
+                    2
+                  ]
                 },
                 {
                   "wall": "y_min",
                   "type": "window",
-                  "boundary": [6.5, 0.8, 1, 1.5]
+                  "boundary": [
+                    6.5,
+                    0.8,
+                    1,
+                    1.5
+                  ]
                 },
                 {
                   "wall": "x_min",
                   "type": "window",
-                  "boundary": [2, 0.8, 1, 1.5]
+                  "boundary": [
+                    2,
+                    0.8,
+                    1,
+                    1.5
+                  ]
                 }
               ],
               "combustibles": [
                 {
-                  "key": "WOOD_FURNITURE",
+                  "key": "WOODEN_FURNITURE",
                   "count": 1
                 },
                 {
-                  "key": "OFFICE_CHAIR",
-                  "count": 4
+                  "key": "OFFICE_SUPPLIES",
+                  "count": 5
                 },
                 {
-                  "key": "NETWORK_CABLE",
-                  "count": 1
-                },
-                {
-                  "key": "OFFICE_EQUIPMENT",
+                  "key": "CABLE_BUNDLE",
                   "count": 1
                 }
               ],
@@ -2714,36 +4246,47 @@
             },
             {
               "name": "会议室",
-              "boundary": [3.0, 9.0, 0, 7.8],
+              "boundary": [
+                3.0,
+                9.0,
+                0,
+                7.8
+              ],
               "firewall_thickness": 0.25,
               "firewall_material": "CONCRETE",
               "openings": [
                 {
                   "wall": "y_max",
                   "type": "door",
-                  "boundary": [0.28, 1, 0, 2]
+                  "boundary": [
+                    0.28,
+                    1,
+                    0,
+                    2
+                  ]
                 },
                 {
                   "wall": "y_min",
                   "type": "window",
-                  "boundary": [0.98, 0.8, 1, 1.5]
+                  "boundary": [
+                    0.98,
+                    0.8,
+                    1,
+                    1.5
+                  ]
                 }
               ],
               "combustibles": [
                 {
-                  "key": "WOOD_FURNITURE",
+                  "key": "WOODEN_FURNITURE",
                   "count": 1
                 },
                 {
-                  "key": "OFFICE_CHAIR",
-                  "count": 8
+                  "key": "OFFICE_SUPPLIES",
+                  "count": 9
                 },
                 {
-                  "key": "NETWORK_CABLE",
-                  "count": 1
-                },
-                {
-                  "key": "OFFICE_EQUIPMENT",
+                  "key": "CABLE_BUNDLE",
                   "count": 1
                 }
               ],
@@ -2751,41 +4294,57 @@
             },
             {
               "name": "会议室",
-              "boundary": [9.0, 16.5, 0, 7.8],
+              "boundary": [
+                9.0,
+                16.5,
+                0,
+                7.8
+              ],
               "firewall_thickness": 0.25,
               "firewall_material": "CONCRETE",
               "openings": [
                 {
                   "wall": "y_max",
                   "type": "door",
-                  "boundary": [1, 1, 0, 2]
+                  "boundary": [
+                    1,
+                    1,
+                    0,
+                    2
+                  ]
                 },
                 {
                   "wall": "y_min",
                   "type": "window",
-                  "boundary": [1.5, 0.8, 1, 1.5]
+                  "boundary": [
+                    1.5,
+                    0.8,
+                    1,
+                    1.5
+                  ]
                 },
                 {
                   "wall": "y_min",
                   "type": "door",
-                  "boundary": [4, 0.8, 0, 2]
+                  "boundary": [
+                    4,
+                    0.8,
+                    0,
+                    2
+                  ]
                 }
               ],
               "combustibles": [
                 {
-                  "key": "WOOD_FURNITURE",
+                  "key": "WOODEN_FURNITURE",
                   "count": 1
                 },
                 {
-                  "key": "OFFICE_CHAIR",
-                  "count": 8
+                  "key": "OFFICE_SUPPLIES",
+                  "count": 9
                 },
                 {
-                  "key": "NETWORK_CABLE",
-                  "count": 1
-                },
-                {
-                  "key": "OFFICE_EQUIPMENT",
+                  "key": "CABLE_BUNDLE",
                   "count": 1
                 }
               ],
@@ -2793,46 +4352,67 @@
             },
             {
               "name": "待客室",
-              "boundary": [21.0, 30.0, 0, 7.8],
+              "boundary": [
+                21.0,
+                30.0,
+                0,
+                7.8
+              ],
               "firewall_thickness": 0.25,
               "firewall_material": "CONCRETE",
               "openings": [
                 {
                   "wall": "x_min",
                   "type": "door",
-                  "boundary": [4.96, 1, 0, 2]
+                  "boundary": [
+                    4.96,
+                    1,
+                    0,
+                    2
+                  ]
                 },
                 {
                   "wall": "x_max",
                   "type": "window",
-                  "boundary": [2.5, 1, 1.5, 1.5]
+                  "boundary": [
+                    2.5,
+                    1,
+                    1.5,
+                    1.5
+                  ]
                 },
                 {
                   "wall": "y_min",
                   "type": "window",
-                  "boundary": [0.5, 1, 1.5, 1.5]
+                  "boundary": [
+                    0.5,
+                    1,
+                    1.5,
+                    1.5
+                  ]
                 },
                 {
                   "wall": "y_min",
                   "type": "window",
-                  "boundary": [3, 1, 1.5, 1.5]
+                  "boundary": [
+                    3,
+                    1,
+                    1.5,
+                    1.5
+                  ]
                 }
               ],
               "combustibles": [
                 {
-                  "key": "WOOD_FURNITURE",
+                  "key": "WOODEN_FURNITURE",
                   "count": 1
                 },
                 {
-                  "key": "OFFICE_CHAIR",
-                  "count": 10
+                  "key": "OFFICE_SUPPLIES",
+                  "count": 11
                 },
                 {
-                  "key": "NETWORK_CABLE",
-                  "count": 1
-                },
-                {
-                  "key": "OFFICE_EQUIPMENT",
+                  "key": "CABLE_BUNDLE",
                   "count": 1
                 }
               ],
@@ -2850,7 +4430,12 @@
     {
       "name": "Operation training",
       "cn_name": "运行值班/培训/档案管理（厂房14）",
-      "boundary": [157.0, 24, 52.5, 16],
+      "boundary": [
+        157.0,
+        24,
+        52.5,
+        16
+      ],
       "wall_thickness": 0.25,
       "height": 5,
       "stories": [
@@ -2861,54 +4446,75 @@
           "fire_compartments": [
             {
               "name": "培训区",
-              "boundary": [0, 12.0, 0, 10.4],
+              "boundary": [
+                0,
+                12.0,
+                0,
+                10.4
+              ],
               "firewall_thickness": 0.25,
               "firewall_material": "CONCRETE",
               "openings": [
                 {
                   "wall": "x_min",
                   "type": "window",
-                  "boundary": [4, 1.0, 1.5, 1.5]
+                  "boundary": [
+                    4,
+                    1.0,
+                    1.5,
+                    1.5
+                  ]
                 },
                 {
                   "wall": "x_min",
                   "type": "door",
-                  "boundary": [6, 2.0, 0, 2]
+                  "boundary": [
+                    6,
+                    2.0,
+                    0,
+                    2
+                  ]
                 },
                 {
                   "wall": "x_min",
                   "type": "window",
-                  "boundary": [9, 1.0, 1.5, 1.5]
+                  "boundary": [
+                    9,
+                    1.0,
+                    1.5,
+                    1.5
+                  ]
                 },
                 {
                   "wall": "x_max",
                   "type": "door",
-                  "boundary": [8, 1.0, 0, 2]
+                  "boundary": [
+                    8,
+                    1.0,
+                    0,
+                    2
+                  ]
                 }
               ],
               "combustibles": [
                 {
-                  "key": "DENSE_ARCHIVE",
+                  "key": "PAPER_STACK",
                   "count": 4
                 },
                 {
-                  "key": "WOOD_FURNITURE",
+                  "key": "WOODEN_FURNITURE",
                   "count": 8
                 },
                 {
-                  "key": "NETWORK_CABLE",
-                  "count": 4
-                },
-                {
-                  "key": "CONTROL_CABLE",
-                  "count": 6
+                  "key": "CABLE_BUNDLE",
+                  "count": 10
                 },
                 {
                   "key": "DECORATION_MATERIAL",
                   "count": 8
                 },
                 {
-                  "key": "RUBBER_PART",
+                  "key": "RUBBER_MATERIAL",
                   "count": 10
                 }
               ],
@@ -2916,41 +4522,57 @@
             },
             {
               "name": "值班办公室",
-              "boundary": [0, 4.8, 12.8, 16.0],
+              "boundary": [
+                0,
+                4.8,
+                12.8,
+                16.0
+              ],
               "firewall_thickness": 0.25,
               "firewall_material": "CONCRETE",
               "openings": [
                 {
                   "wall": "x_min",
                   "type": "window",
-                  "boundary": [1, 1.0, 1.5, 1.5]
+                  "boundary": [
+                    1,
+                    1.0,
+                    1.5,
+                    1.5
+                  ]
                 },
                 {
                   "wall": "y_min",
                   "type": "door",
-                  "boundary": [3.5, 1.0, 0, 2]
+                  "boundary": [
+                    3.5,
+                    1.0,
+                    0,
+                    2
+                  ]
                 },
                 {
                   "wall": "y_max",
                   "type": "window",
-                  "boundary": [3.5, 1.0, 1.5, 1.5]
+                  "boundary": [
+                    3.5,
+                    1.0,
+                    1.5,
+                    1.5
+                  ]
                 }
               ],
               "combustibles": [
                 {
-                  "key": "WOOD_FURNITURE",
+                  "key": "WOODEN_FURNITURE",
                   "count": 2
                 },
                 {
-                  "key": "OFFICE_CHAIR",
-                  "count": 4
+                  "key": "OFFICE_SUPPLIES",
+                  "count": 5
                 },
                 {
-                  "key": "NETWORK_CABLE",
-                  "count": 1
-                },
-                {
-                  "key": "OFFICE_EQUIPMENT",
+                  "key": "CABLE_BUNDLE",
                   "count": 1
                 }
               ],
@@ -2958,36 +4580,47 @@
             },
             {
               "name": "值班办公室",
-              "boundary": [4.8, 9.6, 12.8, 16.0],
+              "boundary": [
+                4.8,
+                9.6,
+                12.8,
+                16.0
+              ],
               "firewall_thickness": 0.25,
               "firewall_material": "CONCRETE",
               "openings": [
                 {
                   "wall": "y_min",
                   "type": "door",
-                  "boundary": [0.5, 1.0, 0, 2]
+                  "boundary": [
+                    0.5,
+                    1.0,
+                    0,
+                    2
+                  ]
                 },
                 {
                   "wall": "y_max",
                   "type": "window",
-                  "boundary": [2, 1.0, 1.5, 1.5]
+                  "boundary": [
+                    2,
+                    1.0,
+                    1.5,
+                    1.5
+                  ]
                 }
               ],
               "combustibles": [
                 {
-                  "key": "WOOD_FURNITURE",
+                  "key": "WOODEN_FURNITURE",
                   "count": 2
                 },
                 {
-                  "key": "OFFICE_CHAIR",
-                  "count": 4
+                  "key": "OFFICE_SUPPLIES",
+                  "count": 5
                 },
                 {
-                  "key": "NETWORK_CABLE",
-                  "count": 1
-                },
-                {
-                  "key": "OFFICE_EQUIPMENT",
+                  "key": "CABLE_BUNDLE",
                   "count": 1
                 }
               ],
@@ -2995,36 +4628,47 @@
             },
             {
               "name": "档案室",
-              "boundary": [9.6, 13.2, 12.8, 16.0],
+              "boundary": [
+                9.6,
+                13.2,
+                12.8,
+                16.0
+              ],
               "firewall_thickness": 0.25,
               "firewall_material": "CONCRETE",
               "openings": [
                 {
                   "wall": "y_min",
                   "type": "door",
-                  "boundary": [2, 1.0, 0, 2]
+                  "boundary": [
+                    2,
+                    1.0,
+                    0,
+                    2
+                  ]
                 },
                 {
                   "wall": "y_max",
                   "type": "window",
-                  "boundary": [1.5, 1.0, 1.5, 1.5]
+                  "boundary": [
+                    1.5,
+                    1.0,
+                    1.5,
+                    1.5
+                  ]
                 }
               ],
               "combustibles": [
                 {
-                  "key": "WOOD_FURNITURE",
+                  "key": "WOODEN_FURNITURE",
                   "count": 2
                 },
                 {
-                  "key": "OFFICE_CHAIR",
-                  "count": 2
+                  "key": "OFFICE_SUPPLIES",
+                  "count": 3
                 },
                 {
-                  "key": "NETWORK_CABLE",
-                  "count": 1
-                },
-                {
-                  "key": "OFFICE_EQUIPMENT",
+                  "key": "CABLE_BUNDLE",
                   "count": 1
                 }
               ],
@@ -3032,36 +4676,47 @@
             },
             {
               "name": "档案室",
-              "boundary": [13.2, 16.8, 12.8, 16.0],
+              "boundary": [
+                13.2,
+                16.8,
+                12.8,
+                16.0
+              ],
               "firewall_thickness": 0.25,
               "firewall_material": "CONCRETE",
               "openings": [
                 {
                   "wall": "y_min",
                   "type": "door",
-                  "boundary": [1.588, 1.0, 0, 2]
+                  "boundary": [
+                    1.588,
+                    1.0,
+                    0,
+                    2
+                  ]
                 },
                 {
                   "wall": "y_max",
                   "type": "window",
-                  "boundary": [1.804, 1.0, 1.5, 1.5]
+                  "boundary": [
+                    1.804,
+                    1.0,
+                    1.5,
+                    1.5
+                  ]
                 }
               ],
               "combustibles": [
                 {
-                  "key": "WOOD_FURNITURE",
+                  "key": "WOODEN_FURNITURE",
                   "count": 2
                 },
                 {
-                  "key": "OFFICE_CHAIR",
-                  "count": 2
+                  "key": "OFFICE_SUPPLIES",
+                  "count": 3
                 },
                 {
-                  "key": "NETWORK_CABLE",
-                  "count": 1
-                },
-                {
-                  "key": "OFFICE_EQUIPMENT",
+                  "key": "CABLE_BUNDLE",
                   "count": 1
                 }
               ],
@@ -3069,36 +4724,47 @@
             },
             {
               "name": "档案室",
-              "boundary": [16.8, 20.4, 12.8, 16.0],
+              "boundary": [
+                16.8,
+                20.4,
+                12.8,
+                16.0
+              ],
               "firewall_thickness": 0.25,
               "firewall_material": "CONCRETE",
               "openings": [
                 {
                   "wall": "y_min",
                   "type": "door",
-                  "boundary": [0.5, 1.0, 0, 2]
+                  "boundary": [
+                    0.5,
+                    1.0,
+                    0,
+                    2
+                  ]
                 },
                 {
                   "wall": "y_max",
                   "type": "window",
-                  "boundary": [2.2, 1.0, 1.5, 1.5]
+                  "boundary": [
+                    2.2,
+                    1.0,
+                    1.5,
+                    1.5
+                  ]
                 }
               ],
               "combustibles": [
                 {
-                  "key": "WOOD_FURNITURE",
+                  "key": "WOODEN_FURNITURE",
                   "count": 2
                 },
                 {
-                  "key": "OFFICE_CHAIR",
-                  "count": 2
+                  "key": "OFFICE_SUPPLIES",
+                  "count": 3
                 },
                 {
-                  "key": "NETWORK_CABLE",
-                  "count": 1
-                },
-                {
-                  "key": "OFFICE_EQUIPMENT",
+                  "key": "CABLE_BUNDLE",
                   "count": 1
                 }
               ],
@@ -3106,36 +4772,47 @@
             },
             {
               "name": "档案室",
-              "boundary": [20.4, 24.0, 12.8, 16.0],
+              "boundary": [
+                20.4,
+                24.0,
+                12.8,
+                16.0
+              ],
               "firewall_thickness": 0.25,
               "firewall_material": "CONCRETE",
               "openings": [
                 {
                   "wall": "y_min",
                   "type": "door",
-                  "boundary": [0.5, 1.0, 0, 2]
+                  "boundary": [
+                    0.5,
+                    1.0,
+                    0,
+                    2
+                  ]
                 },
                 {
                   "wall": "y_max",
                   "type": "window",
-                  "boundary": [0.5, 1.0, 1.5, 1.5]
+                  "boundary": [
+                    0.5,
+                    1.0,
+                    1.5,
+                    1.5
+                  ]
                 }
               ],
               "combustibles": [
                 {
-                  "key": "WOOD_FURNITURE",
+                  "key": "WOODEN_FURNITURE",
                   "count": 2
                 },
                 {
-                  "key": "OFFICE_CHAIR",
-                  "count": 2
+                  "key": "OFFICE_SUPPLIES",
+                  "count": 3
                 },
                 {
-                  "key": "NETWORK_CABLE",
-                  "count": 1
-                },
-                {
-                  "key": "OFFICE_EQUIPMENT",
+                  "key": "CABLE_BUNDLE",
                   "count": 1
                 }
               ],
@@ -3153,7 +4830,12 @@
     {
       "name": "Corridor 13-14",
       "cn_name": "连接走廊",
-      "boundary": [169.0, 2.52, 49.0, 3.5],
+      "boundary": [
+        169.0,
+        2.52,
+        49.0,
+        3.5
+      ],
       "wall_thickness": 0.2,
       "height": 5,
       "stories": [
@@ -3164,29 +4846,54 @@
           "fire_compartments": [
             {
               "name": "走廊主体",
-              "boundary": [0.0, 2.52, 0.0, 3.5],
+              "boundary": [
+                0.0,
+                2.52,
+                0.0,
+                3.5
+              ],
               "firewall_thickness": 0.2,
               "firewall_material": "CONCRETE",
               "openings": [
                 {
                   "wall": "x_min",
                   "type": "window",
-                  "boundary": [0.5, 1.0, 1, 2.0]
+                  "boundary": [
+                    0.5,
+                    1.0,
+                    1,
+                    2.0
+                  ]
                 },
                 {
                   "wall": "x_max",
                   "type": "window",
-                  "boundary": [0.5, 1.0, 1, 2.0]
+                  "boundary": [
+                    0.5,
+                    1.0,
+                    1,
+                    2.0
+                  ]
                 },
                 {
                   "wall": "y_min",
                   "type": "door",
-                  "boundary": [0.0, 2.52, 0, 5]
+                  "boundary": [
+                    0.0,
+                    2.52,
+                    0,
+                    5
+                  ]
                 },
                 {
                   "wall": "y_max",
                   "type": "door",
-                  "boundary": [0.0, 2.52, 0, 5]
+                  "boundary": [
+                    0.0,
+                    2.52,
+                    0,
+                    5
+                  ]
                 }
               ],
               "combustibles": [],

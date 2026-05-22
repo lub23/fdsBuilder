@@ -6,25 +6,74 @@
     {
       "name": "Assembly building",
       "cn_name": "总装车间",
-      "boundary": [-78.75, 157.5, -43.0, 86],
-      "length_range": [68, 565, 157.5],
-      "width_range": [16, 292, 86],
-      "height_range": [5, 21, 8],
-      "stories_range": [1, 1, 1],
+      "boundary": [
+        -78.75,
+        157.5,
+        -43.0,
+        86
+      ],
+      "length_range": [
+        68,
+        565,
+        157.5
+      ],
+      "width_range": [
+        16,
+        292,
+        86
+      ],
+      "height_range": [
+        5,
+        21,
+        8
+      ],
+      "stories_range": [
+        1,
+        1,
+        1
+      ],
       "wall_thickness": 0.3,
       "stories_template": [
         {
           "name": "1F",
-          "height_range": [5, 21, 8],
+          "height_range": [
+            5,
+            21,
+            8
+          ],
           "doors": {
-            "width": [0.8, 20, 4],
-            "height": [2, 20, 5],
-            "count": [0, 35, 5]
+            "width": [
+              0.8,
+              20,
+              4
+            ],
+            "height": [
+              2,
+              20,
+              5
+            ],
+            "count": [
+              0,
+              35,
+              5
+            ]
           },
           "windows": {
-            "width": [0.5, 30, 1],
-            "height": [0.25, 6, 1.5],
-            "count": [0, 466, 13]
+            "width": [
+              0.5,
+              30,
+              1
+            ],
+            "height": [
+              0.25,
+              6,
+              1.5
+            ],
+            "count": [
+              0,
+              466,
+              13
+            ]
           },
           "roof": {
             "thickness": 0.2,
@@ -34,24 +83,29 @@
           "fire_compartment_ratios": [
             {
               "name": "总装作业区",
-              "boundary_ratio": [0, 0.6, 0, 1],
+              "boundary_ratio": [
+                0,
+                0.6,
+                0,
+                1
+              ],
               "firewall_thickness": 0.3,
               "firewall_material": "CONCRETE",
               "combustibles": [
                 {
-                  "key": "INDUSTRIAL_OIL_DRUM",
+                  "key": "LUBE_OIL_DRUM",
                   "count": 4
                 },
                 {
-                  "key": "COATING_AGENT_DRUM",
+                  "key": "ORGANIC_SOLVENT_DRUM",
                   "count": 3
                 },
                 {
-                  "key": "RUBBER_POLYMER_PARTS",
+                  "key": "RUBBER_MATERIAL",
                   "count": 4
                 },
                 {
-                  "key": "OILY_WASTE_BIN",
+                  "key": "TEXTILE_ROLL",
                   "count": 3
                 }
               ],
@@ -74,25 +128,26 @@
             },
             {
               "name": "物料存储区",
-              "boundary_ratio": [0.6, 0.85, 0.5, 1],
+              "boundary_ratio": [
+                0.6,
+                0.85,
+                0.5,
+                1
+              ],
               "firewall_thickness": 0.3,
               "firewall_material": "CONCRETE",
               "combustibles": [
                 {
-                  "key": "WOOD_PALLET",
+                  "key": "WOODEN_PALLET",
                   "count": 8
                 },
                 {
-                  "key": "CARDBOARD_BOX",
+                  "key": "PAPER_STACK",
                   "count": 6
                 },
                 {
                   "key": "PLASTIC_PACKAGING",
-                  "count": 4
-                },
-                {
-                  "key": "FOAM_PACKAGING",
-                  "count": 3
+                  "count": 7
                 },
                 {
                   "key": "TEXTILE_ROLL",
@@ -113,12 +168,17 @@
             },
             {
               "name": "办公区",
-              "boundary_ratio": [0.6, 0.85, 0, 0.5],
+              "boundary_ratio": [
+                0.6,
+                0.85,
+                0,
+                0.5
+              ],
               "firewall_thickness": 0.3,
               "firewall_material": "CONCRETE",
               "combustibles": [
                 {
-                  "key": "WOOD_FURNITURE",
+                  "key": "WOODEN_FURNITURE",
                   "count": 3
                 },
                 {
@@ -126,7 +186,7 @@
                   "count": 2
                 },
                 {
-                  "key": "ELECTRONICS_CONSOLE",
+                  "key": "ELECTRICAL_EQUIPMENT",
                   "count": 2
                 }
               ],
@@ -144,12 +204,17 @@
             },
             {
               "name": "设备间",
-              "boundary_ratio": [0.85, 1.0, 0, 1],
+              "boundary_ratio": [
+                0.85,
+                1.0,
+                0,
+                1
+              ],
               "firewall_thickness": 0.3,
               "firewall_material": "CONCRETE",
               "combustibles": [
                 {
-                  "key": "ELECTRICAL_PLASTIC",
+                  "key": "ELECTRICAL_EQUIPMENT",
                   "count": 4
                 },
                 {
@@ -177,25 +242,74 @@
     {
       "name": "Sub-assembly building",
       "cn_name": "部装车间",
-      "boundary": [-78.0, 130, 80.0, 70],
-      "length_range": [30, 500, 130],
-      "width_range": [16, 144, 70],
-      "height_range": [3, 13, 7],
-      "stories_range": [1, 1, 1],
+      "boundary": [
+        -78.0,
+        130,
+        80.0,
+        70
+      ],
+      "length_range": [
+        30,
+        500,
+        130
+      ],
+      "width_range": [
+        16,
+        144,
+        70
+      ],
+      "height_range": [
+        3,
+        13,
+        7
+      ],
+      "stories_range": [
+        1,
+        1,
+        1
+      ],
       "wall_thickness": 0.3,
       "stories_template": [
         {
           "name": "1F",
-          "height_range": [3, 13, 7],
+          "height_range": [
+            3,
+            13,
+            7
+          ],
           "doors": {
-            "width": [0.8, 5, 3],
-            "height": [2, 6, 4],
-            "count": [1, 21, 4]
+            "width": [
+              0.8,
+              5,
+              3
+            ],
+            "height": [
+              2,
+              6,
+              4
+            ],
+            "count": [
+              1,
+              21,
+              4
+            ]
           },
           "windows": {
-            "width": [0.3, 9, 1],
-            "height": [0.4, 7, 1.5],
-            "count": [0, 330, 33]
+            "width": [
+              0.3,
+              9,
+              1
+            ],
+            "height": [
+              0.4,
+              7,
+              1.5
+            ],
+            "count": [
+              0,
+              330,
+              33
+            ]
           },
           "roof": {
             "thickness": 0.2,
@@ -205,12 +319,17 @@
           "fire_compartment_ratios": [
             {
               "name": "装配作业区",
-              "boundary_ratio": [0, 0.45, 0, 1],
+              "boundary_ratio": [
+                0,
+                0.45,
+                0,
+                1
+              ],
               "firewall_thickness": 0.3,
               "firewall_material": "CONCRETE",
               "combustibles": [
                 {
-                  "key": "INDUSTRIAL_OIL_DRUM",
+                  "key": "LUBE_OIL_DRUM",
                   "count": 3
                 },
                 {
@@ -222,7 +341,7 @@
                   "count": 2
                 },
                 {
-                  "key": "ELECTRICAL_PLASTIC",
+                  "key": "ELECTRICAL_EQUIPMENT",
                   "count": 3
                 }
               ],
@@ -245,28 +364,33 @@
             },
             {
               "name": "原料备件区",
-              "boundary_ratio": [0.45, 0.75, 0.5, 1],
+              "boundary_ratio": [
+                0.45,
+                0.75,
+                0.5,
+                1
+              ],
               "firewall_thickness": 0.3,
               "firewall_material": "CONCRETE",
               "combustibles": [
                 {
-                  "key": "WOOD_PALLET",
+                  "key": "WOODEN_PALLET",
                   "count": 6
                 },
                 {
-                  "key": "CARDBOARD_BOX",
+                  "key": "PAPER_STACK",
                   "count": 5
                 },
                 {
-                  "key": "FOAM_PACKAGING",
+                  "key": "PLASTIC_PACKAGING",
                   "count": 3
                 },
                 {
-                  "key": "COATING_AGENT_DRUM",
+                  "key": "ORGANIC_SOLVENT_DRUM",
                   "count": 2
                 },
                 {
-                  "key": "PROCESS_CHEMICAL_CONTAINER",
+                  "key": "CHEMICAL_DRUM",
                   "count": 2
                 }
               ],
@@ -284,7 +408,12 @@
             },
             {
               "name": "质检区",
-              "boundary_ratio": [0.45, 0.75, 0, 0.5],
+              "boundary_ratio": [
+                0.45,
+                0.75,
+                0,
+                0.5
+              ],
               "firewall_thickness": 0.3,
               "firewall_material": "CONCRETE",
               "combustibles": [
@@ -293,11 +422,11 @@
                   "count": 3
                 },
                 {
-                  "key": "WOOD_PALLET",
+                  "key": "WOODEN_PALLET",
                   "count": 2
                 },
                 {
-                  "key": "ELECTRONICS_CONSOLE",
+                  "key": "ELECTRICAL_EQUIPMENT",
                   "count": 2
                 }
               ],
@@ -315,16 +444,21 @@
             },
             {
               "name": "维修间",
-              "boundary_ratio": [0.75, 1.0, 0, 1],
+              "boundary_ratio": [
+                0.75,
+                1.0,
+                0,
+                1
+              ],
               "firewall_thickness": 0.3,
               "firewall_material": "CONCRETE",
               "combustibles": [
                 {
-                  "key": "OILY_WASTE_BIN",
+                  "key": "TEXTILE_ROLL",
                   "count": 3
                 },
                 {
-                  "key": "RUBBER_POLYMER_PARTS",
+                  "key": "RUBBER_MATERIAL",
                   "count": 2
                 }
               ],
@@ -348,25 +482,74 @@
     {
       "name": "Machining workshop",
       "cn_name": "机械加工车间",
-      "boundary": [72, 135, 80.0, 70],
-      "length_range": [45, 266, 135],
-      "width_range": [25, 227, 70],
-      "height_range": [4, 14, 7],
-      "stories_range": [1, 1, 1],
+      "boundary": [
+        72,
+        135,
+        80.0,
+        70
+      ],
+      "length_range": [
+        45,
+        266,
+        135
+      ],
+      "width_range": [
+        25,
+        227,
+        70
+      ],
+      "height_range": [
+        4,
+        14,
+        7
+      ],
+      "stories_range": [
+        1,
+        1,
+        1
+      ],
       "wall_thickness": 0.3,
       "stories_template": [
         {
           "name": "1F",
-          "height_range": [4, 14, 7],
+          "height_range": [
+            4,
+            14,
+            7
+          ],
           "doors": {
-            "width": [0.8, 20, 3],
-            "height": [2, 10, 4],
-            "count": [1, 14, 5]
+            "width": [
+              0.8,
+              20,
+              3
+            ],
+            "height": [
+              2,
+              10,
+              4
+            ],
+            "count": [
+              1,
+              14,
+              5
+            ]
           },
           "windows": {
-            "width": [0.2, 5, 1.5],
-            "height": [0.5, 6, 1.5],
-            "count": [0, 233, 12.5]
+            "width": [
+              0.2,
+              5,
+              1.5
+            ],
+            "height": [
+              0.5,
+              6,
+              1.5
+            ],
+            "count": [
+              0,
+              233,
+              12.5
+            ]
           },
           "roof": {
             "thickness": 0.2,
@@ -376,12 +559,17 @@
           "fire_compartment_ratios": [
             {
               "name": "机加工区",
-              "boundary_ratio": [0, 0.5, 0, 1],
+              "boundary_ratio": [
+                0,
+                0.5,
+                0,
+                1
+              ],
               "firewall_thickness": 0.3,
               "firewall_material": "CONCRETE",
               "combustibles": [
                 {
-                  "key": "INDUSTRIAL_OIL_DRUM",
+                  "key": "LUBE_OIL_DRUM",
                   "count": 4
                 },
                 {
@@ -393,7 +581,7 @@
                   "count": 2
                 },
                 {
-                  "key": "OILY_WASTE_BIN",
+                  "key": "TEXTILE_ROLL",
                   "count": 3
                 }
               ],
@@ -416,16 +604,21 @@
             },
             {
               "name": "刀具料库区",
-              "boundary_ratio": [0.5, 0.8, 0.5, 1],
+              "boundary_ratio": [
+                0.5,
+                0.8,
+                0.5,
+                1
+              ],
               "firewall_thickness": 0.3,
               "firewall_material": "CONCRETE",
               "combustibles": [
                 {
-                  "key": "WOOD_PALLET",
+                  "key": "WOODEN_PALLET",
                   "count": 5
                 },
                 {
-                  "key": "CARDBOARD_BOX",
+                  "key": "PAPER_STACK",
                   "count": 4
                 },
                 {
@@ -433,7 +626,7 @@
                   "count": 3
                 },
                 {
-                  "key": "ELECTRICAL_PLASTIC",
+                  "key": "ELECTRICAL_EQUIPMENT",
                   "count": 2
                 },
                 {
@@ -455,12 +648,17 @@
             },
             {
               "name": "办公区",
-              "boundary_ratio": [0.5, 0.8, 0, 0.5],
+              "boundary_ratio": [
+                0.5,
+                0.8,
+                0,
+                0.5
+              ],
               "firewall_thickness": 0.3,
               "firewall_material": "CONCRETE",
               "combustibles": [
                 {
-                  "key": "WOOD_FURNITURE",
+                  "key": "WOODEN_FURNITURE",
                   "count": 3
                 },
                 {
@@ -468,7 +666,7 @@
                   "count": 2
                 },
                 {
-                  "key": "ELECTRONICS_CONSOLE",
+                  "key": "ELECTRICAL_EQUIPMENT",
                   "count": 2
                 }
               ],
@@ -486,7 +684,12 @@
             },
             {
               "name": "动力间",
-              "boundary_ratio": [0.8, 1.0, 0, 1],
+              "boundary_ratio": [
+                0.8,
+                1.0,
+                0,
+                1
+              ],
               "firewall_thickness": 0.3,
               "firewall_material": "CONCRETE",
               "combustibles": [

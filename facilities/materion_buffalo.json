@@ -6,7 +6,12 @@
     {
       "name": "Main Building",
       "cn_name": "Buffalo主厂房",
-      "boundary": [0, 18, 0, 38],
+      "boundary": [
+        0,
+        18,
+        0,
+        38
+      ],
       "wall_thickness": 0.25,
       "height": 10,
       "stories": [
@@ -14,121 +19,545 @@
           "name": "1F",
           "height": 5.0,
           "openings": [
-            {"wall": "x_max", "type": "door", "boundary": [23, 4, 0, 4]},
-            {"wall": "y_min", "type": "window", "boundary": [9, 0.5, 3.0, 1.0]},
-            {"wall": "y_min", "type": "window", "boundary": [1.5, 0.2, 3.0, 0.5]},
-            {"wall": "y_min", "type": "window", "boundary": [2.5, 0.2, 3.0, 0.5]},
-            {"wall": "y_min", "type": "window", "boundary": [3.5, 0.2, 3.0, 0.5]},
-            {"wall": "y_min", "type": "window", "boundary": [5.0, 0.2, 3.0, 0.5]},
-            {"wall": "y_min", "type": "window", "boundary": [6.0, 0.2, 3.0, 0.5]},
-            {"wall": "y_min", "type": "window", "boundary": [7.0, 0.2, 3.0, 0.5]},
-            {"wall": "y_min", "type": "window", "boundary": [11.0, 0.2, 3.0, 0.5]},
-            {"wall": "y_min", "type": "window", "boundary": [12.0, 0.2, 3.0, 0.5]},
-            {"wall": "y_min", "type": "window", "boundary": [13.0, 0.2, 3.0, 0.5]},
-            {"wall": "y_min", "type": "window", "boundary": [14.5, 0.2, 3.0, 0.5]},
-            {"wall": "y_min", "type": "window", "boundary": [15.5, 0.2, 3.0, 0.5]},
-            {"wall": "y_min", "type": "window", "boundary": [16.5, 0.2, 3.0, 0.5]},
-            {"wall": "y_max", "type": "window", "boundary": [1.5, 0.2, 3.0, 0.5]},
-            {"wall": "y_max", "type": "window", "boundary": [4.5, 0.2, 3.0, 0.5]},
-            {"wall": "y_max", "type": "window", "boundary": [7.5, 0.2, 3.0, 0.5]},
-            {"wall": "y_max", "type": "window", "boundary": [10.5, 0.2, 3.0, 0.5]},
-            {"wall": "y_max", "type": "window", "boundary": [13.5, 0.2, 3.0, 0.5]},
-            {"wall": "y_max", "type": "window", "boundary": [16.5, 0.2, 3.0, 0.5]},
-            {"wall": "x_min", "type": "window", "boundary": [1.0, 0.2, 3.0, 0.5]},
-            {"wall": "x_min", "type": "window", "boundary": [3.0, 0.2, 3.0, 0.5]},
-            {"wall": "x_min", "type": "window", "boundary": [5.0, 0.2, 3.0, 0.5]},
-            {"wall": "x_min", "type": "window", "boundary": [7.0, 0.2, 3.0, 0.5]},
-            {"wall": "x_min", "type": "window", "boundary": [9.0, 0.2, 3.0, 0.5]},
-            {"wall": "x_min", "type": "window", "boundary": [27.5, 0.2, 3.0, 0.5]},
-            {"wall": "x_min", "type": "window", "boundary": [30.25, 0.2, 3.0, 0.5]},
-            {"wall": "x_min", "type": "window", "boundary": [33.0, 0.2, 3.0, 0.5]},
-            {"wall": "x_min", "type": "window", "boundary": [35.75, 0.2, 3.0, 0.5]},
-            {"wall": "x_max", "type": "window", "boundary": [1.4, 0.2, 3.0, 0.5]},
-            {"wall": "x_max", "type": "window", "boundary": [4.3, 0.2, 3.0, 0.5]},
-            {"wall": "x_max", "type": "window", "boundary": [7.1, 0.2, 3.0, 0.5]},
-            {"wall": "x_max", "type": "window", "boundary": [10.0, 0.2, 3.0, 0.5]},
-            {"wall": "x_max", "type": "window", "boundary": [12.9, 0.2, 3.0, 0.5]},
-            {"wall": "x_max", "type": "window", "boundary": [15.7, 0.2, 3.0, 0.5]},
-            {"wall": "x_max", "type": "window", "boundary": [18.6, 0.2, 3.0, 0.5]},
-            {"wall": "x_max", "type": "window", "boundary": [21.4, 0.2, 3.0, 0.5]},
-            {"wall": "x_max", "type": "window", "boundary": [29.5, 0.2, 3.0, 0.5]},
-            {"wall": "x_max", "type": "window", "boundary": [34.0, 0.2, 3.0, 0.5]}
+            {
+              "wall": "x_max",
+              "type": "door",
+              "boundary": [
+                23,
+                4,
+                0,
+                4
+              ]
+            },
+            {
+              "wall": "y_min",
+              "type": "window",
+              "boundary": [
+                9,
+                0.5,
+                3.0,
+                1.0
+              ]
+            },
+            {
+              "wall": "y_min",
+              "type": "window",
+              "boundary": [
+                1.5,
+                0.2,
+                3.0,
+                0.5
+              ]
+            },
+            {
+              "wall": "y_min",
+              "type": "window",
+              "boundary": [
+                2.5,
+                0.2,
+                3.0,
+                0.5
+              ]
+            },
+            {
+              "wall": "y_min",
+              "type": "window",
+              "boundary": [
+                3.5,
+                0.2,
+                3.0,
+                0.5
+              ]
+            },
+            {
+              "wall": "y_min",
+              "type": "window",
+              "boundary": [
+                5.0,
+                0.2,
+                3.0,
+                0.5
+              ]
+            },
+            {
+              "wall": "y_min",
+              "type": "window",
+              "boundary": [
+                6.0,
+                0.2,
+                3.0,
+                0.5
+              ]
+            },
+            {
+              "wall": "y_min",
+              "type": "window",
+              "boundary": [
+                7.0,
+                0.2,
+                3.0,
+                0.5
+              ]
+            },
+            {
+              "wall": "y_min",
+              "type": "window",
+              "boundary": [
+                11.0,
+                0.2,
+                3.0,
+                0.5
+              ]
+            },
+            {
+              "wall": "y_min",
+              "type": "window",
+              "boundary": [
+                12.0,
+                0.2,
+                3.0,
+                0.5
+              ]
+            },
+            {
+              "wall": "y_min",
+              "type": "window",
+              "boundary": [
+                13.0,
+                0.2,
+                3.0,
+                0.5
+              ]
+            },
+            {
+              "wall": "y_min",
+              "type": "window",
+              "boundary": [
+                14.5,
+                0.2,
+                3.0,
+                0.5
+              ]
+            },
+            {
+              "wall": "y_min",
+              "type": "window",
+              "boundary": [
+                15.5,
+                0.2,
+                3.0,
+                0.5
+              ]
+            },
+            {
+              "wall": "y_min",
+              "type": "window",
+              "boundary": [
+                16.5,
+                0.2,
+                3.0,
+                0.5
+              ]
+            },
+            {
+              "wall": "y_max",
+              "type": "window",
+              "boundary": [
+                1.5,
+                0.2,
+                3.0,
+                0.5
+              ]
+            },
+            {
+              "wall": "y_max",
+              "type": "window",
+              "boundary": [
+                4.5,
+                0.2,
+                3.0,
+                0.5
+              ]
+            },
+            {
+              "wall": "y_max",
+              "type": "window",
+              "boundary": [
+                7.5,
+                0.2,
+                3.0,
+                0.5
+              ]
+            },
+            {
+              "wall": "y_max",
+              "type": "window",
+              "boundary": [
+                10.5,
+                0.2,
+                3.0,
+                0.5
+              ]
+            },
+            {
+              "wall": "y_max",
+              "type": "window",
+              "boundary": [
+                13.5,
+                0.2,
+                3.0,
+                0.5
+              ]
+            },
+            {
+              "wall": "y_max",
+              "type": "window",
+              "boundary": [
+                16.5,
+                0.2,
+                3.0,
+                0.5
+              ]
+            },
+            {
+              "wall": "x_min",
+              "type": "window",
+              "boundary": [
+                1.0,
+                0.2,
+                3.0,
+                0.5
+              ]
+            },
+            {
+              "wall": "x_min",
+              "type": "window",
+              "boundary": [
+                3.0,
+                0.2,
+                3.0,
+                0.5
+              ]
+            },
+            {
+              "wall": "x_min",
+              "type": "window",
+              "boundary": [
+                5.0,
+                0.2,
+                3.0,
+                0.5
+              ]
+            },
+            {
+              "wall": "x_min",
+              "type": "window",
+              "boundary": [
+                7.0,
+                0.2,
+                3.0,
+                0.5
+              ]
+            },
+            {
+              "wall": "x_min",
+              "type": "window",
+              "boundary": [
+                9.0,
+                0.2,
+                3.0,
+                0.5
+              ]
+            },
+            {
+              "wall": "x_min",
+              "type": "window",
+              "boundary": [
+                27.5,
+                0.2,
+                3.0,
+                0.5
+              ]
+            },
+            {
+              "wall": "x_min",
+              "type": "window",
+              "boundary": [
+                30.25,
+                0.2,
+                3.0,
+                0.5
+              ]
+            },
+            {
+              "wall": "x_min",
+              "type": "window",
+              "boundary": [
+                33.0,
+                0.2,
+                3.0,
+                0.5
+              ]
+            },
+            {
+              "wall": "x_min",
+              "type": "window",
+              "boundary": [
+                35.75,
+                0.2,
+                3.0,
+                0.5
+              ]
+            },
+            {
+              "wall": "x_max",
+              "type": "window",
+              "boundary": [
+                1.4,
+                0.2,
+                3.0,
+                0.5
+              ]
+            },
+            {
+              "wall": "x_max",
+              "type": "window",
+              "boundary": [
+                4.3,
+                0.2,
+                3.0,
+                0.5
+              ]
+            },
+            {
+              "wall": "x_max",
+              "type": "window",
+              "boundary": [
+                7.1,
+                0.2,
+                3.0,
+                0.5
+              ]
+            },
+            {
+              "wall": "x_max",
+              "type": "window",
+              "boundary": [
+                10.0,
+                0.2,
+                3.0,
+                0.5
+              ]
+            },
+            {
+              "wall": "x_max",
+              "type": "window",
+              "boundary": [
+                12.9,
+                0.2,
+                3.0,
+                0.5
+              ]
+            },
+            {
+              "wall": "x_max",
+              "type": "window",
+              "boundary": [
+                15.7,
+                0.2,
+                3.0,
+                0.5
+              ]
+            },
+            {
+              "wall": "x_max",
+              "type": "window",
+              "boundary": [
+                18.6,
+                0.2,
+                3.0,
+                0.5
+              ]
+            },
+            {
+              "wall": "x_max",
+              "type": "window",
+              "boundary": [
+                21.4,
+                0.2,
+                3.0,
+                0.5
+              ]
+            },
+            {
+              "wall": "x_max",
+              "type": "window",
+              "boundary": [
+                29.5,
+                0.2,
+                3.0,
+                0.5
+              ]
+            },
+            {
+              "wall": "x_max",
+              "type": "window",
+              "boundary": [
+                34.0,
+                0.2,
+                3.0,
+                0.5
+              ]
+            }
           ],
           "fire_compartments": [
             {
               "name": "南部区域",
-              "boundary": [0, 18, 0, 10],
+              "boundary": [
+                0,
+                18,
+                0,
+                10
+              ],
               "firewall_thickness": 0.25,
               "firewall_material": "CONCRETE",
               "openings": [
                 {
                   "wall": "y_min",
                   "type": "door",
-                  "boundary": [9, 1.0, 0, 2]
+                  "boundary": [
+                    9,
+                    1.0,
+                    0,
+                    2
+                  ]
                 },
                 {
                   "wall": "x_min",
                   "type": "door",
-                  "boundary": [1, 0.8, 0, 2]
+                  "boundary": [
+                    1,
+                    0.8,
+                    0,
+                    2
+                  ]
                 },
                 {
                   "wall": "x_max",
                   "type": "door",
-                  "boundary": [7.5, 1, 0, 2]
+                  "boundary": [
+                    7.5,
+                    1,
+                    0,
+                    2
+                  ]
                 },
                 {
                   "wall": "y_max",
                   "type": "door",
-                  "boundary": [17, 1, 0, 2]
+                  "boundary": [
+                    17,
+                    1,
+                    0,
+                    2
+                  ]
                 }
               ],
               "combustibles": [
-                {"key": "WOOD_PALLET", "count": 3},
-                {"key": "CARDBOARD_BOX", "count": 3}
+                {
+                  "key": "WOODEN_PALLET",
+                  "count": 3
+                },
+                {
+                  "key": "PAPER_STACK",
+                  "count": 3
+                }
               ],
               "specialized_components": [
-                {"key": "ELECTRONICS_CONSOLE", "count": 1},
-                {"key": "CABLE_BUNDLE", "count": 2}
+                {
+                  "key": "ELECTRONICS_CONSOLE",
+                  "count": 1
+                },
+                {
+                  "key": "CABLE_BUNDLE",
+                  "count": 2
+                }
               ]
             },
             {
               "name": "中部区左",
-              "boundary": [0, 6, 10, 27],
+              "boundary": [
+                0,
+                6,
+                10,
+                27
+              ],
               "firewall_thickness": 0.25,
               "firewall_material": "CONCRETE",
               "openings": [
                 {
                   "wall": "x_min",
                   "type": "door",
-                  "boundary": [1.5, 0.8, 0, 2]
+                  "boundary": [
+                    1.5,
+                    0.8,
+                    0,
+                    2
+                  ]
                 },
                 {
                   "wall": "x_max",
                   "type": "door",
-                  "boundary": [8, 1.0, 0, 2.0]
+                  "boundary": [
+                    8,
+                    1.0,
+                    0,
+                    2.0
+                  ]
                 }
               ],
               "combustibles": [
-                {"key": "INDUSTRIAL_OIL_DRUM", "count": 3},
-                {"key": "POLYMER_MATERIAL", "count": 4}
+                {
+                  "key": "LUBE_OIL_DRUM",
+                  "count": 3
+                },
+                {
+                  "key": "RUBBER_MATERIAL",
+                  "count": 4
+                }
               ],
               "specialized_components": []
             },
             {
               "name": "中部区中右",
-              "boundary": [6, 16, 10, 23],
+              "boundary": [
+                6,
+                16,
+                10,
+                23
+              ],
               "firewall_thickness": 0.25,
               "firewall_material": "CONCRETE",
               "openings": [
                 {
                   "wall": "x_min",
                   "type": "door",
-                  "boundary": [11, 1, 0, 2]
+                  "boundary": [
+                    11,
+                    1,
+                    0,
+                    2
+                  ]
                 },
                 {
                   "wall": "y_max",
                   "type": "door",
-                  "boundary": [4.5, 1.0, 0, 2.0]
+                  "boundary": [
+                    4.5,
+                    1.0,
+                    0,
+                    2.0
+                  ]
                 }
               ],
               "combustibles": [],
@@ -136,14 +565,24 @@
             },
             {
               "name": "中部区货梯井",
-              "boundary": [12, 16, 18, 23],
+              "boundary": [
+                12,
+                16,
+                18,
+                23
+              ],
               "firewall_thickness": 0.25,
               "firewall_material": "CONCRETE",
               "openings": [
                 {
                   "wall": "x_min",
                   "type": "door",
-                  "boundary": [1.5, 0.8, 0, 2]
+                  "boundary": [
+                    1.5,
+                    0.8,
+                    0,
+                    2
+                  ]
                 }
               ],
               "combustibles": [],
@@ -151,14 +590,24 @@
             },
             {
               "name": "中部区北",
-              "boundary": [6, 12, 23, 27],
+              "boundary": [
+                6,
+                12,
+                23,
+                27
+              ],
               "firewall_thickness": 0.25,
               "firewall_material": "CONCRETE",
               "openings": [
                 {
                   "wall": "y_max",
                   "type": "door",
-                  "boundary": [3.5, 2, 0, 2]
+                  "boundary": [
+                    3.5,
+                    2,
+                    0,
+                    2
+                  ]
                 }
               ],
               "combustibles": [],
@@ -166,41 +615,77 @@
             },
             {
               "name": "北部办公区",
-              "boundary": [0, 18, 29, 38],
+              "boundary": [
+                0,
+                18,
+                29,
+                38
+              ],
               "firewall_thickness": 0.25,
               "firewall_material": "CONCRETE",
               "openings": [],
               "combustibles": [
-                {"key": "WOOD_FURNITURE", "count": 2},
-                {"key": "PAPER_ARCHIVE", "count": 2}
+                {
+                  "key": "WOODEN_FURNITURE",
+                  "count": 2
+                },
+                {
+                  "key": "PAPER_STACK",
+                  "count": 2
+                }
               ],
               "specialized_components": []
             },
             {
               "name": "楼梯间1",
-              "boundary": [14, 18, 29, 31],
+              "boundary": [
+                14,
+                18,
+                29,
+                31
+              ],
               "firewall_thickness": 0.25,
               "firewall_material": "CONCRETE",
               "openings": [
                 {
                   "wall": "x_max",
                   "type": "door",
-                  "boundary": [0, 1, 0, 2]
+                  "boundary": [
+                    0,
+                    1,
+                    0,
+                    2
+                  ]
                 },
                 {
                   "wall": "x_min",
                   "type": "door",
-                  "boundary": [0, 2, 0, 2]
+                  "boundary": [
+                    0,
+                    2,
+                    0,
+                    2
+                  ]
                 },
                 {
                   "wall": "y_max",
                   "type": "door",
-                  "boundary": [1, 2.5, 0, 2]
+                  "boundary": [
+                    1,
+                    2.5,
+                    0,
+                    2
+                  ]
                 },
                 {
                   "wall": "y_min",
                   "type": "door",
-                  "boundary": [0.5, 1.5, 0, 2]
+                  "boundary": [
+                    0.5,
+                    1.5,
+                    0,
+                    2
+                  ]
                 }
               ],
               "combustibles": [],
@@ -208,7 +693,12 @@
             },
             {
               "name": "楼梯间2",
-              "boundary": [14, 18, 31, 35],
+              "boundary": [
+                14,
+                18,
+                31,
+                35
+              ],
               "firewall_thickness": 0.25,
               "firewall_material": "CONCRETE",
               "openings": [],
@@ -219,64 +709,492 @@
           "roof": {
             "thickness": 0.2,
             "material": "CONCRETE",
-            "openings": [{"boundary": [14, 2, 32, 3]}]
+            "openings": [
+              {
+                "boundary": [
+                  14,
+                  2,
+                  32,
+                  3
+                ]
+              }
+            ]
           }
         },
         {
           "name": "2F",
           "height": 5.0,
           "openings": [
-            {"wall": "y_min", "type": "window", "boundary": [9, 0.5, 3.0, 1.0]},
-            {"wall": "y_min", "type": "window", "boundary": [1.5, 0.2, 3.0, 0.5]},
-            {"wall": "y_min", "type": "window", "boundary": [2.5, 0.2, 3.0, 0.5]},
-            {"wall": "y_min", "type": "window", "boundary": [3.5, 0.2, 3.0, 0.5]},
-            {"wall": "y_min", "type": "window", "boundary": [5.0, 0.2, 3.0, 0.5]},
-            {"wall": "y_min", "type": "window", "boundary": [6.0, 0.2, 3.0, 0.5]},
-            {"wall": "y_min", "type": "window", "boundary": [7.0, 0.2, 3.0, 0.5]},
-            {"wall": "y_min", "type": "window", "boundary": [11.0, 0.2, 3.0, 0.5]},
-            {"wall": "y_min", "type": "window", "boundary": [12.0, 0.2, 3.0, 0.5]},
-            {"wall": "y_min", "type": "window", "boundary": [13.0, 0.2, 3.0, 0.5]},
-            {"wall": "y_min", "type": "window", "boundary": [14.5, 0.2, 3.0, 0.5]},
-            {"wall": "y_min", "type": "window", "boundary": [15.5, 0.2, 3.0, 0.5]},
-            {"wall": "y_min", "type": "window", "boundary": [16.5, 0.2, 3.0, 0.5]},
-            {"wall": "y_max", "type": "window", "boundary": [1.5, 0.2, 3.0, 0.5]},
-            {"wall": "y_max", "type": "window", "boundary": [4.5, 0.2, 3.0, 0.5]},
-            {"wall": "y_max", "type": "window", "boundary": [7.5, 0.2, 3.0, 0.5]},
-            {"wall": "y_max", "type": "window", "boundary": [10.5, 0.2, 3.0, 0.5]},
-            {"wall": "y_max", "type": "window", "boundary": [13.5, 0.2, 3.0, 0.5]},
-            {"wall": "y_max", "type": "window", "boundary": [16.5, 0.2, 3.0, 0.5]},
-            {"wall": "y_max", "type": "window", "boundary": [19.5, 0.2, 3.0, 0.5]},
-            {"wall": "x_min", "type": "window", "boundary": [1.4, 0.2, 3.0, 0.5]},
-            {"wall": "x_min", "type": "window", "boundary": [4.1, 0.2, 3.0, 0.5]},
-            {"wall": "x_min", "type": "window", "boundary": [6.9, 0.2, 3.0, 0.5]},
-            {"wall": "x_min", "type": "window", "boundary": [9.6, 0.2, 3.0, 0.5]},
-            {"wall": "x_min", "type": "window", "boundary": [12.4, 0.2, 3.0, 0.5]},
-            {"wall": "x_min", "type": "window", "boundary": [15.1, 0.2, 3.0, 0.5]},
-            {"wall": "x_min", "type": "window", "boundary": [17.9, 0.2, 3.0, 0.5]},
-            {"wall": "x_min", "type": "window", "boundary": [23.4, 0.2, 3.0, 0.5]},
-            {"wall": "x_min", "type": "window", "boundary": [26.1, 0.2, 3.0, 0.5]},
-            {"wall": "x_min", "type": "window", "boundary": [28.9, 0.2, 3.0, 0.5]},
-            {"wall": "x_min", "type": "window", "boundary": [31.6, 0.2, 3.0, 0.5]},
-            {"wall": "x_min", "type": "window", "boundary": [34.4, 0.2, 3.0, 0.5]},
-            {"wall": "x_min", "type": "window", "boundary": [37.1, 0.2, 3.0, 0.5]},
-            {"wall": "x_max", "type": "window", "boundary": [1.4, 0.2, 3.0, 0.5]},
-            {"wall": "x_max", "type": "window", "boundary": [4.1, 0.2, 3.0, 0.5]},
-            {"wall": "x_max", "type": "window", "boundary": [6.9, 0.2, 3.0, 0.5]},
-            {"wall": "x_max", "type": "window", "boundary": [9.6, 0.2, 3.0, 0.5]},
-            {"wall": "x_max", "type": "window", "boundary": [12.4, 0.2, 3.0, 0.5]},
-            {"wall": "x_max", "type": "window", "boundary": [15.1, 0.2, 3.0, 0.5]},
-            {"wall": "x_max", "type": "window", "boundary": [17.9, 0.2, 3.0, 0.5]},
-            {"wall": "x_max", "type": "window", "boundary": [20.6, 0.2, 3.0, 0.5]},
-            {"wall": "x_max", "type": "window", "boundary": [23.4, 0.2, 3.0, 0.5]},
-            {"wall": "x_max", "type": "window", "boundary": [26.1, 0.2, 3.0, 0.5]},
-            {"wall": "x_max", "type": "window", "boundary": [31.6, 0.2, 3.0, 0.5]},
-            {"wall": "x_max", "type": "window", "boundary": [34.4, 0.2, 3.0, 0.5]},
-            {"wall": "x_max", "type": "window", "boundary": [37.1, 0.2, 3.0, 0.5]}
+            {
+              "wall": "y_min",
+              "type": "window",
+              "boundary": [
+                9,
+                0.5,
+                3.0,
+                1.0
+              ]
+            },
+            {
+              "wall": "y_min",
+              "type": "window",
+              "boundary": [
+                1.5,
+                0.2,
+                3.0,
+                0.5
+              ]
+            },
+            {
+              "wall": "y_min",
+              "type": "window",
+              "boundary": [
+                2.5,
+                0.2,
+                3.0,
+                0.5
+              ]
+            },
+            {
+              "wall": "y_min",
+              "type": "window",
+              "boundary": [
+                3.5,
+                0.2,
+                3.0,
+                0.5
+              ]
+            },
+            {
+              "wall": "y_min",
+              "type": "window",
+              "boundary": [
+                5.0,
+                0.2,
+                3.0,
+                0.5
+              ]
+            },
+            {
+              "wall": "y_min",
+              "type": "window",
+              "boundary": [
+                6.0,
+                0.2,
+                3.0,
+                0.5
+              ]
+            },
+            {
+              "wall": "y_min",
+              "type": "window",
+              "boundary": [
+                7.0,
+                0.2,
+                3.0,
+                0.5
+              ]
+            },
+            {
+              "wall": "y_min",
+              "type": "window",
+              "boundary": [
+                11.0,
+                0.2,
+                3.0,
+                0.5
+              ]
+            },
+            {
+              "wall": "y_min",
+              "type": "window",
+              "boundary": [
+                12.0,
+                0.2,
+                3.0,
+                0.5
+              ]
+            },
+            {
+              "wall": "y_min",
+              "type": "window",
+              "boundary": [
+                13.0,
+                0.2,
+                3.0,
+                0.5
+              ]
+            },
+            {
+              "wall": "y_min",
+              "type": "window",
+              "boundary": [
+                14.5,
+                0.2,
+                3.0,
+                0.5
+              ]
+            },
+            {
+              "wall": "y_min",
+              "type": "window",
+              "boundary": [
+                15.5,
+                0.2,
+                3.0,
+                0.5
+              ]
+            },
+            {
+              "wall": "y_min",
+              "type": "window",
+              "boundary": [
+                16.5,
+                0.2,
+                3.0,
+                0.5
+              ]
+            },
+            {
+              "wall": "y_max",
+              "type": "window",
+              "boundary": [
+                1.5,
+                0.2,
+                3.0,
+                0.5
+              ]
+            },
+            {
+              "wall": "y_max",
+              "type": "window",
+              "boundary": [
+                4.5,
+                0.2,
+                3.0,
+                0.5
+              ]
+            },
+            {
+              "wall": "y_max",
+              "type": "window",
+              "boundary": [
+                7.5,
+                0.2,
+                3.0,
+                0.5
+              ]
+            },
+            {
+              "wall": "y_max",
+              "type": "window",
+              "boundary": [
+                10.5,
+                0.2,
+                3.0,
+                0.5
+              ]
+            },
+            {
+              "wall": "y_max",
+              "type": "window",
+              "boundary": [
+                13.5,
+                0.2,
+                3.0,
+                0.5
+              ]
+            },
+            {
+              "wall": "y_max",
+              "type": "window",
+              "boundary": [
+                16.5,
+                0.2,
+                3.0,
+                0.5
+              ]
+            },
+            {
+              "wall": "y_max",
+              "type": "window",
+              "boundary": [
+                19.5,
+                0.2,
+                3.0,
+                0.5
+              ]
+            },
+            {
+              "wall": "x_min",
+              "type": "window",
+              "boundary": [
+                1.4,
+                0.2,
+                3.0,
+                0.5
+              ]
+            },
+            {
+              "wall": "x_min",
+              "type": "window",
+              "boundary": [
+                4.1,
+                0.2,
+                3.0,
+                0.5
+              ]
+            },
+            {
+              "wall": "x_min",
+              "type": "window",
+              "boundary": [
+                6.9,
+                0.2,
+                3.0,
+                0.5
+              ]
+            },
+            {
+              "wall": "x_min",
+              "type": "window",
+              "boundary": [
+                9.6,
+                0.2,
+                3.0,
+                0.5
+              ]
+            },
+            {
+              "wall": "x_min",
+              "type": "window",
+              "boundary": [
+                12.4,
+                0.2,
+                3.0,
+                0.5
+              ]
+            },
+            {
+              "wall": "x_min",
+              "type": "window",
+              "boundary": [
+                15.1,
+                0.2,
+                3.0,
+                0.5
+              ]
+            },
+            {
+              "wall": "x_min",
+              "type": "window",
+              "boundary": [
+                17.9,
+                0.2,
+                3.0,
+                0.5
+              ]
+            },
+            {
+              "wall": "x_min",
+              "type": "window",
+              "boundary": [
+                23.4,
+                0.2,
+                3.0,
+                0.5
+              ]
+            },
+            {
+              "wall": "x_min",
+              "type": "window",
+              "boundary": [
+                26.1,
+                0.2,
+                3.0,
+                0.5
+              ]
+            },
+            {
+              "wall": "x_min",
+              "type": "window",
+              "boundary": [
+                28.9,
+                0.2,
+                3.0,
+                0.5
+              ]
+            },
+            {
+              "wall": "x_min",
+              "type": "window",
+              "boundary": [
+                31.6,
+                0.2,
+                3.0,
+                0.5
+              ]
+            },
+            {
+              "wall": "x_min",
+              "type": "window",
+              "boundary": [
+                34.4,
+                0.2,
+                3.0,
+                0.5
+              ]
+            },
+            {
+              "wall": "x_min",
+              "type": "window",
+              "boundary": [
+                37.1,
+                0.2,
+                3.0,
+                0.5
+              ]
+            },
+            {
+              "wall": "x_max",
+              "type": "window",
+              "boundary": [
+                1.4,
+                0.2,
+                3.0,
+                0.5
+              ]
+            },
+            {
+              "wall": "x_max",
+              "type": "window",
+              "boundary": [
+                4.1,
+                0.2,
+                3.0,
+                0.5
+              ]
+            },
+            {
+              "wall": "x_max",
+              "type": "window",
+              "boundary": [
+                6.9,
+                0.2,
+                3.0,
+                0.5
+              ]
+            },
+            {
+              "wall": "x_max",
+              "type": "window",
+              "boundary": [
+                9.6,
+                0.2,
+                3.0,
+                0.5
+              ]
+            },
+            {
+              "wall": "x_max",
+              "type": "window",
+              "boundary": [
+                12.4,
+                0.2,
+                3.0,
+                0.5
+              ]
+            },
+            {
+              "wall": "x_max",
+              "type": "window",
+              "boundary": [
+                15.1,
+                0.2,
+                3.0,
+                0.5
+              ]
+            },
+            {
+              "wall": "x_max",
+              "type": "window",
+              "boundary": [
+                17.9,
+                0.2,
+                3.0,
+                0.5
+              ]
+            },
+            {
+              "wall": "x_max",
+              "type": "window",
+              "boundary": [
+                20.6,
+                0.2,
+                3.0,
+                0.5
+              ]
+            },
+            {
+              "wall": "x_max",
+              "type": "window",
+              "boundary": [
+                23.4,
+                0.2,
+                3.0,
+                0.5
+              ]
+            },
+            {
+              "wall": "x_max",
+              "type": "window",
+              "boundary": [
+                26.1,
+                0.2,
+                3.0,
+                0.5
+              ]
+            },
+            {
+              "wall": "x_max",
+              "type": "window",
+              "boundary": [
+                31.6,
+                0.2,
+                3.0,
+                0.5
+              ]
+            },
+            {
+              "wall": "x_max",
+              "type": "window",
+              "boundary": [
+                34.4,
+                0.2,
+                3.0,
+                0.5
+              ]
+            },
+            {
+              "wall": "x_max",
+              "type": "window",
+              "boundary": [
+                37.1,
+                0.2,
+                3.0,
+                0.5
+              ]
+            }
           ],
           "fire_compartments": [
             {
               "name": "default",
-              "boundary": [0, 18, 0, 38],
+              "boundary": [
+                0,
+                18,
+                0,
+                38
+              ],
               "firewall_thickness": 0.25,
               "firewall_material": "CONCRETE",
               "openings": [],
@@ -285,14 +1203,24 @@
             },
             {
               "name": "货梯井",
-              "boundary": [12, 16, 18, 23],
+              "boundary": [
+                12,
+                16,
+                18,
+                23
+              ],
               "firewall_thickness": 0.25,
               "firewall_material": "CONCRETE",
               "openings": [
                 {
                   "wall": "x_min",
                   "type": "door",
-                  "boundary": [1.5, 0.8, 0, 2]
+                  "boundary": [
+                    1.5,
+                    0.8,
+                    0,
+                    2
+                  ]
                 }
               ],
               "combustibles": [],
@@ -300,55 +1228,105 @@
             },
             {
               "name": "中部区",
-              "boundary": [6, 12, 10, 29],
+              "boundary": [
+                6,
+                12,
+                10,
+                29
+              ],
               "firewall_thickness": 0.25,
               "firewall_material": "CONCRETE",
               "openings": [
                 {
                   "wall": "y_max",
                   "type": "door",
-                  "boundary": [3.5, 2, 0, 2]
+                  "boundary": [
+                    3.5,
+                    2,
+                    0,
+                    2
+                  ]
                 }
               ],
               "combustibles": [
-                {"key": "PLASTIC_BIN", "count": 4},
-                {"key": "TEXTILE_ROLL", "count": 3},
-                {"key": "ORGANIC_SOLVENT_DRUM", "count": 3}
+                {
+                  "key": "PLASTIC_PACKAGING",
+                  "count": 4
+                },
+                {
+                  "key": "TEXTILE_ROLL",
+                  "count": 3
+                },
+                {
+                  "key": "ORGANIC_SOLVENT_DRUM",
+                  "count": 3
+                }
               ],
               "specialized_components": []
             },
             {
               "name": "北部办公区",
-              "boundary": [0, 18, 29, 38],
+              "boundary": [
+                0,
+                18,
+                29,
+                38
+              ],
               "firewall_thickness": 0.25,
               "firewall_material": "CONCRETE",
               "openings": [],
               "combustibles": [
-                {"key": "OFFICE_COMPOSITE_FURNITURE", "count": 2},
-                {"key": "DENSE_ARCHIVE", "count": 2}
+                {
+                  "key": "WOODEN_FURNITURE",
+                  "count": 2
+                },
+                {
+                  "key": "PAPER_STACK",
+                  "count": 2
+                }
               ],
               "specialized_components": []
             },
             {
               "name": "楼梯间1",
-              "boundary": [14, 18, 29, 31],
+              "boundary": [
+                14,
+                18,
+                29,
+                31
+              ],
               "firewall_thickness": 0.25,
               "firewall_material": "CONCRETE",
               "openings": [
                 {
                   "wall": "x_min",
                   "type": "door",
-                  "boundary": [0, 2, 0, 2]
+                  "boundary": [
+                    0,
+                    2,
+                    0,
+                    2
+                  ]
                 },
                 {
                   "wall": "y_max",
                   "type": "door",
-                  "boundary": [1, 2.5, 0, 2]
+                  "boundary": [
+                    1,
+                    2.5,
+                    0,
+                    2
+                  ]
                 },
                 {
                   "wall": "y_min",
                   "type": "door",
-                  "boundary": [0.5, 1.5, 0, 2]
+                  "boundary": [
+                    0.5,
+                    1.5,
+                    0,
+                    2
+                  ]
                 }
               ],
               "combustibles": [],
@@ -356,7 +1334,12 @@
             },
             {
               "name": "楼梯间2",
-              "boundary": [14, 18, 31, 35],
+              "boundary": [
+                14,
+                18,
+                31,
+                35
+              ],
               "firewall_thickness": 0.25,
               "firewall_material": "CONCRETE",
               "openings": [],
@@ -375,7 +1358,12 @@
     {
       "name": "West Warehouse",
       "cn_name": "西侧仓库",
-      "boundary": [-3, 3, 14, 10],
+      "boundary": [
+        -3,
+        3,
+        14,
+        10
+      ],
       "wall_thickness": 0.15,
       "height": 5,
       "stories": [
@@ -386,14 +1374,24 @@
           "fire_compartments": [
             {
               "name": "主体",
-              "boundary": [0.0, 3, 0.0, 10],
+              "boundary": [
+                0.0,
+                3,
+                0.0,
+                10
+              ],
               "firewall_thickness": 0.15,
               "firewall_material": "CONCRETE",
               "openings": [
                 {
                   "wall": "x_max",
                   "type": "door",
-                  "boundary": [9, 1.0, 0, 2]
+                  "boundary": [
+                    9,
+                    1.0,
+                    0,
+                    2
+                  ]
                 }
               ],
               "combustibles": [],

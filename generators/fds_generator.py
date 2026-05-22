@@ -180,6 +180,15 @@ class FDSGenerator:
                             if part.material_key:
                                 component_matl_keys.add(part.material_key)
 
+        lines.append("! ========== 追踪粒子 ==========\n")
+        lines.append(
+            "&PART ID='TRACER',\n"
+            "      MASSLESS=.TRUE.,\n"
+            "      MONODISPERSE=.TRUE.,\n"
+            "      AGE=60.0,\n"
+            "      SAMPLING_FACTOR=10 /\n\n"
+        )
+
         lines.append("! ========== 材料定义 ==========\n")
 
         # Wall / structural materials
@@ -195,9 +204,11 @@ class FDSGenerator:
                 cb = COMBUSTIBLE_LIBRARY.get(mat_name)
                 if cb and cb.get("matl"):
                     mt = cb["matl"]
+                    hoc = mt.get("HEAT_OF_COMBUSTION", 0)
                     lines.append(
                         f"&MATL ID='{mat_name}', DENSITY={mt['DENSITY']}, "
-                        f"CONDUCTIVITY={mt['CONDUCTIVITY']}, SPECIFIC_HEAT={mt['SPECIFIC_HEAT']} /\n"
+                        f"CONDUCTIVITY={mt['CONDUCTIVITY']}, SPECIFIC_HEAT={mt['SPECIFIC_HEAT']}"
+                        f"{f', HEAT_OF_COMBUSTION={hoc}' if hoc else ''} /\n"
                     )
 
         # Default structural materials (always need CONCRETE at minimum)
@@ -222,7 +233,7 @@ class FDSGenerator:
             if mat_name in MATERIAL_LIBRARY:
                 thick = MATERIAL_LIBRARY[mat_name]["THICKNESS"]
                 lines.append(
-                    f"&SURF ID='{surf_name}', MATL_ID='{mat_name}', THICKNESS={thick} /  ! {desc}\n"
+                    f"&SURF ID='{surf_name}', MATL_ID='{mat_name}', THICKNESS={thick}, BACKING='VOID' /  ! {desc}\n"
                 )
 
         comp_surfs_done = set()
@@ -239,10 +250,15 @@ class FDSGenerator:
                 hrrpua = cb_def.get("hrrpua", 300)
                 ign_temp = cb_def.get("ignition_temp", 250)
                 color = cb_def.get("color", "RED")
+                bulk_density = cb_def.get("matl", {}).get("DENSITY", 500)
                 lines.append(
                     f"&SURF ID='{surf_id}',\n"
                     f"      HRRPUA={hrrpua},\n"
                     f"      IGNITION_TEMPERATURE={ign_temp},\n"
+                    f"      BURN_AWAY=.TRUE.,\n"
+                    f"      BULK_DENSITY={bulk_density},\n"
+                    f"      THICKNESS=0.05,\n"
+                    f"      PART_ID='TRACER',\n"
                     f"      COLOR='{color}' /\n\n"
                 )
                 comp_surfs_done.add(surf_id)
@@ -258,7 +274,9 @@ class FDSGenerator:
 
         # Combustible MATL / SURF definitions
         if combustible_keys:
-            lines.append("\n! ========== 可燃物材料/表面 ==========\n")
+            lines.append("\n! ========== 可燃物热解材料/表面 ==========\n")
+            # Define fuel SPEC for pyrolysis (matches REAC fuel)
+            lines.append("&SPEC ID='METHANE' /\n\n")
             for ck in sorted(combustible_keys):
                 if ck not in COMBUSTIBLE_LIBRARY:
                     continue
@@ -266,22 +284,36 @@ class FDSGenerator:
                 mt = cb_def.get("matl", {})
                 if not mt:
                     continue
-                matl_id = f"MATL_{ck}"
+                matl_id = f"PYRO_{ck}"
                 surf_id = f"SURF_{ck}"
+                density = mt.get("DENSITY", 500)
+                conductivity = mt.get("CONDUCTIVITY", 0.2)
+                specific_heat = mt.get("SPECIFIC_HEAT", 1.0)
+                hoc = mt.get("HEAT_OF_COMBUSTION", 0)
+                ignition_temp = cb_def.get("ignition_temp", 250.0)
+                color = cb_def.get("color", "RED")
+
+                # Pyrolysis MATL: required for BURN_AWAY
+                # HEAT_OF_REACTION: endothermic pyrolysis energy (~20% of HOC)
+                hor = max(400, int(hoc * 0.2)) if hoc else 500
                 lines.append(
                     f"&MATL ID='{matl_id}',\n"
-                    f"      DENSITY={mt.get('DENSITY', 1000)},\n"
-                    f"      CONDUCTIVITY={mt.get('CONDUCTIVITY', 0.2)},\n"
-                    f"      SPECIFIC_HEAT={mt.get('SPECIFIC_HEAT', 1.0)} /\n\n"
+                    f"      DENSITY={density},\n"
+                    f"      CONDUCTIVITY={conductivity},\n"
+                    f"      SPECIFIC_HEAT={specific_heat},\n"
+                    f"      HEAT_OF_REACTION={hor},\n"
+                    f"      NU_SPEC=0.8,\n"
+                    f"      SPEC_ID='METHANE',\n"
+                    f"      REFERENCE_TEMPERATURE={ignition_temp:.1f} /\n\n"
                 )
-                hrrpua = cb_def.get("hrrpua", 300)
-                color = cb_def.get("color", "RED")
+
+                # SURF with BURN_AWAY: MATL_ID required, BULK_DENSITY on OBST
                 lines.append(
                     f"&SURF ID='{surf_id}',\n"
                     f"      MATL_ID='{matl_id}',\n"
                     f"      THICKNESS=0.05,\n"
-                    f"      IGNITION_TEMPERATURE={cb_def.get('ignition_temp', 250.0):.1f},\n"
-                    f"      HRRPUA={hrrpua},\n"
+                    f"      BURN_AWAY=.TRUE.,\n"
+                    f"      BACKING='VOID',\n"
                     f"      COLOR='{color}' /\n\n"
                 )
 
@@ -561,7 +593,6 @@ class FDSGenerator:
         ox, L, oy, W = building.boundary
         z0 = story.z_bottom
         subgrid_tol = 1e-6
-        PROBE_HEIGHT_OFFSET = 1.0
 
         for fc in story.fire_compartments:
             if not fc.combustibles and not fc.specialized_components:
@@ -707,23 +738,24 @@ class FDSGenerator:
                         or item["height"] < grid_size - subgrid_tol
                     )
                     thicken_kv = "THICKEN=.TRUE., " if is_subgrid else ""
+                    cb_def = COMBUSTIBLE_LIBRARY.get(key, {})
+                    bulk_density = cb_def.get("matl", {}).get("DENSITY", 500)
                     lines.append(
                         f"&OBST XB={x1:.2f},{x2:.2f},{y1:.2f},{y2:.2f},"
                         f"{z1:.2f},{z2:.2f},\n"
                         f"      {thicken_kv}SURF_IDS='{surf_id}','INERT','INERT',\n"
+                        f"      BULK_DENSITY={bulk_density},\n"
                         f"      ID='{cb_id}' /  ! {item.get('name', key)}\n"
                     )
                     cb_idx += 1
-                    if is_subgrid:
-                        continue
                     probe_counters[key] = probe_counters.get(key, 0) + 1
                     probe_idx = probe_counters[key]
                     probe_id = f"{key}_{probe_idx:02d}"
                     cx = (x1 + x2) / 2
                     cy = (y1 + y2) / 2
-                    cz = z2 + PROBE_HEIGHT_OFFSET
+                    cz = z2
                     lines.append(
-                        f"&DEVC XYZ={cx:.2f},{cy:.2f},{cz:.2f}, "
+                        f"&DEVC XYZ={cx:.2f},{cy:.2f},{cz:.2f}, IOR=3, "
                         f"QUANTITY='WALL TEMPERATURE', ID='{probe_id}' /\n"
                     )
 
@@ -742,7 +774,6 @@ class FDSGenerator:
         ox, _L, oy, _W = building.boundary
         z0 = story.z_bottom
         subgrid_tol = 1e-6
-        PROBE_HEIGHT_OFFSET = 1.0
 
         if not story.combustibles and not story.specialized_components:
             return
@@ -829,21 +860,22 @@ class FDSGenerator:
                         or item["height"] < grid_size - subgrid_tol
                     )
                     thicken_kv = "THICKEN=.TRUE., " if sg else ""
+                    cb_def = COMBUSTIBLE_LIBRARY.get(key, {})
+                    bulk_density = cb_def.get("matl", {}).get("DENSITY", 500)
                     lines.append(
                         f"&OBST XB={x1:.2f},{x2:.2f},{y1:.2f},{y2:.2f},"
                         f"{z1:.2f},{z2:.2f},\n"
                         f"      {thicken_kv}SURF_IDS='{surf_id}','INERT','INERT',\n"
+                        f"      BULK_DENSITY={bulk_density},\n"
                         f"      ID='{cb_id}' /  ! {item.get('name', key)} (story-level)\n"
                     )
-                    if sg:
-                        continue
                     probe_counters[key] = probe_counters.get(key, 0) + 1
                     pi2 = probe_counters[key]
                     cx = (x1 + x2) / 2
                     cy = (y1 + y2) / 2
-                    cz = z2 + PROBE_HEIGHT_OFFSET
+                    cz = z2
                     lines.append(
-                        f"&DEVC XYZ={cx:.2f},{cy:.2f},{cz:.2f}, "
+                        f"&DEVC XYZ={cx:.2f},{cy:.2f},{cz:.2f}, IOR=3, "
                         f"QUANTITY='WALL TEMPERATURE', ID='STORY_{key}_{pi2:02d}' /\n"
                     )
 
@@ -936,9 +968,11 @@ class FDSGenerator:
             f"&DEVC ID='TIMER->OUT', QUANTITY='TIME', XYZ={timer_x:.2f},{timer_y:.2f},{timer_z:.2f}, SETPOINT={duration:.2f}, INITIAL_STATE=.TRUE. /\n\n"
         )
 
+        emissivity = hs.get("emissivity", 1.0)
         lines.append(
             f"&SURF ID='radiation',\n"
             f"      NET_HEAT_FLUX={Q_kw:.2f},\n"
+            f"      EMISSIVITY={emissivity:.2f},\n"
             f"      COLOR='ORANGE' /\n\n"
         )
 
@@ -1199,6 +1233,23 @@ class FDSGenerator:
                 pos = cs.get("position", 0)
                 qty = cs.get("quantity", "TEMPERATURE")
                 lines.append(f"&SLCF {axis}={pos:.2f}, QUANTITY='{qty}' /\n")
+            # 3D volume slices for fire visualization
+            if output.get("volume_slices", True):
+                domain, dgrid, _ = self._compute_mesh()
+                x0, x1, y0, y1, z0, z1 = domain
+                half = dgrid / 2
+                vol_slices = [
+                    ("HRRPUV", "hrr"),
+                    ("DENSITY", "density"),
+                    ("TEMPERATURE", "temp"),
+                    ("RADIATION LOSS", "radiation"),
+                ]
+                for qty, fyi in vol_slices:
+                    lines.append(
+                        f"&SLCF QUANTITY='{qty}', VECTOR=.TRUE., CELL_CENTERED=.TRUE.,\n"
+                        f"      XB={x0+half:.2f},{x1-half:.2f},{y0+half:.2f},{y1-half:.2f},"
+                        f"{z0+half:.2f},{z1-half:.2f}, FYI='{fyi}' /\n"
+                    )
             lines.append("\n")
 
         # TAIL
@@ -1229,6 +1280,10 @@ class FDSGenerator:
         dev_z = 1.5
         lines.append(
             f"&DEVC XYZ={dev_x:.2f},{dev_y:.2f},{dev_z:.2f}, QUANTITY='TEMPERATURE', ID='center_temp' /\n"
+        )
+        rad_z = dev_z + 10.0  # elevated position for radiation measurement
+        lines.append(
+            f"&DEVC XYZ={dev_x:.2f},{dev_y:.2f},{rad_z:.2f}, QUANTITY='RADIATION LOSS', ID='radiation_loss' /\n"
         )
         for i, cd in enumerate(output.get("custom_devices", [])):
             x = cd.get("x", 0)
