@@ -1213,16 +1213,13 @@ class FDSGenerator:
         # DUMP
         lines.append("&DUMP DT_RESTART=300.0, DT_SL3D=0.25 /\n\n")
 
-        # Materials & Surfaces (must be before heat source SURFs to define CONCRETE)
-        self._generate_materials(lines)
-
         # Heat source (SURF + VENT) - 前置方便手动调整
         self._generate_heat_source(lines, timer_x, timer_y, timer_z)
 
         # Output: measurement devices - 前置方便手动调整
         self._generate_devices(lines)
 
-        # Materials & Surfaces (define after heat source: no MATL_ID on radiation SURF)
+        # Materials & Surfaces
         self._generate_materials(lines)
 
         # For each building: geometry
