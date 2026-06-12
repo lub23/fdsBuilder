@@ -32,6 +32,9 @@ from models.combustibles import SPECIALIZED_COMPONENTS
 # 5cm redundancy expansion in the wall-normal direction for HOLEs
 REDUNDANCY = 0.05
 
+# Stefan-Boltzmann constant in kW/m²/K⁴
+SIGMA_SB = 5.670374419e-11
+
 
 def _get_part_ignition_temp(part, component_ignition_temp: float) -> float:
     """Return effective ignition temperature for a component part.
@@ -981,16 +984,16 @@ class FDSGenerator:
         rad_faces = {f for f in fluxes if f != "ZMIN"}
         for face_name in sorted(rad_faces):
             face_flux = fluxes[face_name]
-            # EXTERNAL_FLUX replaces NET_HEAT_FLUX for numerical stability.
-            # Unlike NET_HEAT_FLUX (which injects net energy without limit),
-            # EXTERNAL_FLUX allows the surface to re-radiate (εσT⁴) and
-            # convect, preventing unbounded temperature escalation that
-            # triggers FDS ERROR(374) on coarse meshes.
+            # Convert net_heat_flux to fixed surface temperature via
+            # Stefan-Boltzmann: T = (flux / εσ)^¼
+            temp_front = (face_flux / (emissivity * SIGMA_SB)) ** 0.25
             surf_id = f"radiation_{face_name}"
             lines.append(
                 f"&SURF ID='{surf_id}',\n"
-                f" EXTERNAL_FLUX={face_flux:.2f},\n"
-                f" EMISSIVITY={emissivity:.2f},\n"
+                f" MATL_ID='CONCRETE',\n"
+                f" THICKNESS=0.05,\n"
+                f" TEMP_FRONT={temp_front:.0f},\n"
+                f" BACKING='VOID',\n"
                 f" COLOR='ORANGE' /\n\n"
             )
 
@@ -1209,14 +1212,14 @@ class FDSGenerator:
         # DUMP
         lines.append("&DUMP DT_RESTART=300.0, DT_SL3D=0.25 /\n\n")
 
+        # Materials & Surfaces (must be before heat source SURFs to define CONCRETE)
+        self._generate_materials(lines)
+
         # Heat source (SURF + RAMP + VENT) - 前置方便手动调整
         self._generate_heat_source(lines, timer_x, timer_y, timer_z)
 
         # Output: measurement devices - 前置方便手动调整
         self._generate_devices(lines)
-
-        # Materials & Surfaces
-        self._generate_materials(lines)
 
         # For each building: geometry
         for bi, b in enumerate(buildings):

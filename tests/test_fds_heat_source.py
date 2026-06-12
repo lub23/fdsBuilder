@@ -1,9 +1,9 @@
-"""Integration: FDSGenerator heat-source with multi-face Facet radiation.
+"""Integration: FDSGenerator heat-source with multi-face fixed-temperature radiation.
 
 Scheme (2026-06-12):
-- Per-face radiation SURFs named 'radiation_{FACE}' with EXTERNAL_FLUX = face flux (kW/m²).
-  EXTERNAL_FLUX replaces the old NET_HEAT_FLUX; it allows the surface to re-radiate
-  (εσT⁴), preventing the unbounded temperature escalation of NET_HEAT_FLUX.
+- Per-face radiation SURFs named 'radiation_{FACE}' with TEMP_FRONT = equilibrium
+  blackbody temperature computed from face flux via T = (flux / εσ)^¼.
+  MATL_ID='CONCRETE', THICKNESS=0.05, BACKING='VOID'.
 - Optional &DEVC ID='TIMER->OUT' (no SETVAL) when duration > 0.
 - Six &VENT ID='Domain Vent [<FACE>]' blocks, XB on the MESH domain boundary.
   Faces with non-zero flux get SURF_ID='radiation_{FACE}', others get 'OPEN'.
@@ -34,7 +34,10 @@ def _bg(azimuth, elevation, flux_mw=3.0, duration=1.36):
 
 
 _SURF_PATTERN = re.compile(
-    r"&SURF ID='(radiation_[^']+)',\s*\n\s*EXTERNAL_FLUX=([\d.\-]+)"
+    r"&SURF ID='(radiation_[^']+)',\s*\n"
+    r"\s*MATL_ID='CONCRETE',\s*\n"
+    r"\s*THICKNESS=0\.05,\s*\n"
+    r"\s*TEMP_FRONT=([\d.\-]+)"
 )
 _VENT_PATTERN = re.compile(
     r"&VENT ID='Domain Vent \[(XMIN|XMAX|YMIN|YMAX|ZMIN|ZMAX)\]',\s*"
@@ -45,11 +48,14 @@ _VENT_PATTERN = re.compile(
 
 
 def _face_fluxes(fds: str) -> dict[str, float]:
-    """Extract per-face EXTERNAL_FLUX values from generated FDS text."""
+    """Extract per-face flux from generated FDS text via TEMP_FRONT → flux (εσT⁴)."""
+    from generators.fds_generator import SIGMA_SB
     out = {}
     for m in _SURF_PATTERN.finditer(fds):
         face = m.group(1).replace("radiation_", "")
-        out[face] = float(m.group(2))
+        temp_front = float(m.group(2))
+        # Reverse: flux = εσT⁴ (emissivity=1.0)
+        out[face] = 1.0 * SIGMA_SB * temp_front ** 4
     return out
 
 
@@ -65,18 +71,18 @@ def _vents(fds: str):
 
 
 class TestHeatSourceFDS:
-    def test_surf_external_flux_in_kw_from_mw(self):
+    def test_surf_flux_via_temp_front_in_kw_from_mw(self):
         bg = _bg(0, 0, flux_mw=3.0)
         fds = FDSGenerator(bg).generate()
         surfs = _face_fluxes(fds)
-        # azimuth=0 elevation=0 → YMAX=3000 kW/m²
-        assert abs(surfs.get("YMAX", 0) - 3000.0) < 0.1
+        # azimuth=0 elevation=0 → YMAX=3000 kW/m² → TEMP_FRONT ≈ 2675K → back to flux
+        assert abs(surfs.get("YMAX", 0) - 3000.0) < 0.5
 
-    def test_surf_external_flux_small_mw(self):
+    def test_surf_flux_via_temp_front_small_mw(self):
         bg = _bg(0, 0, flux_mw=0.05)
         fds = FDSGenerator(bg).generate()
         surfs = _face_fluxes(fds)
-        assert abs(surfs.get("YMAX", 0) - 50.0) < 0.1
+        assert abs(surfs.get("YMAX", 0) - 50.0) < 0.5
 
     def test_six_domain_vents_emitted(self):
         bg = _bg(0, 0)
@@ -134,9 +140,9 @@ class TestHeatSourceFDS:
         sin_e = math.sin(math.radians(45))
         cos_a = math.cos(math.radians(45))
         sin_a = math.sin(math.radians(45))
-        assert abs(surfs["YMAX"] - Q * cos_e * cos_a) < 0.1
-        assert abs(surfs["XMAX"] - Q * cos_e * sin_a) < 0.1
-        assert abs(surfs["ZMAX"] - Q * sin_e) < 0.1
+        assert abs(surfs["YMAX"] - Q * cos_e * cos_a) < 0.5
+        assert abs(surfs["XMAX"] - Q * cos_e * sin_a) < 0.5
+        assert abs(surfs["ZMAX"] - Q * sin_e) < 0.5
 
     def test_vent_xb_matches_mesh_boundary_not_facility(self):
         bg = _bg(0, 0)
