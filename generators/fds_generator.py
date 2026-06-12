@@ -278,9 +278,11 @@ class FDSGenerator:
         # Combustible MATL / SURF definitions
         if combustible_keys:
             lines.append("\n! ========== 可燃物热解材料/表面 ==========\n")
-            # METHANE = 预定义物种,需显式声明 SPEC 才能在 MATL 中引用。参考已验证的旧版 .fds 文件
+            # METHANE species is auto-created by &REAC FUEL='METHANE'.
+            # Explicit &SPEC ID='METHANE' would cause ERROR(155) in FDS 6.10.1+
+            # (duplicate species ID). The REAC-generated SPEC is referenced
+            # via SPEC_ID='METHANE' in the pyrolyzing MATL blocks below.
             surf_spec_id = "METHANE"
-            lines.append(f"&SPEC ID='{surf_spec_id}' /\n\n")
             for ck in sorted(combustible_keys):
                 if ck not in COMBUSTIBLE_LIBRARY:
                     continue
