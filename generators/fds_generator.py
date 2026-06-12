@@ -984,15 +984,15 @@ class FDSGenerator:
         rad_faces = {f for f in fluxes if f != "ZMIN"}
         for face_name in sorted(rad_faces):
             face_flux = fluxes[face_name]
-            # Convert NET_HEAT_FLUX → equivalent black-body temperature.
-            # TEMP_FRONT is inherently more stable than NET_HEAT_FLUX:
-            # the surface re-radiates and convects, preventing unbounded
-            # temperature escalation that triggers ERROR(374).
-            temp_front = (face_flux / (emissivity * SIGMA_SB)) ** 0.25
+            # EXTERNAL_FLUX replaces NET_HEAT_FLUX for numerical stability.
+            # Unlike NET_HEAT_FLUX (which injects net energy without limit),
+            # EXTERNAL_FLUX allows the surface to re-radiate (εσT⁴) and
+            # convect, preventing unbounded temperature escalation that
+            # triggers FDS ERROR(374) on coarse meshes.
             surf_id = f"radiation_{face_name}"
             lines.append(
                 f"&SURF ID='{surf_id}',\n"
-                f" TEMP_FRONT={temp_front:.0f},\n"
+                f" EXTERNAL_FLUX={face_flux:.2f},\n"
                 f" EMISSIVITY={emissivity:.2f},\n"
                 f" COLOR='ORANGE' /\n\n"
             )
