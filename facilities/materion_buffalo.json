@@ -522,7 +522,7 @@
                   "count": 3
                 },
                 {
-                  "key": "RUBBER_MATERIAL",
+                  "key": "PLASTIC_PACKAGING",
                   "count": 4
                 }
               ],
@@ -626,7 +626,7 @@
               "openings": [],
               "combustibles": [
                 {
-                  "key": "WOODEN_FURNITURE",
+                  "key": "WOODEN_PALLET",
                   "count": 2
                 },
                 {
@@ -1254,11 +1254,11 @@
                   "count": 4
                 },
                 {
-                  "key": "TEXTILE_ROLL",
+                  "key": "PAPER_STACK",
                   "count": 3
                 },
                 {
-                  "key": "ORGANIC_SOLVENT_DRUM",
+                  "key": "LUBE_OIL_DRUM",
                   "count": 3
                 }
               ],
@@ -1277,7 +1277,7 @@
               "openings": [],
               "combustibles": [
                 {
-                  "key": "WOODEN_FURNITURE",
+                  "key": "WOODEN_PALLET",
                   "count": 2
                 },
                 {

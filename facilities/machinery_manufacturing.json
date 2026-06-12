@@ -94,18 +94,14 @@
               "combustibles": [
                 {
                   "key": "LUBE_OIL_DRUM",
+                  "count": 7
+                },
+                {
+                  "key": "ELECTRICAL_EQUIPMENT",
                   "count": 4
                 },
                 {
-                  "key": "ORGANIC_SOLVENT_DRUM",
-                  "count": 3
-                },
-                {
-                  "key": "RUBBER_MATERIAL",
-                  "count": 4
-                },
-                {
-                  "key": "TEXTILE_ROLL",
+                  "key": "PAPER_STACK",
                   "count": 3
                 }
               ],
@@ -143,15 +139,11 @@
                 },
                 {
                   "key": "PAPER_STACK",
-                  "count": 6
+                  "count": 8
                 },
                 {
                   "key": "PLASTIC_PACKAGING",
                   "count": 7
-                },
-                {
-                  "key": "TEXTILE_ROLL",
-                  "count": 2
                 }
               ],
               "specialized_components": [],
@@ -178,12 +170,8 @@
               "firewall_material": "CONCRETE",
               "combustibles": [
                 {
-                  "key": "WOODEN_FURNITURE",
-                  "count": 3
-                },
-                {
                   "key": "PAPER_STACK",
-                  "count": 2
+                  "count": 5
                 },
                 {
                   "key": "ELECTRICAL_EQUIPMENT",
@@ -330,14 +318,10 @@
               "combustibles": [
                 {
                   "key": "LUBE_OIL_DRUM",
-                  "count": 3
+                  "count": 5
                 },
                 {
-                  "key": "ORGANIC_SOLVENT_DRUM",
-                  "count": 2
-                },
-                {
-                  "key": "COMBUSTIBLE_GAS_CYLINDER",
+                  "key": "METAL_DUST_COLLECTOR",
                   "count": 2
                 },
                 {
@@ -386,12 +370,8 @@
                   "count": 3
                 },
                 {
-                  "key": "ORGANIC_SOLVENT_DRUM",
-                  "count": 2
-                },
-                {
-                  "key": "CHEMICAL_DRUM",
-                  "count": 2
+                  "key": "LUBE_OIL_DRUM",
+                  "count": 4
                 }
               ],
               "specialized_components": [],
@@ -454,11 +434,11 @@
               "firewall_material": "CONCRETE",
               "combustibles": [
                 {
-                  "key": "TEXTILE_ROLL",
+                  "key": "PAPER_STACK",
                   "count": 3
                 },
                 {
-                  "key": "RUBBER_MATERIAL",
+                  "key": "ELECTRICAL_EQUIPMENT",
                   "count": 2
                 }
               ],
@@ -570,18 +550,14 @@
               "combustibles": [
                 {
                   "key": "LUBE_OIL_DRUM",
-                  "count": 4
+                  "count": 7
                 },
                 {
-                  "key": "ORGANIC_SOLVENT_DRUM",
-                  "count": 3
-                },
-                {
-                  "key": "COMBUSTIBLE_GAS_CYLINDER",
+                  "key": "METAL_DUST_COLLECTOR",
                   "count": 2
                 },
                 {
-                  "key": "TEXTILE_ROLL",
+                  "key": "PAPER_STACK",
                   "count": 3
                 }
               ],
@@ -658,12 +634,8 @@
               "firewall_material": "CONCRETE",
               "combustibles": [
                 {
-                  "key": "WOODEN_FURNITURE",
-                  "count": 3
-                },
-                {
                   "key": "PAPER_STACK",
-                  "count": 2
+                  "count": 5
                 },
                 {
                   "key": "ELECTRICAL_EQUIPMENT",
@@ -694,7 +666,7 @@
               "firewall_material": "CONCRETE",
               "combustibles": [
                 {
-                  "key": "OILY_SLUDGE_CONTAINER",
+                  "key": "LUBE_OIL_DRUM",
                   "count": 3
                 },
                 {

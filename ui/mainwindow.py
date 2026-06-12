@@ -55,6 +55,7 @@ class MainWindow(QMainWindow):
         super().__init__()
         self.setWindowTitle("FDS建筑模型生成器")
         self.setMinimumSize(1400, 900)
+        self.showMaximized()
         self.model = BuildingGroup(buildings=[Building()])
         self.setup_ui()
         self.setup_menu()
@@ -537,8 +538,13 @@ class MainWindow(QMainWindow):
     
     def set_fds_path(self):
         """设置FDS程序路径"""
+        # 跨平台: Linux/macOS 默认显示所有文件, Windows 显示可执行文件
+        if os.name == "nt":
+            filter_str = "可执行文件 (*.exe *.bin);;所有文件 (*)"
+        else:
+            filter_str = "所有文件 (*);;可执行文件 (*.exe *.bin)"
         file_path, _ = QFileDialog.getOpenFileName(
-            self, "选择FDS可执行文件", "", "可执行文件 (*.exe);;所有文件 (*)"
+            self, "选择FDS可执行文件", "", filter_str
         )
         if file_path:
             # 保存到配置文件
@@ -547,8 +553,13 @@ class MainWindow(QMainWindow):
 
     def set_smv_path(self):
         """设置Smokeview程序路径"""
+        # 跨平台: Linux/macOS 默认显示所有文件, Windows 显示可执行文件
+        if os.name == "nt":
+            filter_str = "可执行文件 (*.exe *.bin);;所有文件 (*)"
+        else:
+            filter_str = "所有文件 (*);;可执行文件 (*.exe *.bin)"
         file_path, _ = QFileDialog.getOpenFileName(
-            self, "选择Smokeview可执行文件", "", "可执行文件 (*.exe);;所有文件 (*)"
+            self, "选择Smokeview可执行文件", "", filter_str
         )
         if file_path:
             self._save_program_path("smokeview", file_path)

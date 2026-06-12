@@ -97,7 +97,7 @@
                   "count": 6
                 },
                 {
-                  "key": "RUBBER_MATERIAL",
+                  "key": "ELECTRICAL_EQUIPMENT",
                   "count": 3
                 }
               ],
@@ -170,12 +170,8 @@
               "firewall_material": "CONCRETE",
               "combustibles": [
                 {
-                  "key": "WOODEN_FURNITURE",
-                  "count": 3
-                },
-                {
                   "key": "PAPER_STACK",
-                  "count": 2
+                  "count": 5
                 },
                 {
                   "key": "ELECTRICAL_EQUIPMENT",
@@ -321,20 +317,12 @@
               "firewall_material": "CONCRETE",
               "combustibles": [
                 {
-                  "key": "COAL_STACK",
-                  "count": 4
-                },
-                {
-                  "key": "COAL_DUST_HOPPER",
-                  "count": 2
-                },
-                {
-                  "key": "LIQUID_FUEL_DRUM",
-                  "count": 3
+                  "key": "CARBON_MATERIAL_STACK",
+                  "count": 6
                 },
                 {
                   "key": "LUBE_OIL_DRUM",
-                  "count": 3
+                  "count": 6
                 }
               ],
               "specialized_components": [],
@@ -361,11 +349,11 @@
               "firewall_material": "CONCRETE",
               "combustibles": [
                 {
-                  "key": "COMBUSTIBLE_GAS_CYLINDER",
+                  "key": "METAL_DUST_COLLECTOR",
                   "count": 2
                 },
                 {
-                  "key": "RUBBER_MATERIAL",
+                  "key": "ELECTRICAL_EQUIPMENT",
                   "count": 2
                 },
                 {
@@ -401,16 +389,8 @@
               "firewall_material": "CONCRETE",
               "combustibles": [
                 {
-                  "key": "WOODEN_FURNITURE",
-                  "count": 3
-                },
-                {
                   "key": "PAPER_STACK",
-                  "count": 2
-                },
-                {
-                  "key": "TEXTILE_ROLL",
-                  "count": 2
+                  "count": 7
                 }
               ],
               "specialized_components": [],
@@ -437,11 +417,11 @@
               "firewall_material": "CONCRETE",
               "combustibles": [
                 {
-                  "key": "COMBUSTIBLE_GAS_CYLINDER",
+                  "key": "METAL_DUST_COLLECTOR",
                   "count": 3
                 },
                 {
-                  "key": "ORGANIC_SOLVENT_DRUM",
+                  "key": "LUBE_OIL_DRUM",
                   "count": 2
                 }
               ],
@@ -556,11 +536,11 @@
                   "count": 4
                 },
                 {
-                  "key": "COMBUSTIBLE_GAS_CYLINDER",
+                  "key": "METAL_DUST_COLLECTOR",
                   "count": 3
                 },
                 {
-                  "key": "COAL_DUST_HOPPER",
+                  "key": "CARBON_MATERIAL_STACK",
                   "count": 2
                 }
               ],
@@ -588,7 +568,7 @@
               "firewall_material": "CONCRETE",
               "combustibles": [
                 {
-                  "key": "RUBBER_MATERIAL",
+                  "key": "ELECTRICAL_EQUIPMENT",
                   "count": 3
                 },
                 {
@@ -596,7 +576,7 @@
                   "count": 4
                 },
                 {
-                  "key": "ORGANIC_SOLVENT_DRUM",
+                  "key": "LUBE_OIL_DRUM",
                   "count": 2
                 }
               ],
@@ -624,12 +604,8 @@
               "firewall_material": "CONCRETE",
               "combustibles": [
                 {
-                  "key": "WOODEN_FURNITURE",
-                  "count": 3
-                },
-                {
                   "key": "PAPER_STACK",
-                  "count": 2
+                  "count": 5
                 },
                 {
                   "key": "ELECTRICAL_EQUIPMENT",
@@ -775,15 +751,11 @@
               "firewall_material": "CONCRETE",
               "combustibles": [
                 {
-                  "key": "ORGANIC_SOLVENT_DRUM",
-                  "count": 3
+                  "key": "LUBE_OIL_DRUM",
+                  "count": 5
                 },
                 {
                   "key": "METAL_DUST_COLLECTOR",
-                  "count": 2
-                },
-                {
-                  "key": "LUBE_OIL_DRUM",
                   "count": 2
                 }
               ],
@@ -821,15 +793,7 @@
                 },
                 {
                   "key": "PAPER_STACK",
-                  "count": 2
-                },
-                {
-                  "key": "PLASTIC_PACKAGING",
-                  "count": 2
-                },
-                {
-                  "key": "WOODEN_FURNITURE",
-                  "count": 3
+                  "count": 7
                 }
               ],
               "specialized_components": [],
@@ -864,7 +828,7 @@
                   "count": 2
                 },
                 {
-                  "key": "ORGANIC_SOLVENT_DRUM",
+                  "key": "LUBE_OIL_DRUM",
                   "count": 2
                 }
               ],
@@ -892,7 +856,7 @@
               "firewall_material": "CONCRETE",
               "combustibles": [
                 {
-                  "key": "ORGANIC_SOLVENT_DRUM",
+                  "key": "LUBE_OIL_DRUM",
                   "count": 5
                 }
               ],
@@ -1003,7 +967,7 @@
               "firewall_material": "CONCRETE",
               "combustibles": [
                 {
-                  "key": "ORGANIC_SOLVENT_DRUM",
+                  "key": "LUBE_OIL_DRUM",
                   "count": 5
                 },
                 {
@@ -1011,7 +975,7 @@
                   "count": 2
                 },
                 {
-                  "key": "SURFACE_COATING_LAYER",
+                  "key": "PAPER_STACK",
                   "count": 2
                 }
               ],
@@ -1048,7 +1012,7 @@
                   "count": 2
                 },
                 {
-                  "key": "RUBBER_MATERIAL",
+                  "key": "ELECTRICAL_EQUIPMENT",
                   "count": 2
                 },
                 {
@@ -1084,12 +1048,8 @@
               "firewall_material": "CONCRETE",
               "combustibles": [
                 {
-                  "key": "WOODEN_FURNITURE",
-                  "count": 3
-                },
-                {
                   "key": "PAPER_STACK",
-                  "count": 2
+                  "count": 5
                 },
                 {
                   "key": "ELECTRICAL_EQUIPMENT",
@@ -1120,11 +1080,11 @@
               "firewall_material": "CONCRETE",
               "combustibles": [
                 {
-                  "key": "RUBBER_MATERIAL",
+                  "key": "ELECTRICAL_EQUIPMENT",
                   "count": 3
                 },
                 {
-                  "key": "ORGANIC_SOLVENT_DRUM",
+                  "key": "LUBE_OIL_DRUM",
                   "count": 2
                 }
               ],

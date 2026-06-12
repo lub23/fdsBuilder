@@ -103,11 +103,7 @@
                 },
                 {
                   "key": "LUBE_OIL_DRUM",
-                  "count": 4
-                },
-                {
-                  "key": "ORGANIC_SOLVENT_DRUM",
-                  "count": 2
+                  "count": 6
                 }
               ],
               "specialized_components": []
@@ -147,11 +143,7 @@
               "combustibles": [
                 {
                   "key": "LUBE_OIL_DRUM",
-                  "count": 4
-                },
-                {
-                  "key": "ORGANIC_SOLVENT_DRUM",
-                  "count": 3
+                  "count": 7
                 },
                 {
                   "key": "CABLE_BUNDLE",
@@ -337,19 +329,11 @@
                 },
                 {
                   "key": "PAPER_STACK",
-                  "count": 6
+                  "count": 10
                 },
                 {
                   "key": "LUBE_OIL_DRUM",
-                  "count": 6
-                },
-                {
-                  "key": "ORGANIC_SOLVENT_DRUM",
-                  "count": 4
-                },
-                {
-                  "key": "TEXTILE_ROLL",
-                  "count": 4
+                  "count": 10
                 }
               ],
               "specialized_components": [
@@ -454,14 +438,10 @@
               "combustibles": [
                 {
                   "key": "LUBE_OIL_DRUM",
-                  "count": 8
+                  "count": 14
                 },
                 {
-                  "key": "ORGANIC_SOLVENT_DRUM",
-                  "count": 6
-                },
-                {
-                  "key": "TEXTILE_ROLL",
+                  "key": "PAPER_STACK",
                   "count": 4
                 },
                 {
@@ -785,14 +765,10 @@
               "combustibles": [
                 {
                   "key": "LUBE_OIL_DRUM",
-                  "count": 8
+                  "count": 20
                 },
                 {
-                  "key": "ORGANIC_SOLVENT_DRUM",
-                  "count": 12
-                },
-                {
-                  "key": "TEXTILE_ROLL",
+                  "key": "PAPER_STACK",
                   "count": 4
                 },
                 {

@@ -150,57 +150,34 @@ class FacilityListPanel(QWidget):
             )
             return lbl
 
+        # -- Size class combo (大/中/小) for equivalent models --
+        self.size_combo = QComboBox()
+        self.size_combo.addItems(["小", "中", "大"])
+        self.size_combo.setEnabled(False)
+        self.size_combo.currentTextChanged.connect(self._on_size_class_changed)
         r = 0
-        g.addWidget(_lbl("长:"), r, 0)
-        self.sp_L = _dsp(1, 2000, 20, width=80)
-        g.addWidget(self.sp_L, r, 1)
-        self.rng_L = _range_label(width=80)
-        g.addWidget(self.rng_L, r, 2)
-        g.addWidget(_lbl("宽:"), r, 3)
-        self.sp_W = _dsp(1, 2000, 15, width=80)
-        g.addWidget(self.sp_W, r, 4)
-        self.rng_W = _range_label(width=80)
-        g.addWidget(self.rng_W, r, 5)
+        g.addWidget(_lbl("规模:"), r, 0)
+        g.addWidget(self.size_combo, r, 1)
+        self.rng_size = _range_label(width=200)
+        g.addWidget(self.rng_size, r, 2, 1, 4)
 
         r += 1
-        g.addWidget(_lbl("高:"), r, 0)
-        self.sp_H = _dsp(1, 300, 12, width=80)
-        g.addWidget(self.sp_H, r, 1)
-        self.rng_H = _range_label(width=80)
-        g.addWidget(self.rng_H, r, 2)
-        g.addWidget(_lbl("层:"), r, 3)
+        g.addWidget(_lbl("层:"), r, 0)
         self.sp_N = _isp(1, 30, 1, width=80)
-        g.addWidget(self.sp_N, r, 4)
+        g.addWidget(self.sp_N, r, 1)
         self.rng_N = _range_label(width=80)
-        g.addWidget(self.rng_N, r, 5)
-
-        r += 1
-        g.addWidget(_lbl("墙厚:"), r, 0)
-        self.sp_T = _dsp(0.05, 5, 0.24, width=80)
-        self.sp_T.setDecimals(2)
-        g.addWidget(self.sp_T, r, 1)
-        g.addWidget(_lbl("位置X:"), r, 2)
-        self.sp_X_offset = _dsp(-1000, 1000, 0, width=80)
-        g.addWidget(self.sp_X_offset, r, 3)
-        g.addWidget(_lbl("位置Y:"), r, 4)
-        self.sp_Y_offset = _dsp(-1000, 1000, 0, width=80)
-        g.addWidget(self.sp_Y_offset, r, 5)
+        g.addWidget(self.rng_N, r, 2)
 
         sec_bld.content_layout.addLayout(g)
 
         # Collect param spinboxes and range labels into dicts for easy access
         self._param_spinboxes = {
-            "length": self.sp_L,
-            "width": self.sp_W,
-            "height": self.sp_H,
             "stories": self.sp_N,
         }
         self._range_labels = {
-            "length": self.rng_L,
-            "width": self.rng_W,
-            "height": self.rng_H,
             "stories": self.rng_N,
         }
+        self._param_ranges = {}  # raw [min, max, ...] per field
 
         # -- Door subsection (inside 建筑参数) --
         sec_bld.content_layout.addWidget(_section_title("门"))
@@ -249,7 +226,7 @@ class FacilityListPanel(QWidget):
             "QPushButton:hover{background:#74c7ec}"
         )
         self.combustible_btn.setEnabled(False)
-        self.combustible_btn.clicked.connect(self._open_combustible_dialog)
+        self.combustible_btn.clicked.connect(self._on_combustible_clicked)
         outer.addWidget(self.combustible_btn)
 
         # -- Action buttons --
@@ -284,6 +261,9 @@ class FacilityListPanel(QWidget):
 
         # -- 8. Scene object list --
         sec_scene = CollapsibleSection("场景目标列表")
+        scroll = QScrollArea()
+        scroll.setWidgetResizable(True)
+        scroll.setStyleSheet("QScrollArea{border:none;}")
         self.scene_table = QTableWidget()
         self.scene_table.setColumnCount(5)
         self.scene_table.setHorizontalHeaderLabels(["名称", "尺寸", "位置", "操作", ""])
@@ -305,7 +285,8 @@ class FacilityListPanel(QWidget):
             "QTableWidget{font-size:12px;}QTableWidget::item{padding:2px 0;}"
         )
         self.scene_table.cellClicked.connect(self._on_scene_table_clicked)
-        sec_scene.content_layout.addWidget(self.scene_table)
+        scroll.setWidget(self.scene_table)
+        sec_scene.content_layout.addWidget(scroll)
 
         # Track editing state
         self._editing_row = -1
@@ -404,18 +385,11 @@ class FacilityListPanel(QWidget):
             self.combustible_btn.setEnabled(True)
 
         elif node == "facility":
-            # A facility-level node was selected
-            cn_name = self.facility_manager.facilities[facility_name]["cn_name"]
-            buildings = self.facility_manager.facilities[facility_name]["buildings"]
-            type_label = "等效模型" if ftype == "equivalent" else "特异模型"
-            self.desc_label.setText(
-                f"{cn_name} ({type_label}) — 共 {len(buildings)} 个建筑\n"
-                "点击「生成设施全部建筑」可生成该设施下所有建筑"
-            )
+            self.selected_facility_data = data
+            self._show_facility_params(facility_name)
             self.generate_btn.setEnabled(False)
             self.generate_category_btn.setEnabled(True)
-            self.combustible_btn.setEnabled(False)
-            self.selected_facility_data = data
+            self.combustible_btn.setEnabled(True)
 
     # ==================================================
     # Parameter display for equivalent models
@@ -431,36 +405,78 @@ class FacilityListPanel(QWidget):
             "type": "equivalent",
         }
         self._syncing = True
+        # Store raw ranges for size combo calculation
+        self._param_ranges = ranges
+
+        # Populate size class combo (大/中/小) from ranges
+        size_hints = {}
+        for field_name in ["length", "width", "height", "stories"]:
+            r = ranges.get(field_name, [0, 0])
+            if len(r) >= 3:
+                small, med, large = r[0], r[2], r[-1]
+            elif len(r) >= 2:
+                small, large = r[0], r[-1]
+                med = (small + large) / 2
+            else:
+                small = med = large = r[0] if r else 0
+            size_hints[field_name] = (small, med, large)
+
+        l_s, l_m, l_l = size_hints["length"]
+        w_s, w_m, w_l = size_hints["width"]
+        self.rng_size.setText(
+            f"小: {l_s:.0f}×{w_s:.0f} / "
+            f"中: {l_m:.0f}×{w_m:.0f} / "
+            f"大: {l_l:.0f}×{w_l:.0f}"
+        )
+        self.size_combo.setEnabled(True)
+        self.size_combo.blockSignals(True)
+        self.size_combo.setCurrentText("中")
+        self.size_combo.blockSignals(False)
+
+        spinbox = self._param_spinboxes["stories"]
+        spinbox.setEnabled(True)
+        r = ranges.get("stories", [0, 0])
+        spinbox.setMinimum(r[0])
+        spinbox.setMaximum(r[1])
+        spinbox.setValue(params["stories"])
+        lo, hi = r[0], r[1]
+        if lo == hi:
+            self._range_labels["stories"].setText("")
+        else:
+            self._range_labels["stories"].setText(f"({int(lo)}~{int(hi)})")
+        self._range_labels["stories"].setVisible(True)
+
+        # Description
+        cn = bdata.get("cn_name", building_name)
+        desc = bdata.get("description", "")
+        self.desc_label.setText(f"{cn}\n{desc}" if desc else cn)
+        self._syncing = False
+
+    # ==================================================
+    # Size class selection callback
+    # ==================================================
+
+    def _on_size_class_changed(self, text: str):
+        if self._syncing or not self._param_ranges:
+            return
+        idx = {"小": 0, "中": 1, "大": -1}.get(text, 1)
+        self._syncing = True
         try:
-            for field_name in ["length", "width", "height", "stories"]:
-                spinbox = self._param_spinboxes[field_name]
-                spinbox.setEnabled(True)
-                r = ranges.get(field_name, [0, 0])
-                spinbox.setMinimum(r[0])
-                spinbox.setMaximum(r[1])
-                spinbox.setValue(params[field_name])
-                lo, hi = r[0], r[1]
-                if lo == hi:
-                    self._range_labels[field_name].setText("")
-                elif field_name == "stories":
-                    self._range_labels[field_name].setText(f"({int(lo)}~{int(hi)})")
+            for field_name, spinbox in self._param_spinboxes.items():
+                r = self._param_ranges.get(field_name, [0, 0])
+                if not r:
+                    continue
+                if idx == -1:
+                    val = r[-1]  # 大 = max
+                elif idx == 0:
+                    val = r[0]   # 小 = min
+                elif len(r) >= 3:
+                    val = r[2]   # 中 = 预设中间值（第3个元素）
                 else:
-                    self._range_labels[field_name].setText(f"({lo:.1f}~{hi:.1f})")
-                self._range_labels[field_name].setVisible(True)
-
-            # Wall thickness and offsets remain editable
-            self.sp_T.setEnabled(True)
-            bdata = self.facility_manager.get_building_data(
-                facility_name, building_name
-            )
-            self.sp_T.setValue(bdata.get("wall_thickness", 0.24))
-            self.sp_X_offset.setValue(0.0)
-            self.sp_Y_offset.setValue(0.0)
-
-            # Description
-            cn = bdata.get("cn_name", building_name)
-            desc = bdata.get("description", "")
-            self.desc_label.setText(f"{cn}\n{desc}" if desc else cn)
+                    val = (r[0] + r[-1]) / 2  # 中 = (min+max)/2
+                if field_name == "stories":
+                    val = int(round(val))
+                spinbox.setValue(val)
         finally:
             self._syncing = False
 
@@ -494,12 +510,8 @@ class FacilityListPanel(QWidget):
                 spinbox.setEnabled(False)
                 self._range_labels[field_name].setVisible(False)
 
-            # Wall thickness read-only
-            self.sp_T.setValue(bdata.get("wall_thickness", 0.24))
-            self.sp_T.setEnabled(False)
-            # Offsets: allow editing position
-            self.sp_X_offset.setValue(boundary[0])
-            self.sp_Y_offset.setValue(boundary[2])
+            # Size combo disabled for specialized models
+            self.size_combo.setEnabled(False)
 
             # Description
             cn = bdata.get("cn_name", building_name)
@@ -508,19 +520,154 @@ class FacilityListPanel(QWidget):
             self._syncing = False
 
     # ==================================================
+    # Parameter display for facility-level (aggregated)
+    # ==================================================
+
+    def _show_facility_params(self, facility_name: str):
+        """Fill inline param controls with aggregated ranges across all buildings."""
+        fac_data = self.facility_manager.facilities[facility_name]
+        buildings = fac_data["buildings"]
+        ftype = fac_data["type"]
+        cn_name = fac_data["cn_name"]
+
+        self._params = {
+            "facility": facility_name,
+            "building": None,
+            "type": ftype,
+        }
+        self._syncing = True
+        try:
+            if ftype == "specialized":
+                self.size_combo.setEnabled(False)
+                self.rng_size.setText("")
+                spinbox = self._param_spinboxes["stories"]
+                spinbox.setEnabled(False)
+                self._range_labels["stories"].setVisible(False)
+                self.desc_label.setText(
+                    f"{cn_name} (特异模型) — 共 {len(buildings)} 个建筑"
+                )
+                return
+
+            # --- Equivalent: aggregate ranges across all buildings ---
+            # Collect per-building ranges
+            all_ranges: dict[str, dict] = {}  # bname -> {field: [min, max, ...]}
+            for b in buildings:
+                bname = b["name"]
+                all_ranges[bname] = {
+                    "length": b.get("length_range", [0, 0]),
+                    "width": b.get("width_range", [0, 0]),
+                    "height": b.get("height_range", [0, 0]),
+                    "stories": b.get("stories_range", [0, 0]),
+                }
+
+            # Compute overall span for description
+            span = {}
+            for field in ["length", "width", "height", "stories"]:
+                mins = [all_ranges[b][field][0] for b in all_ranges]
+                maxs = [all_ranges[b][field][-1] for b in all_ranges]
+                span[field] = (min(mins), max(maxs))
+
+            # Use first building's ranges for preview & _param_ranges
+            first_bname = buildings[0]["name"]
+            first_ranges = all_ranges[first_bname]
+            self._param_ranges = first_ranges  # so _on_size_class_changed works
+
+            # Size hints from first building (reference display)
+            def _hints(r):
+                if len(r) >= 3:
+                    return r[0], r[2], r[-1]
+                if len(r) >= 2:
+                    med = (r[0] + r[-1]) / 2
+                    return r[0], med, r[-1]
+                return r[0], r[0], r[0]
+
+            l_s, l_m, l_l = _hints(first_ranges["length"])
+            w_s, w_m, w_l = _hints(first_ranges["width"])
+            h_s, h_m, h_l = _hints(first_ranges["height"])
+            n_s, n_m, n_l = _hints(first_ranges["stories"])
+
+            self.rng_size.setText(
+                f"小: {l_s:.0f}×{w_s:.0f}×{h_s:.0f} / "
+                f"中: {l_m:.0f}×{w_m:.0f}×{h_m:.0f} / "
+                f"大: {l_l:.0f}×{w_l:.0f}×{h_l:.0f}"
+            )
+            self.size_combo.setEnabled(True)
+            self.size_combo.blockSignals(True)
+            self.size_combo.setCurrentText("中")
+            self.size_combo.blockSignals(False)
+
+            first_params = self.facility_manager.default_params(
+                facility_name, first_bname
+            )
+            spinbox = self._param_spinboxes["stories"]
+            spinbox.setEnabled(True)
+            r = first_ranges["stories"]
+            spinbox.setMinimum(r[0])
+            spinbox.setMaximum(r[-1])
+            spinbox.setValue(first_params["stories"])
+            lo, hi = r[0], r[-1]
+            if lo == hi:
+                self._range_labels["stories"].setText("")
+            else:
+                self._range_labels["stories"].setText(
+                    f"({int(lo)}~{int(hi)})"
+                )
+            self._range_labels["stories"].setVisible(True)
+
+            # Description: show facility name + overall range span
+            sl, lmin, lmax = "长", span["length"][0], span["length"][1]
+            sw, wmin, wmax = "宽", span["width"][0], span["width"][1]
+            sh, hmin, hmax = "高", span["height"][0], span["height"][1]
+            sn, nmin, nmax = "层", int(span["stories"][0]), int(span["stories"][1])
+            range_str = f"{sl}: {lmin:.0f}~{lmax:.0f}  {sw}: {wmin:.0f}~{wmax:.0f}  {sh}: {hmin:.0f}~{hmax:.0f}  {sn}: {nmin}~{nmax}"
+            self.desc_label.setText(
+                f"{cn_name} (等效模型) — 共 {len(buildings)} 个建筑\n"
+                f"尺寸 {range_str}"
+            )
+        finally:
+            self._syncing = False
+
+    # ==================================================
+    # Size-class helper (for facility-level generation)
+    # ==================================================
+
+    def _build_params_for_size_class(
+        self, facility_name: str, building_name: str, size_idx: int
+    ) -> dict:
+        """Build params dict from building's own ranges at the given size index.
+        size_idx: 0=小, 1=中, -1=大
+        """
+        bdata = self.facility_manager.get_building_data(facility_name, building_name)
+        params = {}
+        for field, range_key in [
+            ("length", "length_range"),
+            ("width", "width_range"),
+            ("height", "height_range"),
+            ("stories", "stories_range"),
+        ]:
+            r = bdata.get(range_key, [0, 0])
+            if not r:
+                vals = (0, 0, 0)
+            elif len(r) >= 3:
+                vals = (r[0], r[2], r[-1])
+            elif len(r) >= 2:
+                vals = (r[0], (r[0] + r[-1]) / 2, r[-1])
+            else:
+                vals = (r[0], r[0], r[0])
+            val = vals[size_idx]
+            if field == "stories":
+                val = int(round(val))
+            params[field] = val
+        return params
+
+    # ==================================================
     # Read params -> dict (for equivalent models)
     # ==================================================
 
     def _read_params(self) -> dict:
         p = dict(self._params) if self._params else {}
         p.update(
-            length=self.sp_L.value(),
-            width=self.sp_W.value(),
-            height=self.sp_H.value(),
             stories=self.sp_N.value(),
-            wall_thickness=self.sp_T.value(),
-            x_offset=self.sp_X_offset.value(),
-            y_offset=self.sp_Y_offset.value(),
             door_width=self.sp_dw.value(),
             door_height=self.sp_dh.value(),
             door_count=self.sp_dc.value(),
@@ -541,8 +688,28 @@ class FacilityListPanel(QWidget):
         return p
 
     # ==================================================
+    # Scene building lookup (for offset preservation)
+    # ==================================================
+
+    def _get_scene_building_offset(self, facility: str, building_name: str) -> tuple[float, float] | None:
+        """Look up offset of an existing building with matching name in the scene."""
+        buildings = getattr(self, "_scene_buildings", [])
+        for b in buildings:
+            if b.name == building_name or getattr(b, "cn_name", "") == building_name:
+                return (b.offset_x, b.offset_y)
+        return None
+
+    # ==================================================
     # Generate actions
     # ==================================================
+
+    @staticmethod
+    def _auto_arrange_buildings(buildings, gap=15.0):
+        x = 0.0
+        for b in buildings:
+            b.boundary[0] = x
+            b.boundary[2] = 0.0
+            x += b.length + gap
 
     def _on_generate(self):
         if not self.selected_facility_data:
@@ -560,20 +727,20 @@ class FacilityListPanel(QWidget):
 
         if ftype == "specialized":
             building = self.facility_manager.load_specialized(facility, building_name)
-            # Apply user-specified offsets
-            building.boundary[0] = self.sp_X_offset.value()
-            building.boundary[2] = self.sp_Y_offset.value()
         else:
-            params = {
-                field: self._param_spinboxes[field].value()
-                for field in ["length", "width", "height", "stories"]
-            }
-            building = self.facility_manager.load_equivalent(
-                facility, building_name, params
+            size_text = self.size_combo.currentText() if self.size_combo.isEnabled() else "中"
+            size_idx = {"小": 0, "中": 1, "大": -1}.get(size_text, 1)
+            params = self._build_params_for_size_class(
+                facility, building_name, size_idx
             )
-            # Apply user-specified offsets
-            building.boundary[0] = self.sp_X_offset.value()
-            building.boundary[2] = self.sp_Y_offset.value()
+            params["stories"] = self.sp_N.value()
+            existing_offset = self._get_scene_building_offset(facility, building_name)
+            building = self.facility_manager.load_equivalent(
+                facility, building_name, params,
+                current_offset=existing_offset,
+            )
+            # 保持 JSON 原始偏移，不自动排列
+            pass
 
         self.building_added.emit(building)
 
@@ -587,23 +754,41 @@ class FacilityListPanel(QWidget):
             return
 
         ftype = self.facility_manager.get_type(facility_name)
+        size_text = self.size_combo.currentText() if self.size_combo.isEnabled() else "中"
+        size_idx = {"小": 0, "中": 1, "大": -1}.get(size_text, 1)
+
         buildings = []
 
         if ftype == "specialized":
-            # Load all specialized buildings
             for bname in self.facility_manager.list_buildings(facility_name):
                 b = self.facility_manager.load_specialized(facility_name, bname)
                 buildings.append(b)
         else:
-            # Load all equivalent buildings with default params
             for bname in self.facility_manager.list_buildings(facility_name):
-                params = self.facility_manager.default_params(facility_name, bname)
-                b = self.facility_manager.load_equivalent(facility_name, bname, params)
+                params = self._build_params_for_size_class(
+                    facility_name, bname, size_idx
+                )
+                b = self.facility_manager.load_equivalent(
+                    facility_name, bname, params
+                )
                 buildings.append(b)
 
-        if buildings:
-            group = BuildingGroup(name=facility_name, buildings=buildings)
-            self.facility_selected.emit(group.to_dict())
+        if not buildings:
+            return
+
+        # 保持 JSON 原始偏移（交错布局），不自动排列
+        group = BuildingGroup(name=facility_name, buildings=buildings)
+        self.facility_selected.emit(group.to_dict())
+
+    def _on_combustible_clicked(self):
+        """Route combustible button to building-level or facility-level dialog."""
+        if not self.selected_facility_data:
+            return
+        node = self.selected_facility_data.get("node")
+        if node == "facility":
+            self._open_facility_combustible_dialog()
+        else:
+            self._open_combustible_dialog()
 
     def _open_combustible_dialog(self):
         """Open combustible management with the current building's FC list."""
@@ -640,6 +825,27 @@ class FacilityListPanel(QWidget):
         )
         if dlg.exec() == QDialog.Accepted:
             self._params["combustible_selections"] = dlg.get_selections()
+
+    def _open_facility_combustible_dialog(self):
+        """Open facility-level combustible overview dialog (read-only)."""
+        if not self.selected_facility_data:
+            return
+        facility_name = self.selected_facility_data.get("facility")
+        if not facility_name:
+            return
+
+        size_text = self.size_combo.currentText() if self.size_combo.isEnabled() else "中"
+        size_idx = {"小": 0, "中": 1, "大": -1}.get(size_text, 1)
+
+        from ui.dialogs import FacilityCombustibleOverviewDialog
+
+        dlg = FacilityCombustibleOverviewDialog(
+            self,
+            facility_manager=self.facility_manager,
+            facility_name=facility_name,
+            size_idx=size_idx,
+        )
+        dlg.exec()
 
     # ==================================================
     # Compatibility stubs (for FacilityDialog path)
@@ -689,14 +895,14 @@ class FacilityListPanel(QWidget):
             edit_btn = QPushButton("编辑")
             edit_btn.setFixedHeight(24)
             edit_btn.setStyleSheet(btn_style_edit)
-            edit_btn.clicked.connect(lambda _, idx=i: self._toggle_edit(idx))
+            edit_btn.clicked.connect(lambda checked, idx=i: self._toggle_edit(idx))
             self.scene_table.setCellWidget(i, 3, edit_btn)
 
             del_btn = QPushButton("删除")
             del_btn.setFixedHeight(24)
             del_btn.setStyleSheet(btn_style_del)
             del_btn.setEnabled(len(buildings) > 1)  # single building: disable delete
-            del_btn.clicked.connect(lambda _, idx=i: self._on_scene_delete_row(idx))
+            del_btn.clicked.connect(lambda checked, idx=i: self._on_scene_delete_row(idx))
             self.scene_table.setCellWidget(i, 4, del_btn)
 
         self.scene_table.resizeColumnsToContents()
@@ -781,6 +987,8 @@ class FacilityListPanel(QWidget):
             pos_item = QTableWidgetItem(f"({b.offset_x:.1f}, {b.offset_y:.1f})")
             pos_item.setFlags(pos_item.flags() & ~Qt.ItemIsEditable)
             self.scene_table.setItem(row, 2, pos_item)
+
+        self.scene_table.setColumnWidth(2, 180)
 
         self._editing_row = -1
         if row in self._editing_widgets:

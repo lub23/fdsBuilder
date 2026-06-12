@@ -604,11 +604,7 @@
                 },
                 {
                   "key": "HYDRAULIC_TANK",
-                  "count": 4
-                },
-                {
-                  "key": "LUBE_OIL_DRUM",
-                  "count": 2
+                  "count": 6
                 }
               ],
               "specialized_components": [
@@ -636,11 +632,7 @@
                 },
                 {
                   "key": "HYDRAULIC_TANK",
-                  "count": 4
-                },
-                {
-                  "key": "LUBE_OIL_DRUM",
-                  "count": 2
+                  "count": 6
                 }
               ],
               "specialized_components": [
@@ -3139,11 +3131,7 @@
                 },
                 {
                   "key": "HYDRAULIC_TANK",
-                  "count": 2
-                },
-                {
-                  "key": "LUBE_OIL_DRUM",
-                  "count": 1
+                  "count": 3
                 }
               ],
               "specialized_components": [
@@ -3235,7 +3223,7 @@
                   "count": 1
                 },
                 {
-                  "key": "LUBE_OIL_DRUM",
+                  "key": "HYDRAULIC_TANK",
                   "count": 1
                 }
               ],
@@ -3280,11 +3268,11 @@
               ],
               "combustibles": [
                 {
-                  "key": "LAB_EQUIPMENT",
+                  "key": "CABLE_BUNDLE",
                   "count": 3
                 },
                 {
-                  "key": "CHEMICAL_DRUM",
+                  "key": "HYDRAULIC_TANK",
                   "count": 2
                 }
               ],
@@ -3324,11 +3312,11 @@
               ],
               "combustibles": [
                 {
-                  "key": "LAB_EQUIPMENT",
+                  "key": "CABLE_BUNDLE",
                   "count": 2
                 },
                 {
-                  "key": "CHEMICAL_DRUM",
+                  "key": "HYDRAULIC_TANK",
                   "count": 2
                 }
               ],
@@ -3378,11 +3366,11 @@
               ],
               "combustibles": [
                 {
-                  "key": "LAB_EQUIPMENT",
+                  "key": "CABLE_BUNDLE",
                   "count": 4
                 },
                 {
-                  "key": "CHEMICAL_DRUM",
+                  "key": "HYDRAULIC_TANK",
                   "count": 6
                 }
               ],
@@ -3677,11 +3665,7 @@
                 },
                 {
                   "key": "HYDRAULIC_TANK",
-                  "count": 8
-                },
-                {
-                  "key": "LUBE_OIL_DRUM",
-                  "count": 2
+                  "count": 10
                 }
               ],
               "specialized_components": [
@@ -3810,11 +3794,7 @@
                 },
                 {
                   "key": "HYDRAULIC_TANK",
-                  "count": 8
-                },
-                {
-                  "key": "LUBE_OIL_DRUM",
-                  "count": 2
+                  "count": 10
                 }
               ],
               "specialized_components": [
@@ -4409,7 +4389,7 @@
                   "count": 1
                 },
                 {
-                  "key": "LUBE_OIL_DRUM",
+                  "key": "HYDRAULIC_TANK",
                   "count": 1
                 }
               ],

@@ -1378,8 +1378,10 @@ class Viewer3D(QWidget):
         self.plotter.render()
 
     def _add_heat_source(self, bg, g_xmin, g_xmax, g_ymin, g_ymax, g_zmax):
-        """Render a single radiation panel on the MESH boundary face selected
-        by azimuth/elevation. Matches generators.fds_generator._generate_heat_source.
+        """Render radiation panels on ALL MESH boundary faces with non-zero flux.
+
+        Shows each face that has a flux component from face_fluxes decomposition,
+        with opacity proportional to the relative flux strength.
 
         PyVista Plane convention (verified empirically):
         - direction=(0,1,0): i_size → Z extent, j_size → X extent
@@ -1394,14 +1396,13 @@ class Viewer3D(QWidget):
         fluxes = face_fluxes(azimuth, elevation, 1.0)
         if not fluxes:
             return
-        rad_face = max(fluxes, key=fluxes.get)
 
         mx0, mx1, my0, my1, mz0, mz1 = self._mesh_domain(bg)
         dx = mx1 - mx0
         dy = my1 - my0
         dz = mz1 - mz0
 
-        face_params = {
+        all_face_params = {
             "XMIN": {"center": (mx0, (my0 + my1) / 2, (mz0 + mz1) / 2),
                      "direction": (1, 0, 0), "i_size": dz, "j_size": dy},
             "XMAX": {"center": (mx1, (my0 + my1) / 2, (mz0 + mz1) / 2),
@@ -1414,17 +1415,21 @@ class Viewer3D(QWidget):
                      "direction": (0, 0, 1), "i_size": dx, "j_size": dy},
             "ZMAX": {"center": ((mx0 + mx1) / 2, (my0 + my1) / 2, mz1),
                      "direction": (0, 0, 1), "i_size": dx, "j_size": dy},
-        }[rad_face]
+        }
 
-        plane = pv.Plane(**face_params)
-        actor = self.plotter.add_mesh(
-            plane,
-            color="#f97316",
-            opacity=0.45,
-            show_edges=True,
-            edge_color="#f97316",
-        )
-        self._add_to_group("heat_source", actor)
+        max_flux = max(fluxes.values())
+        for face_name in fluxes:
+            params = all_face_params[face_name]
+            opacity = max(0.15, 0.3 * fluxes[face_name] / max_flux)
+            plane = pv.Plane(**params)
+            actor = self.plotter.add_mesh(
+                plane,
+                color="#f97316",
+                opacity=opacity,
+                show_edges=True,
+                edge_color="#f97316",
+            )
+            self._add_to_group("heat_source", actor)
 
     @staticmethod
     def _mesh_domain(bg):

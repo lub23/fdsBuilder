@@ -94,7 +94,7 @@
                   "count": 4
                 },
                 {
-                  "key": "LUBE_OIL_DRUM",
+                  "key": "ORGANIC_SOLVENT_DRUM",
                   "count": 2
                 }
               ],
@@ -135,7 +135,7 @@
                   "count": 3
                 },
                 {
-                  "key": "PLASTIC_PACKAGING",
+                  "key": "PAPER_STACK",
                   "count": 4
                 }
               ],
@@ -172,14 +172,10 @@
               "combustibles": [
                 {
                   "key": "PAPER_STACK",
-                  "count": 4
+                  "count": 6
                 },
                 {
-                  "key": "LIGHTWEIGHT_PARTITION",
-                  "count": 2
-                },
-                {
-                  "key": "SURFACE_COATING_LAYER",
+                  "key": "WOODEN_PALLET",
                   "count": 2
                 }
               ],
@@ -294,7 +290,7 @@
                   "count": 2
                 },
                 {
-                  "key": "LUBE_OIL_DRUM",
+                  "key": "ORGANIC_SOLVENT_DRUM",
                   "count": 3
                 }
               ],
@@ -340,11 +336,7 @@
                 },
                 {
                   "key": "PAPER_STACK",
-                  "count": 4
-                },
-                {
-                  "key": "PLASTIC_PACKAGING",
-                  "count": 3
+                  "count": 7
                 }
               ],
               "specialized_components": [],
@@ -461,7 +453,7 @@
                   "count": 3
                 },
                 {
-                  "key": "LUBE_OIL_DRUM",
+                  "key": "ORGANIC_SOLVENT_DRUM",
                   "count": 4
                 }
               ],
@@ -499,11 +491,7 @@
                 },
                 {
                   "key": "PAPER_STACK",
-                  "count": 5
-                },
-                {
-                  "key": "PLASTIC_PACKAGING",
-                  "count": 3
+                  "count": 8
                 },
                 {
                   "key": "ORGANIC_SOLVENT_DRUM",
@@ -622,7 +610,7 @@
                   "count": 3
                 },
                 {
-                  "key": "LUBE_OIL_DRUM",
+                  "key": "ORGANIC_SOLVENT_DRUM",
                   "count": 2
                 }
               ],
@@ -663,7 +651,7 @@
                   "count": 2
                 },
                 {
-                  "key": "PLASTIC_PACKAGING",
+                  "key": "PAPER_STACK",
                   "count": 4
                 }
               ],
@@ -699,16 +687,12 @@
               "firewall_material": "CONCRETE",
               "combustibles": [
                 {
-                  "key": "WOODEN_FURNITURE",
+                  "key": "WOODEN_PALLET",
                   "count": 4
                 },
                 {
                   "key": "PAPER_STACK",
-                  "count": 3
-                },
-                {
-                  "key": "TEXTILE_ROLL",
-                  "count": 4
+                  "count": 7
                 }
               ],
               "specialized_components": [],

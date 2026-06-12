@@ -275,8 +275,9 @@ class FDSGenerator:
         # Combustible MATL / SURF definitions
         if combustible_keys:
             lines.append("\n! ========== 可燃物热解材料/表面 ==========\n")
-            # Define fuel SPEC for pyrolysis (matches REAC fuel)
-            lines.append("&SPEC ID='METHANE' /\n\n")
+            # METHANE = 预定义物种,需显式声明 SPEC 才能在 MATL 中引用。参考已验证的旧版 .fds 文件
+            surf_spec_id = "METHANE"
+            lines.append(f"&SPEC ID='{surf_spec_id}' /\n\n")
             for ck in sorted(combustible_keys):
                 if ck not in COMBUSTIBLE_LIBRARY:
                     continue
@@ -292,22 +293,19 @@ class FDSGenerator:
                 hoc = mt.get("HEAT_OF_COMBUSTION", 0)
                 ignition_temp = cb_def.get("ignition_temp", 250.0)
                 color = cb_def.get("color", "RED")
-
-                # Pyrolysis MATL: required for BURN_AWAY
-                # HEAT_OF_REACTION: endothermic pyrolysis energy (~20% of HOC)
                 hor = max(400, int(hoc * 0.2)) if hoc else 500
+
                 lines.append(
                     f"&MATL ID='{matl_id}',\n"
-                    f"      DENSITY={density},\n"
-                    f"      CONDUCTIVITY={conductivity},\n"
-                    f"      SPECIFIC_HEAT={specific_heat},\n"
-                    f"      HEAT_OF_REACTION={hor},\n"
-                    f"      NU_SPEC=0.8,\n"
-                    f"      SPEC_ID='METHANE',\n"
-                    f"      REFERENCE_TEMPERATURE={ignition_temp:.1f} /\n\n"
+                    f" DENSITY={density},\n"
+                    f" CONDUCTIVITY={conductivity},\n"
+                    f" SPECIFIC_HEAT={specific_heat},\n"
+                    f" HEAT_OF_REACTION={hor},\n"
+                    f" NU_SPEC=0.8,\n"
+                    f" SPEC_ID='{surf_spec_id}',\n"
+                    f" REFERENCE_TEMPERATURE={ignition_temp:.1f} /\n\n"
                 )
 
-                # SURF with BURN_AWAY: MATL_ID required, BULK_DENSITY on OBST
                 lines.append(
                     f"&SURF ID='{surf_id}',\n"
                     f"      MATL_ID='{matl_id}',\n"
@@ -317,7 +315,7 @@ class FDSGenerator:
                     f"      COLOR='{color}' /\n\n"
                 )
 
-        lines.append("\n")
+            lines.append("\n")
 
     # ------------------------------------------------------------------
     # Exterior walls
@@ -573,7 +571,7 @@ class FDSGenerator:
     # ------------------------------------------------------------------
     # Combustibles (from fire compartment data)
     # ------------------------------------------------------------------
-    def _generate_combustibles(self, building, story, lines, grid_size: float = 0.1):
+    def _generate_combustibles(self, building, story, si, lines, grid_size: float = 0.1):
         """Generate combustible and specialized component OBSTs per FC.
 
         Specialized components are laid out first (priority), then combustibles
@@ -652,6 +650,7 @@ class FDSGenerator:
                 exclusions=exclusions,
             )
 
+            story_suffix = f"_{si}"
             lines.append(f"! -- 可燃物与组件 ({fc.name}) --\n")
             probe_counters: dict[str, int] = {}
             cb_idx = 0
@@ -662,7 +661,7 @@ class FDSGenerator:
                     key = item["key"]
                     horizontal = item.get("_horizontal", False)
                     lines.append(f"! {comp.name} #{ci + 1}\n")
-
+    
                     # Find part with minimum ignition temperature
                     min_ignition_pi = 0
                     min_ignition_temp = float("inf")
@@ -671,7 +670,7 @@ class FDSGenerator:
                         if ign_temp < min_ignition_temp:
                             min_ignition_temp = ign_temp
                             min_ignition_pi = pi
-
+    
                     # Output all OBSTs and track critical part coordinates
                     crit_px = crit_py = crit_pz = 0.0
                     crit_length = crit_width = crit_height = 0.0
@@ -701,22 +700,22 @@ class FDSGenerator:
                             f"&OBST XB={px:.2f},{px + part_length:.2f},"
                             f"{py:.2f},{py + part_width:.2f},"
                             f"{pz:.2f},{pz + part_height:.2f},\n"
-                            f"      {thicken_kv}SURF_ID='{surf}',\n"
-                            f"      ID='{key}_{fc.name}_{ci}_{pi}' /\n"
+                            f" {thicken_kv}SURF_ID='{surf}',\n"
+                            f" ID='{key}_{fc.name}_{ci}_{pi}' /\n"
                         )
                         # Store coordinates for critical part
                         if pi == min_ignition_pi:
                             crit_px, crit_py, crit_pz = px, py, pz
                             crit_length, crit_width, crit_height = part_length, part_width, part_height
-
+    
                     # Place ONE probe on the part with minimum ignition temp
                     if not is_subgrid:
                         cx = crit_px + crit_length / 2
                         cy = crit_py + crit_width / 2
                         cz = crit_pz + crit_height
                         probe_key = f"{key}_CRIT"
-                        probe_counters[probe_key] = probe_counters.get(probe_key, 0) + 1
-                        probe_idx = probe_counters[probe_key]
+                        probe_counters[probe_key + story_suffix] = probe_counters.get(probe_key + story_suffix, 0) + 1
+                        probe_idx = probe_counters[probe_key + story_suffix]
                         probe_id = f"{probe_key}_{probe_idx:02d}"
                         lines.append(
                             f"&DEVC XYZ={cx:.2f},{cy:.2f},{cz:.2f}, IOR=3, "
@@ -743,20 +742,20 @@ class FDSGenerator:
                     lines.append(
                         f"&OBST XB={x1:.2f},{x2:.2f},{y1:.2f},{y2:.2f},"
                         f"{z1:.2f},{z2:.2f},\n"
-                        f"      {thicken_kv}SURF_IDS='{surf_id}','INERT','INERT',\n"
-                        f"      BULK_DENSITY={bulk_density},\n"
-                        f"      ID='{cb_id}' /  ! {item.get('name', key)}\n"
+                        f" {thicken_kv}SURF_IDS='{surf_id}','INERT','INERT',\n"
+                        f" BULK_DENSITY={bulk_density},\n"
+                        f" ID='{cb_id}' / ! {item.get('name', key)}\n"
                     )
                     cb_idx += 1
-                    probe_counters[key] = probe_counters.get(key, 0) + 1
-                    probe_idx = probe_counters[key]
+                    probe_counters[key + story_suffix] = probe_counters.get(key + story_suffix, 0) + 1
+                    probe_idx = probe_counters[key + story_suffix]
                     probe_id = f"{key}_{probe_idx:02d}"
                     cx = (x1 + x2) / 2
                     cy = (y1 + y2) / 2
                     cz = z2
                     lines.append(
                         f"&DEVC XYZ={cx:.2f},{cy:.2f},{cz:.2f}, IOR=3, "
-                        f"QUANTITY='WALL TEMPERATURE', ID='{probe_id}' /\n"
+                        f"QUANTITY='WALL TEMPERATURE', ID='{cb_id}' /\n"
                     )
 
     # ------------------------------------------------------------------
@@ -937,12 +936,10 @@ class FDSGenerator:
     # Heat source
     # ------------------------------------------------------------------
     def _generate_heat_source(self, lines, timer_x: float, timer_y: float, timer_z: float):
-        """Generate heat source with timer DEVC and radiation SURF.
-        
-        Uses template:
-        - Timer DEVC to control duration
-        - Single radiation SURF 
-        - 6 domain VENTs (OPEN for non-heat faces, radiation for heat face)
+        """Generate heat source with timer DEVC and per-face radiation SURF/VENT.
+
+        Supports multi-face radiation via vector decomposition of (azimuth, elevation, Q)
+        onto 1-3 domain faces. Each face with non-zero flux gets its own SURF+VENT pair.
         """
         from models.heat_source import face_fluxes
 
@@ -963,43 +960,49 @@ class FDSGenerator:
             f"! ========== 外部强辐射热源 (azimuth={azimuth}°, elevation={elevation}°) ==========\n"
         )
 
-        lines.append("! 辐射控制定时器\n")
-        lines.append(
-            f"&DEVC ID='TIMER->OUT', QUANTITY='TIME', XYZ={timer_x:.2f},{timer_y:.2f},{timer_z:.2f}, SETPOINT={duration:.2f}, INITIAL_STATE=.TRUE. /\n\n"
-        )
+        if duration > 0:
+            lines.append("! 辐射控制定时器\n")
+            lines.append(
+                f"&DEVC ID='TIMER->OUT', QUANTITY='TIME', XYZ={timer_x:.2f},{timer_y:.2f},{timer_z:.2f}, "
+                f"SETPOINT={duration:.2f}, INITIAL_STATE=.TRUE. /\n\n"
+            )
+
+        lines.append("! Per-face radiation surfaces\n")
+        face_xb = {
+            "XMIN": (x0, x0, y0, y1, z0, z1),
+            "XMAX": (x1, x1, y0, y1, z0, z1),
+            "YMIN": (x0, x1, y0, y0, z0, z1),
+            "YMAX": (x0, x1, y1, y1, z0, z1),
+            "ZMIN": (x0, x1, y0, y1, z0, z0),
+            "ZMAX": (x0, x1, y0, y1, z1, z1),
+        }
 
         emissivity = hs.get("emissivity", 1.0)
-        lines.append(
-            f"&SURF ID='radiation',\n"
-            f"      NET_HEAT_FLUX={Q_kw:.2f},\n"
-            f"      EMISSIVITY={emissivity:.2f},\n"
-            f"      COLOR='ORANGE' /\n\n"
-        )
+        rad_faces = {f for f in fluxes if f != "ZMIN"}
+        for face_name in sorted(rad_faces):
+            face_flux = fluxes[face_name]
+            surf_id = f"radiation_{face_name}"
+            lines.append(
+                f"&SURF ID='{surf_id}',\n"
+                f" NET_HEAT_FLUX={face_flux:.2f},\n"
+                f" EMISSIVITY={emissivity:.2f},\n"
+                f" COLOR='ORANGE' /\n\n"
+            )
 
         lines.append("! Heat source boundary VENTs\n")
-        if azimuth == 90:
-            rad_face = "XMAX"
-        elif azimuth == 180:
-            rad_face = "YMIN"
-        elif azimuth == 270:
-            rad_face = "XMIN"
-        else:
-            rad_face = "YMAX"
-        face_xb = {
-            "XMIN": ("OPEN", x0, x0, y0, y1, z0, z1),
-            "XMAX": ("OPEN", x1, x1, y0, y1, z0, z1),
-            "YMIN": ("OPEN", x0, x1, y0, y0, z0, z1),
-            "YMAX": ("OPEN", x0, x1, y1, y1, z0, z1),
-            "ZMIN": ("OPEN", x0, x1, y0, y1, z0, z0),
-            "ZMAX": ("OPEN", x0, x1, y0, y1, z1, z1),
-        }
-        face_xb[rad_face] = ("radiation", *face_xb[rad_face][1:])
-        for face_name in ("XMIN", "XMAX", "YMIN", "YMAX", "ZMIN", "ZMAX"):
-            surf, x1, x2, y1, y2, z1, z2 = face_xb[face_name]
-            extra = ", DEVC_ID='TIMER->OUT'" if surf == "radiation" else ""
+        has_timer = duration > 0
+        all_domain_faces = ("XMIN", "XMAX", "YMIN", "YMAX", "ZMIN", "ZMAX")
+        for face_name in all_domain_faces:
+            if face_name in rad_faces:
+                surf_id = f"radiation_{face_name}"
+                extra = ", DEVC_ID='TIMER->OUT'" if has_timer else ""
+            else:
+                surf_id = "OPEN"
+                extra = ""
+            xb = face_xb[face_name]
             lines.append(
-                f"&VENT ID='Domain Vent [{face_name}]', SURF_ID='{surf}'{extra}, "
-                f"XB={x1:.2f},{x2:.2f},{y1:.2f},{y2:.2f},{z1:.2f},{z2:.2f} /\n"
+                f"&VENT ID='Domain Vent [{face_name}]', SURF_ID='{surf_id}'{extra}, "
+                f"XB={xb[0]:.2f},{xb[1]:.2f},{xb[2]:.2f},{xb[3]:.2f},{xb[4]:.2f},{xb[5]:.2f} /\n"
             )
         lines.append("\n")
 
@@ -1039,7 +1042,7 @@ class FDSGenerator:
         domain_d = domain[3] - domain[2]
         domain_h = domain[5] - domain[4]
 
-        max_cells_per_mesh = 250000  # 每个mesh最大网格数
+        max_cells_per_mesh = 100000  # 每个mesh目标网格数(降低以利用多核)
         max_total_cells = 1000000  # 总网格上限
         max_meshes = 4  # 最大mesh数
         
@@ -1059,9 +1062,11 @@ class FDSGenerator:
 
         num_meshes = 1
         if nx * ny * nz > max_cells_per_mesh:
-            # 单个mesh超限,需要拆分
+            # 多个mesh以提高并行度
             num_meshes = math.ceil((nx * ny * nz) / max_cells_per_mesh)
             num_meshes = min(num_meshes, max_meshes)
+            if num_meshes >= 3:
+                num_meshes = 4  # snap到4格(2×2),匹配generate()输出
 
         domain = [round(x) for x in domain]
         nx = max(10, math.ceil(domain_w / grid_size))
@@ -1115,6 +1120,7 @@ class FDSGenerator:
 
         # MESH
         domain, grid_size, num_meshes = self._compute_mesh()
+        self._num_meshes = num_meshes  # 保存供启动时查询 MPI 进程数
         domain_w = domain[1] - domain[0]
         domain_d = domain[3] - domain[2]
         domain_h = domain[5] - domain[4]
@@ -1125,6 +1131,7 @@ class FDSGenerator:
         lines.append("! ========== 计算域 ==========\n")
         timer_x = (domain[0] + domain[1]) / 2
         timer_z = max(1.0, domain[4] + 1.0)
+
         if num_meshes == 1:
             timer_y = (domain[2] + domain[3]) / 2
             lines.append(
@@ -1133,13 +1140,12 @@ class FDSGenerator:
                 f"{domain[2]:.2f},{domain[3]:.2f},"
                 f"{domain[4]:.2f},{domain[5]:.2f} /\n\n"
             )
-        else:
-            lines.append("! 分割为多个网格以避免内存溢出\n")
+        elif num_meshes == 2:
+            lines.append("! 分割为 2 个网格 (Y 方向)\n")
             half_ny = ny // 2
             ny1 = half_ny
             ny2 = ny - half_ny
             y_mid = domain[2] + half_ny * grid_size
-            # Timer goes in Mesh01 center
             timer_y = (domain[2] + y_mid) / 2
             lines.append(
                 f"&MESH ID='Mesh01', IJK={nx},{ny1},{nz}, "
@@ -1150,6 +1156,44 @@ class FDSGenerator:
             lines.append(
                 f"&MESH ID='Mesh02', IJK={nx},{ny2},{nz}, "
                 f"XB={domain[0]:.2f},{domain[1]:.2f},"
+                f"{y_mid:.2f},{domain[3]:.2f},"
+                f"{domain[4]:.2f},{domain[5]:.2f} /\n\n"
+            )
+        else:
+            # num_meshes >= 3 → 2×2 网格划分 (X 和 Y 双向分割)
+            lines.append("! 分割为 4 个网格 (X×Y 双向分割) 以充分利用多核 MPI\n")
+            half_nx = nx // 2
+            half_ny = ny // 2
+            nx1 = half_nx
+            nx2 = nx - half_nx
+            ny1 = half_ny
+            ny2 = ny - half_ny
+            x_mid = domain[0] + half_nx * grid_size
+            y_mid = domain[2] + half_ny * grid_size
+            # Timer 放在 Mesh01 (左下象限) 中心
+            timer_x = (domain[0] + x_mid) / 2
+            timer_y = (domain[2] + y_mid) / 2
+            lines.append(
+                f"&MESH ID='Mesh01', IJK={nx1},{ny1},{nz}, "
+                f"XB={domain[0]:.2f},{x_mid:.2f},"
+                f"{domain[2]:.2f},{y_mid:.2f},"
+                f"{domain[4]:.2f},{domain[5]:.2f} /\n"
+            )
+            lines.append(
+                f"&MESH ID='Mesh02', IJK={nx2},{ny1},{nz}, "
+                f"XB={x_mid:.2f},{domain[1]:.2f},"
+                f"{domain[2]:.2f},{y_mid:.2f},"
+                f"{domain[4]:.2f},{domain[5]:.2f} /\n"
+            )
+            lines.append(
+                f"&MESH ID='Mesh03', IJK={nx1},{ny2},{nz}, "
+                f"XB={domain[0]:.2f},{x_mid:.2f},"
+                f"{y_mid:.2f},{domain[3]:.2f},"
+                f"{domain[4]:.2f},{domain[5]:.2f} /\n"
+            )
+            lines.append(
+                f"&MESH ID='Mesh04', IJK={nx2},{ny2},{nz}, "
+                f"XB={x_mid:.2f},{domain[1]:.2f},"
                 f"{y_mid:.2f},{domain[3]:.2f},"
                 f"{domain[4]:.2f},{domain[5]:.2f} /\n\n"
             )
@@ -1212,7 +1256,7 @@ class FDSGenerator:
                     self._generate_firewalls(b, story, lines)
 
                 # Combustibles (FC-level + story-level)
-                self._generate_combustibles(b, story, lines, grid_size=grid_size)
+                self._generate_combustibles(b, story, si, lines, grid_size=grid_size)
                 self._generate_story_combustibles(b, story, lines, grid_size=grid_size)
 
             # Roof: use the last story's roof
@@ -1252,10 +1296,109 @@ class FDSGenerator:
                     )
             lines.append("\n")
 
+        # Window heat flux probe — 暂时移除,探针坐标与网格边界存在偏差需后续调试
+        # self._generate_window_flux_probe(lines)
+
         # TAIL
         lines.append("&TAIL /\n")
 
         return "".join(lines)
+
+    # ------------------------------------------------------------------
+    # Window heat flux probe (nearest opening to radiation source)
+    # ------------------------------------------------------------------
+    def _generate_window_flux_probe(self, lines):
+        """Place an INCIDENT HEAT FLUX probe at the door/window nearest the radiation source.
+
+        The probe sits at the center of the opening on the radiation-facing wall,
+        allowing the simulation to report actual incident flux reaching that opening.
+        The result is written to ``*_devc.csv`` and picked up by the UI panel.
+        """
+        hs = self.bg.heat_source
+        azimuth = hs.get("azimuth", 0)
+        if not self.bg.buildings:
+            return
+
+        # Get domain bounds to locate radiation source plane
+        domain, _, _ = self._compute_mesh()
+        x0, x1, y0, y1, z0, z1 = domain
+
+        # Determine radiation-facing direction
+        # azimuth 0° → YMAX (north), 90° → XMAX (east), 180° → YMIN (south), 270° → XMIN (west)
+        rad_wall = "y_max"
+        rad_plane_coord = y1
+        if azimuth == 90:
+            rad_wall = "x_max"
+            rad_plane_coord = x1
+        elif azimuth == 180:
+            rad_wall = "y_min"
+            rad_plane_coord = y0
+        elif azimuth == 270:
+            rad_wall = "x_min"
+            rad_plane_coord = x0
+
+        # Collect all exterior openings across all buildings/stories
+        candidates: list[tuple[float, float, float, float, str]] = []
+        for b in self.bg.buildings:
+            ox, L, oy, W = b.boundary
+            for si, story in enumerate(b.stories):
+                story_openings = list(story.openings)
+                story_openings += detect_coplanar_openings(b, story)
+                z0_s = story.z_bottom
+
+                for op in story_openings:
+                    if op.wall != rad_wall:
+                        continue
+                    w_off, w, h_off, h = op.boundary
+                    if rad_wall in ("y_min", "y_max"):
+                        wall_len = L
+                    else:
+                        wall_len = W
+                    if w_off < 0:
+                        w_off = resolve_negative_offset(w_off, w, wall_len)
+                    # Opening center in world coords
+                    if rad_wall == "y_min":
+                        cx = ox + w_off + w / 2
+                        cy = oy
+                        dist = oy - rad_plane_coord  # negative if behind plane
+                    elif rad_wall == "y_max":
+                        cx = ox + w_off + w / 2
+                        cy = oy + W
+                        dist = rad_plane_coord - (oy + W)
+                    elif rad_wall == "x_min":
+                        cx = ox
+                        cy = oy + w_off + w / 2
+                        dist = ox - rad_plane_coord
+                    else:
+                        cx = ox + L
+                        cy = oy + w_off + w / 2
+                        dist = rad_plane_coord - (ox + L)
+                    cz = z0_s + h_off + h / 2
+                    candidates.append((dist, cx, cy, cz, op.type))
+
+        if not candidates:
+            return
+
+        # Pick the one with minimum positive distance to radiation plane
+        valid = [(d, cx, cy, cz, t) for d, cx, cy, cz, t in candidates if d >= 0]
+        if not valid:
+            valid = candidates
+        valid.sort(key=lambda x: x[0])
+        _, cx, cy, cz, otype = valid[0]
+
+        # IOR mapping: gauge faces outward (toward the radiation source)
+        ior_map = {"y_min": -2, "y_max": 2, "x_min": -1, "x_max": 1}
+        ior = ior_map.get(rad_wall, 2)
+
+        lines.append("! ========== 窗口入射热通量探针 ==========\n")
+        # NOTE: 使用 GAUGE HEAT FLUX (气相量) 而非 INCIDENT HEAT FLUX (壁面量),
+        # 因为探针位于洞口中心(空腔),没有固体表面支撑 INCIDENT HEAT FLUX 的计算。
+        # RADIATIVE 是 &SURF 参数,不能用于 &DEVC,会触发 ERROR(101)
+        lines.append(
+            f"&DEVC XYZ={cx:.2f},{cy:.2f},{cz:.2f}, IOR={ior}, "
+            f"QUANTITY='GAUGE HEAT FLUX', "
+            f"ID='window_heat_flux'  ! nearest {otype} to radiation source\n\n"
+        )
 
     # ------------------------------------------------------------------
     # Measurement devices (extracted for prepending)

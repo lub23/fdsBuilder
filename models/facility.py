@@ -54,10 +54,11 @@ class FacilityManager:
         building.update_z_offsets()
         return building
 
-    def load_equivalent(self, facility_name: str, building_name: str, params: dict) -> Building:
-        """Generate a building from equivalent model template + user params"""
+    def load_equivalent(self, facility_name: str, building_name: str, params: dict,
+                        current_offset: tuple[float, float] | None = None) -> Building:
+        """Generate a building from equivalent model template + user params."""
         bdata = self._find_building(facility_name, building_name)
-        return ParameterEngine.generate(bdata, params)
+        return ParameterEngine.generate(bdata, params, current_offset)
 
     def default_params(self, facility_name: str, building_name: str) -> dict:
         """Get default parameter values for an equivalent model building.

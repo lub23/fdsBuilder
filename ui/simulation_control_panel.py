@@ -445,6 +445,20 @@ class SimulationControlPanel(QWidget):
         self.output_text.setMaximumHeight(40)
         layout.addWidget(self.output_text)
 
+        # -- Window heat flux display --
+        flux_row = QHBoxLayout()
+        flux_row.setSpacing(4)
+        self.flux_label = QLabel("窗口热通量: -- kW/m²")
+        self.flux_label.setStyleSheet(
+            "color: #f9e2af; font-size: 12px; font-weight: bold;"
+        )
+        flux_row.addWidget(self.flux_label)
+        self.flux_peak_label = QLabel("峰值: --")
+        self.flux_peak_label.setStyleSheet("color: #a6adc8; font-size: 11px;")
+        flux_row.addWidget(self.flux_peak_label)
+        flux_row.addStretch()
+        layout.addLayout(flux_row)
+
         grp.content_layout.addLayout(layout)
         return grp
 
@@ -539,6 +553,7 @@ class SimulationControlPanel(QWidget):
 
         generator = FDSGenerator(self.model)
         fds_code = generator.generate()
+        num_meshes = getattr(generator, "_num_meshes", 1)
 
         # 写入文件
         try:
@@ -561,7 +576,7 @@ class SimulationControlPanel(QWidget):
 
         # 3. 运行FDS
         self.progress_label.setText("正在运行FDS仿真...")
-        self.output_text.setText(f"执行: {fds_exe}\n文件: {fds_path}")
+        self.output_text.setText(f"网格: {num_meshes} | 执行: {fds_exe}\n文件: {fds_path}")
         self.run_fds_btn.setEnabled(False)
         self.stop_fds_btn.setEnabled(True)
 
@@ -596,12 +611,35 @@ class SimulationControlPanel(QWidget):
                 current_path = d + os.pathsep + current_path
         env.insert("PATH", current_path)
 
-        # Prevent OpenMP / MPI issues on single node
-        env.insert("OMP_NUM_THREADS", "1")
+        # 多核并行：多 MPI 进程 × 多 OpenMP 线程
+        import os as _os
+        cpu_count = len(_os.sched_getaffinity(0)) if hasattr(_os, "sched_getaffinity") else _os.cpu_count() or 1
+        omp_threads = max(1, cpu_count // num_meshes)
+        env.insert("OMP_NUM_THREADS", str(omp_threads))
         env.insert("I_MPI_FABRICS", "shm")
-        self._fds_process.setProcessEnvironment(env)
 
-        self._fds_process.start(fds_exe, [fds_path])
+        # 栈空间：Intel FDS 在栈上分配大数组，默认 8MB 会 segfault
+        import resource
+        try:
+            resource.setrlimit(
+                resource.RLIMIT_STACK,
+                (resource.RLIM_INFINITY, resource.RLIM_INFINITY),
+            )
+        except (ValueError, resource.error):
+            pass
+
+        # 查找 Intel MPI 启动器
+        mpirun = self._find_mpirun(fds_exe)
+
+        if mpirun and num_meshes > 1:
+            args = ["-np", str(num_meshes), fds_exe, fds_path]
+            self.output_text.append(f"MPI 启动: {mpirun} {' '.join(args)}")
+            self._fds_process.setProcessEnvironment(env)
+            self._fds_process.start(mpirun, args)
+        else:
+            self._fds_process.setProcessEnvironment(env)
+            self._fds_process.start(fds_exe, [fds_path])
+            self.progress_label.setText("MPI 不可用，单进程运行")
 
     @staticmethod
     def _collect_fds_lib_dirs(fds_dir: str) -> list:
@@ -659,12 +697,46 @@ class SimulationControlPanel(QWidget):
         if user_path and os.path.exists(user_path):
             return user_path
 
-        # 尝试从PATH中查找
+        # 尝试从PATH中查找 (跨平台: Windows用where, Linux/macOS用which)
         try:
-            result = subprocess.run(["where", "fds"], capture_output=True, text=True)
+            cmd = "where" if os.name == "nt" else "which"
+            result = subprocess.run([cmd, "fds"], capture_output=True, text=True)
             if result.returncode == 0:
                 return result.stdout.strip().split("\n")[0]
         except:
+            pass
+
+        return None
+
+    @staticmethod
+    def _find_mpirun(fds_exe: str | None = None) -> str | None:
+        """查找 Intel MPI mpirun，优先 fds 同级 INTEL 目录"""
+        # 优先：fds_exe 同级 INTEL/bin/mpirun
+        if fds_exe:
+            fds_dir = os.path.dirname(os.path.abspath(fds_exe))
+            candidates = [
+                os.path.join(fds_dir, "INTEL", "bin", "mpirun"),
+                os.path.join(fds_dir, "..", "INTEL", "bin", "mpirun"),
+            ]
+            for c in candidates:
+                norm = os.path.normpath(c)
+                if os.path.isfile(norm) and os.access(norm, os.X_OK):
+                    return norm
+
+        # I_MPI_ROOT 环境变量
+        impi_root = os.environ.get("I_MPI_ROOT")
+        if impi_root:
+            c = os.path.join(impi_root, "bin", "mpirun")
+            if os.path.isfile(c) and os.access(c, os.X_OK):
+                return c
+
+        # PATH 中的 mpirun
+        try:
+            cmd = "where" if os.name == "nt" else "which"
+            result = subprocess.run([cmd, "mpirun"], capture_output=True, text=True)
+            if result.returncode == 0:
+                return result.stdout.strip().split("\n")[0]
+        except Exception:
             pass
 
         return None
@@ -682,6 +754,61 @@ class SimulationControlPanel(QWidget):
                 self.progress_label.setText(lines[-1][:100])
                 self.output_text.setText("\n".join(lines[-5:]))
 
+    def _parse_window_flux(self):
+        """Parse `*_devc.csv` for the `window_heat_flux` channel."""
+        work_dir = getattr(self, "_current_fds_path", None)
+        if not work_dir:
+            return
+        work_dir = os.path.dirname(work_dir)
+        import glob
+        csv_files = glob.glob(os.path.join(work_dir, "*_devc.csv"))
+        if not csv_files:
+            return
+        try:
+            with open(csv_files[0], "r") as f:
+                lines = f.readlines()
+            if len(lines) < 2:
+                return
+            header = [h.strip() for h in lines[0].split(",")]
+            # Find window_heat_flux column index
+            col = None
+            for i, h in enumerate(header):
+                if "window_heat_flux" in h or "WINDOW_HEAT_FLUX" in h:
+                    col = i
+                    break
+            if col is None:
+                return
+            # Parse last few rows for current and peak value
+            values = []
+            for row in lines[1:]:
+                parts = row.split(",")
+                if len(parts) > col:
+                    try:
+                        v = float(parts[col])
+                        values.append(v)
+                    except ValueError:
+                        pass
+            if values:
+                latest = values[-1]
+                peak = max(values)
+                self.flux_label.setText(f"窗口热通量: {latest:.1f} kW/m²")
+                self.flux_peak_label.setText(f"峰值: {peak:.1f} kW/m²")
+                # Color-code: yellow for moderate, red for high
+                if peak > 100:
+                    self.flux_label.setStyleSheet(
+                        "color: #f38ba8; font-size: 12px; font-weight: bold;"
+                    )
+                elif peak > 20:
+                    self.flux_label.setStyleSheet(
+                        "color: #f9e2af; font-size: 12px; font-weight: bold;"
+                    )
+                else:
+                    self.flux_label.setStyleSheet(
+                        "color: #a6e3a1; font-size: 12px; font-weight: bold;"
+                    )
+        except Exception:
+            pass
+
     def _on_fds_finished(self, exit_code, exit_status):
         """FDS完成"""
         self.run_fds_btn.setEnabled(True)
@@ -689,6 +816,7 @@ class SimulationControlPanel(QWidget):
 
         if exit_code == 0:
             self.progress_label.setText("仿真完成!")
+            self._parse_window_flux()
         else:
             # Decode Windows NTSTATUS codes
             hint = ""
@@ -757,21 +885,31 @@ class SimulationControlPanel(QWidget):
         if user_path and os.path.exists(user_path):
             return user_path
 
+        # 跨平台: Windows用where, Linux/macOS用which
+        try:
+            cmd = "where" if os.name == "nt" else "which"
+            result = subprocess.run(
+                [cmd, "smokeview"], capture_output=True, text=True
+            )
+            if result.returncode == 0:
+                return result.stdout.strip().split("\n")[0]
+        except:
+            pass
+
+        # Windows 常见安装路径
         common_paths = [
             "smokeview",
             "C:/Program Files/FDS/Smokeview/bin/smokeview.exe",
             "C:/Program Files (x86)/FDS/Smokeview/bin/smokeview.exe",
             "C:/FDS/Smokeview/bin/smokeview.exe",
         ]
-
-        try:
-            result = subprocess.run(
-                ["where", "smokeview"], capture_output=True, text=True
-            )
-            if result.returncode == 0:
-                return result.stdout.strip().split("\n")[0]
-        except:
-            pass
+        # Linux 常见安装路径
+        if os.name != "nt":
+            common_paths += [
+                "/usr/local/bin/smokeview",
+                "/usr/bin/smokeview",
+                "/opt/fds/bin/smokeview",
+            ]
 
         for path in common_paths:
             if os.path.exists(path):

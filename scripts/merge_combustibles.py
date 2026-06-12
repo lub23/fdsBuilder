@@ -158,6 +158,82 @@ MERGE_MAP: dict[str, str] = {
 # Keys to keep (any key NOT in this set as a value in the map will be removed)
 KEEP_KEYS = set(MERGE_MAP.values())
 
+# ── Per-Facility Merge Map (second round: 5-6 types per facility) ──────────
+# Each facility maps some post-merge keys into broader retained keys.
+# KEY = filename stem (without .json)
+PER_FACILITY_MERGE: dict[str, dict[str, str]] = {
+    "aerospace": {
+        "PLASTIC_PACKAGING": "PAPER_STACK",
+        "ELECTRICAL_EQUIPMENT": "CABLE_BUNDLE",
+        "WOODEN_FURNITURE": "WOODEN_PALLET",
+        "LIGHTWEIGHT_PARTITION": "WOODEN_PALLET",
+        "LUBE_OIL_DRUM": "ORGANIC_SOLVENT_DRUM",
+        "LIQUID_FUEL_DRUM": "ORGANIC_SOLVENT_DRUM",
+        "RUBBER_MATERIAL": "CABLE_BUNDLE",
+    },
+    "airport_hangar": {
+        "PLASTIC_PACKAGING": "PAPER_STACK",
+        "WOODEN_FURNITURE": "WOODEN_PALLET",
+        "LIGHTWEIGHT_PARTITION": "WOODEN_PALLET",
+        "LUBE_OIL_DRUM": "ORGANIC_SOLVENT_DRUM",
+        "TEXTILE_ROLL": "PAPER_STACK",
+        "SURFACE_COATING_LAYER": "PAPER_STACK",
+    },
+    "alcoa": {
+        "LUBE_OIL_DRUM": "HYDRAULIC_TANK",
+        "CHEMICAL_DRUM": "HYDRAULIC_TANK",
+        "LAB_EQUIPMENT": "CABLE_BUNDLE",
+    },
+    "frymaster_corporation": {},
+    "gleason_cutting_tools_corporation": {},
+    "harbison_fischer": {
+        "ORGANIC_SOLVENT_DRUM": "LUBE_OIL_DRUM",
+        "TEXTILE_ROLL": "PAPER_STACK",
+    },
+    "machinery_manufacturing": {
+        "WOODEN_FURNITURE": "PAPER_STACK",
+        "TEXTILE_ROLL": "PAPER_STACK",
+        "ORGANIC_SOLVENT_DRUM": "LUBE_OIL_DRUM",
+        "OILY_SLUDGE_CONTAINER": "LUBE_OIL_DRUM",
+        "CHEMICAL_DRUM": "LUBE_OIL_DRUM",
+        "RUBBER_MATERIAL": "ELECTRICAL_EQUIPMENT",
+        "COMBUSTIBLE_GAS_CYLINDER": "METAL_DUST_COLLECTOR",
+    },
+    "materion_buffalo": {
+        "WOODEN_FURNITURE": "WOODEN_PALLET",
+        "TEXTILE_ROLL": "PAPER_STACK",
+        "RUBBER_MATERIAL": "PLASTIC_PACKAGING",
+        "ORGANIC_SOLVENT_DRUM": "LUBE_OIL_DRUM",
+    },
+    "materion_newton": {},
+    "metallurgical_facilities": {
+        "COAL_STACK": "CARBON_MATERIAL_STACK",
+        "COAL_DUST_HOPPER": "CARBON_MATERIAL_STACK",
+        "COMBUSTIBLE_GAS_CYLINDER": "METAL_DUST_COLLECTOR",
+        "WOODEN_FURNITURE": "PAPER_STACK",
+        "TEXTILE_ROLL": "PAPER_STACK",
+        "PLASTIC_PACKAGING": "PAPER_STACK",
+        "SURFACE_COATING_LAYER": "PAPER_STACK",
+        "ORGANIC_SOLVENT_DRUM": "LUBE_OIL_DRUM",
+        "LIQUID_FUEL_DRUM": "LUBE_OIL_DRUM",
+        "RUBBER_MATERIAL": "ELECTRICAL_EQUIPMENT",
+    },
+    "warrick_power_plant": {
+        "ELECTRICAL_EQUIPMENT": "CABLE_BUNDLE",
+        "OFFICE_SUPPLIES": "PAPER_STACK",
+        "WOODEN_FURNITURE": "PAPER_STACK",
+        "DECORATION_MATERIAL": "PAPER_STACK",
+        "EMERGENCY_SUPPLIES": "PAPER_STACK",
+        "ORGANIC_SOLVENT_DRUM": "LUBE_OIL_DRUM",
+        "CHEMICAL_DRUM": "LUBE_OIL_DRUM",
+        "DIESEL_DRUM": "LUBE_OIL_DRUM",
+        "PLASTIC_PACKAGING": "RUBBER_MATERIAL",
+        "HYDRAULIC_TANK": "OIL_TRANSFORMER",
+        "COAL_STACK": "WOODEN_PALLET",
+        "COAL_DUST_HOPPER": "WOODEN_PALLET",
+    },
+}
+
 # ── Part 1: Remove old keys from COMBUSTIBLE_LIBRARY in materials.py ───────
 
 
@@ -246,8 +322,12 @@ def remove_keys_from_library():
 # ── Part 2: Transform facility JSONs ──────────────────────────────────────
 
 
-def _merge_combustibles(entries: list) -> list | None:
-    """Replace old keys, sum counts for duplicates. Returns None if no change."""
+def _merge_combustibles(entries: list, extra_map: dict[str, str] | None = None) -> list | None:
+    """Replace old keys, sum counts for duplicates. Returns None if no change.
+
+    First applies the global MERGE_MAP, then the optional extra_map
+    (used for per-facility second-round merges).
+    """
     if not entries:
         return None
 
@@ -258,6 +338,8 @@ def _merge_combustibles(entries: list) -> list | None:
     for entry in entries:
         old_key = entry.get("key", "")
         new_key = MERGE_MAP.get(old_key, old_key)
+        if extra_map:
+            new_key = extra_map.get(new_key, new_key)
         if new_key != old_key:
             changed = True
 
@@ -280,29 +362,29 @@ def _merge_combustibles(entries: list) -> list | None:
     return result
 
 
-def _process_story(story: dict) -> bool:
+def _process_story(story: dict, extra_map: dict[str, str] | None = None) -> bool:
     """Process combustibles in a single story dict. Returns True if modified."""
     modified = False
 
-    story_comb = _merge_combustibles(story.get("combustibles", []))
+    story_comb = _merge_combustibles(story.get("combustibles", []), extra_map)
     if story_comb is not None:
         story["combustibles"] = story_comb
         modified = True
 
     for fc in story.get("fire_compartments", []):
-        fc_comb = _merge_combustibles(fc.get("combustibles", []))
+        fc_comb = _merge_combustibles(fc.get("combustibles", []), extra_map)
         if fc_comb is not None:
             fc["combustibles"] = fc_comb
             modified = True
 
     for fcr in story.get("fire_compartment_ratios", []):
-        fcr_comb = _merge_combustibles(fcr.get("combustibles", []))
+        fcr_comb = _merge_combustibles(fcr.get("combustibles", []), extra_map)
         if fcr_comb is not None:
             fcr["combustibles"] = fcr_comb
             modified = True
 
         for fc in fcr.get("fire_compartments", []):
-            fc_comb = _merge_combustibles(fc.get("combustibles", []))
+            fc_comb = _merge_combustibles(fc.get("combustibles", []), extra_map)
             if fc_comb is not None:
                 fc["combustibles"] = fc_comb
                 modified = True
@@ -315,14 +397,18 @@ def transform_json(filepath: Path) -> bool:
     with open(filepath, "r", encoding="utf-8") as f:
         data = json.load(f)
 
+    # Per-facility merge map (second-round: 5-6 types per facility)
+    fname = filepath.stem  # e.g. "aerospace", "alcoa"
+    extra_map = PER_FACILITY_MERGE.get(fname, {})
+
     modified = False
 
     for building in data.get("buildings", []):
         for story in building.get("stories", []):
-            if _process_story(story):
+            if _process_story(story, extra_map):
                 modified = True
         for story in building.get("stories_template", []):
-            if _process_story(story):
+            if _process_story(story, extra_map):
                 modified = True
 
     if modified:
@@ -333,50 +419,56 @@ def transform_json(filepath: Path) -> bool:
     return modified
 
 
+def _get_comb_keys(text: str) -> set[str]:
+    """Extract all distinct combustible keys from JSON text."""
+    import re
+    return set(re.findall(r'"key":\s*"([A-Z_]+)"', text))
+
+
 def transform_all_jsons():
-    """Transform all facility JSONs."""
+    """Transform all facility JSONs (applies global + per-facility merge maps)."""
     facilities_dir = ROOT / "facilities"
     modified_count = 0
-    total_entries_removed = 0
+    total_merged_types = 0
 
-    for fpath in sorted(glob.glob(str(facilities_dir / "*.json"))):
-        before_keys = set()
-        with open(fpath, "r", encoding="utf-8") as f:
-            text = f.read()
-        # Count old keys in combustibles context (rough measurement)
-        for old_key in MERGE_MAP:
-            if old_key != MERGE_MAP[old_key] and f'"key": "{old_key}"' in text:
-                before_keys.add(old_key)
+    for fpath_str in sorted(glob.glob(str(facilities_dir / "*.json"))):
+        fpath = Path(fpath_str)
+        text = fpath.read_text(encoding="utf-8")
+        before_keys = _get_comb_keys(text)
+        before_count = len(before_keys)
 
         modified = transform_json(fpath)
 
-        after_keys = set()
-        text2 = Path(fpath).read_text(encoding="utf-8")
-        for old_key in MERGE_MAP:
-            if old_key != MERGE_MAP[old_key] and f'"key": "{old_key}"' in text2:
-                after_keys.add(old_key)
+        text2 = fpath.read_text(encoding="utf-8")
+        after_keys = _get_comb_keys(text2)
+        after_count = len(after_keys)
 
-        json_name = Path(fpath).name
-        if before_keys:
-            removed = before_keys - after_keys
-            print(f"  {json_name}: removed {len(removed)} old key types ({len(before_keys)} → {len(after_keys)})")
+        json_name = fpath.name
+        if modified:
+            fname = fpath.stem
+            extra = PER_FACILITY_MERGE.get(fname, {})
+            extra_desc = f" (per-facility: {len(extra)} mappings)" if extra else ""
+            print(f"  {json_name}: {before_count} → {after_count} combustible types{extra_desc}")
+            if before_count - after_count > 0:
+                merged_types = before_keys - after_keys
+                print(f"           merged: {sorted(merged_types)}")
             modified_count += 1
-            total_entries_removed += len(removed)
-        elif modified:
-            print(f"  {json_name}: modified (counts merged)")
+            total_merged_types += before_count - after_count
+        else:
+            print(f"  {json_name}: unchanged ({before_count} types)")
 
-    print(f"  Total JSON files modified: {modified_count}")
+    print(f"  Files modified: {modified_count}, total type reduction: {total_merged_types}")
 
 
 # ── Main ──────────────────────────────────────────────────────────────────
 
 
 def main():
-    print("=== Step 1: Removing merged keys from COMBUSTIBLE_LIBRARY ===")
+    print("=== Step 1: Removing orphan keys from COMBUSTIBLE_LIBRARY ===")
     remove_keys_from_library()
 
     print()
-    print("=== Step 2: Updating facility JSON files ===")
+    print("=== Step 2: Applying per-facility second-round merges ===")
     transform_all_jsons()
 
     print()

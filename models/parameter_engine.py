@@ -34,7 +34,8 @@ class ParameterEngine:
     # Public generator
     # ------------------------------------------------------------------
     @staticmethod
-    def generate(template_building: dict, params: dict) -> Building:
+    def generate(template_building: dict, params: dict,
+                 current_offset: tuple[float, float] | None = None) -> Building:
         """Expand a template building dict into a fully formed Building.
 
         Args:
@@ -42,6 +43,8 @@ class ParameterEngine:
                 ``stories_template``, ``*_range`` fields, etc.
             params: concrete parameters, e.g.
                 ``{"length": 85.0, "width": 32.5, "height": 10.0, "stories": 3}``
+            current_offset: optional (offset_x, offset_y) to preserve
+                existing building position; otherwise uses template boundary.
 
         Returns:
             A Building instance with stories, fire compartments, openings,
@@ -73,10 +76,14 @@ class ParameterEngine:
             story = Story.from_dict(story_dict)
             stories.append(story)
 
-        # Read boundary offset from template
+        # Read boundary offset from template or preserve existing
         template_boundary = template_building.get("boundary", [0, 0, 0, 0])
-        offset_x = template_boundary[0]
-        offset_y = template_boundary[2] if len(template_boundary) > 2 else 0
+        if current_offset is not None:
+            offset_x = current_offset[0]
+            offset_y = current_offset[1]
+        else:
+            offset_x = template_boundary[0]
+            offset_y = template_boundary[2] if len(template_boundary) > 2 else 0
 
         building = Building(
             name=template_building.get("name", ""),

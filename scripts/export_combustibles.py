@@ -27,6 +27,7 @@ LOCATION_COLUMNS = [
     "热释放速率(kW/m²)", "点燃温度(°C)",
     "密度(kg/m³)", "导热系数(W/m·K)", "比热(kJ/kg·K)",
     "燃烧热(kJ/kg)", "参考温度(°C)", "出现位置",
+    "组成部件",  # only populated for specialized_components
 ]
 
 
@@ -144,6 +145,25 @@ def _locations_str(locs: set[str]) -> str:
     return "\n".join(sorted(locs))
 
 
+def _sc_parts_summary(sc_key: str) -> str:
+    """Build a concise parts summary string for a specialized component key."""
+    comp = SPECIALIZED_COMPONENTS.get(sc_key)
+    if comp is None or not comp.parts:
+        return ""
+    seen: dict[str, int] = {}
+    for p in comp.parts:
+        mk = p.material_key
+        if mk in COMBUSTIBLE_LIBRARY:
+            label = COMBUSTIBLE_LIBRARY[mk].get("name", mk)
+        else:
+            label = mk
+        seen[label] = seen.get(label, 0) + 1
+    return "、".join(
+        f"{name}({count})" if count > 1 else name
+        for name, count in sorted(seen.items())
+    )
+
+
 def _group_by_key(entries: list[dict]) -> list[dict]:
     """Group entries by (key, typ). Same combustible species => one output row
     with total count and all locations aggregated."""
@@ -169,6 +189,7 @@ def _group_by_key(entries: list[dict]) -> list[dict]:
 
     rows: list[dict] = []
     for g in groups.values():
+        parts = _sc_parts_summary(g["key"]) if g["typ"] == "specialized_component" else ""
         rows.append({
             "名称": g["name"],
             "英文Key": g["key"],
@@ -185,8 +206,10 @@ def _group_by_key(entries: list[dict]) -> list[dict]:
             "燃烧热(kJ/kg)": g["heat_of_combustion"],
             "参考温度(°C)": g["ref_temp"],
             "出现位置": _locations_str(g["locations"]),
+            "组成部件": parts,
         })
-    rows.sort(key=lambda r: r["英文Key"])
+    # sort: combustibles first (by key), then SC (by key)
+    rows.sort(key=lambda r: (1 if r["类型"] == "specialized_component" else 0, r["英文Key"]))
     return rows
 
 
@@ -194,13 +217,16 @@ def _make_summary_row(rows: list[dict]) -> dict:
     total_count = sum(
         r["总数量"] for r in rows if isinstance(r["总数量"], (int, float))
     )
+    n_comb = sum(1 for r in rows if r["类型"] == "combustible")
+    n_sc = sum(1 for r in rows if r["类型"] == "specialized_component")
     return {
-        "名称": f"合计：{len(rows)} 种可燃物, 共 {total_count} 件",
+        "名称": f"合计：{n_comb} 种可燃物 + {n_sc} 种组件, 共 {total_count} 件",
         "英文Key": "", "类型": "", "总数量": "",
         "长度(m)": "", "宽度(m)": "", "高度(m)": "",
         "热释放速率(kW/m²)": "", "点燃温度(°C)": "",
         "密度(kg/m³)": "", "导热系数(W/m·K)": "", "比热(kJ/kg·K)": "",
         "燃烧热(kJ/kg)": "", "参考温度(°C)": "", "出现位置": "",
+        "组成部件": "",
     }
 
 

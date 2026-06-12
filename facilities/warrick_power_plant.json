@@ -217,24 +217,16 @@
               ],
               "combustibles": [
                 {
-                  "key": "COAL_STACK",
-                  "count": 2
-                },
-                {
-                  "key": "COAL_DUST_HOPPER",
-                  "count": 1
+                  "key": "WOODEN_PALLET",
+                  "count": 3
                 },
                 {
                   "key": "RUBBER_MATERIAL",
                   "count": 2
                 },
                 {
-                  "key": "HYDRAULIC_TANK",
-                  "count": 4
-                },
-                {
                   "key": "OIL_TRANSFORMER",
-                  "count": 1
+                  "count": 5
                 }
               ],
               "specialized_components": [
@@ -282,24 +274,16 @@
               ],
               "combustibles": [
                 {
-                  "key": "COAL_STACK",
-                  "count": 2
-                },
-                {
-                  "key": "COAL_DUST_HOPPER",
-                  "count": 1
+                  "key": "WOODEN_PALLET",
+                  "count": 3
                 },
                 {
                   "key": "RUBBER_MATERIAL",
                   "count": 2
                 },
                 {
-                  "key": "HYDRAULIC_TANK",
-                  "count": 4
-                },
-                {
                   "key": "OIL_TRANSFORMER",
-                  "count": 1
+                  "count": 5
                 }
               ],
               "specialized_components": [
@@ -347,24 +331,16 @@
               ],
               "combustibles": [
                 {
-                  "key": "COAL_STACK",
-                  "count": 2
-                },
-                {
-                  "key": "COAL_DUST_HOPPER",
-                  "count": 1
+                  "key": "WOODEN_PALLET",
+                  "count": 3
                 },
                 {
                   "key": "RUBBER_MATERIAL",
                   "count": 2
                 },
                 {
-                  "key": "HYDRAULIC_TANK",
-                  "count": 4
-                },
-                {
                   "key": "OIL_TRANSFORMER",
-                  "count": 1
+                  "count": 5
                 }
               ],
               "specialized_components": [
@@ -510,16 +486,12 @@
               ],
               "combustibles": [
                 {
-                  "key": "HYDRAULIC_TANK",
-                  "count": 2
+                  "key": "OIL_TRANSFORMER",
+                  "count": 4
                 },
                 {
                   "key": "CABLE_BUNDLE",
                   "count": 12
-                },
-                {
-                  "key": "OIL_TRANSFORMER",
-                  "count": 2
                 }
               ],
               "specialized_components": [
@@ -583,16 +555,12 @@
               ],
               "combustibles": [
                 {
-                  "key": "ELECTRICAL_EQUIPMENT",
-                  "count": 30
+                  "key": "CABLE_BUNDLE",
+                  "count": 40
                 },
                 {
                   "key": "OIL_TRANSFORMER",
                   "count": 20
-                },
-                {
-                  "key": "CABLE_BUNDLE",
-                  "count": 10
                 }
               ],
               "specialized_components": []
@@ -652,11 +620,7 @@
               "combustibles": [
                 {
                   "key": "CABLE_BUNDLE",
-                  "count": 12
-                },
-                {
-                  "key": "ELECTRICAL_EQUIPMENT",
-                  "count": 14
+                  "count": 26
                 },
                 {
                   "key": "OIL_TRANSFORMER",
@@ -804,7 +768,7 @@
               ],
               "combustibles": [
                 {
-                  "key": "HYDRAULIC_TANK",
+                  "key": "OIL_TRANSFORMER",
                   "count": 1
                 }
               ],
@@ -834,7 +798,7 @@
               ],
               "combustibles": [
                 {
-                  "key": "HYDRAULIC_TANK",
+                  "key": "OIL_TRANSFORMER",
                   "count": 2
                 },
                 {
@@ -1036,7 +1000,7 @@
                   "count": 4
                 },
                 {
-                  "key": "HYDRAULIC_TANK",
+                  "key": "OIL_TRANSFORMER",
                   "count": 1
                 }
               ],
@@ -1114,7 +1078,7 @@
                   "count": 6
                 },
                 {
-                  "key": "HYDRAULIC_TANK",
+                  "key": "OIL_TRANSFORMER",
                   "count": 1
                 },
                 {
@@ -1172,7 +1136,7 @@
                   "count": 10
                 },
                 {
-                  "key": "HYDRAULIC_TANK",
+                  "key": "OIL_TRANSFORMER",
                   "count": 2
                 },
                 {
@@ -1230,7 +1194,7 @@
                   "count": 6
                 },
                 {
-                  "key": "ORGANIC_SOLVENT_DRUM",
+                  "key": "LUBE_OIL_DRUM",
                   "count": 20
                 }
               ],
@@ -1287,11 +1251,7 @@
               "combustibles": [
                 {
                   "key": "CABLE_BUNDLE",
-                  "count": 2
-                },
-                {
-                  "key": "ELECTRICAL_EQUIPMENT",
-                  "count": 10
+                  "count": 12
                 }
               ],
               "specialized_components": []
@@ -1341,19 +1301,11 @@
               "combustibles": [
                 {
                   "key": "OIL_TRANSFORMER",
-                  "count": 2
+                  "count": 3
                 },
                 {
                   "key": "CABLE_BUNDLE",
-                  "count": 2
-                },
-                {
-                  "key": "ELECTRICAL_EQUIPMENT",
-                  "count": 4
-                },
-                {
-                  "key": "HYDRAULIC_TANK",
-                  "count": 1
+                  "count": 6
                 }
               ],
               "specialized_components": []
@@ -1473,14 +1425,10 @@
               "combustibles": [
                 {
                   "key": "CABLE_BUNDLE",
-                  "count": 4
+                  "count": 10
                 },
                 {
-                  "key": "ELECTRICAL_EQUIPMENT",
-                  "count": 6
-                },
-                {
-                  "key": "HYDRAULIC_TANK",
+                  "key": "OIL_TRANSFORMER",
                   "count": 2
                 }
               ],
@@ -1606,7 +1554,7 @@
               ],
               "combustibles": [
                 {
-                  "key": "HYDRAULIC_TANK",
+                  "key": "OIL_TRANSFORMER",
                   "count": 2
                 },
                 {
@@ -1686,7 +1634,7 @@
               ],
               "combustibles": [
                 {
-                  "key": "CHEMICAL_DRUM",
+                  "key": "LUBE_OIL_DRUM",
                   "count": 10
                 },
                 {
@@ -1778,12 +1726,8 @@
               ],
               "combustibles": [
                 {
-                  "key": "ELECTRICAL_EQUIPMENT",
-                  "count": 2
-                },
-                {
                   "key": "CABLE_BUNDLE",
-                  "count": 4
+                  "count": 6
                 }
               ],
               "specialized_components": []
@@ -1822,7 +1766,7 @@
               ],
               "combustibles": [
                 {
-                  "key": "OFFICE_SUPPLIES",
+                  "key": "PAPER_STACK",
                   "count": 10
                 }
               ],
@@ -1888,12 +1832,8 @@
               ],
               "combustibles": [
                 {
-                  "key": "DIESEL_DRUM",
-                  "count": 8
-                },
-                {
                   "key": "LUBE_OIL_DRUM",
-                  "count": 10
+                  "count": 18
                 },
                 {
                   "key": "CABLE_BUNDLE",
@@ -1946,7 +1886,7 @@
               ],
               "combustibles": [
                 {
-                  "key": "ELECTRICAL_EQUIPMENT",
+                  "key": "CABLE_BUNDLE",
                   "count": 4
                 },
                 {
@@ -2040,7 +1980,7 @@
               ],
               "combustibles": [
                 {
-                  "key": "HYDRAULIC_TANK",
+                  "key": "OIL_TRANSFORMER",
                   "count": 2
                 },
                 {
@@ -2074,7 +2014,7 @@
               ],
               "combustibles": [
                 {
-                  "key": "CHEMICAL_DRUM",
+                  "key": "LUBE_OIL_DRUM",
                   "count": 20
                 },
                 {
@@ -2148,7 +2088,7 @@
               ],
               "combustibles": [
                 {
-                  "key": "CHEMICAL_DRUM",
+                  "key": "LUBE_OIL_DRUM",
                   "count": 20
                 }
               ],
@@ -2210,7 +2150,7 @@
                   "count": 4
                 },
                 {
-                  "key": "HYDRAULIC_TANK",
+                  "key": "OIL_TRANSFORMER",
                   "count": 2
                 }
               ],
@@ -2281,11 +2221,7 @@
               "combustibles": [
                 {
                   "key": "RUBBER_MATERIAL",
-                  "count": 20
-                },
-                {
-                  "key": "PLASTIC_PACKAGING",
-                  "count": 10
+                  "count": 30
                 }
               ],
               "specialized_components": []
@@ -2334,12 +2270,8 @@
               ],
               "combustibles": [
                 {
-                  "key": "OFFICE_SUPPLIES",
-                  "count": 10
-                },
-                {
                   "key": "PAPER_STACK",
-                  "count": 20
+                  "count": 30
                 }
               ],
               "specialized_components": []
@@ -2425,19 +2357,11 @@
               "combustibles": [
                 {
                   "key": "PAPER_STACK",
-                  "count": 6
-                },
-                {
-                  "key": "WOODEN_FURNITURE",
-                  "count": 10
+                  "count": 16
                 },
                 {
                   "key": "CABLE_BUNDLE",
-                  "count": 6
-                },
-                {
-                  "key": "ELECTRICAL_EQUIPMENT",
-                  "count": 8
+                  "count": 14
                 }
               ],
               "specialized_components": []
@@ -2551,19 +2475,11 @@
               "combustibles": [
                 {
                   "key": "PAPER_STACK",
-                  "count": 10
-                },
-                {
-                  "key": "WOODEN_FURNITURE",
-                  "count": 8
+                  "count": 18
                 },
                 {
                   "key": "CABLE_BUNDLE",
-                  "count": 6
-                },
-                {
-                  "key": "ELECTRICAL_EQUIPMENT",
-                  "count": 10
+                  "count": 16
                 }
               ],
               "specialized_components": []
@@ -2602,7 +2518,7 @@
               ],
               "combustibles": [
                 {
-                  "key": "DECORATION_MATERIAL",
+                  "key": "PAPER_STACK",
                   "count": 1
                 },
                 {
@@ -2666,7 +2582,7 @@
               ],
               "combustibles": [
                 {
-                  "key": "DECORATION_MATERIAL",
+                  "key": "PAPER_STACK",
                   "count": 1
                 },
                 {
@@ -2740,7 +2656,7 @@
               ],
               "combustibles": [
                 {
-                  "key": "DECORATION_MATERIAL",
+                  "key": "PAPER_STACK",
                   "count": 1
                 },
                 {
@@ -2840,11 +2756,11 @@
               ],
               "combustibles": [
                 {
-                  "key": "EMERGENCY_SUPPLIES",
+                  "key": "PAPER_STACK",
                   "count": 8
                 },
                 {
-                  "key": "DIESEL_DRUM",
+                  "key": "LUBE_OIL_DRUM",
                   "count": 6
                 }
               ],
@@ -2904,7 +2820,7 @@
               ],
               "combustibles": [
                 {
-                  "key": "WOODEN_FURNITURE",
+                  "key": "PAPER_STACK",
                   "count": 2
                 },
                 {
@@ -2912,7 +2828,7 @@
                   "count": 2
                 },
                 {
-                  "key": "PLASTIC_PACKAGING",
+                  "key": "RUBBER_MATERIAL",
                   "count": 4
                 }
               ],
@@ -3008,12 +2924,8 @@
               ],
               "combustibles": [
                 {
-                  "key": "DIESEL_DRUM",
-                  "count": 10
-                },
-                {
                   "key": "LUBE_OIL_DRUM",
-                  "count": 12
+                  "count": 22
                 }
               ],
               "specialized_components": []
@@ -3152,7 +3064,7 @@
                   "count": 4
                 },
                 {
-                  "key": "EMERGENCY_SUPPLIES",
+                  "key": "PAPER_STACK",
                   "count": 2
                 }
               ],
@@ -3202,7 +3114,7 @@
               ],
               "combustibles": [
                 {
-                  "key": "ELECTRICAL_EQUIPMENT",
+                  "key": "CABLE_BUNDLE",
                   "count": 4
                 },
                 {
@@ -3588,7 +3500,7 @@
               ],
               "combustibles": [
                 {
-                  "key": "ORGANIC_SOLVENT_DRUM",
+                  "key": "LUBE_OIL_DRUM",
                   "count": 10
                 },
                 {
@@ -3656,7 +3568,7 @@
               ],
               "combustibles": [
                 {
-                  "key": "ORGANIC_SOLVENT_DRUM",
+                  "key": "LUBE_OIL_DRUM",
                   "count": 10
                 },
                 {
@@ -3683,7 +3595,7 @@
               "openings": [],
               "combustibles": [
                 {
-                  "key": "ORGANIC_SOLVENT_DRUM",
+                  "key": "LUBE_OIL_DRUM",
                   "count": 8
                 },
                 {
@@ -3751,7 +3663,7 @@
               ],
               "combustibles": [
                 {
-                  "key": "ORGANIC_SOLVENT_DRUM",
+                  "key": "LUBE_OIL_DRUM",
                   "count": 20
                 },
                 {
@@ -3857,15 +3769,7 @@
               "combustibles": [
                 {
                   "key": "PAPER_STACK",
-                  "count": 1
-                },
-                {
-                  "key": "WOODEN_FURNITURE",
-                  "count": 1
-                },
-                {
-                  "key": "OFFICE_SUPPLIES",
-                  "count": 3
+                  "count": 5
                 },
                 {
                   "key": "CABLE_BUNDLE",
@@ -3909,15 +3813,7 @@
               "combustibles": [
                 {
                   "key": "PAPER_STACK",
-                  "count": 1
-                },
-                {
-                  "key": "WOODEN_FURNITURE",
-                  "count": 1
-                },
-                {
-                  "key": "OFFICE_SUPPLIES",
-                  "count": 3
+                  "count": 5
                 },
                 {
                   "key": "CABLE_BUNDLE",
@@ -3961,15 +3857,7 @@
               "combustibles": [
                 {
                   "key": "PAPER_STACK",
-                  "count": 1
-                },
-                {
-                  "key": "WOODEN_FURNITURE",
-                  "count": 1
-                },
-                {
-                  "key": "OFFICE_SUPPLIES",
-                  "count": 3
+                  "count": 5
                 },
                 {
                   "key": "CABLE_BUNDLE",
@@ -4013,15 +3901,7 @@
               "combustibles": [
                 {
                   "key": "PAPER_STACK",
-                  "count": 1
-                },
-                {
-                  "key": "WOODEN_FURNITURE",
-                  "count": 1
-                },
-                {
-                  "key": "OFFICE_SUPPLIES",
-                  "count": 3
+                  "count": 5
                 },
                 {
                   "key": "CABLE_BUNDLE",
@@ -4065,15 +3945,7 @@
               "combustibles": [
                 {
                   "key": "PAPER_STACK",
-                  "count": 1
-                },
-                {
-                  "key": "WOODEN_FURNITURE",
-                  "count": 1
-                },
-                {
-                  "key": "OFFICE_SUPPLIES",
-                  "count": 3
+                  "count": 5
                 },
                 {
                   "key": "CABLE_BUNDLE",
@@ -4117,15 +3989,7 @@
               "combustibles": [
                 {
                   "key": "PAPER_STACK",
-                  "count": 1
-                },
-                {
-                  "key": "WOODEN_FURNITURE",
-                  "count": 1
-                },
-                {
-                  "key": "OFFICE_SUPPLIES",
-                  "count": 3
+                  "count": 5
                 },
                 {
                   "key": "CABLE_BUNDLE",
@@ -4169,15 +4033,7 @@
               "combustibles": [
                 {
                   "key": "PAPER_STACK",
-                  "count": 1
-                },
-                {
-                  "key": "WOODEN_FURNITURE",
-                  "count": 1
-                },
-                {
-                  "key": "OFFICE_SUPPLIES",
-                  "count": 3
+                  "count": 5
                 },
                 {
                   "key": "CABLE_BUNDLE",
@@ -4230,12 +4086,8 @@
               ],
               "combustibles": [
                 {
-                  "key": "WOODEN_FURNITURE",
-                  "count": 1
-                },
-                {
-                  "key": "OFFICE_SUPPLIES",
-                  "count": 5
+                  "key": "PAPER_STACK",
+                  "count": 6
                 },
                 {
                   "key": "CABLE_BUNDLE",
@@ -4278,12 +4130,8 @@
               ],
               "combustibles": [
                 {
-                  "key": "WOODEN_FURNITURE",
-                  "count": 1
-                },
-                {
-                  "key": "OFFICE_SUPPLIES",
-                  "count": 9
+                  "key": "PAPER_STACK",
+                  "count": 10
                 },
                 {
                   "key": "CABLE_BUNDLE",
@@ -4336,12 +4184,8 @@
               ],
               "combustibles": [
                 {
-                  "key": "WOODEN_FURNITURE",
-                  "count": 1
-                },
-                {
-                  "key": "OFFICE_SUPPLIES",
-                  "count": 9
+                  "key": "PAPER_STACK",
+                  "count": 10
                 },
                 {
                   "key": "CABLE_BUNDLE",
@@ -4404,12 +4248,8 @@
               ],
               "combustibles": [
                 {
-                  "key": "WOODEN_FURNITURE",
-                  "count": 1
-                },
-                {
-                  "key": "OFFICE_SUPPLIES",
-                  "count": 11
+                  "key": "PAPER_STACK",
+                  "count": 12
                 },
                 {
                   "key": "CABLE_BUNDLE",
@@ -4499,19 +4339,11 @@
               "combustibles": [
                 {
                   "key": "PAPER_STACK",
-                  "count": 4
-                },
-                {
-                  "key": "WOODEN_FURNITURE",
-                  "count": 8
+                  "count": 20
                 },
                 {
                   "key": "CABLE_BUNDLE",
                   "count": 10
-                },
-                {
-                  "key": "DECORATION_MATERIAL",
-                  "count": 8
                 },
                 {
                   "key": "RUBBER_MATERIAL",
@@ -4564,12 +4396,8 @@
               ],
               "combustibles": [
                 {
-                  "key": "WOODEN_FURNITURE",
-                  "count": 2
-                },
-                {
-                  "key": "OFFICE_SUPPLIES",
-                  "count": 5
+                  "key": "PAPER_STACK",
+                  "count": 7
                 },
                 {
                   "key": "CABLE_BUNDLE",
@@ -4612,12 +4440,8 @@
               ],
               "combustibles": [
                 {
-                  "key": "WOODEN_FURNITURE",
-                  "count": 2
-                },
-                {
-                  "key": "OFFICE_SUPPLIES",
-                  "count": 5
+                  "key": "PAPER_STACK",
+                  "count": 7
                 },
                 {
                   "key": "CABLE_BUNDLE",
@@ -4660,12 +4484,8 @@
               ],
               "combustibles": [
                 {
-                  "key": "WOODEN_FURNITURE",
-                  "count": 2
-                },
-                {
-                  "key": "OFFICE_SUPPLIES",
-                  "count": 3
+                  "key": "PAPER_STACK",
+                  "count": 5
                 },
                 {
                   "key": "CABLE_BUNDLE",
@@ -4708,12 +4528,8 @@
               ],
               "combustibles": [
                 {
-                  "key": "WOODEN_FURNITURE",
-                  "count": 2
-                },
-                {
-                  "key": "OFFICE_SUPPLIES",
-                  "count": 3
+                  "key": "PAPER_STACK",
+                  "count": 5
                 },
                 {
                   "key": "CABLE_BUNDLE",
@@ -4756,12 +4572,8 @@
               ],
               "combustibles": [
                 {
-                  "key": "WOODEN_FURNITURE",
-                  "count": 2
-                },
-                {
-                  "key": "OFFICE_SUPPLIES",
-                  "count": 3
+                  "key": "PAPER_STACK",
+                  "count": 5
                 },
                 {
                   "key": "CABLE_BUNDLE",
@@ -4804,12 +4616,8 @@
               ],
               "combustibles": [
                 {
-                  "key": "WOODEN_FURNITURE",
-                  "count": 2
-                },
-                {
-                  "key": "OFFICE_SUPPLIES",
-                  "count": 3
+                  "key": "PAPER_STACK",
+                  "count": 5
                 },
                 {
                   "key": "CABLE_BUNDLE",
