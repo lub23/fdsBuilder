@@ -32,6 +32,9 @@ from models.combustibles import SPECIALIZED_COMPONENTS
 # 5cm redundancy expansion in the wall-normal direction for HOLEs
 REDUNDANCY = 0.05
 
+# Stefan-Boltzmann constant in kW/m²/K⁴
+SIGMA_SB = 5.670374419e-11
+
 
 def _get_part_ignition_temp(part, component_ignition_temp: float) -> float:
     """Return effective ignition temperature for a component part.
@@ -981,10 +984,15 @@ class FDSGenerator:
         rad_faces = {f for f in fluxes if f != "ZMIN"}
         for face_name in sorted(rad_faces):
             face_flux = fluxes[face_name]
+            # Convert NET_HEAT_FLUX → equivalent black-body temperature.
+            # TEMP_FRONT is inherently more stable than NET_HEAT_FLUX:
+            # the surface re-radiates and convects, preventing unbounded
+            # temperature escalation that triggers ERROR(374).
+            temp_front = (face_flux / (emissivity * SIGMA_SB)) ** 0.25
             surf_id = f"radiation_{face_name}"
             lines.append(
                 f"&SURF ID='{surf_id}',\n"
-                f" NET_HEAT_FLUX={face_flux:.2f},\n"
+                f" TEMP_FRONT={temp_front:.0f},\n"
                 f" EMISSIVITY={emissivity:.2f},\n"
                 f" COLOR='ORANGE' /\n\n"
             )
