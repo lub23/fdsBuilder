@@ -984,17 +984,16 @@ class FDSGenerator:
         rad_faces = {f for f in fluxes if f != "ZMIN"}
         for face_name in sorted(rad_faces):
             face_flux = fluxes[face_name]
-            # Convert net_heat_flux to fixed surface temperature via
-            # Stefan-Boltzmann: T = (flux / εσ)^¼
+            # Convert net_heat_flux to equivalent fixed surface temperature (K).
+            # Matches FDS example back_wall_test_2.fds pattern:
+            #   TMP_FRONT + TAU_T=0.0 + HEAT_TRANSFER_COEFFICIENT=0.0
+            # No MATL_ID needed - TMP_FRONT directly sets gas-phase temperature at boundary.
             temp_front = (face_flux / (emissivity * SIGMA_SB)) ** 0.25
             surf_id = f"radiation_{face_name}"
             lines.append(
-                f"&SURF ID='{surf_id}',\n"
-                f" MATL_ID='CONCRETE',\n"
-                f" THICKNESS=0.05,\n"
-                f" TEMP_FRONT={temp_front:.0f},\n"
-                f" BACKING='VOID',\n"
-                f" COLOR='ORANGE' /\n\n"
+                f"&SURF ID='{surf_id}', TMP_FRONT={temp_front:.0f}, "
+                f"TAU_T=0.0, EMISSIVITY={emissivity:.2f}, "
+                f"HEAT_TRANSFER_COEFFICIENT=0.0, COLOR='ORANGE' /\n\n"
             )
 
         lines.append("! Heat source boundary VENTs\n")
@@ -1215,11 +1214,14 @@ class FDSGenerator:
         # Materials & Surfaces (must be before heat source SURFs to define CONCRETE)
         self._generate_materials(lines)
 
-        # Heat source (SURF + RAMP + VENT) - 前置方便手动调整
+        # Heat source (SURF + VENT) - 前置方便手动调整
         self._generate_heat_source(lines, timer_x, timer_y, timer_z)
 
         # Output: measurement devices - 前置方便手动调整
         self._generate_devices(lines)
+
+        # Materials & Surfaces (define after heat source: no MATL_ID on radiation SURF)
+        self._generate_materials(lines)
 
         # For each building: geometry
         for bi, b in enumerate(buildings):

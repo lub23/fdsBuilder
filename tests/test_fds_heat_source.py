@@ -1,9 +1,10 @@
 """Integration: FDSGenerator heat-source with multi-face fixed-temperature radiation.
 
 Scheme (2026-06-12):
-- Per-face radiation SURFs named 'radiation_{FACE}' with TEMP_FRONT = equilibrium
+- Per-face radiation SURFs named 'radiation_{FACE}' with TMP_FRONT = equilibrium
   blackbody temperature computed from face flux via T = (flux / εσ)^¼.
-  MATL_ID='CONCRETE', THICKNESS=0.05, BACKING='VOID'.
+  Matches FDS back_wall_test_2.fds pattern: TAU_T=0.0, HEAT_TRANSFER_COEFFICIENT=0.0,
+  EMISSIVITY=1.0. No MATL_ID required (direct temperature boundary).
 - Optional &DEVC ID='TIMER->OUT' (no SETVAL) when duration > 0.
 - Six &VENT ID='Domain Vent [<FACE>]' blocks, XB on the MESH domain boundary.
   Faces with non-zero flux get SURF_ID='radiation_{FACE}', others get 'OPEN'.
@@ -34,10 +35,7 @@ def _bg(azimuth, elevation, flux_mw=3.0, duration=1.36):
 
 
 _SURF_PATTERN = re.compile(
-    r"&SURF ID='(radiation_[^']+)',\s*\n"
-    r"\s*MATL_ID='CONCRETE',\s*\n"
-    r"\s*THICKNESS=0\.05,\s*\n"
-    r"\s*TEMP_FRONT=([\d.\-]+)"
+    r"&SURF ID='(radiation_[^']+)',[^/]*?TMP_FRONT=([\d.\-]+)"
 )
 _VENT_PATTERN = re.compile(
     r"&VENT ID='Domain Vent \[(XMIN|XMAX|YMIN|YMAX|ZMIN|ZMAX)\]',\s*"
@@ -48,14 +46,14 @@ _VENT_PATTERN = re.compile(
 
 
 def _face_fluxes(fds: str) -> dict[str, float]:
-    """Extract per-face flux from generated FDS text via TEMP_FRONT → flux (εσT⁴)."""
-    from generators.fds_generator import SIGMA_SB
+    """Extract per-face flux from generated FDS text via TMP_FRONT → flux (εσT⁴)."""
+    SIGMA_SB = 5.670374419e-11
     out = {}
     for m in _SURF_PATTERN.finditer(fds):
         face = m.group(1).replace("radiation_", "")
-        temp_front = float(m.group(2))
+        t = float(m.group(2))
         # Reverse: flux = εσT⁴ (emissivity=1.0)
-        out[face] = 1.0 * SIGMA_SB * temp_front ** 4
+        out[face] = t ** 4 * SIGMA_SB
     return out
 
 
