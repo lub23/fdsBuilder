@@ -32,9 +32,6 @@ from models.combustibles import SPECIALIZED_COMPONENTS
 # 5cm redundancy expansion in the wall-normal direction for HOLEs
 REDUNDANCY = 0.05
 
-# Stefan-Boltzmann constant in kW/m²/K⁴
-SIGMA_SB = 5.670374419e-11
-
 
 def _get_part_ignition_temp(part, component_ignition_temp: float) -> float:
     """Return effective ignition temperature for a component part.
