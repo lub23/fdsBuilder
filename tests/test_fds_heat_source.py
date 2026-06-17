@@ -236,31 +236,37 @@ class TestCombustibleProbes:
             heat_source={"azimuth": 0, "elevation": 0, "net_heat_flux": 3.0, "duration": 1.36},
         )
 
-    def test_non_burnable_combustible_emits_heat_flux_probe(self):
-        # METAL_PARTS is inert -> radiative heat-flux gauge facing the source.
+    def test_metal_combustible_emits_temperature_and_heat_flux(self):
+        # METAL_PARTS is inert; it still gets BOTH probes above it.
         bg = self._bg_with_combustible("METAL_PARTS")
         fds = FDSGenerator(bg).generate()
-        # No thermocouple should reference the metal item.
-        assert not any(
-            "WALL TEMPERATURE" in ln and "METAL_PARTS" in ln
-            for ln in fds.splitlines()
-        )
+        assert "ID='T_METAL_PARTS_B0S0_000'" in fds
         assert "ID='HF_METAL_PARTS_B0S0_000'" in fds
         # The HF gauge block carries the gas heat-flux quantity + ORIENTATION.
         block = fds.split("ID='HF_METAL_PARTS_B0S0_000'")[0].rsplit("&DEVC", 1)[1]
         assert "RADIATIVE HEAT FLUX GAS" in block
         assert "ORIENTATION=0.000,1.000,0.000" in block
 
-    def test_burnable_combustible_emits_thermocouple(self):
+    def test_burnable_combustible_emits_temperature_and_heat_flux(self):
+        # Burnable fuel now also gets TWO probes: gas temperature + heat flux.
         bg = self._bg_with_combustible("WOODEN_PALLET")
         fds = FDSGenerator(bg).generate()
-        probe = next(
+        t_line = next(
             ln for ln in fds.splitlines()
-            if "&DEVC" in ln and "ID='TC_WOODEN_PALLET_B0S0_000'" in ln
+            if "&DEVC" in ln and "ID='T_WOODEN_PALLET_B0S0_000'" in ln
         )
-        assert "QUANTITY='WALL TEMPERATURE'" in probe
-        assert "IOR=3" in probe
-        assert "ORIENTATION" not in probe
+        assert "QUANTITY='TEMPERATURE'" in t_line
+        assert "ID='HF_WOODEN_PALLET_B0S0_000'" in fds
+
+    def test_no_devc_uses_wall_temperature(self):
+        # The per-item thermocouple (WALL TEMPERATURE DEVC) is gone; only the
+        # BNDF output may still reference that quantity.
+        bg = self._bg_with_combustible("WOODEN_PALLET")
+        fds = FDSGenerator(bg).generate()
+        assert not any(
+            "&DEVC" in ln and "WALL TEMPERATURE" in ln
+            for ln in fds.splitlines()
+        )
 
     def test_specialized_component_emits_heat_flux_probe(self):
         # Single-metal components are inert targets -> heat-flux gauge, no TC.
@@ -292,11 +298,4 @@ class TestCombustibleProbes:
         ids = re.findall(r"\bID='([^']+)'", fds)
         dups = {i for i in ids if ids.count(i) > 1}
         assert not dups, f"duplicate IDs: {sorted(dups)}"
-
-    def test_burnable_item_uses_thermocouple_not_heat_flux(self):
-        # Burnable fuel keeps a surface-temperature thermocouple (no gas gauge).
-        bg = self._bg_with_combustible("WOODEN_PALLET")
-        fds = FDSGenerator(bg).generate()
-        assert "RADIATIVE HEAT FLUX GAS" not in fds
-        assert "TC_WOODEN_PALLET" in fds
 

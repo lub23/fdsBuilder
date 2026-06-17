@@ -154,244 +154,44 @@ class SimulationControlPanel(QWidget):
         g.addWidget(QLabel("时间:"), 0, 0)
         self.sim_time_spin = QDoubleSpinBox()
         self.sim_time_spin.setRange(1, 36000)
-        self.sim_time_spin.setValue(600)
+        self.sim_time_spin.setValue(1800)
         self.sim_time_spin.setSuffix(" s")
         self.sim_time_spin.valueChanged.connect(
             lambda v: self._on_param_changed_debounced("sim")
         )
         g.addWidget(self.sim_time_spin, 0, 1)
 
-        # grid_size 已改为自动调整,不再由用户设置
-        # g.addWidget(QLabel("网格:"), 0, 2)
-        # self.grid_size_spin = QDoubleSpinBox()
-        # self.grid_size_spin.setRange(0.1, 2.0)
-        # self.grid_size_spin.setValue(1.0)
-        # self.grid_size_spin.setSingleStep(0.1)
-        # self.grid_size_spin.setToolTip("网格尺寸 (m)")
-        # self.grid_size_spin.valueChanged.connect(
-        #     lambda v: self._on_param_changed_debounced("sim")
-        # )
-        # g.addWidget(self.grid_size_spin, 0, 3)
-
-        self.output_slices_check = QCheckBox("切片输出")
-        self.output_slices_check.setChecked(True)
-        self.output_slices_check.stateChanged.connect(
-            lambda _: self.on_param_changed("slice_device")
+        g.addWidget(QLabel("网格尺寸:"), 0, 2)
+        self.grid_size_spin = QDoubleSpinBox()
+        self.grid_size_spin.setRange(0.1, 5.0)
+        self.grid_size_spin.setValue(1.0)
+        self.grid_size_spin.setSingleStep(0.1)
+        self.grid_size_spin.setToolTip(
+            "网格尺寸 (m)\n小规模建议 0.5, 中规模 1.0, 大规模 2.0"
         )
-        g.addWidget(self.output_slices_check, 1, 0, 1, 2)
-
-        self.output_devices_check = QCheckBox("测量点输出")
-        self.output_devices_check.setChecked(True)
-        self.output_devices_check.stateChanged.connect(
-            lambda _: self.on_param_changed("slice_device")
+        self.grid_size_spin.valueChanged.connect(
+            lambda _v: self._on_param_changed_debounced("sim")
         )
-        g.addWidget(self.output_devices_check, 1, 2, 1, 2)
+        g.addWidget(self.grid_size_spin, 0, 3)
+
+        g.addWidget(QLabel("切分数:"), 1, 0)
+        self.num_meshes_combo = QComboBox()
+        self.num_meshes_combo.addItems(
+            ["自动 (推荐)", "1 (单核)", "2 (Y 切分)", "4 (2×2 多核)"]
+        )
+        self.num_meshes_combo.setCurrentIndex(0)
+        self.num_meshes_combo.setToolTip(
+            "MESH 切分数.\n"
+            "自动: 由网格总量决定 1/2/4;\n"
+            "4 (2x2): 充分利用多核 CPU 并行计算"
+        )
+        self.num_meshes_combo.currentIndexChanged.connect(
+            lambda _i: self._on_param_changed_debounced("sim")
+        )
+        g.addWidget(self.num_meshes_combo, 1, 1)
 
         grp.content_layout.addLayout(g)
         return grp
-
-    # ── 切片/测量点设置 ─────────────────────────────
-    def _build_slice_device_section(self):
-        grp = CollapsibleGroup("📊 切片 / 测量点")
-        grp.setChecked(True)
-
-        QUANTITIES = [
-            "TEMPERATURE",
-            "HRRPUV",
-            "VELOCITY",
-            "VISIBILITY",
-            "DENSITY",
-            "PRESSURE",
-            "MASS FRACTION",
-        ]
-
-        # ── Default slices info ──
-        self._default_slice_label = QLabel(
-            "默认: PBX=0, PBY=0, PBZ (中层) TEMPERATURE+HRRPUV"
-        )
-        self._default_slice_label.setWordWrap(True)
-        self._default_slice_label.setStyleSheet("color:#a6adc8; font-size:11px;")
-        grp.content_layout.addWidget(self._default_slice_label)
-
-        # ── Custom slices ──
-        sl = QVBoxLayout()
-        sl.setSpacing(3)
-        sl.addWidget(QLabel("自定义切片:"))
-
-        self._slice_rows = []
-        self._slice_container = QVBoxLayout()
-        self._slice_container.setSpacing(2)
-        sl.addLayout(self._slice_container)
-
-        add_slice_btn = QPushButton("+ 添加切片")
-        add_slice_btn.setFixedHeight(30)
-        add_slice_btn.setStyleSheet("QPushButton{font-size:13px; padding:4px 8px;}")
-        add_slice_btn.clicked.connect(self._add_slice_row)
-        sl.addWidget(add_slice_btn)
-
-        grp.content_layout.addLayout(sl)
-
-        # ── Default devices info ──
-        self._default_device_label = QLabel("默认: 可燃物中心 + 各层中部 TEMPERATURE")
-        self._default_device_label.setWordWrap(True)
-        self._default_device_label.setStyleSheet("color:#a6adc8; font-size:11px;")
-        grp.content_layout.addWidget(self._default_device_label)
-
-        # ── Custom devices ──
-        dl = QVBoxLayout()
-        dl.setSpacing(3)
-        dl.addWidget(QLabel("自定义测量点:"))
-
-        self._device_rows = []
-        self._device_container = QVBoxLayout()
-        self._device_container.setSpacing(2)
-        dl.addLayout(self._device_container)
-
-        add_dev_btn = QPushButton("+ 添加测量点")
-        add_dev_btn.setFixedHeight(30)
-        add_dev_btn.setStyleSheet("QPushButton{font-size:13px; padding:4px 8px;}")
-        add_dev_btn.clicked.connect(self._add_device_row)
-        dl.addWidget(add_dev_btn)
-
-        grp.content_layout.addLayout(dl)
-
-        # 添加默认切片行（不可删除）
-        self._add_slice_row(default=True, axis="PBZ", pos=1.5, qty="TEMPERATURE")
-        # 添加默认测量点行（不可删除）
-        self._add_device_row(default=True, x=0.0, y=0.0, z=1.5, qty="TEMPERATURE")
-
-        return grp
-
-    def _add_slice_row(self, default=False, axis="PBX", pos=0.0, qty="TEMPERATURE"):
-        """Add a slice row: axis + position + quantity + remove btn."""
-        row = QHBoxLayout()
-        row.setSpacing(2)
-
-        axis_combo = QComboBox()
-        axis_combo.addItems(["PBX", "PBY", "PBZ"])
-        axis_combo.setCurrentText(axis)
-        axis_combo.setMinimumWidth(60)
-        axis_combo.setEnabled(not default)
-        row.addWidget(axis_combo)
-
-        pos_spin = QDoubleSpinBox()
-        pos_spin.setRange(-500, 500)
-        pos_spin.setDecimals(2)
-        pos_spin.setValue(pos)
-        pos_spin.setSuffix(" m")
-        pos_spin.setMinimumWidth(70)
-        pos_spin.valueChanged.connect(lambda v: self.on_param_changed("slice_device"))
-        row.addWidget(pos_spin)
-        qty_combo = QComboBox()
-        qty_combo.addItems(
-            ["TEMPERATURE", "HRRPUV", "VELOCITY", "VISIBILITY", "DENSITY", "PRESSURE"]
-        )
-        qty_combo.setCurrentText(qty)
-        qty_combo.setMinimumWidth(110)
-        qty_combo.currentIndexChanged.connect(lambda _: self.on_param_changed("slice_device"))
-        row.addWidget(qty_combo)
-
-        del_btn = QPushButton("删除")
-        del_btn.setFixedWidth(60)
-        if default:
-            del_btn.setEnabled(False)
-            del_btn.setStyleSheet("QPushButton{background:#6c7086;color:#cdd6f4;}")
-        else:
-            del_btn.setStyleSheet(
-                "QPushButton{background:#f38ba8;color:#1e1e2e;font-weight:bold;"
-                "padding:2px 8px;border-radius:3px}"
-                "QPushButton:hover{background:#e06080}"
-            )
-        entry = {
-            "layout": row,
-            "axis": axis_combo,
-            "pos": pos_spin,
-            "qty": qty_combo,
-            "default": default,
-        }
-        del_btn.clicked.connect(lambda: self._remove_slice_row(entry))
-        row.addWidget(del_btn)
-
-        self._slice_rows.append(entry)
-        self._slice_container.addLayout(row)
-        axis_combo.currentIndexChanged.connect(lambda _: self.on_param_changed("slice_device"))
-        if not default:
-            self.on_param_changed("slice_device")
-
-    def _remove_slice_row(self, entry):
-        if entry in self._slice_rows:
-            self._slice_rows.remove(entry)
-            layout = entry["layout"]
-            while layout.count():
-                item = layout.takeAt(0)
-                w = item.widget()
-                if w:
-                    w.deleteLater()
-            self._slice_container.removeItem(layout)
-            self.on_param_changed("slice_device")
-
-    def _add_device_row(self, default=False, x=0.0, y=0.0, z=0.0, qty="TEMPERATURE"):
-        """Add a custom device row: X, Y, Z + quantity + remove btn."""
-        row = QHBoxLayout()
-        row.setSpacing(2)
-
-        spins = []
-        for label in ("X:", "Y:", "Z:"):
-            row.addWidget(QLabel(label))
-            sp = QDoubleSpinBox()
-            sp.setRange(-500, 500)
-            sp.setDecimals(2)
-            sp.setValue(0)
-            sp.setFixedWidth(60)
-            sp.valueChanged.connect(lambda v: self.on_param_changed("slice_device"))
-            row.addWidget(sp)
-            spins.append(sp)
-
-        qty = QComboBox()
-        qty.addItems(["TEMPERATURE", "HRRPUV", "VELOCITY", "VISIBILITY"])
-        qty.setFixedWidth(100)
-        qty.currentIndexChanged.connect(lambda _: self.on_param_changed("slice_device"))
-        row.addWidget(qty)
-
-        del_btn = QPushButton("X")
-        del_btn.setFixedSize(28, 28)
-        del_btn.setStyleSheet(
-            "QPushButton{background:#f38ba8;color:#1e1e2e;font-weight:bold;"
-            "font-size:13px;border-radius:3px}"
-            "QPushButton:hover{background:#e06080}"
-        )
-        entry = {"layout": row, "x": spins[0], "y": spins[1], "z": spins[2], "qty": qty}
-        del_btn.clicked.connect(lambda: self._remove_device_row(entry))
-        row.addWidget(del_btn)
-
-        self._device_rows.append(entry)
-        self._device_container.addLayout(row)
-        self.on_param_changed("slice_device")
-
-    def _remove_device_row(self, entry):
-        if entry in self._device_rows:
-            self._device_rows.remove(entry)
-            layout = entry["layout"]
-            while layout.count():
-                item = layout.takeAt(0)
-                w = item.widget()
-                if w:
-                    w.deleteLater()
-            self._device_container.removeItem(layout)
-            self.on_param_changed("slice_device")
-
-    @staticmethod
-    def _clear_custom_rows(rows_list, container_layout):
-        """Remove all dynamically added rows from container."""
-        for entry in list(rows_list):
-            layout = entry["layout"]
-            while layout.count():
-                item = layout.takeAt(0)
-                w = item.widget()
-                if w:
-                    w.deleteLater()
-            container_layout.removeItem(layout)
-        rows_list.clear()
 
     # ── FDS仿真执行 ─────────────────────────────────
     def _build_simulation_run_section(self):
@@ -465,15 +265,14 @@ class SimulationControlPanel(QWidget):
     def setup_ui(self):
         root = QVBoxLayout(self)
         root.setContentsMargins(0, 0, 0, 0)
-        root.setSpacing(0)
+        root.setSpacing(6)
 
         # 添加热源和模拟部分
         root.addWidget(self._build_heat_section())
         root.addWidget(self._build_simulation_section())
-        root.addWidget(self._build_slice_device_section())
         root.addWidget(self._build_simulation_run_section())
-
-        root.addStretch()
+        # No trailing stretch: the right-column splitter gives the FDS
+        # preview all leftover room.
 
     # ── 事件处理 ────────────────────────────────────────
     def _toggle_heat(self, state):
@@ -959,29 +758,10 @@ class SimulationControlPanel(QWidget):
 
             # 模拟设置
             self.sim_time_spin.setValue(model.simulation_time)
-            # grid_size 已改为自动调整,不再由UI设置
-            # self.grid_size_spin.setValue(model.domain.get("grid_size", 1.0))
-            self.output_slices_check.setChecked(model.output.get("slices", True))
-            self.output_devices_check.setChecked(model.output.get("devices", True))
-
-            # Restore custom slices
-            self._clear_custom_rows(self._slice_rows, self._slice_container)
-            for s in model.output.get("custom_slices", []):
-                self._add_slice_row()
-                entry = self._slice_rows[-1]
-                entry["axis"].setCurrentText(s.get("axis", "PBX"))
-                entry["pos"].setValue(s.get("position", 0))
-                entry["qty"].setCurrentText(s.get("quantity", "TEMPERATURE"))
-
-            # Restore custom devices
-            self._clear_custom_rows(self._device_rows, self._device_container)
-            for d in model.output.get("custom_devices", []):
-                self._add_device_row()
-                entry = self._device_rows[-1]
-                entry["x"].setValue(d.get("x", 0))
-                entry["y"].setValue(d.get("y", 0))
-                entry["z"].setValue(d.get("z", 0))
-                entry["qty"].setCurrentText(d.get("quantity", "TEMPERATURE"))
+            self.grid_size_spin.setValue(model.domain.get("grid_size", 1.0))
+            _mesh_options = {None: 0, 1: 2, 2: 3, 4: 4}
+            mesh_val = model.domain.get("num_meshes", None)
+            self.num_meshes_combo.setCurrentIndex(_mesh_options.get(mesh_val, 0))
         finally:
             self._syncing = False
 
@@ -1003,28 +783,13 @@ class SimulationControlPanel(QWidget):
             "duration": self.heat_duration_spin.value(),
         }
         m.simulation_time = self.sim_time_spin.value()
-        # grid_size 已改为自动调整,不再保存用户设置
-        # m.domain["grid_size"] = self.grid_size_spin.value()
-        m.output["slices"] = self.output_slices_check.isChecked()
-        m.output["devices"] = self.output_devices_check.isChecked()
-
-        m.output["custom_slices"] = [
-            {
-                "axis": e["axis"].currentText(),
-                "position": e["pos"].value(),
-                "quantity": e["qty"].currentText(),
-            }
-            for e in self._slice_rows
-        ]
-        m.output["custom_devices"] = [
-            {
-                "x": e["x"].value(),
-                "y": e["y"].value(),
-                "z": e["z"].value(),
-                "quantity": e["qty"].currentText(),
-            }
-            for e in self._device_rows
-        ]
+        m.domain["grid_size"] = float(self.grid_size_spin.value())
+        _mesh_to_val = {0: None, 1: None, 2: 1, 3: 2, 4: 4}
+        mesh_val = _mesh_to_val.get(self.num_meshes_combo.currentIndex(), None)
+        if mesh_val is None:
+            m.domain.pop("num_meshes", None)
+        else:
+            m.domain["num_meshes"] = mesh_val
 
     # ── 工程快速预测 ────────────────────────────────────────
     def run_predict(self):

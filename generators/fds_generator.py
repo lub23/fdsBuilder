@@ -645,9 +645,9 @@ class FDSGenerator:
     def _emit_heat_flux_devc(self, lines, cx, cy, cz, devc_id):
         """Emit a RADIATIVE HEAT FLUX GAS gauge facing the radiation source.
 
-        Used for inert targets (single-metal specialized components and
-        non-burnable combustibles such as metal goods).  The gauge sits just
-        above the target top and its ORIENTATION points toward the source/door.
+        Sits just above the target top; its ORIENTATION points toward the
+        source/door.  Used for every combustible (burnable + metal) and for
+        inert specialized components.
         """
         sx, sy, sz = self._source_orientation()
         lines.append(
@@ -656,6 +656,22 @@ class FDSGenerator:
             f"      ORIENTATION={sx:.3f},{sy:.3f},{sz:.3f},\n"
             f"      ID='{devc_id}' /\n"
         )
+
+    def _emit_temp_devc(self, lines, cx, cy, cz, devc_id):
+        """Emit a gas TEMPERATURE point probe just above an item's top."""
+        lines.append(
+            f"&DEVC XYZ={cx:.2f},{cy:.2f},{cz + 0.10:.2f}, "
+            f"QUANTITY='TEMPERATURE', ID='{devc_id}' /\n"
+        )
+
+    def _emit_item_probes(self, lines, cx, cy, cz, base):
+        """Two probes above an item: gas temperature + radiative heat flux.
+
+        Applied uniformly to every combustible (burnable and metal).  IDs are
+        derived from the OBST base (name-based, unique).
+        """
+        self._emit_temp_devc(lines, cx, cy, cz, f"T_{base}")
+        self._emit_heat_flux_devc(lines, cx, cy, cz, f"HF_{base}")
 
     def _emit_component(self, lines, item, ox, oy, z0, grid_size, base):
         """Emit one specialized component's OBSTs + a single heat-flux gauge.
@@ -693,12 +709,12 @@ class FDSGenerator:
         )
 
     def _emit_combustible(self, lines, item, ox, oy, z0, grid_size, base):
-        """Emit one combustible OBST + its probe.
+        """Emit one combustible OBST + its two probes.
 
-        Burnable items get a pyrolysing surface and a thermocouple on top
-        (``WALL TEMPERATURE``) to judge surface temperature vs. ignition.
-        Non-burnable items are inert blocks with a heat-flux gauge instead.
-        Probe IDs are derived from the OBST ID (name-based, unique).
+        Burnable items keep a pyrolysing surface; non-burnable (metal) items
+        are inert blocks.  Either way, two probes are placed above the item:
+        a gas ``TEMPERATURE`` point and a ``RADIATIVE HEAT FLUX GAS`` gauge
+        facing the source.  Probe IDs are derived from the OBST ID.
         """
         subgrid_tol = 1e-6
         key = item["key"]
@@ -729,11 +745,6 @@ class FDSGenerator:
                 f" BULK_DENSITY={bulk_density},\n"
                 f" ID='{base}' / ! {label}\n"
             )
-            # Thermocouple on top: surface temperature vs ignition temperature
-            lines.append(
-                f"&DEVC XYZ={cx:.2f},{cy:.2f},{z2:.2f}, IOR=3, "
-                f"QUANTITY='WALL TEMPERATURE', ID='TC_{base}' /\n"
-            )
         else:
             lines.append(
                 f"&OBST XB={x1:.2f},{x2:.2f},{y1:.2f},{y2:.2f},"
@@ -741,7 +752,8 @@ class FDSGenerator:
                 f" {thicken_kv}SURF_ID='{surf_id}',\n"
                 f" ID='{base}' / ! {label} (inert target)\n"
             )
-            self._emit_heat_flux_devc(lines, cx, cy, z2, f"HF_{base}")
+        # Two probes above every combustible (burnable + metal).
+        self._emit_item_probes(lines, cx, cy, z2, base)
 
     def _component_item(self, comp, key, ci, horizontal):
         """Build a layout item dict for a specialized component instance.

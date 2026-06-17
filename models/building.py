@@ -326,7 +326,7 @@ class BuildingGroup:
         "net_heat_flux": 1000,
         "duration": 1.36,
     })
-    simulation_time: float = 600
+    simulation_time: float = 1800
     domain: dict = field(
         default_factory=lambda: {"padding": 5.0, "grid_size": 1.0}
     )
@@ -419,7 +419,7 @@ class BuildingGroup:
             buildings=[Building.from_dict(b) for b in data.get("buildings", [])],
             name=data.get("name", ""),
             heat_source=hs,
-            simulation_time=data.get("simulation_time", 600),
+            simulation_time=data.get("simulation_time", 1800),
             domain=domain,
             output=data.get("output", {"slices": True, "devices": True}),
         )

@@ -478,7 +478,7 @@ class TestBuildingGroup:
             "net_heat_flux": 1000,
             "duration": 1.36,
         }
-        assert bg.simulation_time == 600
+        assert bg.simulation_time == 1800
         assert bg.domain == {"padding": 5.0, "grid_size": 1.0}
         assert bg.output == {"slices": True, "devices": True}
 
@@ -558,7 +558,7 @@ class TestBuildingGroup:
     def test_from_dict_defaults(self):
         bg = BuildingGroup.from_dict({})
         assert bg.buildings == []
-        assert bg.simulation_time == 600
+        assert bg.simulation_time == 1800
 
     def test_roundtrip(self):
         bg = BuildingGroup(
@@ -705,7 +705,7 @@ class TestIntegration:
         d = bg.to_dict()
         bg2 = BuildingGroup.from_dict(d)
         assert bg2.buildings == []
-        assert bg2.simulation_time == 600
+        assert bg2.simulation_time == 1800
 
     def test_project_format_wrapper_roundtrip(self):
         """Simulate project save: wrap in building_group key, then load."""
@@ -825,9 +825,9 @@ class TestBuildingGroupHeatSourceMigration:
             "duration": 1.36,
         }
 
-    def test_default_simulation_time_600(self):
+    def test_default_simulation_time_1800(self):
         bg = BuildingGroup()
-        assert bg.simulation_time == 600
+        assert bg.simulation_time == 1800
 
     def test_default_domain_grid_size_1(self):
         bg = BuildingGroup()
