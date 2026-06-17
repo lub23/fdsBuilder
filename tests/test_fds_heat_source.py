@@ -46,14 +46,15 @@ _VENT_PATTERN = re.compile(
 
 
 def _face_fluxes(fds: str) -> dict[str, float]:
-    """Extract per-face flux from generated FDS text via TMP_FRONT → flux (εσT⁴)."""
-    SIGMA_SB = 5.670374419e-11
+    """Extract per-face flux from generated FDS text.
+
+    ``TMP_FRONT`` now carries the face flux directly (kW/m²), so it is read
+    back as-is rather than inverted through the blackbody relation.
+    """
     out = {}
     for m in _SURF_PATTERN.finditer(fds):
         face = m.group(1).replace("radiation_", "")
-        t = float(m.group(2))
-        # Reverse: flux = εσT⁴ (emissivity=1.0)
-        out[face] = t ** 4 * SIGMA_SB
+        out[face] = float(m.group(2))
     return out
 
 
@@ -73,7 +74,7 @@ class TestHeatSourceFDS:
         bg = _bg(0, 0, flux_mw=3.0)
         fds = FDSGenerator(bg).generate()
         surfs = _face_fluxes(fds)
-        # azimuth=0 elevation=0 → YMAX=3000 kW/m² → TEMP_FRONT ≈ 2675K → back to flux
+        # azimuth=0 elevation=0 → all flux on YMAX → TMP_FRONT = 3000 (kW/m²)
         assert abs(surfs.get("YMAX", 0) - 3000.0) < 0.5
 
     def test_surf_flux_via_temp_front_small_mw(self):
@@ -268,10 +269,11 @@ class TestCombustibleProbes:
             for ln in fds.splitlines()
         )
 
-    def test_specialized_component_emits_heat_flux_probe(self):
-        # Single-metal components are inert targets -> heat-flux gauge, no TC.
+    def test_specialized_component_emits_both_probes(self):
+        # Single-metal components are inert targets -> two probes (T + HF).
         bg = self._bg_with_component("ROCKET_VEHICLE_LARGE")
         fds = FDSGenerator(bg).generate()
+        assert "ID='T_ROCKET_VEHICLE_LARGE_B0S0_000'" in fds
         assert "ID='HF_ROCKET_VEHICLE_LARGE_B0S0_000'" in fds
         assert "RADIATIVE HEAT FLUX GAS" in fds
         # The component is aluminium only (no propellant / glass surfaces).

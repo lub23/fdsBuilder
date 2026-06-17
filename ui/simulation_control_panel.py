@@ -174,22 +174,6 @@ class SimulationControlPanel(QWidget):
         )
         g.addWidget(self.grid_size_spin, 0, 3)
 
-        g.addWidget(QLabel("切分数:"), 1, 0)
-        self.num_meshes_combo = QComboBox()
-        self.num_meshes_combo.addItems(
-            ["自动 (推荐)", "1 (单核)", "2 (Y 切分)", "4 (2×2 多核)"]
-        )
-        self.num_meshes_combo.setCurrentIndex(0)
-        self.num_meshes_combo.setToolTip(
-            "MESH 切分数.\n"
-            "自动: 由网格总量决定 1/2/4;\n"
-            "4 (2x2): 充分利用多核 CPU 并行计算"
-        )
-        self.num_meshes_combo.currentIndexChanged.connect(
-            lambda _i: self._on_param_changed_debounced("sim")
-        )
-        g.addWidget(self.num_meshes_combo, 1, 1)
-
         grp.content_layout.addLayout(g)
         return grp
 
@@ -759,9 +743,6 @@ class SimulationControlPanel(QWidget):
             # 模拟设置
             self.sim_time_spin.setValue(model.simulation_time)
             self.grid_size_spin.setValue(model.domain.get("grid_size", 1.0))
-            _mesh_options = {None: 0, 1: 2, 2: 3, 4: 4}
-            mesh_val = model.domain.get("num_meshes", None)
-            self.num_meshes_combo.setCurrentIndex(_mesh_options.get(mesh_val, 0))
         finally:
             self._syncing = False
 
@@ -784,12 +765,9 @@ class SimulationControlPanel(QWidget):
         }
         m.simulation_time = self.sim_time_spin.value()
         m.domain["grid_size"] = float(self.grid_size_spin.value())
-        _mesh_to_val = {0: None, 1: None, 2: 1, 3: 2, 4: 4}
-        mesh_val = _mesh_to_val.get(self.num_meshes_combo.currentIndex(), None)
-        if mesh_val is None:
-            m.domain.pop("num_meshes", None)
-        else:
-            m.domain["num_meshes"] = mesh_val
+        # Mesh count is no longer user-configurable: always use the generator
+        # default (4 meshes, 2×2) for MPI parallel execution.
+        m.domain.pop("num_meshes", None)
 
     # ── 工程快速预测 ────────────────────────────────────────
     def run_predict(self):

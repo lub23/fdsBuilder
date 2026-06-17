@@ -674,10 +674,11 @@ class FDSGenerator:
         self._emit_heat_flux_devc(lines, cx, cy, cz, f"HF_{base}")
 
     def _emit_component(self, lines, item, ox, oy, z0, grid_size, base):
-        """Emit one specialized component's OBSTs + a single heat-flux gauge.
+        """Emit one specialized component's OBSTs + its two probes.
 
-        Components are inert single-metal targets, so they get a
-        ``RADIATIVE HEAT FLUX GAS`` gauge on top (not a thermocouple).
+        Components are inert single-metal targets; like combustibles they get
+        two probes above the top: a gas ``TEMPERATURE`` point and a
+        ``RADIATIVE HEAT FLUX GAS`` gauge facing the source.
         """
         subgrid_tol = 1e-6
         comp = item["_comp"]
@@ -704,8 +705,8 @@ class FDSGenerator:
             bx_lo, by_lo = min(bx_lo, px), min(by_lo, py)
             bx_hi, by_hi = max(bx_hi, px + ex), max(by_hi, py + ey)
             z_top = max(z_top, pz + ez)
-        self._emit_heat_flux_devc(
-            lines, (bx_lo + bx_hi) / 2, (by_lo + by_hi) / 2, z_top, f"HF_{base}"
+        self._emit_item_probes(
+            lines, (bx_lo + bx_hi) / 2, (by_lo + by_hi) / 2, z_top, base
         )
 
     def _emit_combustible(self, lines, item, ox, oy, z0, grid_size, base):
@@ -1002,11 +1003,11 @@ class FDSGenerator:
             # Matches FDS example back_wall_test_2.fds pattern:
             #   TMP_FRONT + TAU_T=0.0 + HEAT_TRANSFER_COEFFICIENT=0.0
             # No MATL_ID needed - TMP_FRONT directly sets gas-phase temperature at boundary.
-            temp_front = (face_flux / (emissivity * SIGMA_SB)) ** 0.25
+            temp_front = face_flux
             surf_id = f"radiation_{face_name}"
             lines.append(
                 f"&SURF ID='{surf_id}', TMP_FRONT={temp_front:.0f}, "
-                f"TAU_T=0.0, EMISSIVITY={emissivity:.2f}, "
+                f"TAU_T=-0.01, EMISSIVITY=1.0, "
                 f"HEAT_TRANSFER_COEFFICIENT=0.0, COLOR='ORANGE' /\n\n"
             )
 
@@ -1045,8 +1046,9 @@ class FDSGenerator:
         2. ``bg.domain["grid_size"]`` (if present) overrides the default.
            The default raises to **1.0 m** so the integers stay tractable
            for industrial-scale scenarios.
-        3. Auto-sizing kicks in only when the user didn't pin num_meshes
-           AND total cells would otherwise exceed the 1 M-cell budget.
+        3. With no override, the default is **4 meshes (2×2)** for MPI parallel
+           execution.  The grid is still grown if the cell count would exceed
+           the 1 M-cell budget.
         """
         bg = self.bg
         buildings = bg.buildings
@@ -1085,7 +1087,6 @@ class FDSGenerator:
 
         user_num_meshes = bg.domain.get("num_meshes")
         max_meshes = 4
-        max_cells_per_mesh = 100000
         max_total_cells = 1000000
 
         grid_size = base_grid_size
@@ -1106,13 +1107,8 @@ class FDSGenerator:
                 nx, ny, nz = _cells(domain_w, domain_d, domain_h)
                 total_cells = nx * ny * nz
 
-            auto = 1
-            if nx * ny * nz > max_cells_per_mesh:
-                auto = max(1, int(math.ceil(total_cells / max_cells_per_mesh)))
-                auto = min(auto, max_meshes)
-                if auto >= 3:
-                    auto = 4
-            num_meshes = auto
+            # Default to 4 meshes (2×2) so runs are MPI-parallel by default.
+            num_meshes = max_meshes
         else:
             num_meshes = int(user_num_meshes)
             if num_meshes not in (1, 2, 4):
