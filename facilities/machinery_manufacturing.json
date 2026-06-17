@@ -94,21 +94,41 @@
               "combustibles": [
                 {
                   "key": "LUBE_OIL_DRUM",
-                  "count": 7
+                  "count": 7,
+                  "count_scaled": [
+                    4,
+                    7,
+                    10
+                  ]
                 },
                 {
-                  "key": "ELECTRICAL_EQUIPMENT",
-                  "count": 4
+                  "key": "CABLE_BUNDLE",
+                  "count": 4,
+                  "count_scaled": [
+                    2,
+                    4,
+                    6
+                  ]
                 },
                 {
-                  "key": "PAPER_STACK",
-                  "count": 3
+                  "key": "WOODEN_PALLET",
+                  "count": 3,
+                  "count_scaled": [
+                    2,
+                    3,
+                    4
+                  ]
                 }
               ],
               "specialized_components": [
                 {
                   "key": "VEHICLE_TRUCK",
-                  "count": 1
+                  "count": 1,
+                  "count_scaled": [
+                    1,
+                    1,
+                    1
+                  ]
                 }
               ],
               "opening_templates": [
@@ -135,15 +155,21 @@
               "combustibles": [
                 {
                   "key": "WOODEN_PALLET",
-                  "count": 8
+                  "count": 16,
+                  "count_scaled": [
+                    10,
+                    16,
+                    24
+                  ]
                 },
                 {
-                  "key": "PAPER_STACK",
-                  "count": 8
-                },
-                {
-                  "key": "PLASTIC_PACKAGING",
-                  "count": 7
+                  "key": "CABLE_BUNDLE",
+                  "count": 7,
+                  "count_scaled": [
+                    4,
+                    7,
+                    10
+                  ]
                 }
               ],
               "specialized_components": [],
@@ -170,12 +196,22 @@
               "firewall_material": "CONCRETE",
               "combustibles": [
                 {
-                  "key": "PAPER_STACK",
-                  "count": 5
+                  "key": "WOODEN_PALLET",
+                  "count": 5,
+                  "count_scaled": [
+                    3,
+                    5,
+                    8
+                  ]
                 },
                 {
-                  "key": "ELECTRICAL_EQUIPMENT",
-                  "count": 2
+                  "key": "CABLE_BUNDLE",
+                  "count": 2,
+                  "count_scaled": [
+                    1,
+                    2,
+                    3
+                  ]
                 }
               ],
               "specialized_components": [],
@@ -202,12 +238,22 @@
               "firewall_material": "CONCRETE",
               "combustibles": [
                 {
-                  "key": "ELECTRICAL_EQUIPMENT",
-                  "count": 4
+                  "key": "CABLE_BUNDLE",
+                  "count": 4,
+                  "count_scaled": [
+                    2,
+                    4,
+                    6
+                  ]
                 },
                 {
-                  "key": "METAL_DUST_COLLECTOR",
-                  "count": 3
+                  "key": "CARBON_MATERIAL_STACK",
+                  "count": 3,
+                  "count_scaled": [
+                    2,
+                    3,
+                    4
+                  ]
                 }
               ],
               "specialized_components": [],
@@ -318,21 +364,41 @@
               "combustibles": [
                 {
                   "key": "LUBE_OIL_DRUM",
-                  "count": 5
+                  "count": 5,
+                  "count_scaled": [
+                    3,
+                    5,
+                    8
+                  ]
                 },
                 {
-                  "key": "METAL_DUST_COLLECTOR",
-                  "count": 2
+                  "key": "CARBON_MATERIAL_STACK",
+                  "count": 2,
+                  "count_scaled": [
+                    1,
+                    2,
+                    3
+                  ]
                 },
                 {
-                  "key": "ELECTRICAL_EQUIPMENT",
-                  "count": 3
+                  "key": "CABLE_BUNDLE",
+                  "count": 3,
+                  "count_scaled": [
+                    2,
+                    3,
+                    4
+                  ]
                 }
               ],
               "specialized_components": [
                 {
                   "key": "VEHICLE_CAR",
-                  "count": 2
+                  "count": 2,
+                  "count_scaled": [
+                    2,
+                    2,
+                    2
+                  ]
                 }
               ],
               "opening_templates": [
@@ -359,19 +425,30 @@
               "combustibles": [
                 {
                   "key": "WOODEN_PALLET",
-                  "count": 6
+                  "count": 11,
+                  "count_scaled": [
+                    7,
+                    11,
+                    17
+                  ]
                 },
                 {
-                  "key": "PAPER_STACK",
-                  "count": 5
-                },
-                {
-                  "key": "PLASTIC_PACKAGING",
-                  "count": 3
+                  "key": "CABLE_BUNDLE",
+                  "count": 3,
+                  "count_scaled": [
+                    2,
+                    3,
+                    4
+                  ]
                 },
                 {
                   "key": "LUBE_OIL_DRUM",
-                  "count": 4
+                  "count": 4,
+                  "count_scaled": [
+                    2,
+                    4,
+                    6
+                  ]
                 }
               ],
               "specialized_components": [],
@@ -398,16 +475,22 @@
               "firewall_material": "CONCRETE",
               "combustibles": [
                 {
-                  "key": "PAPER_STACK",
-                  "count": 3
-                },
-                {
                   "key": "WOODEN_PALLET",
-                  "count": 2
+                  "count": 5,
+                  "count_scaled": [
+                    3,
+                    5,
+                    7
+                  ]
                 },
                 {
-                  "key": "ELECTRICAL_EQUIPMENT",
-                  "count": 2
+                  "key": "CABLE_BUNDLE",
+                  "count": 2,
+                  "count_scaled": [
+                    1,
+                    2,
+                    3
+                  ]
                 }
               ],
               "specialized_components": [],
@@ -434,12 +517,22 @@
               "firewall_material": "CONCRETE",
               "combustibles": [
                 {
-                  "key": "PAPER_STACK",
-                  "count": 3
+                  "key": "WOODEN_PALLET",
+                  "count": 3,
+                  "count_scaled": [
+                    2,
+                    3,
+                    4
+                  ]
                 },
                 {
-                  "key": "ELECTRICAL_EQUIPMENT",
-                  "count": 2
+                  "key": "CABLE_BUNDLE",
+                  "count": 2,
+                  "count_scaled": [
+                    1,
+                    2,
+                    3
+                  ]
                 }
               ],
               "specialized_components": [],
@@ -550,21 +643,41 @@
               "combustibles": [
                 {
                   "key": "LUBE_OIL_DRUM",
-                  "count": 7
+                  "count": 7,
+                  "count_scaled": [
+                    4,
+                    7,
+                    10
+                  ]
                 },
                 {
-                  "key": "METAL_DUST_COLLECTOR",
-                  "count": 2
+                  "key": "CARBON_MATERIAL_STACK",
+                  "count": 2,
+                  "count_scaled": [
+                    1,
+                    2,
+                    3
+                  ]
                 },
                 {
-                  "key": "PAPER_STACK",
-                  "count": 3
+                  "key": "WOODEN_PALLET",
+                  "count": 3,
+                  "count_scaled": [
+                    2,
+                    3,
+                    4
+                  ]
                 }
               ],
               "specialized_components": [
                 {
                   "key": "VEHICLE_CAR",
-                  "count": 1
+                  "count": 1,
+                  "count_scaled": [
+                    1,
+                    1,
+                    1
+                  ]
                 }
               ],
               "opening_templates": [
@@ -591,23 +704,30 @@
               "combustibles": [
                 {
                   "key": "WOODEN_PALLET",
-                  "count": 5
+                  "count": 9,
+                  "count_scaled": [
+                    5,
+                    9,
+                    14
+                  ]
                 },
                 {
-                  "key": "PAPER_STACK",
-                  "count": 4
+                  "key": "CABLE_BUNDLE",
+                  "count": 5,
+                  "count_scaled": [
+                    3,
+                    5,
+                    7
+                  ]
                 },
                 {
-                  "key": "PLASTIC_PACKAGING",
-                  "count": 3
-                },
-                {
-                  "key": "ELECTRICAL_EQUIPMENT",
-                  "count": 2
-                },
-                {
-                  "key": "METAL_DUST_COLLECTOR",
-                  "count": 2
+                  "key": "CARBON_MATERIAL_STACK",
+                  "count": 2,
+                  "count_scaled": [
+                    1,
+                    2,
+                    3
+                  ]
                 }
               ],
               "specialized_components": [],
@@ -634,12 +754,22 @@
               "firewall_material": "CONCRETE",
               "combustibles": [
                 {
-                  "key": "PAPER_STACK",
-                  "count": 5
+                  "key": "WOODEN_PALLET",
+                  "count": 5,
+                  "count_scaled": [
+                    3,
+                    5,
+                    8
+                  ]
                 },
                 {
-                  "key": "ELECTRICAL_EQUIPMENT",
-                  "count": 2
+                  "key": "CABLE_BUNDLE",
+                  "count": 2,
+                  "count_scaled": [
+                    1,
+                    2,
+                    3
+                  ]
                 }
               ],
               "specialized_components": [],
@@ -667,11 +797,21 @@
               "combustibles": [
                 {
                   "key": "LUBE_OIL_DRUM",
-                  "count": 3
+                  "count": 3,
+                  "count_scaled": [
+                    2,
+                    3,
+                    4
+                  ]
                 },
                 {
-                  "key": "METAL_DUST_COLLECTOR",
-                  "count": 2
+                  "key": "CARBON_MATERIAL_STACK",
+                  "count": 2,
+                  "count_scaled": [
+                    1,
+                    2,
+                    3
+                  ]
                 }
               ],
               "specialized_components": [],
@@ -691,5 +831,25 @@
       ],
       "stories": []
     }
-  ]
+  ],
+  "meta": {
+    "default_scale": {
+      "small": {
+        "fuel_density": 0.6,
+        "fuel_size_multiplier": 0.7,
+        "grid_size_m": 0.5
+      },
+      "medium": {
+        "fuel_density": 1.0,
+        "fuel_size_multiplier": 1.0,
+        "grid_size_m": 1.0
+      },
+      "large": {
+        "fuel_density": 1.5,
+        "fuel_size_multiplier": 1.3,
+        "grid_size_m": 2.0
+      }
+    },
+    "notes": "Count scaling convention: small = ceil(count * 0.6) for fuels, medium keeps the JSON value, large = ceil(count * 1.5). Occupancy components (rockets, aircraft, vehicles, electrolysis cells) keep their raw count at every scale."
+  }
 }

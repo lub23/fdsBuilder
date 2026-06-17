@@ -1592,6 +1592,36 @@ SPECIALIZED_COMPONENTS = {
 }
 
 
+# ============================================================
+# 特异性组件主材质统一 (single-material simplification)
+# ============================================================
+# 为方便后续计算，所有特异性组件统一为一种主要金属材质（按类别区分）：
+#   航空器 / 火箭   -> 铝 (ALUMINUM)
+#   车辆 / 工业 / 电力等其余 -> 钢 (STEEL)
+# 统一后组件视为惰性金属目标（不再热解燃烧），仅用于测量入射辐射热流。
+# 这里在定义后统一回填每个 part 的 material_key / surf_id 并清除 ignition_temp，
+# 避免逐一改动庞大的字面量，同时便于核对。
+_COMPONENT_METAL_BY_CATEGORY = {
+    "hangar": "ALUMINUM",
+    "rocket": "ALUMINUM",
+}
+_DEFAULT_COMPONENT_METAL = "STEEL"
+
+
+def _unify_component_materials() -> None:
+    for comp in SPECIALIZED_COMPONENTS.values():
+        metal = _COMPONENT_METAL_BY_CATEGORY.get(
+            comp.category, _DEFAULT_COMPONENT_METAL
+        )
+        for part in comp.parts:
+            part.material_key = metal
+            part.surf_id = f"{metal}_SURF"
+            part.ignition_temp = 0.0
+
+
+_unify_component_materials()
+
+
 # ── 可燃物模板库 ──────────────────────────────────────────────
 
 

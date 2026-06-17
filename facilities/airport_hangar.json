@@ -90,18 +90,24 @@
               "firewall_material": "CONCRETE",
               "combustibles": [
                 {
-                  "key": "JET_FUEL_RESIDUE",
-                  "count": 4
-                },
-                {
-                  "key": "ORGANIC_SOLVENT_DRUM",
-                  "count": 2
+                  "key": "LUBE_OIL_DRUM",
+                  "count": 6,
+                  "count_scaled": [
+                    3,
+                    6,
+                    9
+                  ]
                 }
               ],
               "specialized_components": [
                 {
                   "key": "AIRCRAFT_SMALL",
-                  "count": 5
+                  "count": 5,
+                  "count_scaled": [
+                    5,
+                    5,
+                    5
+                  ]
                 }
               ],
               "opening_templates": [
@@ -128,15 +134,21 @@
               "combustibles": [
                 {
                   "key": "WOODEN_PALLET",
-                  "count": 4
+                  "count": 8,
+                  "count_scaled": [
+                    4,
+                    8,
+                    12
+                  ]
                 },
                 {
                   "key": "CABLE_BUNDLE",
-                  "count": 3
-                },
-                {
-                  "key": "PAPER_STACK",
-                  "count": 4
+                  "count": 3,
+                  "count_scaled": [
+                    2,
+                    3,
+                    4
+                  ]
                 }
               ],
               "specialized_components": [],
@@ -171,12 +183,13 @@
               "firewall_material": "CONCRETE",
               "combustibles": [
                 {
-                  "key": "PAPER_STACK",
-                  "count": 6
-                },
-                {
                   "key": "WOODEN_PALLET",
-                  "count": 2
+                  "count": 8,
+                  "count_scaled": [
+                    5,
+                    8,
+                    12
+                  ]
                 }
               ],
               "specialized_components": [],
@@ -282,22 +295,24 @@
               "firewall_material": "CONCRETE",
               "combustibles": [
                 {
-                  "key": "JET_FUEL_RESIDUE",
-                  "count": 5
-                },
-                {
-                  "key": "GLYCOL_DEICING_FLUID",
-                  "count": 2
-                },
-                {
-                  "key": "ORGANIC_SOLVENT_DRUM",
-                  "count": 3
+                  "key": "LUBE_OIL_DRUM",
+                  "count": 10,
+                  "count_scaled": [
+                    6,
+                    10,
+                    15
+                  ]
                 }
               ],
               "specialized_components": [
                 {
                   "key": "AIRCRAFT_MEDIUM",
-                  "count": 2
+                  "count": 2,
+                  "count_scaled": [
+                    2,
+                    2,
+                    2
+                  ]
                 }
               ],
               "opening_templates": [
@@ -324,19 +339,30 @@
               "combustibles": [
                 {
                   "key": "WOODEN_PALLET",
-                  "count": 5
+                  "count": 12,
+                  "count_scaled": [
+                    7,
+                    12,
+                    18
+                  ]
                 },
                 {
                   "key": "CABLE_BUNDLE",
-                  "count": 4
+                  "count": 4,
+                  "count_scaled": [
+                    2,
+                    4,
+                    6
+                  ]
                 },
                 {
-                  "key": "ORGANIC_SOLVENT_DRUM",
-                  "count": 3
-                },
-                {
-                  "key": "PAPER_STACK",
-                  "count": 7
+                  "key": "LUBE_OIL_DRUM",
+                  "count": 3,
+                  "count_scaled": [
+                    2,
+                    3,
+                    4
+                  ]
                 }
               ],
               "specialized_components": [],
@@ -445,22 +471,24 @@
               "firewall_material": "CONCRETE",
               "combustibles": [
                 {
-                  "key": "JET_FUEL_RESIDUE",
-                  "count": 6
-                },
-                {
-                  "key": "GLYCOL_DEICING_FLUID",
-                  "count": 3
-                },
-                {
-                  "key": "ORGANIC_SOLVENT_DRUM",
-                  "count": 4
+                  "key": "LUBE_OIL_DRUM",
+                  "count": 13,
+                  "count_scaled": [
+                    8,
+                    13,
+                    19
+                  ]
                 }
               ],
               "specialized_components": [
                 {
                   "key": "AIRCRAFT_LARGE",
-                  "count": 1
+                  "count": 1,
+                  "count_scaled": [
+                    1,
+                    1,
+                    1
+                  ]
                 }
               ],
               "opening_templates": [
@@ -487,19 +515,30 @@
               "combustibles": [
                 {
                   "key": "WOODEN_PALLET",
-                  "count": 6
+                  "count": 14,
+                  "count_scaled": [
+                    9,
+                    14,
+                    21
+                  ]
                 },
                 {
-                  "key": "PAPER_STACK",
-                  "count": 8
-                },
-                {
-                  "key": "ORGANIC_SOLVENT_DRUM",
-                  "count": 4
+                  "key": "LUBE_OIL_DRUM",
+                  "count": 4,
+                  "count_scaled": [
+                    2,
+                    4,
+                    6
+                  ]
                 },
                 {
                   "key": "CABLE_BUNDLE",
-                  "count": 3
+                  "count": 3,
+                  "count_scaled": [
+                    2,
+                    3,
+                    4
+                  ]
                 }
               ],
               "specialized_components": [],
@@ -606,18 +645,24 @@
               "firewall_material": "CONCRETE",
               "combustibles": [
                 {
-                  "key": "JET_FUEL_RESIDUE",
-                  "count": 3
-                },
-                {
-                  "key": "ORGANIC_SOLVENT_DRUM",
-                  "count": 2
+                  "key": "LUBE_OIL_DRUM",
+                  "count": 5,
+                  "count_scaled": [
+                    3,
+                    5,
+                    7
+                  ]
                 }
               ],
               "specialized_components": [
                 {
                   "key": "AIRCRAFT_SMALL",
-                  "count": 3
+                  "count": 3,
+                  "count_scaled": [
+                    3,
+                    3,
+                    3
+                  ]
                 }
               ],
               "opening_templates": [
@@ -644,15 +689,30 @@
               "combustibles": [
                 {
                   "key": "CABLE_BUNDLE",
-                  "count": 3
+                  "count": 3,
+                  "count_scaled": [
+                    2,
+                    3,
+                    4
+                  ]
                 },
                 {
-                  "key": "ORGANIC_SOLVENT_DRUM",
-                  "count": 2
+                  "key": "LUBE_OIL_DRUM",
+                  "count": 2,
+                  "count_scaled": [
+                    1,
+                    2,
+                    3
+                  ]
                 },
                 {
-                  "key": "PAPER_STACK",
-                  "count": 4
+                  "key": "WOODEN_PALLET",
+                  "count": 4,
+                  "count_scaled": [
+                    2,
+                    4,
+                    6
+                  ]
                 }
               ],
               "specialized_components": [],
@@ -688,11 +748,12 @@
               "combustibles": [
                 {
                   "key": "WOODEN_PALLET",
-                  "count": 4
-                },
-                {
-                  "key": "PAPER_STACK",
-                  "count": 7
+                  "count": 11,
+                  "count_scaled": [
+                    6,
+                    11,
+                    16
+                  ]
                 }
               ],
               "specialized_components": [],
@@ -718,5 +779,25 @@
         49.1
       ]
     }
-  ]
+  ],
+  "meta": {
+    "default_scale": {
+      "small": {
+        "fuel_density": 0.6,
+        "fuel_size_multiplier": 0.7,
+        "grid_size_m": 0.5
+      },
+      "medium": {
+        "fuel_density": 1.0,
+        "fuel_size_multiplier": 1.0,
+        "grid_size_m": 1.0
+      },
+      "large": {
+        "fuel_density": 1.5,
+        "fuel_size_multiplier": 1.3,
+        "grid_size_m": 2.0
+      }
+    },
+    "notes": "Count scaling convention: small = ceil(count * 0.6) for fuels, medium keeps the JSON value, large = ceil(count * 1.5). Occupancy components (rockets, aircraft, vehicles, electrolysis cells) keep their raw count at every scale."
+  }
 }

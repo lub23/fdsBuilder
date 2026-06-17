@@ -193,7 +193,8 @@ class TestHeatSourceFDS:
 
 
 class TestCombustibleProbes:
-    """Per-combustible DEVC probes attached to each item's top face."""
+    """Per-item DEVC probes: thermocouples for burnable fuel, heat-flux
+    gauges for inert targets (non-burnable combustibles + components)."""
 
     def _bg_with_combustible(self, key):
         fc = FireCompartment(
@@ -215,29 +216,87 @@ class TestCombustibleProbes:
             heat_source={"azimuth": 0, "elevation": 0, "net_heat_flux": 3.0, "duration": 1.36},
         )
 
-    def test_metal_combustible_emits_wall_temperature_probe(self):
+    def _bg_with_component(self, key):
+        fc = FireCompartment(
+            name="FC1",
+            boundary=[0, 40, 0, 40],
+            specialized_components=[{"key": key, "count": 1}],
+        )
+        b = Building(
+            name="T",
+            cn_name="T",
+            boundary=[0, 40, 0, 40],
+            wall_thickness=0.24,
+            height=25.0,
+            stories=[Story(name="1F", height=25.0, fire_compartments=[fc], roof=Roof())],
+        )
+        b.update_z_offsets()
+        return BuildingGroup(
+            buildings=[b],
+            heat_source={"azimuth": 0, "elevation": 0, "net_heat_flux": 3.0, "duration": 1.36},
+        )
+
+    def test_non_burnable_combustible_emits_heat_flux_probe(self):
+        # METAL_PARTS is inert -> radiative heat-flux gauge facing the source.
         bg = self._bg_with_combustible("METAL_PARTS")
         fds = FDSGenerator(bg).generate()
-        probe = next(
-            ln for ln in fds.splitlines()
-            if "&DEVC" in ln and "METAL_PARTS_FC1_0" in ln
+        # No thermocouple should reference the metal item.
+        assert not any(
+            "WALL TEMPERATURE" in ln and "METAL_PARTS" in ln
+            for ln in fds.splitlines()
         )
-        assert "QUANTITY='WALL TEMPERATURE'" in probe
-        assert "IOR=3" in probe
-        assert "ORIENTATION" not in probe
+        assert "ID='HF_METAL_PARTS_B0S0_000'" in fds
+        # The HF gauge block carries the gas heat-flux quantity + ORIENTATION.
+        block = fds.split("ID='HF_METAL_PARTS_B0S0_000'")[0].rsplit("&DEVC", 1)[1]
+        assert "RADIATIVE HEAT FLUX GAS" in block
+        assert "ORIENTATION=0.000,1.000,0.000" in block
 
-    def test_non_metal_combustible_emits_wall_temperature_probe(self):
+    def test_burnable_combustible_emits_thermocouple(self):
         bg = self._bg_with_combustible("WOODEN_PALLET")
         fds = FDSGenerator(bg).generate()
         probe = next(
             ln for ln in fds.splitlines()
-            if "&DEVC" in ln and "WOODEN_PALLET_FC1_0" in ln
+            if "&DEVC" in ln and "ID='TC_WOODEN_PALLET_B0S0_000'" in ln
         )
         assert "QUANTITY='WALL TEMPERATURE'" in probe
         assert "IOR=3" in probe
         assert "ORIENTATION" not in probe
 
-    def test_probes_never_use_radiative_heat_flux_gas(self):
-        bg = self._bg_with_combustible("METAL_PARTS")
+    def test_specialized_component_emits_heat_flux_probe(self):
+        # Single-metal components are inert targets -> heat-flux gauge, no TC.
+        bg = self._bg_with_component("ROCKET_VEHICLE_LARGE")
+        fds = FDSGenerator(bg).generate()
+        assert "ID='HF_ROCKET_VEHICLE_LARGE_B0S0_000'" in fds
+        assert "RADIATIVE HEAT FLUX GAS" in fds
+        # The component is aluminium only (no propellant / glass surfaces).
+        assert "SOLID_PROPELLANT" not in fds
+
+    def test_probe_ids_are_unique(self):
+        # Multiple fire compartments + components must not collide.
+        fcs = [
+            FireCompartment(name="FC1", boundary=[0, 20, 0, 20],
+                            combustibles=[{"key": "WOODEN_PALLET", "count": 5},
+                                          {"key": "METAL_PARTS", "count": 3}]),
+            FireCompartment(name="FC2", boundary=[20, 40, 0, 20],
+                            combustibles=[{"key": "WOODEN_PALLET", "count": 5},
+                                          {"key": "CABLE_BUNDLE", "count": 4}]),
+        ]
+        b = Building(name="T", cn_name="T", boundary=[0, 40, 0, 20],
+                     wall_thickness=0.24, height=6.0,
+                     stories=[Story(name="1F", height=6.0, fire_compartments=fcs, roof=Roof())])
+        b.update_z_offsets()
+        bg = BuildingGroup(buildings=[b],
+                           heat_source={"azimuth": 0, "elevation": 0,
+                                        "net_heat_flux": 3.0, "duration": 1.36})
+        fds = FDSGenerator(bg).generate()
+        ids = re.findall(r"\bID='([^']+)'", fds)
+        dups = {i for i in ids if ids.count(i) > 1}
+        assert not dups, f"duplicate IDs: {sorted(dups)}"
+
+    def test_burnable_item_uses_thermocouple_not_heat_flux(self):
+        # Burnable fuel keeps a surface-temperature thermocouple (no gas gauge).
+        bg = self._bg_with_combustible("WOODEN_PALLET")
         fds = FDSGenerator(bg).generate()
         assert "RADIATIVE HEAT FLUX GAS" not in fds
+        assert "TC_WOODEN_PALLET" in fds
+

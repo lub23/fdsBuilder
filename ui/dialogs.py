@@ -14,7 +14,7 @@ from PySide6.QtWidgets import (
     QDialog, QVBoxLayout, QFormLayout, QLineEdit, QDoubleSpinBox, QComboBox,
     QLabel, QDialogButtonBox, QTableWidget, QTableWidgetItem, QPushButton,
     QHBoxLayout, QHeaderView, QGroupBox, QSpinBox, QCheckBox, QMessageBox,
-    QGridLayout, QTreeWidget, QTreeWidgetItem, QScrollArea, QWidget
+    QGridLayout, QScrollArea, QWidget, QPlainTextEdit,
 )
 from PySide6.QtCore import Qt, Signal
 from PySide6.QtGui import QPainter, QColor, QPen, QBrush
@@ -170,6 +170,8 @@ class CombustibleDialog(QDialog):
 
         self.preset_combo = QComboBox()
         for key, val in COMBUSTIBLE_LIBRARY.items():
+            if key.startswith("_") or "name" not in val:
+                continue
             self.preset_combo.addItem(
                 f"{val['name']} ({val['length']}×{val['width']}×{val['height']}m, "
                 f"{val['hrrpua']}kW/m²)", key)

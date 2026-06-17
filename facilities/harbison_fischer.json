@@ -95,11 +95,7 @@
               "combustibles": [
                 {
                   "key": "WOODEN_PALLET",
-                  "count": 18
-                },
-                {
-                  "key": "PAPER_STACK",
-                  "count": 16
+                  "count": 34
                 },
                 {
                   "key": "LUBE_OIL_DRUM",
@@ -186,12 +182,8 @@
               ],
               "combustibles": [
                 {
-                  "key": "WOODEN_FURNITURE",
-                  "count": 8
-                },
-                {
-                  "key": "PAPER_STACK",
-                  "count": 6
+                  "key": "WOODEN_PALLET",
+                  "count": 14
                 },
                 {
                   "key": "CABLE_BUNDLE",
@@ -325,11 +317,7 @@
               "combustibles": [
                 {
                   "key": "WOODEN_PALLET",
-                  "count": 8
-                },
-                {
-                  "key": "PAPER_STACK",
-                  "count": 10
+                  "count": 18
                 },
                 {
                   "key": "LUBE_OIL_DRUM",
@@ -441,7 +429,7 @@
                   "count": 14
                 },
                 {
-                  "key": "PAPER_STACK",
+                  "key": "WOODEN_PALLET",
                   "count": 4
                 },
                 {
@@ -541,11 +529,7 @@
               "combustibles": [
                 {
                   "key": "WOODEN_PALLET",
-                  "count": 6
-                },
-                {
-                  "key": "PAPER_STACK",
-                  "count": 3
+                  "count": 9
                 }
               ],
               "specialized_components": [
@@ -610,11 +594,7 @@
               "combustibles": [
                 {
                   "key": "WOODEN_PALLET",
-                  "count": 6
-                },
-                {
-                  "key": "PAPER_STACK",
-                  "count": 5
+                  "count": 11
                 }
               ],
               "specialized_components": []
@@ -731,11 +711,7 @@
               "combustibles": [
                 {
                   "key": "WOODEN_PALLET",
-                  "count": 6
-                },
-                {
-                  "key": "PAPER_STACK",
-                  "count": 5
+                  "count": 11
                 }
               ],
               "specialized_components": []
@@ -768,7 +744,7 @@
                   "count": 20
                 },
                 {
-                  "key": "PAPER_STACK",
+                  "key": "WOODEN_PALLET",
                   "count": 4
                 },
                 {
@@ -914,7 +890,7 @@
               ],
               "combustibles": [
                 {
-                  "key": "WOODEN_FURNITURE",
+                  "key": "WOODEN_PALLET",
                   "count": 4
                 }
               ],
@@ -933,7 +909,7 @@
               "openings": [],
               "combustibles": [
                 {
-                  "key": "WOODEN_FURNITURE",
+                  "key": "WOODEN_PALLET",
                   "count": 24
                 }
               ],
@@ -998,7 +974,7 @@
               ],
               "combustibles": [
                 {
-                  "key": "WOODEN_FURNITURE",
+                  "key": "WOODEN_PALLET",
                   "count": 4
                 }
               ],
@@ -1028,7 +1004,7 @@
               ],
               "combustibles": [
                 {
-                  "key": "WOODEN_FURNITURE",
+                  "key": "WOODEN_PALLET",
                   "count": 6
                 },
                 {
@@ -1062,7 +1038,7 @@
               ],
               "combustibles": [
                 {
-                  "key": "WOODEN_FURNITURE",
+                  "key": "WOODEN_PALLET",
                   "count": 6
                 },
                 {
@@ -1096,7 +1072,7 @@
               ],
               "combustibles": [
                 {
-                  "key": "WOODEN_FURNITURE",
+                  "key": "WOODEN_PALLET",
                   "count": 6
                 },
                 {
@@ -1130,7 +1106,7 @@
               ],
               "combustibles": [
                 {
-                  "key": "WOODEN_FURNITURE",
+                  "key": "WOODEN_PALLET",
                   "count": 6
                 },
                 {
@@ -1164,7 +1140,7 @@
               ],
               "combustibles": [
                 {
-                  "key": "WOODEN_FURNITURE",
+                  "key": "WOODEN_PALLET",
                   "count": 6
                 },
                 {

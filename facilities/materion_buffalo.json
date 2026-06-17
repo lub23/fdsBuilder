@@ -466,11 +466,7 @@
               "combustibles": [
                 {
                   "key": "WOODEN_PALLET",
-                  "count": 3
-                },
-                {
-                  "key": "PAPER_STACK",
-                  "count": 3
+                  "count": 6
                 }
               ],
               "specialized_components": [
@@ -522,7 +518,7 @@
                   "count": 3
                 },
                 {
-                  "key": "PLASTIC_PACKAGING",
+                  "key": "CABLE_BUNDLE",
                   "count": 4
                 }
               ],
@@ -627,11 +623,7 @@
               "combustibles": [
                 {
                   "key": "WOODEN_PALLET",
-                  "count": 2
-                },
-                {
-                  "key": "PAPER_STACK",
-                  "count": 2
+                  "count": 4
                 }
               ],
               "specialized_components": []
@@ -1250,11 +1242,11 @@
               ],
               "combustibles": [
                 {
-                  "key": "PLASTIC_PACKAGING",
+                  "key": "CABLE_BUNDLE",
                   "count": 4
                 },
                 {
-                  "key": "PAPER_STACK",
+                  "key": "WOODEN_PALLET",
                   "count": 3
                 },
                 {
@@ -1278,11 +1270,7 @@
               "combustibles": [
                 {
                   "key": "WOODEN_PALLET",
-                  "count": 2
-                },
-                {
-                  "key": "PAPER_STACK",
-                  "count": 2
+                  "count": 4
                 }
               ],
               "specialized_components": []

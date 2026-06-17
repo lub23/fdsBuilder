@@ -144,20 +144,12 @@
               ],
               "combustibles": [
                 {
-                  "key": "PREBAKED_ANODE_BLOCK",
-                  "count": 24
+                  "key": "CARBON_MATERIAL_STACK",
+                  "count": 34
                 },
                 {
-                  "key": "CATHODE_CARBON_BLOCK",
-                  "count": 10
-                },
-                {
-                  "key": "OIL_TRANSFORMER",
-                  "count": 1
-                },
-                {
-                  "key": "HYDRAULIC_TANK",
-                  "count": 1
+                  "key": "LUBE_OIL_DRUM",
+                  "count": 2
                 },
                 {
                   "key": "CABLE_BUNDLE",
@@ -381,20 +373,12 @@
               ],
               "combustibles": [
                 {
-                  "key": "PREBAKED_ANODE_BLOCK",
-                  "count": 24
+                  "key": "CARBON_MATERIAL_STACK",
+                  "count": 44
                 },
                 {
-                  "key": "CATHODE_CARBON_BLOCK",
-                  "count": 20
-                },
-                {
-                  "key": "OIL_TRANSFORMER",
-                  "count": 1
-                },
-                {
-                  "key": "HYDRAULIC_TANK",
-                  "count": 1
+                  "key": "LUBE_OIL_DRUM",
+                  "count": 2
                 },
                 {
                   "key": "CABLE_BUNDLE",
@@ -478,20 +462,12 @@
               ],
               "combustibles": [
                 {
-                  "key": "PREBAKED_ANODE_BLOCK",
-                  "count": 26
+                  "key": "CARBON_MATERIAL_STACK",
+                  "count": 46
                 },
                 {
-                  "key": "CATHODE_CARBON_BLOCK",
-                  "count": 20
-                },
-                {
-                  "key": "OIL_TRANSFORMER",
-                  "count": 1
-                },
-                {
-                  "key": "HYDRAULIC_TANK",
-                  "count": 1
+                  "key": "LUBE_OIL_DRUM",
+                  "count": 2
                 },
                 {
                   "key": "CABLE_BUNDLE",
@@ -565,12 +541,8 @@
               ],
               "combustibles": [
                 {
-                  "key": "PREBAKED_ANODE_BLOCK",
-                  "count": 20
-                },
-                {
-                  "key": "CATHODE_CARBON_BLOCK",
-                  "count": 10
+                  "key": "CARBON_MATERIAL_STACK",
+                  "count": 30
                 }
               ],
               "specialized_components": []
@@ -603,7 +575,7 @@
                   "count": 4
                 },
                 {
-                  "key": "HYDRAULIC_TANK",
+                  "key": "LUBE_OIL_DRUM",
                   "count": 6
                 }
               ],
@@ -631,7 +603,7 @@
                   "count": 4
                 },
                 {
-                  "key": "HYDRAULIC_TANK",
+                  "key": "LUBE_OIL_DRUM",
                   "count": 6
                 }
               ],
@@ -852,20 +824,12 @@
               ],
               "combustibles": [
                 {
-                  "key": "PREBAKED_ANODE_BLOCK",
-                  "count": 24
+                  "key": "CARBON_MATERIAL_STACK",
+                  "count": 44
                 },
                 {
-                  "key": "CATHODE_CARBON_BLOCK",
-                  "count": 20
-                },
-                {
-                  "key": "OIL_TRANSFORMER",
-                  "count": 1
-                },
-                {
-                  "key": "HYDRAULIC_TANK",
-                  "count": 1
+                  "key": "LUBE_OIL_DRUM",
+                  "count": 2
                 },
                 {
                   "key": "CABLE_BUNDLE",
@@ -1089,20 +1053,12 @@
               ],
               "combustibles": [
                 {
-                  "key": "PREBAKED_ANODE_BLOCK",
-                  "count": 20
+                  "key": "CARBON_MATERIAL_STACK",
+                  "count": 40
                 },
                 {
-                  "key": "CATHODE_CARBON_BLOCK",
-                  "count": 20
-                },
-                {
-                  "key": "OIL_TRANSFORMER",
-                  "count": 1
-                },
-                {
-                  "key": "HYDRAULIC_TANK",
-                  "count": 1
+                  "key": "LUBE_OIL_DRUM",
+                  "count": 2
                 },
                 {
                   "key": "CABLE_BUNDLE",
@@ -1326,20 +1282,12 @@
               ],
               "combustibles": [
                 {
-                  "key": "PREBAKED_ANODE_BLOCK",
-                  "count": 20
+                  "key": "CARBON_MATERIAL_STACK",
+                  "count": 40
                 },
                 {
-                  "key": "CATHODE_CARBON_BLOCK",
-                  "count": 20
-                },
-                {
-                  "key": "OIL_TRANSFORMER",
-                  "count": 1
-                },
-                {
-                  "key": "HYDRAULIC_TANK",
-                  "count": 1
+                  "key": "LUBE_OIL_DRUM",
+                  "count": 2
                 },
                 {
                   "key": "CABLE_BUNDLE",
@@ -1563,20 +1511,12 @@
               ],
               "combustibles": [
                 {
-                  "key": "PREBAKED_ANODE_BLOCK",
-                  "count": 26
+                  "key": "CARBON_MATERIAL_STACK",
+                  "count": 46
                 },
                 {
-                  "key": "CATHODE_CARBON_BLOCK",
-                  "count": 20
-                },
-                {
-                  "key": "OIL_TRANSFORMER",
-                  "count": 1
-                },
-                {
-                  "key": "HYDRAULIC_TANK",
-                  "count": 1
+                  "key": "LUBE_OIL_DRUM",
+                  "count": 2
                 },
                 {
                   "key": "CABLE_BUNDLE",
@@ -1800,20 +1740,12 @@
               ],
               "combustibles": [
                 {
-                  "key": "PREBAKED_ANODE_BLOCK",
-                  "count": 26
+                  "key": "CARBON_MATERIAL_STACK",
+                  "count": 46
                 },
                 {
-                  "key": "CATHODE_CARBON_BLOCK",
-                  "count": 20
-                },
-                {
-                  "key": "OIL_TRANSFORMER",
-                  "count": 1
-                },
-                {
-                  "key": "HYDRAULIC_TANK",
-                  "count": 1
+                  "key": "LUBE_OIL_DRUM",
+                  "count": 2
                 },
                 {
                   "key": "CABLE_BUNDLE",
@@ -2037,20 +1969,12 @@
               ],
               "combustibles": [
                 {
-                  "key": "PREBAKED_ANODE_BLOCK",
-                  "count": 26
+                  "key": "CARBON_MATERIAL_STACK",
+                  "count": 46
                 },
                 {
-                  "key": "CATHODE_CARBON_BLOCK",
-                  "count": 20
-                },
-                {
-                  "key": "OIL_TRANSFORMER",
-                  "count": 1
-                },
-                {
-                  "key": "HYDRAULIC_TANK",
-                  "count": 1
+                  "key": "LUBE_OIL_DRUM",
+                  "count": 2
                 },
                 {
                   "key": "CABLE_BUNDLE",
@@ -2274,20 +2198,12 @@
               ],
               "combustibles": [
                 {
-                  "key": "PREBAKED_ANODE_BLOCK",
-                  "count": 26
+                  "key": "CARBON_MATERIAL_STACK",
+                  "count": 46
                 },
                 {
-                  "key": "CATHODE_CARBON_BLOCK",
-                  "count": 20
-                },
-                {
-                  "key": "OIL_TRANSFORMER",
-                  "count": 1
-                },
-                {
-                  "key": "HYDRAULIC_TANK",
-                  "count": 1
+                  "key": "LUBE_OIL_DRUM",
+                  "count": 2
                 },
                 {
                   "key": "CABLE_BUNDLE",
@@ -2511,20 +2427,12 @@
               ],
               "combustibles": [
                 {
-                  "key": "PREBAKED_ANODE_BLOCK",
-                  "count": 26
+                  "key": "CARBON_MATERIAL_STACK",
+                  "count": 46
                 },
                 {
-                  "key": "CATHODE_CARBON_BLOCK",
-                  "count": 20
-                },
-                {
-                  "key": "OIL_TRANSFORMER",
-                  "count": 1
-                },
-                {
-                  "key": "HYDRAULIC_TANK",
-                  "count": 1
+                  "key": "LUBE_OIL_DRUM",
+                  "count": 2
                 },
                 {
                   "key": "CABLE_BUNDLE",
@@ -2748,20 +2656,12 @@
               ],
               "combustibles": [
                 {
-                  "key": "PREBAKED_ANODE_BLOCK",
-                  "count": 26
+                  "key": "CARBON_MATERIAL_STACK",
+                  "count": 46
                 },
                 {
-                  "key": "CATHODE_CARBON_BLOCK",
-                  "count": 20
-                },
-                {
-                  "key": "OIL_TRANSFORMER",
-                  "count": 1
-                },
-                {
-                  "key": "HYDRAULIC_TANK",
-                  "count": 1
+                  "key": "LUBE_OIL_DRUM",
+                  "count": 2
                 },
                 {
                   "key": "CABLE_BUNDLE",
@@ -2985,20 +2885,12 @@
               ],
               "combustibles": [
                 {
-                  "key": "PREBAKED_ANODE_BLOCK",
-                  "count": 26
+                  "key": "CARBON_MATERIAL_STACK",
+                  "count": 46
                 },
                 {
-                  "key": "CATHODE_CARBON_BLOCK",
-                  "count": 20
-                },
-                {
-                  "key": "OIL_TRANSFORMER",
-                  "count": 1
-                },
-                {
-                  "key": "HYDRAULIC_TANK",
-                  "count": 1
+                  "key": "LUBE_OIL_DRUM",
+                  "count": 2
                 },
                 {
                   "key": "CABLE_BUNDLE",
@@ -3082,12 +2974,8 @@
               ],
               "combustibles": [
                 {
-                  "key": "PREBAKED_ANODE_BLOCK",
-                  "count": 28
-                },
-                {
-                  "key": "CATHODE_CARBON_BLOCK",
-                  "count": 21
+                  "key": "CARBON_MATERIAL_STACK",
+                  "count": 49
                 }
               ],
               "specialized_components": []
@@ -3130,7 +3018,7 @@
                   "count": 4
                 },
                 {
-                  "key": "HYDRAULIC_TANK",
+                  "key": "LUBE_OIL_DRUM",
                   "count": 3
                 }
               ],
@@ -3211,19 +3099,15 @@
               ],
               "combustibles": [
                 {
-                  "key": "PREBAKED_ANODE_BLOCK",
-                  "count": 10
-                },
-                {
-                  "key": "CATHODE_CARBON_BLOCK",
-                  "count": 10
+                  "key": "CARBON_MATERIAL_STACK",
+                  "count": 20
                 },
                 {
                   "key": "CABLE_BUNDLE",
                   "count": 1
                 },
                 {
-                  "key": "HYDRAULIC_TANK",
+                  "key": "LUBE_OIL_DRUM",
                   "count": 1
                 }
               ],
@@ -3272,7 +3156,7 @@
                   "count": 3
                 },
                 {
-                  "key": "HYDRAULIC_TANK",
+                  "key": "LUBE_OIL_DRUM",
                   "count": 2
                 }
               ],
@@ -3316,7 +3200,7 @@
                   "count": 2
                 },
                 {
-                  "key": "HYDRAULIC_TANK",
+                  "key": "LUBE_OIL_DRUM",
                   "count": 2
                 }
               ],
@@ -3370,7 +3254,7 @@
                   "count": 4
                 },
                 {
-                  "key": "HYDRAULIC_TANK",
+                  "key": "LUBE_OIL_DRUM",
                   "count": 6
                 }
               ],
@@ -3546,12 +3430,8 @@
               ],
               "combustibles": [
                 {
-                  "key": "PREBAKED_ANODE_BLOCK",
-                  "count": 12
-                },
-                {
-                  "key": "CATHODE_CARBON_BLOCK",
-                  "count": 14
+                  "key": "CARBON_MATERIAL_STACK",
+                  "count": 26
                 }
               ],
               "specialized_components": []
@@ -3664,7 +3544,7 @@
                   "count": 4
                 },
                 {
-                  "key": "HYDRAULIC_TANK",
+                  "key": "LUBE_OIL_DRUM",
                   "count": 10
                 }
               ],
@@ -3793,7 +3673,7 @@
                   "count": 4
                 },
                 {
-                  "key": "HYDRAULIC_TANK",
+                  "key": "LUBE_OIL_DRUM",
                   "count": 10
                 }
               ],
@@ -4389,7 +4269,7 @@
                   "count": 1
                 },
                 {
-                  "key": "HYDRAULIC_TANK",
+                  "key": "LUBE_OIL_DRUM",
                   "count": 1
                 }
               ],

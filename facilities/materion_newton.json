@@ -179,7 +179,7 @@
                   "count": 30
                 },
                 {
-                  "key": "PAPER_STACK",
+                  "key": "WOODEN_PALLET",
                   "count": 10
                 }
               ],
@@ -243,7 +243,7 @@
                   "count": 40
                 },
                 {
-                  "key": "PAPER_STACK",
+                  "key": "WOODEN_PALLET",
                   "count": 15
                 }
               ],
@@ -373,7 +373,7 @@
               ],
               "combustibles": [
                 {
-                  "key": "PAPER_STACK",
+                  "key": "WOODEN_PALLET",
                   "count": 10
                 }
               ],
@@ -479,7 +479,7 @@
               ],
               "combustibles": [
                 {
-                  "key": "ELECTRICAL_EQUIPMENT",
+                  "key": "CABLE_BUNDLE",
                   "count": 10
                 }
               ],
@@ -519,11 +519,11 @@
               ],
               "combustibles": [
                 {
-                  "key": "ELECTRICAL_EQUIPMENT",
+                  "key": "CABLE_BUNDLE",
                   "count": 8
                 },
                 {
-                  "key": "PAPER_STACK",
+                  "key": "WOODEN_PALLET",
                   "count": 5
                 }
               ],
@@ -597,7 +597,7 @@
                   "count": 15
                 },
                 {
-                  "key": "ELECTRICAL_EQUIPMENT",
+                  "key": "CABLE_BUNDLE",
                   "count": 5
                 }
               ],
@@ -616,7 +616,7 @@
               "openings": [],
               "combustibles": [
                 {
-                  "key": "ELECTRICAL_EQUIPMENT",
+                  "key": "CABLE_BUNDLE",
                   "count": 8
                 }
               ],
@@ -635,7 +635,7 @@
               "openings": [],
               "combustibles": [
                 {
-                  "key": "CHEMICAL_DRUM",
+                  "key": "LUBE_OIL_DRUM",
                   "count": 15
                 }
               ],
@@ -695,7 +695,7 @@
               ],
               "combustibles": [
                 {
-                  "key": "PAPER_STACK",
+                  "key": "WOODEN_PALLET",
                   "count": 5
                 }
               ],
@@ -760,7 +760,7 @@
               "openings": [],
               "combustibles": [
                 {
-                  "key": "ELECTRICAL_EQUIPMENT",
+                  "key": "CABLE_BUNDLE",
                   "count": 5
                 }
               ],
@@ -825,7 +825,7 @@
               ],
               "combustibles": [
                 {
-                  "key": "PAPER_STACK",
+                  "key": "WOODEN_PALLET",
                   "count": 3
                 }
               ],
@@ -972,12 +972,8 @@
               ],
               "combustibles": [
                 {
-                  "key": "PAPER_STACK",
-                  "count": 40
-                },
-                {
                   "key": "WOODEN_PALLET",
-                  "count": 20
+                  "count": 60
                 }
               ],
               "specialized_components": [
@@ -1004,7 +1000,7 @@
                   "count": 60
                 },
                 {
-                  "key": "CHEMICAL_DRUM",
+                  "key": "LUBE_OIL_DRUM",
                   "count": 20
                 }
               ],
@@ -1054,7 +1050,7 @@
               ],
               "combustibles": [
                 {
-                  "key": "PAPER_STACK",
+                  "key": "WOODEN_PALLET",
                   "count": 5
                 }
               ],
@@ -1294,7 +1290,7 @@
               ],
               "combustibles": [
                 {
-                  "key": "PAPER_STACK",
+                  "key": "WOODEN_PALLET",
                   "count": 10
                 }
               ],
@@ -1344,11 +1340,11 @@
               ],
               "combustibles": [
                 {
-                  "key": "ELECTRICAL_EQUIPMENT",
+                  "key": "CABLE_BUNDLE",
                   "count": 20
                 },
                 {
-                  "key": "PAPER_STACK",
+                  "key": "WOODEN_PALLET",
                   "count": 10
                 }
               ],
@@ -1378,11 +1374,11 @@
               ],
               "combustibles": [
                 {
-                  "key": "CHEMICAL_DRUM",
+                  "key": "LUBE_OIL_DRUM",
                   "count": 25
                 },
                 {
-                  "key": "PAPER_STACK",
+                  "key": "WOODEN_PALLET",
                   "count": 10
                 }
               ],
@@ -1442,7 +1438,7 @@
               ],
               "combustibles": [
                 {
-                  "key": "ELECTRICAL_EQUIPMENT",
+                  "key": "CABLE_BUNDLE",
                   "count": 10
                 }
               ],
@@ -1499,11 +1495,7 @@
               "combustibles": [
                 {
                   "key": "WOODEN_PALLET",
-                  "count": 30
-                },
-                {
-                  "key": "PAPER_STACK",
-                  "count": 15
+                  "count": 45
                 }
               ],
               "specialized_components": []
@@ -1568,11 +1560,11 @@
               ],
               "combustibles": [
                 {
-                  "key": "CHEMICAL_DRUM",
+                  "key": "LUBE_OIL_DRUM",
                   "count": 10
                 },
                 {
-                  "key": "PAPER_STACK",
+                  "key": "WOODEN_PALLET",
                   "count": 5
                 }
               ],
@@ -1628,7 +1620,7 @@
               ],
               "combustibles": [
                 {
-                  "key": "PAPER_STACK",
+                  "key": "WOODEN_PALLET",
                   "count": 15
                 }
               ],
@@ -1694,7 +1686,7 @@
               ],
               "combustibles": [
                 {
-                  "key": "PAPER_STACK",
+                  "key": "WOODEN_PALLET",
                   "count": 10
                 },
                 {
@@ -1785,11 +1777,7 @@
               "combustibles": [
                 {
                   "key": "CABLE_BUNDLE",
-                  "count": 20
-                },
-                {
-                  "key": "ELECTRICAL_EQUIPMENT",
-                  "count": 5
+                  "count": 25
                 }
               ],
               "specialized_components": [
