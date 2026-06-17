@@ -475,7 +475,7 @@ class TestBuildingGroup:
         assert bg.heat_source == {
             "azimuth": 0,
             "elevation": 0,
-            "net_heat_flux": 3.0,
+            "net_heat_flux": 1000,
             "duration": 1.36,
         }
         assert bg.simulation_time == 600
@@ -504,7 +504,7 @@ class TestBuildingGroup:
         assert d["heat_source"] == {
             "azimuth": 0,
             "elevation": 0,
-            "net_heat_flux": 3.0,
+            "net_heat_flux": 1000,
             "duration": 1.36,
         }
         assert d["domain"] == {"padding": 5.0, "grid_size": 1.0}
@@ -821,7 +821,7 @@ class TestBuildingGroupHeatSourceMigration:
         assert bg.heat_source == {
             "azimuth": 0,
             "elevation": 0,
-            "net_heat_flux": 3.0,
+            "net_heat_flux": 1000,
             "duration": 1.36,
         }
 
@@ -878,6 +878,6 @@ class TestBuildingGroupHeatSourceMigration:
         assert bg.heat_source == {
             "azimuth": 0,
             "elevation": 0,
-            "net_heat_flux": 3.0,
+            "net_heat_flux": 1000,
             "duration": 1.36,
         }
