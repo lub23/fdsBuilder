@@ -22,9 +22,12 @@ OCCLUSION_LATERAL_TOLERANCE: float = 5.0
 
 
 def _azimuth_direction(azimuth_deg: float) -> Tuple[float, float]:
-    """Azimuth=0 is +y (north). Returns unit (dx, dy)."""
+    """Compass convention: az=0 is +x (XMAX), increases clockwise.
+
+    Returns unit (dx, dy).
+    """
     rad = math.radians(azimuth_deg)
-    return (math.sin(rad), math.cos(rad))
+    return (math.cos(rad), -math.sin(rad))
 
 
 def heat_source_position(facility: Facility, azimuth: float) -> Tuple[float, float]:

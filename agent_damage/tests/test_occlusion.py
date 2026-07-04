@@ -42,11 +42,23 @@ def test_heat_source_position_east():
         name="f", cn_name="f", facility_type=FacilityType.AEROSPACE,
         buildings=[_make_building("b", 0, 0, 10, 10, 5)],
     )
-    # azimuth=90 = east (+x)
-    pos = heat_source_position(facility, azimuth=90)
+    # Compass: az=0 -> +x (east)
+    pos = heat_source_position(facility, azimuth=0)
     cx, cy = facility.center
     assert pos[0] == pytest.approx(cx + 5.0 + FIXED_SOURCE_OFFSET, abs=1e-6)
     assert pos[1] == pytest.approx(cy, abs=1e-6)
+
+
+def test_heat_source_position_south():
+    facility = Facility(
+        name="f", cn_name="f", facility_type=FacilityType.AEROSPACE,
+        buildings=[_make_building("b", 0, 0, 10, 20, 5)],
+    )
+    # Compass: az=90 -> -y (south)
+    pos = heat_source_position(facility, azimuth=90)
+    cx, cy = facility.center
+    assert pos[0] == pytest.approx(cx, abs=1e-6)
+    assert pos[1] == pytest.approx(cy - 10.0 - FIXED_SOURCE_OFFSET, abs=1e-6)
 
 
 def test_heat_source_position_north():
@@ -54,8 +66,8 @@ def test_heat_source_position_north():
         name="f", cn_name="f", facility_type=FacilityType.AEROSPACE,
         buildings=[_make_building("b", 0, 0, 10, 20, 5)],
     )
-    # azimuth=0 = north (+y)
-    pos = heat_source_position(facility, azimuth=0)
+    # Compass: az=270 -> +y (north)
+    pos = heat_source_position(facility, azimuth=270)
     cx, cy = facility.center
     assert pos[0] == pytest.approx(cx, abs=1e-6)
     assert pos[1] == pytest.approx(cy + 10.0 + FIXED_SOURCE_OFFSET, abs=1e-6)
@@ -67,7 +79,7 @@ def test_occluding_count_zero_when_only_target():
         name="f", cn_name="f", facility_type=FacilityType.AEROSPACE,
         buildings=[target],
     )
-    assert occluding_higher_count(facility, target, azimuth=90) == 0
+    assert occluding_higher_count(facility, target, azimuth=0) == 0
 
 
 def test_occluding_count_taller_on_line():
@@ -77,7 +89,7 @@ def test_occluding_count_taller_on_line():
         name="f", cn_name="f", facility_type=FacilityType.AEROSPACE,
         buildings=[target, blocker],
     )
-    assert occluding_higher_count(facility, target, azimuth=90) == 1
+    assert occluding_higher_count(facility, target, azimuth=0) == 1
 
 
 def test_occluding_count_shorter_not_counted():
@@ -87,7 +99,7 @@ def test_occluding_count_shorter_not_counted():
         name="f", cn_name="f", facility_type=FacilityType.AEROSPACE,
         buildings=[target, shorter],
     )
-    assert occluding_higher_count(facility, target, azimuth=90) == 0
+    assert occluding_higher_count(facility, target, azimuth=0) == 0
 
 
 def test_occluding_count_off_line_not_counted():
@@ -97,4 +109,4 @@ def test_occluding_count_off_line_not_counted():
         name="f", cn_name="f", facility_type=FacilityType.AEROSPACE,
         buildings=[target, offline],
     )
-    assert occluding_higher_count(facility, target, azimuth=90) == 0
+    assert occluding_higher_count(facility, target, azimuth=0) == 0

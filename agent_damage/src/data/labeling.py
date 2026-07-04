@@ -27,14 +27,11 @@ LABEL_THRESHOLD_HIGH: float = 70.0
 
 _COMB_WEIGHTS: Sequence[float] = (1.2, 1.0, 1.5, 2.0, 1.3, 1.2, 0.8, 1.1)
 
-# Wall angle convention matching heat_source.py:
-# azimuth 0°  = YMAX (north),  90° = XMAX (east)
-#         180° = YMIN (south), 270° = XMIN (west)
 _WALL_ANGLES = {
-    "y_max": 0,
-    "x_max": 90,
-    "y_min": 180,
-    "x_min": 270,
+    "x_max": 0,
+    "y_min": 90,
+    "x_min": 180,
+    "y_max": 270,
 }
 
 

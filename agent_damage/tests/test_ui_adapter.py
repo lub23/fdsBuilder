@@ -47,10 +47,9 @@ class _FakeGroup:
 
 
 def test_nearest_enum_heat_flux():
-    # UI value treated as kW/m² after divided by 1000 elsewhere
-    assert nearest_enum(2.9, HEAT_FLUX_OPTIONS) == 3
-    assert nearest_enum(0.0, HEAT_FLUX_OPTIONS) == 0.05
-    assert nearest_enum(1000.0, HEAT_FLUX_OPTIONS) == 20
+    assert nearest_enum(2900, HEAT_FLUX_OPTIONS) == 3000
+    assert nearest_enum(0.0, HEAT_FLUX_OPTIONS) == 50
+    assert nearest_enum(21000, HEAT_FLUX_OPTIONS) == 20000
 
 
 def test_nearest_enum_azimuth():

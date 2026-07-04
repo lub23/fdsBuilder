@@ -41,7 +41,7 @@ def _building(height: float = 10.0, opening_ratio_override=None):
 
 def test_low_label_for_low_flux():
     b = _building()
-    hs = HeatSourceParams(elevation=0, azimuth=0, duration=1.36, heat_flux=0.05)
+    hs = HeatSourceParams(elevation=0, azimuth=0, duration=1.36, heat_flux=50)
     label = simulate_damage_label(b, hs, occluding_higher_count=0)
     assert label is DamageLevel.LOW
 
@@ -56,14 +56,14 @@ def test_high_label_for_max_flux_fuel_heavy():
         stories=1, boundary=[0, 10, 0, 10],
         combustibles_raw={"JET_FUEL": 100, "DIESEL_TANK": 50, "GASOLINE": 20},
     )
-    hs = HeatSourceParams(elevation=0, azimuth=0, duration=7.5, heat_flux=20.0)
+    hs = HeatSourceParams(elevation=0, azimuth=0, duration=7.5, heat_flux=20000)
     label = simulate_damage_label(b, hs, occluding_higher_count=0)
     assert label is DamageLevel.HIGH
 
 
 def test_occlusion_reduces_damage():
     b = _building()
-    hs = HeatSourceParams(elevation=0, azimuth=0, duration=7.5, heat_flux=20.0)
+    hs = HeatSourceParams(elevation=0, azimuth=0, duration=7.5, heat_flux=20000)
     no_block = simulate_damage_label(b, hs, occluding_higher_count=0)
     with_block = simulate_damage_label(b, hs, occluding_higher_count=3)
     assert with_block.numeric <= no_block.numeric

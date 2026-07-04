@@ -20,7 +20,7 @@ def test_feature_columns_are_23():
 def test_build_sample_shape():
     facility = load_core_facilities()[0]
     building = facility.buildings[0]
-    hs = HeatSourceParams(elevation=30, azimuth=90, duration=2.1, heat_flux=10.0)
+    hs = HeatSourceParams(elevation=30, azimuth=90, duration=2.1, heat_flux=10000)
     row = build_sample(facility, building, hs)
     assert len(row["features"]) == 23
     assert row["label"] in {0, 1, 2}

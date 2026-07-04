@@ -22,8 +22,7 @@ CORE_FACILITY_FILES: Tuple[str, ...] = (
 
 @lru_cache(maxsize=1)
 def load_core_facilities() -> Tuple[Facility, ...]:
-    """Load and cache the 4 canonical facilities (aerospace / airport_hangar /
-    machinery_manufacturing / metallurgical_facilities)."""
+    """Load and cache the 4 canonical facilities."""
     facilities: List[Facility] = []
     for name in CORE_FACILITY_FILES:
         path = FACILITIES_DIR / name

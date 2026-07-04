@@ -56,7 +56,7 @@ def test_end_to_end_pipeline(tmp_path: Path):
 
     # 5. Facility-level inference
     facility = load_core_facilities()[0]
-    heat = HeatSourceParams(elevation=30, azimuth=180, duration=2.1, heat_flux=7.0)
+    heat = HeatSourceParams(elevation=30, azimuth=180, duration=2.1, heat_flux=7000)
     result = predictor.predict_facility(facility, heat)
     assert len(result.building_results) == facility.num_buildings
     # Try each aggregation algorithm
