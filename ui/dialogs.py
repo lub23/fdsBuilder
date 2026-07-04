@@ -149,7 +149,7 @@ class CombustibleDialog(QDialog):
 
     def __init__(self, manager: CombustibleManager,
                  room_length: float, room_width: float,
-                 wall_thickness: float = 0.2, parent=None):
+                 wall_thickness: float = 0.5, parent=None):
         super().__init__(parent)
         self.manager = manager
         self.room_length = room_length
@@ -339,7 +339,7 @@ class _CompartmentCanvas(QWidget):
 class FireCompartmentDialog(QDialog):
     """防火分区可视化编辑对话框"""
     def __init__(self, parent=None, compartments=None, building_length=20,
-                 building_width=15, wall_thickness=0.24):
+                 building_width=15, wall_thickness=0.5):
         super().__init__(parent)
         self.setWindowTitle("防火分区编辑")
         self.setMinimumSize(600, 450)
@@ -419,7 +419,7 @@ class FireCompartmentDialog(QDialog):
             self.table.setItem(i, 2, QTableWidgetItem(f"{fc.get('x_max', self._L):.1f}"))
             self.table.setItem(i, 3, QTableWidgetItem(f"{fc.get('y_min', 0):.1f}"))
             self.table.setItem(i, 4, QTableWidgetItem(f"{fc.get('y_max', self._W):.1f}"))
-            self.table.setItem(i, 5, QTableWidgetItem(f"{fc.get('firewall_thickness', 0.2):.2f}"))
+            self.table.setItem(i, 5, QTableWidgetItem(f"{fc.get('firewall_thickness', 0.5):.2f}"))
         self._canvas.set_compartments(self._compartments)
 
     def _add_compartment(self):
@@ -428,7 +428,7 @@ class FireCompartmentDialog(QDialog):
             "id": f"FC_{idx}", "name": f"防火分区{idx+1}",
             "x_min": 0, "x_max": self._L,
             "y_min": 0, "y_max": self._W,
-            "firewall_thickness": 0.2, "firewall_material": "CONCRETE",
+            "firewall_thickness": 0.5, "firewall_material": "CONCRETE",
         })
         self._refresh_table()
 
@@ -442,7 +442,7 @@ class FireCompartmentDialog(QDialog):
                     "x_min": round(i * self._L / n, 2),
                     "x_max": round((i + 1) * self._L / n, 2),
                     "y_min": 0, "y_max": self._W,
-                    "firewall_thickness": 0.2, "firewall_material": "CONCRETE",
+                    "firewall_thickness": 0.5, "firewall_material": "CONCRETE",
                 }
             else:
                 fc = {
@@ -450,7 +450,7 @@ class FireCompartmentDialog(QDialog):
                     "x_min": 0, "x_max": self._L,
                     "y_min": round(i * self._W / n, 2),
                     "y_max": round((i + 1) * self._W / n, 2),
-                    "firewall_thickness": 0.2, "firewall_material": "CONCRETE",
+                    "firewall_thickness": 0.5, "firewall_material": "CONCRETE",
                 }
             self._compartments.append(fc)
         self._refresh_table()

@@ -55,7 +55,8 @@ def regenerate_fds(facility_name: str):
     with open(fds_path, "w", encoding="utf-8") as f:
         f.write(fds_code)
 
-    domain, grid_size, _num = generator._compute_mesh()
+    _domain_unused, grid_size, _num, _ref = generator._compute_mesh()
+    domain = _domain_unused
     nx = max(10, int((domain[1] - domain[0]) / grid_size))
     ny = max(10, int((domain[3] - domain[2]) / grid_size))
     nz = max(10, int((domain[5] - domain[4]) / grid_size))

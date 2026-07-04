@@ -55,7 +55,7 @@ class Roof:
         openings:  List of dicts, each with a ``boundary`` key [x, length, y, width].
     """
 
-    thickness: float = 0.2
+    thickness: float = 0.5
     material: str = "CONCRETE"
     openings: list[dict] = field(default_factory=list)
 
@@ -74,7 +74,7 @@ class Roof:
         else:
             openings = []
         return cls(
-            thickness=d.get("thickness", 0.2),
+            thickness=d.get("thickness", 0.5),
             material=d.get("material", "CONCRETE"),
             openings=openings,
         )
@@ -96,7 +96,7 @@ class FireCompartment:
 
     name: str = ""
     boundary: list[float] = field(default_factory=lambda: [0, 0, 0, 0])
-    firewall_thickness: float = 0.3
+    firewall_thickness: float = 0.5
     firewall_material: str = "CONCRETE"
     openings: list[Opening] = field(default_factory=list)
     combustibles: list[dict] = field(default_factory=list)
@@ -120,7 +120,7 @@ class FireCompartment:
         fc = cls(
             name=d.get("name", ""),
             boundary=list(d.get("boundary", [0, 0, 0, 0])),
-            firewall_thickness=d.get("firewall_thickness", 0.3),
+            firewall_thickness=d.get("firewall_thickness", 0.5),
             firewall_material=d.get("firewall_material", "CONCRETE"),
             openings=[Opening.from_dict(o) for o in d.get("openings", [])],
             combustibles=d.get("combustibles", []),
@@ -224,7 +224,7 @@ class Building:
     name: str = ""
     cn_name: str = ""
     boundary: list[float] = field(default_factory=lambda: [0, 20, 0, 10])
-    wall_thickness: float = 0.24
+    wall_thickness: float = 0.5
     height: float = 3.0
     stories: list[Story] = field(default_factory=list)
 
@@ -270,11 +270,12 @@ class Building:
         t = self.wall_thickness
         story = self.stories[story_index]
         z0, z1 = story.z_bottom, story.z_top
+        half_t = t / 2
         return {
-            "y_min": [ox - t / 2, ox + L + t / 2, oy - t, oy, z0, z1],
-            "y_max": [ox - t / 2, ox + L + t / 2, oy + W, oy + W + t, z0, z1],
-            "x_min": [ox - t, ox, oy - t / 2, oy + W + t / 2, z0, z1],
-            "x_max": [ox + L, ox + L + t, oy - t / 2, oy + W + t / 2, z0, z1],
+            "y_min": [ox + half_t, ox + L - half_t, oy - half_t, oy + half_t, z0, z1],
+            "y_max": [ox + half_t, ox + L - half_t, oy + W - half_t, oy + W + half_t, z0, z1],
+            "x_min": [ox - half_t, ox + half_t, oy - half_t, oy + W + half_t, z0, z1],
+            "x_max": [ox + L - half_t, ox + L + half_t, oy - half_t, oy + W + half_t, z0, z1],
         }
 
     # -- serialization --------------------------------------------------------
@@ -296,7 +297,7 @@ class Building:
             name=d.get("name", ""),
             cn_name=d.get("cn_name", ""),
             boundary=list(d.get("boundary", [0, 20, 0, 10])),
-            wall_thickness=d.get("wall_thickness", 0.24),
+            wall_thickness=d.get("wall_thickness", 0.5),
             height=d.get("height", 3.0),
             stories=[Story.from_dict(s) for s in d.get("stories", [])],
         )
@@ -311,8 +312,9 @@ class BuildingGroup:
 
     Attributes:
         buildings:       List of Building instances.
-        heat_source:     Heat source configuration dict:
-                         {azimuth(°), elevation(°), net_heat_flux(kW/m²), duration(s)}.
+        heat_source:     Heat source configuration dict. ``net_heat_flux`` is
+                         the UI target q_avg in kW/m²:
+                         {azimuth(°), elevation(°), net_heat_flux, duration(s)}.
         simulation_time: Total simulation time in seconds.
         domain:          Computational domain settings.
         output:          Output control settings.
@@ -328,7 +330,11 @@ class BuildingGroup:
     })
     simulation_time: float = 1800
     domain: dict = field(
-        default_factory=lambda: {"padding": 5.0, "grid_size": 1.0}
+        default_factory=lambda: {
+            "padding": 5.0,
+            "grid_size": 1.0,
+            "refinement_zone": {"enabled": True, "depth": 1.0, "grid_size": 1.0},
+        }
     )
     output: dict = field(default_factory=lambda: {"slices": True, "devices": True})
 
@@ -411,10 +417,16 @@ class BuildingGroup:
             "duration": raw_hs.get("duration", 1.36),
         }
 
-        domain = data.get("domain", {"padding": 5.0, "grid_size": 1.0})
+        domain = dict(data.get("domain", {"padding": 5.0, "grid_size": 1.0}))
         # Legacy configs may have mesh_cells; drop it in favor of grid_size.
         if "grid_size" not in domain:
             domain = {"padding": domain.get("padding", 5.0), "grid_size": 1.0}
+        # The source-side refinement strip is mandatory and defaults to a 1 m cell.
+        rz = dict(domain.get("refinement_zone", {}) or {})
+        rz["enabled"] = True
+        rz["depth"] = float(rz.get("depth", 1.0))
+        rz["grid_size"] = float(rz.get("grid_size", 1.0))
+        domain["refinement_zone"] = rz
         return cls(
             buildings=[Building.from_dict(b) for b in data.get("buildings", [])],
             name=data.get("name", ""),

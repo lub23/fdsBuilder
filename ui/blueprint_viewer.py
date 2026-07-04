@@ -145,7 +145,7 @@ class BlueprintViewer(QWidget):
 
     def recognize_blueprint(self):
         if not self.image_path:
-            QMessageBox.warning(self, "提示", "请先上传图纸")
+            QMessageBox.warning(self.window(), "提示", "请先上传图纸")
             return
         # 禁用按钮，显示进度
         self.recognize_btn.setEnabled(False)
@@ -166,18 +166,18 @@ class BlueprintViewer(QWidget):
                 self.status_label.setText(f"✅ 识别成功！\n{summary}")
                 self.status_label.setStyleSheet("color:#a6e3a1; font-size:12px;")
 
-                QMessageBox.information(self, "识别完成",
-                    f"已识别并应用到模型：\n{summary}\n\n"
-                    f"请在「参数设置」中检查并调整。")
+                QMessageBox.information(
+                    self.window(),
+                    "识别完成",
+                    f"识别成功！\n\n{summary}",
+                )
             else:
-                self.status_label.setText("❌ 识别失败，未返回有效数据")
-                self.status_label.setStyleSheet("color:#f38ba8; font-size:12px;")
-                QMessageBox.warning(self, "失败", "识别未返回有效数据")
+                QMessageBox.warning(self.window(), "失败", "识别未返回有效数据")
 
         except Exception as e:
             self.status_label.setText(f"❌ 错误: {str(e)}")
             self.status_label.setStyleSheet("color:#f38ba8; font-size:12px;")
-            QMessageBox.critical(self, "识别错误", str(e))
+            QMessageBox.critical(self.window(), "识别错误", str(e))
 
         finally:
             self.recognize_btn.setEnabled(True)

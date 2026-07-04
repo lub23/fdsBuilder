@@ -148,10 +148,10 @@ COMBUSTIBLE_LIBRARY = {
     },
     # 1. 纤维质堆料：木制品 / 纸张 / 织物 / 木质家具
     "WOODEN_PALLET": {
-        "name": "纤维质料(木/纸/织物)",
-        "length": 2.4,
-        "width": 1.4,
-        "height": 1.2,
+        "name": "纤维质堆料",
+        "length": 3.0,
+        "width": 2.0,
+        "height": 1.5,
         "hrrpua": 280,
         "ignition_temp": 350,
         "color": "BROWN",
@@ -166,10 +166,10 @@ COMBUSTIBLE_LIBRARY = {
     },
     # 2. 高分子材料：塑料 / 橡胶 / 电缆 / 电气设备 / 复合材料
     "CABLE_BUNDLE": {
-        "name": "高分子/复合材料(塑料/橡胶/电缆)",
-        "length": 1.6,
-        "width": 1.2,
-        "height": 1.2,
+        "name": "高分子线缆装置",
+        "length": 2.0,
+        "width": 1.5,
+        "height": 1.5,
         "hrrpua": 600,
         "ignition_temp": 360,
         "color": "BLACK",
@@ -184,10 +184,10 @@ COMBUSTIBLE_LIBRARY = {
     },
     # 3. 易燃液体桶罐：润滑油 / 溶剂 / 化学品 / 液压油 / 变压器油 / 煤油
     "LUBE_OIL_DRUM": {
-        "name": "易燃液体桶罐(油/溶剂/化学品)",
-        "length": 1.4,
-        "width": 1.4,
-        "height": 1.4,
+        "name": "易燃液体桶罐",
+        "length": 2.0,
+        "width": 2.0,
+        "height": 2.0,
         "hrrpua": 1000,
         "ignition_temp": 300,
         "color": "GREEN",
@@ -203,9 +203,9 @@ COMBUSTIBLE_LIBRARY = {
     # 4. 炭素固体：炭素/煤 / 预焙阳极 / 阴极碳块 / 金属粉尘
     "CARBON_MATERIAL_STACK": {
         "name": "炭素/煤炭材料堆",
-        "length": 1.8,
-        "width": 1.4,
-        "height": 1.2,
+        "length": 2.0,
+        "width": 1.5,
+        "height": 1.0,
         "hrrpua": 250,
         "ignition_temp": 500,
         "color": "GRAY",
@@ -221,8 +221,8 @@ COMBUSTIBLE_LIBRARY = {
     # 5. 金属制品/零件：不可燃目标，仅作辐射热流测量对象
     "METAL_PARTS": {
         "name": "金属制品/零件(不可燃)",
-        "length": 1.4,
-        "width": 1.2,
+        "length": 1.5,
+        "width": 1.0,
         "height": 1.0,
         "hrrpua": 0,
         "ignition_temp": 0,

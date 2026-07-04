@@ -62,7 +62,12 @@ def _signature(building):
                 for c in fc.combustibles if isinstance(c, dict)
             ),
             tuple(
-                (sc.get("key", ""), sc.get("count", 1))
+                (
+                    sc.get("key", ""),
+                    sc.get("count", 1),
+                    sc.get("orientation", ""),
+                    sc.get("rotation", 0),
+                )
                 for sc in fc.specialized_components if isinstance(sc, dict)
             ),
         )
@@ -77,7 +82,13 @@ def _signature(building):
                 for c in s.combustibles if isinstance(c, dict)
             ),
             tuple(
-                (sc.get("key", ""), sc.get("count", 1), tuple(sc.get("boundary", [])))
+                (
+                    sc.get("key", ""),
+                    sc.get("count", 1),
+                    tuple(sc.get("boundary", [])),
+                    sc.get("orientation", ""),
+                    sc.get("rotation", 0),
+                )
                 for sc in s.specialized_components if isinstance(sc, dict)
             ),
             (round(s.roof.thickness, 4), s.roof.material),
@@ -195,6 +206,55 @@ class Viewer3D(QWidget):
         if si in self.visible_stories:
             return True
         return False
+
+    @staticmethod
+    def _component_orientation_axis(orientation):
+        if orientation is None:
+            return "x"
+        value = str(orientation).strip().lower()
+        if value in {
+            "y", "ns", "north_south", "north-south", "south-north", "南北", "南北向",
+        }:
+            return "y"
+        return "x"
+
+    def _component_preview_item(self, comp, sc: dict, ci: int) -> dict:
+        orientation = sc.get("orientation")
+        if orientation is None and sc.get("rotation") == 90:
+            orientation = "y"
+        rotate_xy = self._component_orientation_axis(orientation) == "y"
+        if rotate_xy:
+            length, width = comp.total_width, comp.total_length
+        else:
+            length, width = comp.total_length, comp.total_width
+        return {
+            "length": length,
+            "width": width,
+            "height": comp.total_height,
+            "color": "GRAY",
+            "component_key": sc["key"],
+            "_comp": comp,
+            "_instance": ci,
+            "_rotate_xy": rotate_xy,
+        }
+
+    @staticmethod
+    def _component_part_bounds(item, part, ox, oy, z_offset):
+        if item.get("_rotate_xy"):
+            comp = item["_comp"]
+            x1 = ox + item["x"] + part.dy
+            x2 = x1 + part.width
+            y1 = oy + item["y"] + comp.total_length - part.dx - part.length
+            y2 = y1 + part.length
+            return (x1, x2, y1, y2, part.dz + z_offset, part.dz + part.height + z_offset)
+        return (
+            ox + item["x"] + part.dx,
+            ox + item["x"] + part.dx + part.length,
+            oy + item["y"] + part.dy,
+            oy + item["y"] + part.dy + part.width,
+            part.dz + z_offset,
+            part.dz + part.height + z_offset,
+        )
 
     def update_model(self, model, debounce=False, partial=False):
         """Update the model and trigger re-render.
@@ -402,11 +462,14 @@ class Viewer3D(QWidget):
             z0 = story.z_bottom
             z1 = story.z_top
 
+            half_t = t / 2
             wall_boxes.extend([
-                _box([ox - t/2, ox + L + t/2, oy - t, oy, z0, z1]),
-                _box([ox - t/2, ox + L + t/2, oy + W, oy + W + t, z0, z1]),
-                _box([ox - t, ox, oy - t/2, oy + W + t/2, z0, z1]),
-                _box([ox + L, ox + L + t, oy - t/2, oy + W + t/2, z0, z1]),
+                # y-direction walls: shortened at ends so they sit between x-walls
+                _box([ox + half_t, ox + L - half_t, oy - half_t, oy + half_t, z0, z1]),
+                _box([ox + half_t, ox + L - half_t, oy + W - half_t, oy + W + half_t, z0, z1]),
+                # x-direction walls: extended past y-walls to fill corners fully
+                _box([ox - half_t, ox + half_t, oy - half_t, oy + W + half_t, z0, z1]),
+                _box([ox + L - half_t, ox + L + half_t, oy - half_t, oy + W + half_t, z0, z1]),
             ])
 
             all_ext = list(story.openings) + detect_coplanar_openings(building, story)
@@ -428,7 +491,7 @@ class Viewer3D(QWidget):
 
             if self.show_roof:
                 roof_boxes.append(
-                    _box([ox, ox + L, oy, oy + W, z1, z1 + story.roof.thickness])
+                    _box([ox - t/2, ox + L + t/2, oy - t/2, oy + W + t/2, z1, z1 + story.roof.thickness])
                 )
                 # Add roof openings as SEPARATE meshes (not merged with roof)
                 for opening in story.roof.openings:
@@ -442,16 +505,16 @@ class Viewer3D(QWidget):
                     )
 
             for fc in story.fire_compartments:
-                self._collect_combustible_boxes(fc, ox, oy, z0, combust_per_color)
+                self._collect_combustible_boxes(
+                    fc, story.fire_compartments, ox, oy, z0, combust_per_color)
             self._collect_story_combustible_boxes(story, ox, oy, z0, combust_per_color)
 
-        def _combine(boxes):
-            if not boxes:
+        def _combine(meshes):
+            if not meshes:
                 return None
-            m = boxes[0].copy()
-            for b in boxes[1:]:
-                m = m.merge(b)
-            return m
+            if len(meshes) == 1:
+                return meshes[0]
+            return pv.merge(meshes)
 
         bundle.walls = _combine(wall_boxes)
         bundle.openings = _combine(opening_boxes)
@@ -533,11 +596,11 @@ class Viewer3D(QWidget):
             ]))
         return boxes
 
-    def _collect_combustible_boxes(self, fc, ox, oy, z_offset, per_color: dict):
+    def _collect_combustible_boxes(self, fc, fire_compartments, ox, oy, z_offset, per_color: dict):
         """Populate per_color dict: {hex_color: [pv.Box, ...]}."""
         from models.materials import COMBUSTIBLE_LIBRARY
         from models.combustibles import SPECIALIZED_COMPONENTS
-        from models.geometry import layout_items_in_fc
+        from models.geometry import layout_items_in_fc_cached
 
         colors = {
             "BROWN": "#8B4513", "RED": "#CD5C5C", "SALMON": "#FA8072",
@@ -551,6 +614,9 @@ class Viewer3D(QWidget):
             "WOOD": "#92400e",
         }
 
+        from generators.fds_generator import _compute_sibling_overlaps
+        sibling_excl = _compute_sibling_overlaps(fc, fire_compartments)
+
         all_items = []
 
         for sc in fc.specialized_components:
@@ -559,15 +625,7 @@ class Viewer3D(QWidget):
                 if not comp:
                     continue
                 for ci in range(sc.get("count", 1)):
-                    all_items.append({
-                        "length": comp.total_length,
-                        "width": comp.total_width,
-                        "height": comp.total_height,
-                        "color": "GRAY",
-                        "component_key": sc["key"],
-                        "_comp": comp,
-                        "_instance": ci,
-                    })
+                    all_items.append(self._component_preview_item(comp, sc, ci))
 
         for cb in fc.combustibles:
             if isinstance(cb, dict) and "key" in cb and "x" not in cb:
@@ -584,10 +642,13 @@ class Viewer3D(QWidget):
                         "length": length, "width": width,
                         "height": cb_def.get("height", 0.5),
                         "color": cb_def.get("color", "BROWN"),
-                        "component_key": None,
+                         "component_key": None,
                     })
 
-        placed = layout_items_in_fc(fc.boundary, all_items, margin=1.0, gap=0.5)
+        placed = layout_items_in_fc_cached(
+            fc.boundary, all_items, margin=0.5, gap=1.5,
+            exclusions=(sibling_excl if sibling_excl else None),
+        )
 
         for item in placed:
             comp_key = item.get("component_key")
@@ -595,14 +656,7 @@ class Viewer3D(QWidget):
             if comp_key and comp:
                 for part in comp.parts:
                     col = material_colors.get(part.material_key, "#CD853F")
-                    box = pv.Box(bounds=(
-                        ox + item["x"] + part.dx,
-                        ox + item["x"] + part.dx + part.length,
-                        oy + item["y"] + part.dy,
-                        oy + item["y"] + part.dy + part.width,
-                        part.dz + z_offset,
-                        part.dz + part.height + z_offset,
-                    ))
+                    box = pv.Box(bounds=self._component_part_bounds(item, part, ox, oy, z_offset))
                     per_color.setdefault(col, []).append(box)
             else:
                 col = colors.get(item.get("color", "BROWN"), "#CD853F")
@@ -621,7 +675,7 @@ class Viewer3D(QWidget):
         """
         from models.materials import COMBUSTIBLE_LIBRARY
         from models.combustibles import SPECIALIZED_COMPONENTS
-        from models.geometry import layout_items_in_fc
+        from models.geometry import layout_items_in_fc_cached
 
         colors = {
             "BROWN": "#8B4513", "RED": "#CD5C5C", "SALMON": "#FA8072",
@@ -635,6 +689,10 @@ class Viewer3D(QWidget):
             "WOOD": "#92400e",
         }
 
+        # Cumulative placed-item exclusions so items from different entries
+        # stay at full gap distance from already-placed rectangles.
+        placed_excl: list[tuple[float, float, float, float]] = []
+
         # Story-level specialized_components
         for sc in story.specialized_components:
             boundary = sc.get("boundary")
@@ -645,30 +703,24 @@ class Viewer3D(QWidget):
                 continue
             items = []
             for ci in range(sc.get("count", 1)):
-                items.append({
-                    "length": comp.total_length,
-                    "width": comp.total_width,
-                    "height": comp.total_height,
-                    "color": "GRAY",
-                    "component_key": sc["key"],
-                    "_comp": comp,
-                    "_instance": ci,
-                })
-            placed = layout_items_in_fc(boundary, items, margin=1.0, gap=0.5)
+                items.append(self._component_preview_item(comp, sc, ci))
+            placed = layout_items_in_fc_cached(
+                boundary, items, margin=0.5, gap=1.5,
+                exclusions=(placed_excl if placed_excl else None),
+            )
+            if placed:
+                for p in placed:
+                    placed_excl.append((
+                        p["x"] - 1.0, p["x"] + p["length"] + 1.0,
+                        p["y"] - 1.0, p["y"] + p["width"] + 1.0,
+                    ))
             for item in placed:
                 comp_key = item.get("component_key")
                 comp_obj = item.get("_comp")
                 if comp_key and comp_obj:
                     for part in comp_obj.parts:
                         col = material_colors.get(part.material_key, "#CD853F")
-                        box = pv.Box(bounds=(
-                            ox + item["x"] + part.dx,
-                            ox + item["x"] + part.dx + part.length,
-                            oy + item["y"] + part.dy,
-                            oy + item["y"] + part.dy + part.width,
-                            part.dz + z_offset,
-                            part.dz + part.height + z_offset,
-                        ))
+                        box = pv.Box(bounds=self._component_part_bounds(item, part, ox, oy, z_offset))
                         per_color.setdefault(col, []).append(box)
 
         # Story-level combustibles
@@ -692,7 +744,16 @@ class Viewer3D(QWidget):
                     "color": cb_def.get("color", "BROWN"),
                     "component_key": None,
                 })
-            placed = layout_items_in_fc(boundary, items, margin=1.0, gap=0.5)
+            placed = layout_items_in_fc_cached(
+                boundary, items, margin=0.5, gap=1.5,
+                exclusions=(placed_excl if placed_excl else None),
+            )
+            if placed:
+                for p in placed:
+                    placed_excl.append((
+                        p["x"] - 1.0, p["x"] + p["length"] + 1.0,
+                        p["y"] - 1.0, p["y"] + p["width"] + 1.0,
+                    ))
             for item in placed:
                 col = colors.get(item.get("color", "BROWN"), "#CD853F")
                 box = pv.Box(bounds=(
@@ -863,10 +924,10 @@ class Viewer3D(QWidget):
         for b in bg.buildings:
             ox, L, oy, W = b.boundary
             t = b.wall_thickness
-            xmin = min(xmin, ox - t)
-            xmax = max(xmax, ox + L + t)
-            ymin = min(ymin, oy - t)
-            ymax = max(ymax, oy + W + t)
+            xmin = min(xmin, ox - t / 2)
+            xmax = max(xmax, ox + L + t / 2)
+            ymin = min(ymin, oy - t / 2)
+            ymax = max(ymax, oy + W + t / 2)
             total_h = 0.0
             for s in b.stories:
                 total_h = max(total_h, s.z_bottom + s.height)
@@ -896,15 +957,16 @@ class Viewer3D(QWidget):
         edge_width=1,
     ):
         """Draw 4 exterior wall boxes using PyVista."""
+        half_t = t / 2
         walls = [
-            # South wall (y_min)
-            (ox - t / 2, ox + L + t / 2, oy - t, oy, z0, z1),
-            # North wall (y_max)
-            (ox - t / 2, ox + L + t / 2, oy + W, oy + W + t, z0, z1),
-            # West wall (x_min)
-            (ox - t, ox, oy - t / 2, oy + W + t / 2, z0, z1),
-            # East wall (x_max)
-            (ox + L, ox + L + t, oy - t / 2, oy + W + t / 2, z0, z1),
+            # South wall (y_min): shortened x → sits between x-walls
+            (ox + half_t, ox + L - half_t, oy - half_t, oy + half_t, z0, z1),
+            # North wall (y_max): same
+            (ox + half_t, ox + L - half_t, oy + W - half_t, oy + W + half_t, z0, z1),
+            # West wall (x_min): extended y → fills corners
+            (ox - half_t, ox + half_t, oy - half_t, oy + W + half_t, z0, z1),
+            # East wall (x_max): same
+            (ox + L - half_t, ox + L + half_t, oy - half_t, oy + W + half_t, z0, z1),
         ]
         for bounds in walls:
             box = pv.Box(bounds=bounds)
@@ -1105,7 +1167,7 @@ class Viewer3D(QWidget):
         """Draw combustible and specialized component items within a fire compartment."""
         from models.materials import COMBUSTIBLE_LIBRARY
         from models.combustibles import SPECIALIZED_COMPONENTS
-        from models.geometry import layout_items_in_fc
+        from models.geometry import layout_items_in_fc_cached
 
         colors = {
             "BROWN": "#8B4513",
@@ -1137,17 +1199,7 @@ class Viewer3D(QWidget):
                 if not comp:
                     continue
                 for ci in range(sc.get("count", 1)):
-                    all_items.append(
-                        {
-                            "length": comp.total_length,
-                            "width": comp.total_width,
-                            "height": comp.total_height,
-                            "color": "GRAY",
-                            "component_key": sc["key"],
-                            "_comp": comp,
-                            "_instance": ci,
-                        }
-                    )
+                    all_items.append(self._component_preview_item(comp, sc, ci))
 
         # 2. Combustibles
         for cb in fc.combustibles:
@@ -1172,7 +1224,7 @@ class Viewer3D(QWidget):
                     )
 
         # Layout all items together
-        placed = layout_items_in_fc(fc.boundary, all_items, margin=1.0, gap=0.5)
+        placed = layout_items_in_fc_cached(fc.boundary, all_items, margin=0.5, gap=1.5)
 
         # Draw
         for item in placed:
@@ -1184,14 +1236,7 @@ class Viewer3D(QWidget):
                 for part in comp.parts:
                     color = material_colors.get(part.material_key, "#CD853F")
                     box = pv.Box(
-                        bounds=(
-                            ox + item["x"] + part.dx,
-                            ox + item["x"] + part.dx + part.length,
-                            oy + item["y"] + part.dy,
-                            oy + item["y"] + part.dy + part.width,
-                            part.dz + z_offset,
-                            part.dz + part.height + z_offset,
-                        )
+                        bounds=self._component_part_bounds(item, part, ox, oy, z_offset)
                     )
                     actor = self.plotter.add_mesh(box, color=color, opacity=0.8)
                     self._add_to_group("combustibles", actor)
@@ -1215,7 +1260,7 @@ class Viewer3D(QWidget):
         """Draw story-level combustibles/specialized_components with explicit boundary."""
         from models.materials import COMBUSTIBLE_LIBRARY
         from models.combustibles import SPECIALIZED_COMPONENTS
-        from models.geometry import layout_items_in_fc
+        from models.geometry import layout_items_in_fc_cached
 
         colors = {
             "BROWN": "#8B4513", "RED": "#CD5C5C", "SALMON": "#FA8072",
@@ -1229,6 +1274,8 @@ class Viewer3D(QWidget):
             "WOOD": "#92400e",
         }
 
+        placed_excl: list[tuple[float, float, float, float]] = []
+
         # Story-level specialized_components
         for sc in story.specialized_components:
             boundary = sc.get("boundary")
@@ -1239,29 +1286,24 @@ class Viewer3D(QWidget):
                 continue
             items = []
             for ci in range(sc.get("count", 1)):
-                items.append({
-                    "length": comp.total_length,
-                    "width": comp.total_width,
-                    "height": comp.total_height,
-                    "color": "GRAY",
-                    "component_key": sc["key"],
-                    "_comp": comp,
-                    "_instance": ci,
-                })
-            placed = layout_items_in_fc(boundary, items, margin=1.0, gap=0.5)
+                items.append(self._component_preview_item(comp, sc, ci))
+            placed = layout_items_in_fc_cached(
+                boundary, items, margin=0.5, gap=1.5,
+                exclusions=(placed_excl if placed_excl else None),
+            )
+            for p in placed:
+                placed_excl.append((
+                    p["x"] - 1.0,
+                    p["x"] + p["length"] + 1.0,
+                    p["y"] - 1.0,
+                    p["y"] + p["width"] + 1.0,
+                ))
             for item in placed:
                 comp_obj = item.get("_comp")
                 if comp_obj:
                     for part in comp_obj.parts:
                         color = material_colors.get(part.material_key, "#CD853F")
-                        box = pv.Box(bounds=(
-                            ox + item["x"] + part.dx,
-                            ox + item["x"] + part.dx + part.length,
-                            oy + item["y"] + part.dy,
-                            oy + item["y"] + part.dy + part.width,
-                            part.dz + z_offset,
-                            part.dz + part.height + z_offset,
-                        ))
+                        box = pv.Box(bounds=self._component_part_bounds(item, part, ox, oy, z_offset))
                         actor = self.plotter.add_mesh(box, color=color, opacity=0.8)
                         self._add_to_group("combustibles", actor)
 
@@ -1286,7 +1328,17 @@ class Viewer3D(QWidget):
                     "color": cb_def.get("color", "BROWN"),
                     "component_key": None,
                 })
-            placed = layout_items_in_fc(boundary, items, margin=1.0, gap=0.5)
+            placed = layout_items_in_fc_cached(
+                boundary, items, margin=0.5, gap=1.5,
+                exclusions=(placed_excl if placed_excl else None),
+            )
+            for p in placed:
+                placed_excl.append((
+                    p["x"] - 1.0,
+                    p["x"] + p["length"] + 1.0,
+                    p["y"] - 1.0,
+                    p["y"] + p["width"] + 1.0,
+                ))
             for item in placed:
                 color = colors.get(item.get("color", "BROWN"), "#CD853F")
                 box = pv.Box(bounds=(
@@ -1378,22 +1430,26 @@ class Viewer3D(QWidget):
         self.plotter.render()
 
     def _add_heat_source(self, bg, g_xmin, g_xmax, g_ymin, g_ymax, g_zmax):
-        """Render radiation panels on ALL MESH boundary faces with non-zero flux.
+        """Render radiation panels on MESH boundary faces.
 
-        Shows each face that has a flux component from face_fluxes decomposition,
-        with opacity proportional to the relative flux strength.
-
-        PyVista Plane convention (verified empirically):
-        - direction=(0,1,0): i_size → Z extent, j_size → X extent
-        - direction=(1,0,0): i_size → Z extent, j_size → Y extent
-        - direction=(0,0,1): i_size → X extent, j_size → Y extent
+        net_heat_flux stores the UI target q_avg (kW/m2).  The preview uses the
+        same calibrated q_set that FDS receives to scale panel opacity.  Side
+        panels are full-face; top panel is a 1 m strip on ZMAX above the
+        building (only when elevation > 0).
         """
         from models.heat_source import face_fluxes
+        from models.temp_flux_formula import compute_top_face_bounds
+        from models.window_flux_calibration import q_avg_to_q_set
 
         hs = bg.heat_source or {}
-        azimuth = hs.get("azimuth", 0)
-        elevation = hs.get("elevation", 0)
-        fluxes = face_fluxes(azimuth, elevation, 1.0)
+        azimuth = float(hs.get("azimuth", 0))
+        elevation = float(hs.get("elevation", 0))
+        q_avg_target = float(hs.get("net_heat_flux", 1000))
+        duration = float(hs.get("duration", 1.36))
+        q_set = q_avg_to_q_set(q_avg_target, duration)
+
+        # Which walls are active (azimuth only — we handle elevation ourselves)
+        fluxes = face_fluxes(azimuth, 0.0, 1.0)
         if not fluxes:
             return
 
@@ -1417,10 +1473,13 @@ class Viewer3D(QWidget):
                      "direction": (0, 0, 1), "i_size": dx, "j_size": dy},
         }
 
-        max_flux = max(fluxes.values())
+        # Normalize opacity by calibrated source strength (brighter = stronger).
+        q_norm = min(max(q_set / 32000.0, 0.1), 1.0)
+
+        # Side panels (full domain faces)
         for face_name in fluxes:
             params = all_face_params[face_name]
-            opacity = max(0.15, 0.3 * fluxes[face_name] / max_flux)
+            opacity = max(0.15, 0.3 * q_norm)
             plane = pv.Plane(**params)
             actor = self.plotter.add_mesh(
                 plane,
@@ -1431,6 +1490,34 @@ class Viewer3D(QWidget):
             )
             self._add_to_group("heat_source", actor)
 
+        # Top panel: 1 m strip on ZMAX (only when elevation > 0)
+        if elevation > 0.0:
+            buildings = bg.buildings
+            xb_min = min(b.offset_x - b.wall_thickness / 2 for b in buildings)
+            xb_max = max(b.offset_x + b.length + b.wall_thickness / 2 for b in buildings)
+            yb_min = min(b.offset_y - b.wall_thickness / 2 for b in buildings)
+            yb_max = max(b.offset_y + b.width + b.wall_thickness / 2 for b in buildings)
+            tx1, tx2, ty1, ty2, _, _ = compute_top_face_bounds(
+                azimuth, (mx0, mx1, my0, my1, mz0, mz1),
+                xb_min, xb_max, yb_min, yb_max,
+            )
+            top_dx = tx2 - tx1
+            top_dy = ty2 - ty1
+            top_center = ((tx1 + tx2) / 2, (ty1 + ty2) / 2, mz1)
+            top_plane = pv.Plane(
+                center=top_center, direction=(0, 0, 1),
+                i_size=top_dx, j_size=top_dy,
+            )
+            top_opacity = max(0.15, 0.3 * q_norm)
+            top_actor = self.plotter.add_mesh(
+                top_plane,
+                color="#ef4444",
+                opacity=top_opacity,
+                show_edges=True,
+                edge_color="#ef4444",
+            )
+            self._add_to_group("heat_source", top_actor)
+
     @staticmethod
     def _mesh_domain(bg):
         """Replicate generators.fds_generator._compute_mesh's domain expansion.
@@ -1438,17 +1525,24 @@ class Viewer3D(QWidget):
         Returns (x0, x1, y0, y1, z0, z1). Keeps viewer 3D preview geometry in
         sync with the MESH XB used by FDS.
         """
+        from generators.fds_generator import FDSGenerator
+        try:
+            plan = FDSGenerator(bg)._compute_mesh()
+            d = plan.domain
+            return (d[0], d[1], d[2], d[3], d[4], d[5])
+        except Exception:
+            pass
         buildings = bg.buildings
         if not buildings:
             return (0.0, 10.0, 0.0, 10.0, 0.0, 10.0)
-        x_min = min(b.offset_x - b.wall_thickness for b in buildings)
-        x_max = max(b.offset_x + b.length + b.wall_thickness for b in buildings)
-        y_min = min(b.offset_y - b.wall_thickness for b in buildings)
-        y_max = max(b.offset_y + b.width + b.wall_thickness for b in buildings)
+        x_min = min(b.offset_x - b.wall_thickness / 2 for b in buildings)
+        x_max = max(b.offset_x + b.length + b.wall_thickness / 2 for b in buildings)
+        y_min = min(b.offset_y - b.wall_thickness / 2 for b in buildings)
+        y_max = max(b.offset_y + b.width + b.wall_thickness / 2 for b in buildings)
         z_max = max(sum(s.height for s in b.stories) for b in buildings)
-        expand_x = 2.0
-        expand_y = 2.0
-        expand_z = 2.0
+        expand_x = 1.0
+        expand_y = 1.0
+        expand_z = 1.0
         return (
             x_min - expand_x,
             x_max + expand_x,

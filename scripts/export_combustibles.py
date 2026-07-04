@@ -22,6 +22,7 @@ from models.combustibles import SPECIALIZED_COMPONENTS
 from models.parameter_engine import ParameterEngine
 
 LOCATION_COLUMNS = [
+    "设施",  # facility (json stem) — first column
     "名称", "英文Key", "类型", "总数量",
     "长度(m)", "宽度(m)", "高度(m)",
     "热释放速率(kW/m²)", "点燃温度(°C)",
@@ -164,9 +165,14 @@ def _sc_parts_summary(sc_key: str) -> str:
     )
 
 
-def _group_by_key(entries: list[dict]) -> list[dict]:
+def _group_by_key(entries: list[dict], facility: str = "") -> list[dict]:
     """Group entries by (key, typ). Same combustible species => one output row
-    with total count and all locations aggregated."""
+    with total count and all locations aggregated.
+
+    Args:
+        entries:  per-row dicts from :func:`_collect_facility_rows`.
+        facility: facility / json stem label written to the leading column.
+    """
     groups: dict[tuple[str, str], dict] = {}
     for e in entries:
         gk = (e["key"], e["typ"])
@@ -191,6 +197,7 @@ def _group_by_key(entries: list[dict]) -> list[dict]:
     for g in groups.values():
         parts = _sc_parts_summary(g["key"]) if g["typ"] == "specialized_component" else ""
         rows.append({
+            "设施": facility,
             "名称": g["name"],
             "英文Key": g["key"],
             "类型": g["typ"],
@@ -213,13 +220,14 @@ def _group_by_key(entries: list[dict]) -> list[dict]:
     return rows
 
 
-def _make_summary_row(rows: list[dict]) -> dict:
+def _make_summary_row(rows: list[dict], facility: str = "") -> dict:
     total_count = sum(
         r["总数量"] for r in rows if isinstance(r["总数量"], (int, float))
     )
     n_comb = sum(1 for r in rows if r["类型"] == "combustible")
     n_sc = sum(1 for r in rows if r["类型"] == "specialized_component")
     return {
+        "设施": facility,
         "名称": f"合计：{n_comb} 种可燃物 + {n_sc} 种组件, 共 {total_count} 件",
         "英文Key": "", "类型": "", "总数量": "",
         "长度(m)": "", "宽度(m)": "", "高度(m)": "",
@@ -237,6 +245,27 @@ def export_one_file(facility_data: dict, output_path: str):
         facility_data: Parsed facility JSON dict (top-level, with "buildings" key).
         output_path:   Path for the output .xlsx file.
     """
+    facility = facility_data.get("name", "facility")
+    entries = _facility_entries(facility_data)
+
+    rows = _group_by_key(entries, facility=facility)
+    df = pd.DataFrame(rows, columns=LOCATION_COLUMNS)
+    if not rows:
+        summary = {"设施": facility, "名称": "无可燃物数据"}
+    else:
+        summary = _make_summary_row(rows, facility=facility)
+    df = pd.concat([df, pd.DataFrame([summary], columns=LOCATION_COLUMNS)], ignore_index=True)
+
+    sheet_name = facility[:31]
+    sheet_name = "".join(c for c in sheet_name if c.isprintable() and c not in r'\/[]:*?')
+
+    with pd.ExcelWriter(output_path, engine="openpyxl") as writer:
+        df.to_excel(writer, sheet_name=sheet_name, index=False)
+    return len(rows)
+
+
+def _facility_entries(facility_data: dict) -> list[dict]:
+    """Drill through one facility's buildings and collect per-entry rows."""
     entries: list[dict] = []
     for b in facility_data.get("buildings", []):
         has_template = "stories_template" in b or "length_range" in b
@@ -256,21 +285,7 @@ def export_one_file(facility_data: dict, output_path: str):
             building.update_z_offsets()
             bg = BuildingGroup(buildings=[building], name=facility_data.get("name", ""))
             entries.extend(_collect_facility_rows(bg))
-
-    rows = _group_by_key(entries)
-    df = pd.DataFrame(rows, columns=LOCATION_COLUMNS)
-    if not rows:
-        summary = {"名称": "无可燃物数据"}
-    else:
-        summary = _make_summary_row(rows)
-    df = pd.concat([df, pd.DataFrame([summary], columns=LOCATION_COLUMNS)], ignore_index=True)
-
-    sheet_name = facility_data.get("name", "facility")[:31]
-    sheet_name = "".join(c for c in sheet_name if c.isprintable() and c not in r'\/[]:*?')
-
-    with pd.ExcelWriter(output_path, engine="openpyxl") as writer:
-        df.to_excel(writer, sheet_name=sheet_name, index=False)
-    return len(rows)
+    return entries
 
 
 def main():
@@ -284,46 +299,62 @@ def main():
     output_path = Path(__file__).resolve().parent.parent / "export" / "all_combustibles.xlsx"
     output_path.parent.mkdir(exist_ok=True)
 
+    blocks: list[pd.DataFrame] = []
+    total_species = 0
+    for json_file in json_files:
+        with open(json_file, "r", encoding="utf-8") as f:
+            data = json.load(f)
+
+        facility = json_file.stem
+        entries = _facility_entries(data)
+        rows = _group_by_key(entries, facility=facility)
+        df = pd.DataFrame(rows, columns=LOCATION_COLUMNS)
+        if rows:
+            summary = _make_summary_row(rows, facility=facility)
+            df = pd.concat([df, pd.DataFrame([summary], columns=LOCATION_COLUMNS)], ignore_index=True)
+        else:
+            empty = pd.DataFrame(
+                [{"设施": facility, "名称": "无可燃物数据"}],
+                columns=LOCATION_COLUMNS,
+            )
+            df = pd.concat([df, empty], ignore_index=True)
+
+        blocks.append(df)
+        print(f"  {facility}: {len(rows)} 种")
+        total_species += len(rows)
+
+    combined = (
+        pd.concat(blocks, ignore_index=True)
+        if blocks
+        else pd.DataFrame(columns=LOCATION_COLUMNS)
+    )
+
+    # Grand total: scan trailing "合计" rows from each block to roll up across facilities.
+    grand_count = 0
+    grand_comb = 0
+    grand_sc = 0
+    import re as _re
+    summary_pat = _re.compile(r"合计：(\d+) 种可燃物 \+ (\d+) 种组件, 共 (\d+) 件")
+    for block in blocks:
+        marker = block.iloc[-1]
+        if str(marker.get("名称", "")).startswith("合计："):
+            m = summary_pat.search(str(marker["名称"]))
+            if m:
+                grand_comb += int(m.group(1))
+                grand_sc += int(m.group(2))
+                grand_count += int(m.group(3))
+    if grand_count or grand_comb or grand_sc:
+        grand_row = {
+            "设施": "全部（合计）",
+            "名称": f"合计：{grand_comb} 种可燃物 + {grand_sc} 种组件, 共 {grand_count} 件",
+        }
+        combined = pd.concat(
+            [combined, pd.DataFrame([grand_row], columns=LOCATION_COLUMNS)],
+            ignore_index=True,
+        )
+
     with pd.ExcelWriter(output_path, engine="openpyxl") as writer:
-        total_species = 0
-        for json_file in json_files:
-            with open(json_file, "r", encoding="utf-8") as f:
-                data = json.load(f)
-
-            entries: list[dict] = []
-            for b in data.get("buildings", []):
-                has_template = "stories_template" in b or "length_range" in b
-                if has_template:
-                    params = {
-                        "length": ParameterEngine.resolve_range(b.get("length_range", [0, 20])),
-                        "width": ParameterEngine.resolve_range(b.get("width_range", [0, 10])),
-                        "height": ParameterEngine.resolve_range(b.get("height_range", [0, 5])),
-                        "stories": int(ParameterEngine.resolve_range(b.get("stories_range", [1, 1, 1]))),
-                    }
-                    bg = ParameterEngine.generate(b, params)
-                    building_list = [bg]
-                else:
-                    building_list = [Building.from_dict(b)]
-
-                for building in building_list:
-                    building.update_z_offsets()
-                    bg = BuildingGroup(buildings=[building], name=data.get("name", ""))
-                    entries.extend(_collect_facility_rows(bg))
-
-            rows = _group_by_key(entries)
-            df = pd.DataFrame(rows, columns=LOCATION_COLUMNS)
-            if rows:
-                summary = _make_summary_row(rows)
-                df = pd.concat([df, pd.DataFrame([summary], columns=LOCATION_COLUMNS)], ignore_index=True)
-            else:
-                empty = pd.DataFrame([{"名称": "无可燃物数据"}], columns=LOCATION_COLUMNS)
-                df = pd.concat([df, empty], ignore_index=True)
-
-            sheet_name = json_file.stem[:31]
-            df.to_excel(writer, sheet_name=sheet_name, index=False)
-
-            print(f"  {json_file.stem}: {len(rows)} 种")
-            total_species += len(rows)
+        combined.to_excel(writer, sheet_name="所有设施", index=False)
 
     print(f"\nExported to {output_path}")
     print(f"Total distinct combustible species across all facilities: {total_species}")

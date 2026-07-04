@@ -738,19 +738,37 @@ class TestLayoutExclusions:
                 )
 
     def test_layout_drops_when_exclusions_fill_space(self, capsys):
-        """If every grid cell hits an exclusion, items are dropped with WARNING."""
+        """If every grid cell hits an exclusion, items are dropped silently.
+
+        Dropped events are accumulated and accessible via
+        :func:`models.geometry.last_layout_drops` — that's how callers
+        observe drops in production.  We force ``enable_layout_warnings``
+        on for the duration of this test to also verify both paths.
+        """
+        from models.geometry import enable_layout_warnings, last_layout_drops
+
         fc_boundary = [0, 5, 0, 5]
         items = [_combustible("BOX", 0.5, 0.5) for _ in range(3)]
         # Exclusion covers the entire fc interior
         exclusions = [(0, 5, 0, 5)]
 
-        placed = layout_items_in_fc(
-            fc_boundary, items, margin=0.5, gap=0.5, exclusions=exclusions
-        )
+        enable_layout_warnings(True)  # capture stderr side-effect too
+        try:
+            placed = layout_items_in_fc(
+                fc_boundary, items, margin=0.5, gap=0.5, exclusions=exclusions
+            )
+        finally:
+            enable_layout_warnings(False)
 
         assert placed == [], "no items should fit when exclusion covers fc"
+        drops = last_layout_drops()
+        assert drops.get("BOX", 0) >= 3, (
+            f"expected at least 3 BOX drops, got {drops}"
+        )
         captured = capsys.readouterr().out
-        assert captured.count("WARNING") >= 3
+        assert captured.count("WARNING") >= 3, (
+            "when warnings are enabled, each dropped item should print one"
+        )
 
     def test_layout_without_exclusions_unchanged(self):
         """Regression: behavior with no exclusions matches a single known layout."""
@@ -785,4 +803,99 @@ class TestLayoutExclusions:
 
         assert len(placed) == 1
         assert not _boxes_overlap(_placed_rect(placed[0]), exclusions[0])
+
+
+class TestLayoutMarginInvariant:
+    """Regression for the wall-overlap audit: every placed item must lie
+    strictly inside the FC's margin-inset region, regardless of item sizes
+    mixed in a single batch or pathological FC aspect ratios.
+    """
+
+    @staticmethod
+    def _assert_within_margin(placed, fc_boundary, margin):
+        x_min, x_max, y_min, y_max = fc_boundary
+        for it in placed:
+            x1, x2, y1, y2 = _placed_rect(it)
+            assert x1 >= x_min + margin - 1e-6, (
+                f"item {it['key']} overlaps x_min wall gap: "
+                f"x1={x1:.3f} < x_min+margin={x_min + margin:.3f}"
+            )
+            assert x2 <= x_max - margin + 1e-6, (
+                f"item {it['key']} overlaps x_max wall gap: "
+                f"x2={x2:.3f} > x_max-margin={x_max - margin:.3f}"
+            )
+            assert y1 >= y_min + margin - 1e-6, (
+                f"item {it['key']} overlaps y_min wall gap: "
+                f"y1={y1:.3f} < y_min+margin={y_min + margin:.3f}"
+            )
+            assert y2 <= y_max - margin + 1e-6, (
+                f"item {it['key']} overlaps y_max wall gap: "
+                f"y2={y2:.3f} > y_max-margin={y_max - margin:.3f}"
+            )
+
+    def test_mixed_size_items_honor_margin(self):
+        """The audit case from issue: mixed-size items in 10x10 FC with margin=1.0
+        must NOT overflow into the boundary walls."""
+        fc_boundary = [0, 10, 0, 10]
+        items = [
+            _combustible("X", 3.0, 3.0),
+            _combustible("X", 3.0, 3.0),
+            _combustible("X", 4.0, 4.0),
+        ]
+        placed = layout_items_in_fc(fc_boundary, items, margin=1.0, gap=0.5)
+        # Only 2 of 3 items fit (4.0×4.0 can't squeeze past the two 3×3)
+        assert len(placed) >= 2
+        self._assert_within_margin(placed, fc_boundary, 1.0)
+
+    def test_narrow_strip_does_not_overflow(self):
+        """A 2x2 FC body cannot fit a single 2x2 item with margin=0.5.
+        The item is logged as a drop instead of overflowing.
+        """
+        fc_boundary = [0, 2, 0, 2]
+        items = [_combustible("X", 2.0, 2.0)]
+        placed = layout_items_in_fc(fc_boundary, items, margin=0.5, gap=0.3)
+        # Item should not be placed (because 2+2*0.5 = 3 > 2) — no overflow.
+        assert placed == []
+        # Even though dropped, no rect was placed outside [0,2].
+        self._assert_within_margin(placed, fc_boundary, 0.5)
+
+    def test_uniform_items_full_grid(self):
+        """Many identical 3×3 items, asked for 9, into a 12×12 FC with
+        margin 1.0 + gap 0.5 — the new uniform grid packs a 3×3."""
+        fc_boundary = [0, 12, 0, 12]
+        items = [_combustible("PALLET", 3.0, 3.0) for _ in range(9)]
+        placed = layout_items_in_fc(fc_boundary, items, margin=1.0, gap=0.5)
+        # 9 requested → algorithm packs them in a 3×3 grid (cells of
+        # (3+0.5) = 3.5m → 3 fit in (12 - 2*1) = 10m of available width).
+        assert len(placed) == 9
+        self._assert_within_margin(placed, fc_boundary, 1.0)
+        # Each placed item is inside the 12×12 FC with margin ≥ 1.0.
+        for p in placed:
+            assert 1.0 - 1e-6 < p["x"]
+            assert p["x"] + p["length"] < 12 - 1.0 + 1e-6
+            assert 1.0 - 1e-6 < p["y"]
+            assert p["y"] + p["width"] < 12 - 1.0 + 1e-6
+        # And they're spaced at least the requested gap apart.
+        for i in range(len(placed)):
+            for j in range(i + 1, len(placed)):
+                a, b = placed[i], placed[j]
+                dx = max(0.0, max(a["x"], b["x"]) - min(a["x"] + a["length"], b["x"]))
+                dy = max(0.0, max(a["y"], b["y"]) - min(a["y"] + a["width"], b["y"]))
+                d = (dx * dx + dy * dy) ** 0.5
+                assert d >= 0.5 - 1e-6, (
+                    f"items too close: {a['x']},{a['y']} ↔ {b['x']},{b['y']} d={d:.3f}"
+                )
+
+    def test_exclusion_handling_keeps_margin(self):
+        """Exclusions driving fallback scan must still keep margin."""
+        fc_boundary = [0, 10, 0, 10]
+        items = [_combustible("X", 1.5, 1.5) for _ in range(6)]
+        exclusions = [(4, 6, 4, 6)]  # tiny center block
+        placed = layout_items_in_fc(
+            fc_boundary, items, margin=1.0, gap=0.5, exclusions=exclusions
+        )
+        assert placed
+        for it in placed:
+            assert not _boxes_overlap(_placed_rect(it), exclusions[0])
+        self._assert_within_margin(placed, fc_boundary, 1.0)
 

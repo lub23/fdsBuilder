@@ -183,7 +183,7 @@ class TestExpandStoryTemplate:
                 {
                     "name": "Zone A",
                     "boundary_ratio": [0.0, 0.5, 0.0, 1.0],
-                    "firewall_thickness": 0.3,
+                    "firewall_thickness": 0.5,
                     "firewall_material": "CONCRETE",
                     "opening_templates": [
                         {
@@ -201,14 +201,14 @@ class TestExpandStoryTemplate:
                 {
                     "name": "Zone B",
                     "boundary_ratio": [0.5, 1.0, 0.0, 1.0],
-                    "firewall_thickness": 0.3,
+                    "firewall_thickness": 0.5,
                     "firewall_material": "CONCRETE",
                     "opening_templates": [],
                     "combustibles": [],
                     "specialized_components": [],
                 },
             ],
-            "roof": {"thickness": 0.2, "material": "CONCRETE", "openings": []},
+            "roof": {"thickness": 0.5, "material": "CONCRETE", "openings": []},
         }
 
     def test_returns_dict(self):
@@ -259,7 +259,7 @@ class TestExpandStoryTemplate:
         result = ParameterEngine._expand_story_template(tmpl, 100.0, 50.0, 10.0)
         fcs = result["fire_compartments"]
         assert fcs[0]["name"] == "Zone A"
-        assert fcs[0]["firewall_thickness"] == 0.3
+        assert fcs[0]["firewall_thickness"] == 0.5
         assert fcs[0]["firewall_material"] == "CONCRETE"
         assert fcs[0]["combustibles"] == [{"key": "WOOD_DESK", "count": 3}]
         assert fcs[0]["specialized_components"] == []
@@ -274,14 +274,82 @@ class TestExpandStoryTemplate:
         tmpl = self._make_template()
         result = ParameterEngine._expand_story_template(tmpl, 100.0, 50.0, 10.0)
         assert "roof" in result
-        assert result["roof"]["thickness"] == 0.2
+        assert result["roof"]["thickness"] == 0.5
         assert result["roof"]["material"] == "CONCRETE"
 
     def test_no_fire_compartment_ratios(self):
         """Template without fire_compartment_ratios should produce empty list."""
-        tmpl = {"name": "1F", "height": 5.0, "roof": {"thickness": 0.2, "material": "CONCRETE", "openings": []}}
+        tmpl = {"name": "1F", "height": 5.0, "roof": {"thickness": 0.5, "material": "CONCRETE", "openings": []}}
         result = ParameterEngine._expand_story_template(tmpl, 80.0, 30.0, 5.0)
         assert result["fire_compartments"] == []
+
+    def test_story_level_combustible_boundary_ratio(self):
+        tmpl = {
+            "name": "1F",
+            "doors": {"width": [0, 0], "height": [0, 0], "count": [0, 0]},
+            "windows": {"width": [0, 0], "height": [0, 0], "count": [0, 0]},
+            "combustibles": [
+                {
+                    "key": "LUBE_OIL_DRUM",
+                    "count": 2,
+                    "count_scaled": [1, 2, 3],
+                    "boundary_ratio": [0, 1, 0.75, 0.85],
+                }
+            ],
+            "fire_compartment_ratios": [],
+        }
+
+        result = ParameterEngine._expand_story_template(
+            tmpl,
+            100.0,
+            40.0,
+            8.0,
+            scale_idx=2,
+            fuel_size_multiplier=1.5,
+        )
+
+        assert result["combustibles"] == [
+            {
+                "key": "LUBE_OIL_DRUM",
+                "count": 3,
+                "count_scaled": [1, 2, 3],
+                "boundary_ratio": [0, 1, 0.75, 0.85],
+                "boundary": [0.0, 100.0, 30.0, 34.0],
+                "size_multiplier": 1.5,
+            }
+        ]
+
+    def test_story_level_specialized_component_boundary_ratio(self):
+        tmpl = {
+            "name": "1F",
+            "doors": {"width": [0, 0], "height": [0, 0], "count": [0, 0]},
+            "windows": {"width": [0, 0], "height": [0, 0], "count": [0, 0]},
+            "specialized_components": [
+                {
+                    "key": "ROCKET_TRANSPORT_CRADLE",
+                    "count": 1,
+                    "count_scaled": [0, 1, 2],
+                    "boundary_ratio": [0.2, 0.5, 0.1, 0.4],
+                    "orientation": "x",
+                }
+            ],
+            "fire_compartment_ratios": [],
+        }
+
+        result = ParameterEngine._expand_story_template(
+            tmpl, 100.0, 40.0, 8.0, scale_idx=2
+        )
+
+        assert result["specialized_components"] == [
+            {
+                "key": "ROCKET_TRANSPORT_CRADLE",
+                "count": 2,
+                "count_scaled": [0, 1, 2],
+                "boundary_ratio": [0.2, 0.5, 0.1, 0.4],
+                "orientation": "x",
+                "boundary": [20.0, 50.0, 4.0, 16.0],
+            }
+        ]
 
 
 # ============================================================
@@ -314,7 +382,7 @@ class TestGenerate:
                         {
                             "name": "Zone A",
                             "boundary_ratio": [0.0, 0.5, 0.0, 1.0],
-                            "firewall_thickness": 0.3,
+                            "firewall_thickness": 0.5,
                             "firewall_material": "CONCRETE",
                             "opening_templates": [
                                 {
@@ -331,7 +399,7 @@ class TestGenerate:
                         }
                     ],
                     "roof": {
-                        "thickness": 0.2,
+                        "thickness": 0.5,
                         "material": "CONCRETE",
                         "openings": [],
                     },
@@ -494,7 +562,7 @@ class TestParameterEngineIntegration:
                         {
                             "name": "Main",
                             "boundary_ratio": [0.0, 1.0, 0.0, 1.0],
-                            "firewall_thickness": 0.3,
+                            "firewall_thickness": 0.5,
                             "firewall_material": "CONCRETE",
                             "opening_templates": [],
                             "combustibles": [],
@@ -502,7 +570,7 @@ class TestParameterEngineIntegration:
                         }
                     ],
                     "roof": {
-                        "thickness": 0.2,
+                        "thickness": 0.5,
                         "material": "CONCRETE",
                         "openings": [],
                     },
@@ -549,7 +617,7 @@ class TestParameterEngineIntegration:
                         {
                             "name": "Zone A",
                             "boundary_ratio": [0.0, 0.5, 0.0, 1.0],
-                            "firewall_thickness": 0.3,
+                            "firewall_thickness": 0.5,
                             "firewall_material": "CONCRETE",
                             "opening_templates": [
                                 {
@@ -568,7 +636,7 @@ class TestParameterEngineIntegration:
                         }
                     ],
                     "roof": {
-                        "thickness": 0.2,
+                        "thickness": 0.5,
                         "material": "CONCRETE",
                         "openings": [{"boundary": [1, 2, 2, 2]}],
                     },
@@ -636,7 +704,7 @@ class TestParameterEngineIntegration:
                     },
                     "fire_compartment_ratios": [],
                     "roof": {
-                        "thickness": 0.2,
+                        "thickness": 0.5,
                         "material": "CONCRETE",
                         "openings": [],
                     },
@@ -666,7 +734,7 @@ class TestParameterEngineIntegration:
                     "name": "1F",
                     "height": 8.0,
                     "fire_compartment_ratios": [],
-                    "roof": {"thickness": 0.2, "material": "CONCRETE", "openings": []},
+                    "roof": {"thickness": 0.5, "material": "CONCRETE", "openings": []},
                 }
             ],
             "stories": [],

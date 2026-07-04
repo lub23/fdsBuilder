@@ -33,7 +33,7 @@ PROMPT = PROMPT = """分析给定的建筑平面图，提取建筑信息。图�
 {
   "length": 外墙X方向总长度(米),
   "width": 外墙Y方向总宽度(米),
-  "wall_thickness": 外墙厚度(米,默认0.24),
+  "wall_thickness": 外墙厚度(米,默认0.5),
   "stories": [
     {
       "name": "1F",
@@ -42,7 +42,7 @@ PROMPT = PROMPT = """分析给定的建筑平面图，提取建筑信息。图�
         {
           "x1": 起点x, "y1": 起点y,
           "x2": 终点x, "y2": 终点y,
-          "thickness": 墙厚(默认0.24),
+          "thickness": 墙厚(默认0.5),
           "is_external": 是否外墙(true/false),
           "name": 墙体名称
         }
@@ -58,7 +58,7 @@ PROMPT = PROMPT = """分析给定的建筑平面图，提取建筑信息。图�
         }
       ],
       "floor_slab": {
-        "thickness": 楼板厚度(默认0.2),
+        "thickness": 楼板厚度(默认0.5),
         "openings": [
           {
             "x": 左下角x坐标, "y": 左下角y坐标,
@@ -177,7 +177,7 @@ class BlueprintRecognizer:
         """将API返回的原始dict转换为BuildingModel.from_dict兼容格式"""
         length = raw.get("length", 10.0)
         width = raw.get("width", 8.0)
-        wall_thickness = raw.get("wall_thickness", 0.24)
+        wall_thickness = raw.get("wall_thickness", 0.5)
 
         stories = []
         raw_stories = raw.get("stories", [])
@@ -196,7 +196,7 @@ class BlueprintRecognizer:
             "width": width,
             "wall_thickness": wall_thickness,
             "stories": stories,
-            "roof": {"thickness": 0.2, "material": "CONCRETE"},
+            "roof": {"thickness": 0.5, "material": "CONCRETE"},
             "materials": {"walls": "CONCRETE", "floor": "CONCRETE", "roof": "CONCRETE"},
             "heat_source": {"enabled": False},
             "simulation_time": 60,
@@ -263,7 +263,7 @@ class BlueprintRecognizer:
         # 楼板
         floor_slab_raw = rs.get("floor_slab", {})
         floor_slab = {
-            "thickness": floor_slab_raw.get("thickness", 0.2),
+            "thickness": floor_slab_raw.get("thickness", 0.5),
             "material": floor_slab_raw.get("material", "CONCRETE"),
             "openings": floor_slab_raw.get("openings", []),
         }
@@ -284,7 +284,7 @@ class BlueprintRecognizer:
             "height": raw.get("height", 3.0),
             "walls": raw.get("walls", []),
             "openings": raw.get("openings", []),
-            "floor_slab": {"thickness": 0.2, "openings": []},
+            "floor_slab": {"thickness": 0.5, "openings": []},
         }, thick)
 
     def get_summary(self) -> str:

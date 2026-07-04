@@ -19,7 +19,6 @@ from PySide6.QtWidgets import (
     QDoubleSpinBox,
     QComboBox,
     QPushButton,
-    QCheckBox,
     QHBoxLayout,
     QSizePolicy,
     QSpinBox,
@@ -118,30 +117,30 @@ class SimulationControlPanel(QWidget):
         elev_row.addWidget(self.elevation_label)
         form.addLayout(elev_row, 0, 3)
 
-        # Row 1: Flux (kW/m²) | Duration (s)
+        # Row 1: Flux target q_avg (kW/m²) | calibrated duration (s)
         form.addWidget(QLabel("热通量:"), 1, 0)
         self.heat_flux_spin = QDoubleSpinBox()
-        self.heat_flux_spin.setRange(50, 20000)
+        self.heat_flux_spin.setRange(100, 20000)
         self.heat_flux_spin.setValue(1000)
         self.heat_flux_spin.setDecimals(0)
         self.heat_flux_spin.setSingleStep(500)
         self.heat_flux_spin.setSuffix(" kW/m²")
+        self.heat_flux_spin.setToolTip("0 到持续时间窗口内的目标平均热通量")
         self.heat_flux_spin.valueChanged.connect(self._on_flux_changed)
         form.addWidget(self.heat_flux_spin, 1, 1)
 
         form.addWidget(QLabel("持续:"), 1, 2)
-        self.heat_duration_spin = QDoubleSpinBox()
-        self.heat_duration_spin.setRange(0, 36000)
-        self.heat_duration_spin.setValue(1.36)
-        self.heat_duration_spin.setDecimals(2)
-        self.heat_duration_spin.setSuffix(" s")
-        self.heat_duration_spin.valueChanged.connect(self._on_flux_changed)
+        self.heat_duration_spin = QComboBox()
+        for duration in self._DURATION_VALUES:
+            self.heat_duration_spin.addItem(f"{duration:g} s", duration)
+        self.heat_duration_spin.currentIndexChanged.connect(self._on_flux_changed)
         form.addWidget(self.heat_duration_spin, 1, 3)
 
         grp.content_layout.addLayout(form)
         return grp
 
     _ELEV_VALUES = [0, 30, 45, 60]
+    _DURATION_VALUES = [1.36, 2.1, 7.5]
 
     # ── 模拟 + 输出 ─────────────────────────────────
     def _build_simulation_section(self):
@@ -286,8 +285,10 @@ class SimulationControlPanel(QWidget):
         self.elevation_label.setText(f"{val}°")
         self.on_param_changed("heat_geom")
 
-    def _on_flux_changed(self):
+    def _on_flux_changed(self, *_args):
         """Flux / duration — FDS-only, no 3D refresh."""
+        if self._syncing:
+            return
         self._debounce_kind = "heat_flux"
         self._debounce_timer.start(500)
 
@@ -303,6 +304,18 @@ class SimulationControlPanel(QWidget):
             self.sync_model_from_ui()
             self.parameters_changed.emit(kind)
 
+    def _current_duration(self) -> float:
+        value = self.heat_duration_spin.currentData()
+        return float(value if value is not None else self._DURATION_VALUES[0])
+
+    def _set_duration_value(self, duration: float):
+        nearest = min(
+            self._DURATION_VALUES,
+            key=lambda candidate: abs(candidate - float(duration)),
+        )
+        idx = self._DURATION_VALUES.index(nearest)
+        self.heat_duration_spin.setCurrentIndex(idx)
+
     # ── FDS仿真执行 ─────────────────────────────────
     def run_fds_simulation(self):
         """运行FDS仿真"""
@@ -312,13 +325,13 @@ class SimulationControlPanel(QWidget):
         chid = "".join(c for c in chid if ord(c) < 128) or "building"
 
         hs = bg.heat_source
-        heat_flux_kw = int(hs.get("net_heat_flux", 1000))
+        q_avg_kw = int(hs.get("net_heat_flux", 1000))
         azimuth = int(hs.get("azimuth", 0))
         elevation = int(hs.get("elevation", 0))
         duration = int(hs.get("duration", 0) * 1000)
         sim_time = int(bg.simulation_time)
 
-        chid_suffix = f"q{heat_flux_kw}_a{azimuth}_e{elevation}_d{duration}_t{sim_time}"
+        chid_suffix = f"q{q_avg_kw}_a{azimuth}_e{elevation}_d{duration}_t{sim_time}"
         default_filename = f"{chid}_{chid_suffix}.fds"
         # 1. 先导出FDS文件
         fds_path, _ = QFileDialog.getSaveFileName(
@@ -343,14 +356,14 @@ class SimulationControlPanel(QWidget):
             with open(fds_path, "w", encoding="utf-8") as f:
                 f.write(fds_code)
         except Exception as e:
-            QMessageBox.critical(self, "错误", f"无法保存FDS文件: {str(e)}")
+            QMessageBox.critical(self.window(), "错误", f"无法保存FDS文件: {str(e)}")
             return
 
         # 2. 查找FDS可执行文件
         fds_exe = self._find_fds_exe()
         if not fds_exe:
             QMessageBox.warning(
-                self,
+                self.window(),
                 "未找到FDS",
                 "未找到FDS可执行文件。请确保FDS已安装并添加到系统PATH。\n"
                 "FDS文件已保存到: " + fds_path,
@@ -395,9 +408,13 @@ class SimulationControlPanel(QWidget):
         env.insert("PATH", current_path)
 
         # 多核并行：多 MPI 进程 × 多 OpenMP 线程
+        # 每个 mesh 的 OMP 线程数 = ceil(cpu / num_meshes)，这样
+        # 6 mesh × 32 核 = 6 线程/mesh（理论 36 线程超线程），4 mesh
+        # × 32 核 = 8 线程/mesh。若 num_meshes 误设为 1，会自动用满 cpu。
+        import math as _math
         import os as _os
         cpu_count = len(_os.sched_getaffinity(0)) if hasattr(_os, "sched_getaffinity") else _os.cpu_count() or 1
-        omp_threads = max(1, cpu_count // num_meshes)
+        omp_threads = max(1, _math.ceil(cpu_count / num_meshes))
         env.insert("OMP_NUM_THREADS", str(omp_threads))
         env.insert("I_MPI_FABRICS", "shm")
 
@@ -636,7 +653,7 @@ class SimulationControlPanel(QWidget):
                 and self._fds_process.state() != QProcess.NotRunning
             ):
                 msg += "\n\n仿真正在运行中，请稍等片刻再试。"
-            QMessageBox.warning(self, "提示", msg)
+            QMessageBox.warning(self.window(), "提示", msg)
             return
 
         # 查找smokeview
@@ -645,7 +662,7 @@ class SimulationControlPanel(QWidget):
             from PySide6.QtWidgets import QMessageBox
 
             QMessageBox.warning(
-                self,
+                self.window(),
                 "未找到Smokeview",
                 "未找到Smokeview可执行文件。请确保Smokeview已安装并添加到系统PATH。",
             )
@@ -657,7 +674,7 @@ class SimulationControlPanel(QWidget):
         except Exception as e:
             from PySide6.QtWidgets import QMessageBox
 
-            QMessageBox.critical(self, "错误", f"无法启动Smokeview: {str(e)}")
+            QMessageBox.critical(self.window(), "错误", f"无法启动Smokeview: {str(e)}")
 
     def _find_smokeview_exe(self):
         """查找Smokeview可执行文件"""
@@ -730,13 +747,13 @@ class SimulationControlPanel(QWidget):
         self._syncing = True
         try:
             hs = model.heat_source
-            # uses kW/m²
+            # UI value is the target window-average heat flux q_avg in kW/m².
             self.heat_flux_spin.setValue(hs.get("net_heat_flux", 1000))
             self.heat_azimuth_slider.setValue(hs.get("azimuth", 0))
             elev = hs.get("elevation", 0)
             elev_idx = {0: 0, 30: 1, 45: 2, 60: 3}.get(elev, 0)
             self.heat_elevation_slider.setValue(elev_idx)
-            self.heat_duration_spin.setValue(hs.get("duration", 1.36))
+            self._set_duration_value(hs.get("duration", 1.36))
             self.elevation_label.setText(f"{elev}°")
             self._refresh_azimuth_label(hs.get("azimuth", 0), elev)
 
@@ -756,15 +773,20 @@ class SimulationControlPanel(QWidget):
         if not hasattr(self, "model"):
             return
         m = self.model
-        # UI uses kW/m², model stores MW/m², convert.
+        # Store the UI target window-average heat flux q_avg in kW/m².
         m.heat_source = {
             "azimuth": self.heat_azimuth_slider.value(),
             "elevation": self._ELEV_VALUES[min(self.heat_elevation_slider.value(), 3)],
             "net_heat_flux": self.heat_flux_spin.value(),
-            "duration": self.heat_duration_spin.value(),
+            "duration": self._current_duration(),
         }
         m.simulation_time = self.sim_time_spin.value()
         m.domain["grid_size"] = float(self.grid_size_spin.value())
+        m.domain["refinement_zone"] = {
+            "enabled": True,
+            "depth": 1.0,
+            "grid_size": 1.0,
+        }
         # Mesh count is no longer user-configurable: always use the generator
         # default (4 meshes, 2×2) for MPI parallel execution.
         m.domain.pop("num_meshes", None)
@@ -776,7 +798,7 @@ class SimulationControlPanel(QWidget):
         import time
 
         if not hasattr(self, "model") or not self.model.buildings:
-            QMessageBox.warning(self, "预测", "当前没有展示的设施")
+            QMessageBox.warning(self.window(), "预测", "当前没有展示的设施")
             return
 
         try:
@@ -797,7 +819,7 @@ class SimulationControlPanel(QWidget):
             from ui.damage_result_dialog import DamageResultDialog
         except ImportError as exc:
             QMessageBox.critical(
-                self,
+                self.window(),
                 "预测失败",
                 f"无法导入 agent_damage 模块：{exc}",
             )
@@ -810,11 +832,11 @@ class SimulationControlPanel(QWidget):
             heat_source = HeatSourceParams(
                 elevation=ELEVATION_OPTIONS[min(self.heat_elevation_slider.value(), 3)],
                 azimuth=int(nearest_enum(self.heat_azimuth_slider.value(), AZIMUTH_OPTIONS)),
-                duration=float(self.heat_duration_spin.value()),
+                duration=self._current_duration(),
                 heat_flux=float(nearest_enum(ui_flux_kw, HEAT_FLUX_OPTIONS)),
             )
         except ValueError as exc:
-            QMessageBox.critical(self, "预测失败", f"热源参数无效：{exc}")
+            QMessageBox.critical(self.window(), "预测失败", f"热源参数无效：{exc}")
             return
 
         # 2. Load the ensemble predictor from checkpoints.
@@ -830,17 +852,17 @@ class SimulationControlPanel(QWidget):
                 "    python agent_damage/scripts/generate_data.py\n"
                 "    python agent_damage/scripts/train.py --models svm rf mlp cnn1d"
             )
-            QMessageBox.warning(self, "预测", msg)
+            QMessageBox.warning(self.window(), "预测", msg)
             return
         except Exception as exc:
-            QMessageBox.critical(self, "预测失败", f"加载模型失败：{exc}")
+            QMessageBox.critical(self.window(), "预测失败", f"加载模型失败：{exc}")
             return
 
         # 3. Convert main-app BuildingGroup → agent_damage Facility and predict.
         try:
             facility = group_to_facility(self.model)
             if not facility.buildings:
-                QMessageBox.warning(self, "预测", "当前设施没有可预测的建筑")
+                QMessageBox.warning(self.window(), "预测", "当前设施没有可预测的建筑")
                 return
             t0 = time.perf_counter()
             result = predictor.predict_facility(facility, heat_source)
@@ -849,7 +871,7 @@ class SimulationControlPanel(QWidget):
             import traceback
 
             traceback.print_exc()
-            QMessageBox.critical(self, "预测失败", f"推理出错：{exc}")
+            QMessageBox.critical(self.window(), "预测失败", f"推理出错：{exc}")
             return
 
         # 4. Display beautified dialog.

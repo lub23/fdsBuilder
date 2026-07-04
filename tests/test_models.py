@@ -60,7 +60,7 @@ class TestOpening:
 class TestRoof:
     def test_defaults(self):
         r = Roof()
-        assert r.thickness == 0.2
+        assert r.thickness == 0.5
         assert r.material == "CONCRETE"
         assert r.openings == []
 
@@ -87,7 +87,7 @@ class TestRoof:
 
     def test_from_dict_defaults(self):
         r = Roof.from_dict({})
-        assert r.thickness == 0.2
+        assert r.thickness == 0.5
         assert r.material == "CONCRETE"
         assert r.openings == []
 
@@ -113,7 +113,7 @@ class TestFireCompartment:
         fc = FireCompartment()
         assert fc.name == ""
         assert fc.boundary == [0, 0, 0, 0]
-        assert fc.firewall_thickness == 0.3
+        assert fc.firewall_thickness == 0.5
         assert fc.firewall_material == "CONCRETE"
         assert fc.openings == []
         assert fc.combustibles == []
@@ -283,7 +283,7 @@ class TestStory:
                     ],
                 )
             ],
-            roof=Roof(thickness=0.2, material="CONCRETE"),
+            roof=Roof(thickness=0.5, material="CONCRETE"),
         )
         s2 = Story.from_dict(s.to_dict())
         assert s2.name == s.name
@@ -304,7 +304,7 @@ class TestBuilding:
         assert b.name == ""
         assert b.cn_name == ""
         assert b.boundary == [0, 20, 0, 10]
-        assert b.wall_thickness == 0.24
+        assert b.wall_thickness == 0.5
         assert b.height == 3.0
         assert b.stories == []
 
@@ -338,7 +338,7 @@ class TestBuilding:
     def test_get_exterior_walls(self):
         b = Building(
             boundary=[0, 20, 0, 10],
-            wall_thickness=0.24,
+            wall_thickness=0.5,
             stories=[Story(name="1F", height=3.0)],
         )
         b.update_z_offsets()
@@ -348,19 +348,19 @@ class TestBuilding:
         # Check y_min wall (south)
         ym = walls["y_min"]
         assert len(ym) == 6
-        assert ym[0] == pytest.approx(-0.12)  # ox - t/2
-        assert ym[1] == pytest.approx(20.12)  # ox + L + t/2
-        assert ym[2] == pytest.approx(-0.24)  # oy - t
-        assert ym[3] == pytest.approx(0.0)  # oy
+        assert ym[0] == pytest.approx(0.25)  # ox + t/2
+        assert ym[1] == pytest.approx(19.75)  # ox + L - t/2
+        assert ym[2] == pytest.approx(-0.25)  # oy - t/2
+        assert ym[3] == pytest.approx(0.25)  # oy + t/2
         assert ym[4] == 0.0  # z0
         assert ym[5] == 3.0  # z1
 
         # Check x_max wall (east)
         xm = walls["x_max"]
-        assert xm[0] == pytest.approx(20.0)  # ox + L
-        assert xm[1] == pytest.approx(20.24)  # ox + L + t
-        assert xm[2] == pytest.approx(-0.12)  # oy - t/2
-        assert xm[3] == pytest.approx(10.12)  # oy + W + t/2
+        assert xm[0] == pytest.approx(19.75)  # ox + L - t/2
+        assert xm[1] == pytest.approx(20.25)  # ox + L + t/2
+        assert xm[2] == pytest.approx(-0.25)  # oy - t/2
+        assert xm[3] == pytest.approx(10.25)  # oy + W + t/2
 
     def test_get_exterior_walls_with_offset(self):
         b = Building(
@@ -373,8 +373,8 @@ class TestBuilding:
 
         # x_min (west wall)
         xmin = walls["x_min"]
-        assert xmin[0] == pytest.approx(5.0 - 0.5)  # ox - t
-        assert xmin[1] == pytest.approx(5.0)  # ox
+        assert xmin[0] == pytest.approx(5.0 - 0.25)  # ox - t/2
+        assert xmin[1] == pytest.approx(5.0 + 0.25)  # ox + t/2
         assert xmin[2] == pytest.approx(3.0 - 0.25)  # oy - t/2
         assert xmin[3] == pytest.approx(13.25)  # oy + W + t/2
         assert xmin[4] == 0.0
@@ -383,7 +383,7 @@ class TestBuilding:
     def test_get_exterior_walls_second_story(self):
         b = Building(
             boundary=[0, 10, 0, 10],
-            wall_thickness=0.2,
+            wall_thickness=0.5,
             stories=[Story(name="1F", height=3.0), Story(name="2F", height=4.0)],
         )
         b.update_z_offsets()
@@ -397,7 +397,7 @@ class TestBuilding:
             name="warehouse",
             cn_name="仓库",
             boundary=[0, 30, 0, 20],
-            wall_thickness=0.3,
+            wall_thickness=0.5,
             height=6.0,
             stories=[Story(name="1F", height=6.0)],
         )
@@ -405,7 +405,7 @@ class TestBuilding:
         assert d["name"] == "warehouse"
         assert d["cn_name"] == "仓库"
         assert d["boundary"] == [0, 30, 0, 20]
-        assert d["wall_thickness"] == 0.3
+        assert d["wall_thickness"] == 0.5
         assert d["height"] == 6.0
         assert len(d["stories"]) == 1
 
@@ -414,7 +414,7 @@ class TestBuilding:
             "name": "factory",
             "cn_name": "工厂",
             "boundary": [10, 40, 5, 25],
-            "wall_thickness": 0.25,
+            "wall_thickness": 0.5,
             "height": 8.0,
             "stories": [
                 {"name": "1F", "height": 4.0},
@@ -441,7 +441,7 @@ class TestBuilding:
             name="test",
             cn_name="测试",
             boundary=[2, 25, 3, 12],
-            wall_thickness=0.24,
+            wall_thickness=0.5,
             height=9.0,
             stories=[
                 Story(
@@ -479,7 +479,11 @@ class TestBuildingGroup:
             "duration": 1.36,
         }
         assert bg.simulation_time == 1800
-        assert bg.domain == {"padding": 5.0, "grid_size": 1.0}
+        assert bg.domain == {
+            "padding": 5.0,
+            "grid_size": 1.0,
+            "refinement_zone": {"enabled": True, "depth": 1.0, "grid_size": 1.0},
+        }
         assert bg.output == {"slices": True, "devices": True}
 
     def test_custom(self):
@@ -507,7 +511,11 @@ class TestBuildingGroup:
             "net_heat_flux": 1000,
             "duration": 1.36,
         }
-        assert d["domain"] == {"padding": 5.0, "grid_size": 1.0}
+        assert d["domain"] == {
+            "padding": 5.0,
+            "grid_size": 1.0,
+            "refinement_zone": {"enabled": True, "depth": 1.0, "grid_size": 1.0},
+        }
         assert d["output"] == {"slices": True, "devices": True}
 
     def test_from_dict_project_format(self):
@@ -599,7 +607,11 @@ class TestBuildingGroup:
             "net_heat_flux": 15.0,
             "duration": 2.5,
         }
-        assert bg2.domain == {"padding": 10.0, "grid_size": 0.5}
+        assert bg2.domain == {
+            "padding": 10.0,
+            "grid_size": 0.5,
+            "refinement_zone": {"enabled": True, "depth": 1.0, "grid_size": 1.0},
+        }
         assert bg2.output == {"slices": True, "devices": False}
 
 
@@ -615,7 +627,7 @@ class TestIntegration:
                     name="plant",
                     cn_name="电解车间",
                     boundary=[0, 100, 0, 50],
-                    wall_thickness=0.3,
+                    wall_thickness=0.5,
                     height=15.0,
                     stories=[
                         Story(
@@ -774,6 +786,22 @@ class TestCombustibleRotation:
 
 
 # ============================================================
+# Specialized Components
+# ============================================================
+class TestSpecializedComponents:
+    def test_pot_tending_machine_is_large_metallurgical_component(self):
+        from models.combustibles import SPECIALIZED_COMPONENTS
+
+        comp = SPECIALIZED_COMPONENTS["POT_TENDING_MACHINE"]
+
+        assert comp.category == "electrolysis"
+        assert comp.total_length >= 30.0
+        assert comp.total_width >= 4.0
+        assert comp.total_height >= 5.0
+        assert len(comp.parts) >= 6
+
+
+# ============================================================
 # Combustible Bounds Check
 # ============================================================
 class TestCombustibleBoundsCheck:
@@ -831,11 +859,15 @@ class TestBuildingGroupHeatSourceMigration:
 
     def test_default_domain_grid_size_1(self):
         bg = BuildingGroup()
-        assert bg.domain == {"padding": 5.0, "grid_size": 1.0}
+        assert bg.domain == {
+            "padding": 5.0,
+            "grid_size": 1.0,
+            "refinement_zone": {"enabled": True, "depth": 1.0, "grid_size": 1.0},
+        }
 
-    def test_from_dict_drops_legacy_fields_and_keeps_flux(self):
+    def test_from_dict_drops_legacy_fields_and_keeps_qavg_target(self):
         # Legacy keys (enabled/distance/width_ratio/...) are silently dropped.
-        # net_heat_flux is stored as-is in MW/m² (model→FDS: multiply by 1000).
+        # net_heat_flux stores the UI q_avg target in kW/m² as-is.
         data = {
             "buildings": [],
             "heat_source": {
@@ -859,7 +891,7 @@ class TestBuildingGroupHeatSourceMigration:
         assert "width_ratio" not in bg.heat_source
         assert "height_ratio" not in bg.heat_source
 
-    def test_from_dict_keeps_small_mw_value(self):
+    def test_from_dict_keeps_small_qavg_value(self):
         data = {
             "buildings": [],
             "heat_source": {

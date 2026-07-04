@@ -34,6 +34,7 @@ from PySide6.QtCore import Qt, QTimer
 from PySide6.QtGui import QAction, QKeySequence
 from models.building import BuildingGroup, Building, Story
 from models.materials import MATERIAL_LIBRARY
+from models.geometry import clear_layout_cache
 from generators.fds_generator import FDSGenerator, validate_fds
 
 from ui.viewer_3d import Viewer3D, HAS_PYVISTA
@@ -57,6 +58,12 @@ class MainWindow(QMainWindow):
         self.setMinimumSize(1400, 900)
         self.showMaximized()
         self.model = BuildingGroup(buildings=[Building()])
+
+        # FDS preview debounce timer — prevents regeneration on rapid slider changes
+        self._fds_preview_timer = QTimer(self)
+        self._fds_preview_timer.setSingleShot(True)
+        self._fds_preview_timer.timeout.connect(self._do_update_preview)
+
         self.setup_ui()
         self.setup_menu()
         self._refresh_scene_list()
@@ -144,13 +151,18 @@ class MainWindow(QMainWindow):
         right_panel = QWidget()
         right_layout = QVBoxLayout(right_panel)
         right_layout.setContentsMargins(5, 10, 10, 10)
+        right_layout.setSpacing(6)
 
         self.simulation_control = SimulationControlPanel()
         self.simulation_control.parameters_changed.connect(self._on_sim_param_changed)
-        right_layout.addWidget(self.simulation_control)
+        # Stretch 0: simulation control (heat + sim + run buttons) takes only
+        # the height its content needs; no slack beneath it.
+        right_layout.addWidget(self.simulation_control, 0)
 
         self.fds_preview = FDSPreviewPanel()
-        right_layout.addWidget(self.fds_preview)
+        # Stretch 1: FDS code preview fills whatever vertical space remains so
+        # there is no visible gap between the run buttons and the preview.
+        right_layout.addWidget(self.fds_preview, 1)
 
         right_panel.setMinimumWidth(350)
         right_panel.setMaximumWidth(500)
@@ -251,10 +263,25 @@ class MainWindow(QMainWindow):
         material_action.triggered.connect(self.show_materials)
         help_menu.addAction(material_action)
 
-    def update_preview(self):
-        """更新FDS代码和状态栏"""
+    def update_preview(self, debounce=True):
+        """更新FDS代码和状态栏。debounce=True delays FDS generation to avoid blocking on rapid parameter changes."""
+        if debounce and self._fds_preview_timer.isActive():
+            self._fds_preview_timer.stop()
+        if debounce:
+            self._fds_preview_timer.start(500)
+        else:
+            self._do_update_preview()
+
+    def _do_update_preview(self):
         try:
             model = self.model
+
+            # Invalidate layout cache on every full preview generation —
+            # the cache is only useful across multiple rapid calls within
+            # the same model state (e.g. 3D viewer + FDS generator sharing
+            # results).  When a new model is set, stale cache entries must
+            # be evicted so the new geometry is placed correctly.
+            clear_layout_cache()
 
             # FDS preview
             generator = FDSGenerator(model)
@@ -345,13 +372,13 @@ class MainWindow(QMainWindow):
         chid = "".join(c for c in chid if ord(c) < 128) or "building"
 
         hs = bg.heat_source
-        heat_flux_kw = int(hs.get("net_heat_flux", 1000))
+        q_avg_kw = int(hs.get("net_heat_flux", 1000))
         azimuth = int(hs.get("azimuth", 0))
         elevation = int(hs.get("elevation", 0))
         duration = int(hs.get("duration", 0) * 1000)
         sim_time = int(bg.simulation_time)
 
-        chid_suffix = f"q{heat_flux_kw}_a{azimuth}_e{elevation}_d{duration}_t{sim_time}"
+        chid_suffix = f"q{q_avg_kw}_a{azimuth}_e{elevation}_d{duration}_t{sim_time}"
         default_filename = f"{chid}_{chid_suffix}.fds"
 
         file_path, _ = QFileDialog.getSaveFileName(
