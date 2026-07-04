@@ -33,6 +33,7 @@ HRR_MONITOR_WINDOW="${HRR_MONITOR_WINDOW:-120}"
 HRR_MONITOR_INTERVAL="${HRR_MONITOR_INTERVAL:-5}"
 HRR_MONITOR_THRESHOLD="${HRR_MONITOR_THRESHOLD:-1e-6}"
 HRR_STOP_GRACE="${HRR_STOP_GRACE:-60}"
+NO_COMBUSTION_RC="${NO_COMBUSTION_RC:-10}"
 
 hrr_status() {
     local csv_file="$1"
@@ -60,6 +61,20 @@ time_reached_window() {
     awk -v t="$last_time" -v w="$HRR_MONITOR_WINDOW" 'BEGIN { exit !((t + 0) >= (w + 0)) }'
 }
 
+cleanup_stop_files() {
+    local phase="$1"
+    local removed=0
+    local f
+    for f in ./*.stop; do
+        [ -e "$f" ] || continue
+        rm -f -- "$f"
+        removed=1
+    done
+    if [ "$removed" -eq 1 ]; then
+        echo "FDS stop cleanup: removed stale .stop file(s) ${phase}."
+    fi
+}
+
 # CHID = 原 .fds 文件名(去扩展名),与原 work.slurm 同约定
 CASE_NAME=$(basename "$FDS_FILE" .fds)
 echo "Running case: $CASE_NAME  (MPI np=$NP, bin=$FDS_BIN)"
@@ -68,7 +83,10 @@ mkdir -p "$CASE_NAME"
 cp "$FDS_FILE" "$CASE_NAME/"
 cd "$CASE_NAME" || exit 3
 
-OUTPUT_CHID=$(sed -n "s/.*CHID='\([^']*\)'.*/\1/p" "$CASE_NAME.fds" | head -n 1)
+OUTPUT_CHID=$(sed -n "s/.*CHID[[:space:]]*=[[:space:]]*'\([^']*\)'.*/\1/p" "$CASE_NAME.fds" | head -n 1)
+if [ -z "$OUTPUT_CHID" ]; then
+    OUTPUT_CHID=$(sed -n 's/.*CHID[[:space:]]*=[[:space:]]*"\([^"]*\)".*/\1/p' "$CASE_NAME.fds" | head -n 1)
+fi
 if [ -z "$OUTPUT_CHID" ]; then
     OUTPUT_CHID="$CASE_NAME"
 fi
@@ -78,7 +96,7 @@ fi
 
 HRR_CSV="${OUTPUT_CHID}_hrr.csv"
 STOP_FILE="${OUTPUT_CHID}.stop"
-rm -f "$STOP_FILE"
+cleanup_stop_files "before launch"
 
 mpirun -n "$NP" "$FDS_BIN" "$CASE_NAME.fds" &
 FDS_PID=$!
@@ -135,10 +153,12 @@ fi
 wait "$FDS_PID"
 rc=$?
 trap - INT TERM
+cleanup_stop_files "after FDS exit"
 
 if [ "$EARLY_STOP" -eq 1 ]; then
-    echo "HRR monitor: treated as complete because no HRR change occurred in the first ${HRR_MONITOR_WINDOW}s."
-    exit 0
+    echo "HRR monitor: no combustion detected in the first ${HRR_MONITOR_WINDOW}s; classified as no-combustion early stop."
+    echo "HRR_RESULT=NO_COMBUSTION_EARLY_STOP"
+    exit "$NO_COMBUSTION_RC"
 fi
 
 exit $rc

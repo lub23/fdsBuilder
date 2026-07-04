@@ -9,8 +9,9 @@ HRR_MONITOR_WINDOW="${HRR_MONITOR_WINDOW:-120}"
 HRR_MONITOR_INTERVAL="${HRR_MONITOR_INTERVAL:-5}"
 HRR_MONITOR_THRESHOLD="${HRR_MONITOR_THRESHOLD:-1e-6}"
 HRR_STOP_GRACE="${HRR_STOP_GRACE:-60}"
+NO_COMBUSTION_RC="${NO_COMBUSTION_RC:-10}"
 
-FDS_ROOT="/home/blue/FDS/FDS6"
+FDS_ROOT="${FDS_ROOT:-/home/blue/FDS/FDS6}"
 FDS_BINDIR="$FDS_ROOT/bin"
 FDS_VARS="$FDS_BINDIR/FDS6VARS.sh"
 FDS_PATTERN="*.fds"
@@ -102,6 +103,10 @@ worker() {
             echo "[$(TIMESTAMP)] [worker-$worker_id] <<< 完成: $fds_file (用时 ${cost_min}m${cost_sec}s)" \
                 | tee -a "$SUMMARY_LOG" "$log_file"
             rm -f "$fds_file"
+        elif [ "$rc" -eq "$NO_COMBUSTION_RC" ]; then
+            echo "[$(TIMESTAMP)] [worker-$worker_id] <<< 未燃提前终止: $fds_file (用时 ${cost_min}m${cost_sec}s)" \
+                | tee -a "$SUMMARY_LOG" "$log_file"
+            rm -f "$fds_file"
         else
             echo "[$(TIMESTAMP)] [worker-$worker_id] <<< 失败: $fds_file rc=$rc (用时 ${cost_min}m${cost_sec}s)" \
                 | tee -a "$SUMMARY_LOG" "$log_file"
@@ -114,7 +119,7 @@ worker() {
 export -f worker
 export -f TIMESTAMP
 export LOG_DIR SUMMARY_LOG TASK_QUEUE RUNNING_DIR NP_PER_TASK FDS_ROOT FDS_BIN
-export HRR_MONITOR HRR_MONITOR_WINDOW HRR_MONITOR_INTERVAL HRR_MONITOR_THRESHOLD HRR_STOP_GRACE
+export HRR_MONITOR HRR_MONITOR_WINDOW HRR_MONITOR_INTERVAL HRR_MONITOR_THRESHOLD HRR_STOP_GRACE NO_COMBUSTION_RC
 
 echo "[$(TIMESTAMP)] 启动 $MAX_JOBS 个并发 worker..." | tee -a "$SUMMARY_LOG"
 
@@ -129,12 +134,14 @@ for pid in "${WORKER_PIDS[@]}"; do
 done
 
 SUCCESS=$(grep -h "<<< 完成" "$LOG_DIR"/worker_*.log 2>/dev/null | wc -l)
+NO_COMBUSTION=$(grep -h "<<< 未燃提前终止" "$LOG_DIR"/worker_*.log 2>/dev/null | wc -l)
 FAILED=$(grep -h "<<< 失败" "$LOG_DIR"/worker_*.log 2>/dev/null | wc -l)
 
 echo "[$(TIMESTAMP)] ===== 全部跑完 =====" | tee -a "$SUMMARY_LOG"
-echo "[$(TIMESTAMP)] 总计: $TOTAL  成功: $SUCCESS  失败: $FAILED" | tee -a "$SUMMARY_LOG"
+echo "[$(TIMESTAMP)] 总计: $TOTAL  成功: $SUCCESS  未燃提前终止: $NO_COMBUSTION  失败: $FAILED" | tee -a "$SUMMARY_LOG"
 echo "[$(TIMESTAMP)] 详细日志: $LOG_DIR/" | tee -a "$SUMMARY_LOG"
 echo ""
 echo "查看汇总: cat $SUMMARY_LOG"
 echo "查看失败案例: grep '失败' $LOG_DIR/worker_*.log"
+echo "查看未燃提前终止案例: grep '未燃提前终止' $LOG_DIR/worker_*.log"
 echo "完成。"
