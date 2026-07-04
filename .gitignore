@@ -30,9 +30,11 @@ _backup/
 agent_damage/checkpoints/
 agent_damage/data/
 agent_damage/output/
+agent_damage/raw_results/
 agent_damage/reports/
 
 # Project export artifacts
+export/*.xlsx
 projects/
 
 .*/
