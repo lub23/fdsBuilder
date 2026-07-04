@@ -12,7 +12,7 @@
         0,
         38
       ],
-      "wall_thickness": 0.25,
+      "wall_thickness": 0.5,
       "height": 10,
       "stories": [
         {
@@ -44,7 +44,7 @@
               "type": "window",
               "boundary": [
                 1.5,
-                0.2,
+                0.5,
                 3.0,
                 0.5
               ]
@@ -54,7 +54,7 @@
               "type": "window",
               "boundary": [
                 2.5,
-                0.2,
+                0.5,
                 3.0,
                 0.5
               ]
@@ -64,7 +64,7 @@
               "type": "window",
               "boundary": [
                 3.5,
-                0.2,
+                0.5,
                 3.0,
                 0.5
               ]
@@ -74,7 +74,7 @@
               "type": "window",
               "boundary": [
                 5.0,
-                0.2,
+                0.5,
                 3.0,
                 0.5
               ]
@@ -84,7 +84,7 @@
               "type": "window",
               "boundary": [
                 6.0,
-                0.2,
+                0.5,
                 3.0,
                 0.5
               ]
@@ -94,7 +94,7 @@
               "type": "window",
               "boundary": [
                 7.0,
-                0.2,
+                0.5,
                 3.0,
                 0.5
               ]
@@ -104,7 +104,7 @@
               "type": "window",
               "boundary": [
                 11.0,
-                0.2,
+                0.5,
                 3.0,
                 0.5
               ]
@@ -114,7 +114,7 @@
               "type": "window",
               "boundary": [
                 12.0,
-                0.2,
+                0.5,
                 3.0,
                 0.5
               ]
@@ -124,7 +124,7 @@
               "type": "window",
               "boundary": [
                 13.0,
-                0.2,
+                0.5,
                 3.0,
                 0.5
               ]
@@ -134,7 +134,7 @@
               "type": "window",
               "boundary": [
                 14.5,
-                0.2,
+                0.5,
                 3.0,
                 0.5
               ]
@@ -144,7 +144,7 @@
               "type": "window",
               "boundary": [
                 15.5,
-                0.2,
+                0.5,
                 3.0,
                 0.5
               ]
@@ -154,7 +154,7 @@
               "type": "window",
               "boundary": [
                 16.5,
-                0.2,
+                0.5,
                 3.0,
                 0.5
               ]
@@ -164,9 +164,9 @@
               "type": "window",
               "boundary": [
                 1.5,
-                0.2,
+                1.0,
                 3.0,
-                0.5
+                1.0
               ]
             },
             {
@@ -174,9 +174,9 @@
               "type": "window",
               "boundary": [
                 4.5,
-                0.2,
+                1.0,
                 3.0,
-                0.5
+                1.0
               ]
             },
             {
@@ -184,9 +184,9 @@
               "type": "window",
               "boundary": [
                 7.5,
-                0.2,
+                1.0,
                 3.0,
-                0.5
+                1.0
               ]
             },
             {
@@ -194,9 +194,9 @@
               "type": "window",
               "boundary": [
                 10.5,
-                0.2,
+                1.0,
                 3.0,
-                0.5
+                1.0
               ]
             },
             {
@@ -204,9 +204,9 @@
               "type": "window",
               "boundary": [
                 13.5,
-                0.2,
+                1.0,
                 3.0,
-                0.5
+                1.0
               ]
             },
             {
@@ -214,9 +214,9 @@
               "type": "window",
               "boundary": [
                 16.5,
-                0.2,
+                1.0,
                 3.0,
-                0.5
+                1.0
               ]
             },
             {
@@ -224,7 +224,7 @@
               "type": "window",
               "boundary": [
                 1.0,
-                0.2,
+                0.5,
                 3.0,
                 0.5
               ]
@@ -234,7 +234,7 @@
               "type": "window",
               "boundary": [
                 3.0,
-                0.2,
+                0.5,
                 3.0,
                 0.5
               ]
@@ -244,7 +244,7 @@
               "type": "window",
               "boundary": [
                 5.0,
-                0.2,
+                0.5,
                 3.0,
                 0.5
               ]
@@ -254,7 +254,7 @@
               "type": "window",
               "boundary": [
                 7.0,
-                0.2,
+                0.5,
                 3.0,
                 0.5
               ]
@@ -264,7 +264,7 @@
               "type": "window",
               "boundary": [
                 9.0,
-                0.2,
+                0.5,
                 3.0,
                 0.5
               ]
@@ -274,7 +274,7 @@
               "type": "window",
               "boundary": [
                 27.5,
-                0.2,
+                0.5,
                 3.0,
                 0.5
               ]
@@ -284,7 +284,7 @@
               "type": "window",
               "boundary": [
                 30.25,
-                0.2,
+                0.5,
                 3.0,
                 0.5
               ]
@@ -294,7 +294,7 @@
               "type": "window",
               "boundary": [
                 33.0,
-                0.2,
+                0.5,
                 3.0,
                 0.5
               ]
@@ -304,7 +304,7 @@
               "type": "window",
               "boundary": [
                 35.75,
-                0.2,
+                0.5,
                 3.0,
                 0.5
               ]
@@ -314,7 +314,7 @@
               "type": "window",
               "boundary": [
                 1.4,
-                0.2,
+                0.5,
                 3.0,
                 0.5
               ]
@@ -324,7 +324,7 @@
               "type": "window",
               "boundary": [
                 4.3,
-                0.2,
+                0.5,
                 3.0,
                 0.5
               ]
@@ -334,7 +334,7 @@
               "type": "window",
               "boundary": [
                 7.1,
-                0.2,
+                0.5,
                 3.0,
                 0.5
               ]
@@ -344,7 +344,7 @@
               "type": "window",
               "boundary": [
                 10.0,
-                0.2,
+                0.5,
                 3.0,
                 0.5
               ]
@@ -354,7 +354,7 @@
               "type": "window",
               "boundary": [
                 12.9,
-                0.2,
+                0.5,
                 3.0,
                 0.5
               ]
@@ -364,7 +364,7 @@
               "type": "window",
               "boundary": [
                 15.7,
-                0.2,
+                0.5,
                 3.0,
                 0.5
               ]
@@ -374,7 +374,7 @@
               "type": "window",
               "boundary": [
                 18.6,
-                0.2,
+                0.5,
                 3.0,
                 0.5
               ]
@@ -384,7 +384,7 @@
               "type": "window",
               "boundary": [
                 21.4,
-                0.2,
+                0.5,
                 3.0,
                 0.5
               ]
@@ -394,7 +394,7 @@
               "type": "window",
               "boundary": [
                 29.5,
-                0.2,
+                0.5,
                 3.0,
                 0.5
               ]
@@ -404,7 +404,7 @@
               "type": "window",
               "boundary": [
                 34.0,
-                0.2,
+                0.5,
                 3.0,
                 0.5
               ]
@@ -419,7 +419,7 @@
                 0,
                 10
               ],
-              "firewall_thickness": 0.25,
+              "firewall_thickness": 0.5,
               "firewall_material": "CONCRETE",
               "openings": [
                 {
@@ -427,9 +427,9 @@
                   "type": "door",
                   "boundary": [
                     9,
-                    1.0,
+                    1.5,
                     0,
-                    2
+                    2.5
                   ]
                 },
                 {
@@ -437,9 +437,9 @@
                   "type": "door",
                   "boundary": [
                     1,
-                    0.8,
+                    1.5,
                     0,
-                    2
+                    2.5
                   ]
                 },
                 {
@@ -447,36 +447,36 @@
                   "type": "door",
                   "boundary": [
                     7.5,
-                    1,
+                    1.5,
                     0,
-                    2
+                    2.5
                   ]
                 },
                 {
                   "wall": "y_max",
                   "type": "door",
                   "boundary": [
-                    17,
-                    1,
+                    16.5,
+                    1.5,
                     0,
-                    2
+                    2.5
                   ]
                 }
               ],
               "combustibles": [
                 {
                   "key": "WOODEN_PALLET",
-                  "count": 6
+                  "count": 3
+                },
+                {
+                  "key": "LUBE_OIL_DRUM",
+                  "count": 3
                 }
               ],
               "specialized_components": [
                 {
                   "key": "ELECTRONICS_CONSOLE",
                   "count": 1
-                },
-                {
-                  "key": "CABLE_BUNDLE",
-                  "count": 2
                 }
               ]
             },
@@ -488,7 +488,7 @@
                 10,
                 27
               ],
-              "firewall_thickness": 0.25,
+              "firewall_thickness": 0.5,
               "firewall_material": "CONCRETE",
               "openings": [
                 {
@@ -519,7 +519,7 @@
                 },
                 {
                   "key": "CABLE_BUNDLE",
-                  "count": 4
+                  "count": 3
                 }
               ],
               "specialized_components": []
@@ -532,7 +532,7 @@
                 10,
                 23
               ],
-              "firewall_thickness": 0.25,
+              "firewall_thickness": 0.5,
               "firewall_material": "CONCRETE",
               "openings": [
                 {
@@ -556,7 +556,16 @@
                   ]
                 }
               ],
-              "combustibles": [],
+              "combustibles": [
+                {
+                  "key": "WOODEN_PALLET",
+                  "count": 2
+                },
+                {
+                  "key": "LUBE_OIL_DRUM",
+                  "count": 2
+                }
+              ],
               "specialized_components": []
             },
             {
@@ -567,7 +576,7 @@
                 18,
                 23
               ],
-              "firewall_thickness": 0.25,
+              "firewall_thickness": 0.5,
               "firewall_material": "CONCRETE",
               "openings": [
                 {
@@ -592,7 +601,7 @@
                 23,
                 27
               ],
-              "firewall_thickness": 0.25,
+              "firewall_thickness": 0.5,
               "firewall_material": "CONCRETE",
               "openings": [
                 {
@@ -606,24 +615,10 @@
                   ]
                 }
               ],
-              "combustibles": [],
-              "specialized_components": []
-            },
-            {
-              "name": "北部办公区",
-              "boundary": [
-                0,
-                18,
-                29,
-                38
-              ],
-              "firewall_thickness": 0.25,
-              "firewall_material": "CONCRETE",
-              "openings": [],
               "combustibles": [
                 {
-                  "key": "WOODEN_PALLET",
-                  "count": 4
+                  "key": "CABLE_BUNDLE",
+                  "count": 1
                 }
               ],
               "specialized_components": []
@@ -636,7 +631,7 @@
                 29,
                 31
               ],
-              "firewall_thickness": 0.25,
+              "firewall_thickness": 0.5,
               "firewall_material": "CONCRETE",
               "openings": [
                 {
@@ -684,6 +679,20 @@
               "specialized_components": []
             },
             {
+              "name": "北部办公区",
+              "boundary": [
+                0,
+                18,
+                29,
+                38
+              ],
+              "firewall_thickness": 0.5,
+              "firewall_material": "CONCRETE",
+              "openings": [],
+              "combustibles": [],
+              "specialized_components": []
+            },
+            {
               "name": "楼梯间2",
               "boundary": [
                 14,
@@ -691,15 +700,47 @@
                 31,
                 35
               ],
-              "firewall_thickness": 0.25,
+              "firewall_thickness": 0.5,
               "firewall_material": "CONCRETE",
               "openings": [],
               "combustibles": [],
               "specialized_components": []
             }
           ],
+          "combustibles": [
+            {
+              "key": "CABLE_BUNDLE",
+              "count": 4,
+              "boundary": [
+                0,
+                14,
+                29,
+                38
+              ]
+            },
+            {
+              "key": "WOODEN_PALLET",
+              "count": 4,
+              "boundary": [
+                0,
+                14,
+                29,
+                38
+              ]
+            },
+            {
+              "key": "WOODEN_PALLET",
+              "count": 1,
+              "boundary": [
+                12,
+                18,
+                23,
+                29
+              ]
+            }
+          ],
           "roof": {
-            "thickness": 0.2,
+            "thickness": 0.5,
             "material": "CONCRETE",
             "openings": [
               {
@@ -732,7 +773,7 @@
               "type": "window",
               "boundary": [
                 1.5,
-                0.2,
+                0.5,
                 3.0,
                 0.5
               ]
@@ -742,7 +783,7 @@
               "type": "window",
               "boundary": [
                 2.5,
-                0.2,
+                0.5,
                 3.0,
                 0.5
               ]
@@ -752,7 +793,7 @@
               "type": "window",
               "boundary": [
                 3.5,
-                0.2,
+                0.5,
                 3.0,
                 0.5
               ]
@@ -762,7 +803,7 @@
               "type": "window",
               "boundary": [
                 5.0,
-                0.2,
+                0.5,
                 3.0,
                 0.5
               ]
@@ -772,7 +813,7 @@
               "type": "window",
               "boundary": [
                 6.0,
-                0.2,
+                0.5,
                 3.0,
                 0.5
               ]
@@ -782,7 +823,7 @@
               "type": "window",
               "boundary": [
                 7.0,
-                0.2,
+                0.5,
                 3.0,
                 0.5
               ]
@@ -792,7 +833,7 @@
               "type": "window",
               "boundary": [
                 11.0,
-                0.2,
+                0.5,
                 3.0,
                 0.5
               ]
@@ -802,7 +843,7 @@
               "type": "window",
               "boundary": [
                 12.0,
-                0.2,
+                0.5,
                 3.0,
                 0.5
               ]
@@ -812,7 +853,7 @@
               "type": "window",
               "boundary": [
                 13.0,
-                0.2,
+                0.5,
                 3.0,
                 0.5
               ]
@@ -822,7 +863,7 @@
               "type": "window",
               "boundary": [
                 14.5,
-                0.2,
+                0.5,
                 3.0,
                 0.5
               ]
@@ -832,7 +873,7 @@
               "type": "window",
               "boundary": [
                 15.5,
-                0.2,
+                0.5,
                 3.0,
                 0.5
               ]
@@ -842,7 +883,7 @@
               "type": "window",
               "boundary": [
                 16.5,
-                0.2,
+                0.5,
                 3.0,
                 0.5
               ]
@@ -852,9 +893,9 @@
               "type": "window",
               "boundary": [
                 1.5,
-                0.2,
+                1.0,
                 3.0,
-                0.5
+                1.0
               ]
             },
             {
@@ -862,9 +903,9 @@
               "type": "window",
               "boundary": [
                 4.5,
-                0.2,
+                1.0,
                 3.0,
-                0.5
+                1.0
               ]
             },
             {
@@ -872,9 +913,9 @@
               "type": "window",
               "boundary": [
                 7.5,
-                0.2,
+                1.0,
                 3.0,
-                0.5
+                1.0
               ]
             },
             {
@@ -882,9 +923,9 @@
               "type": "window",
               "boundary": [
                 10.5,
-                0.2,
+                1.0,
                 3.0,
-                0.5
+                1.0
               ]
             },
             {
@@ -892,9 +933,9 @@
               "type": "window",
               "boundary": [
                 13.5,
-                0.2,
+                1.0,
                 3.0,
-                0.5
+                1.0
               ]
             },
             {
@@ -902,19 +943,9 @@
               "type": "window",
               "boundary": [
                 16.5,
-                0.2,
+                1.0,
                 3.0,
-                0.5
-              ]
-            },
-            {
-              "wall": "y_max",
-              "type": "window",
-              "boundary": [
-                19.5,
-                0.2,
-                3.0,
-                0.5
+                1.0
               ]
             },
             {
@@ -922,7 +953,7 @@
               "type": "window",
               "boundary": [
                 1.4,
-                0.2,
+                0.5,
                 3.0,
                 0.5
               ]
@@ -932,7 +963,7 @@
               "type": "window",
               "boundary": [
                 4.1,
-                0.2,
+                0.5,
                 3.0,
                 0.5
               ]
@@ -942,7 +973,7 @@
               "type": "window",
               "boundary": [
                 6.9,
-                0.2,
+                0.5,
                 3.0,
                 0.5
               ]
@@ -952,7 +983,7 @@
               "type": "window",
               "boundary": [
                 9.6,
-                0.2,
+                0.5,
                 3.0,
                 0.5
               ]
@@ -962,7 +993,7 @@
               "type": "window",
               "boundary": [
                 12.4,
-                0.2,
+                0.5,
                 3.0,
                 0.5
               ]
@@ -972,7 +1003,7 @@
               "type": "window",
               "boundary": [
                 15.1,
-                0.2,
+                0.5,
                 3.0,
                 0.5
               ]
@@ -982,7 +1013,7 @@
               "type": "window",
               "boundary": [
                 17.9,
-                0.2,
+                0.5,
                 3.0,
                 0.5
               ]
@@ -992,7 +1023,7 @@
               "type": "window",
               "boundary": [
                 23.4,
-                0.2,
+                0.5,
                 3.0,
                 0.5
               ]
@@ -1002,7 +1033,7 @@
               "type": "window",
               "boundary": [
                 26.1,
-                0.2,
+                0.5,
                 3.0,
                 0.5
               ]
@@ -1012,7 +1043,7 @@
               "type": "window",
               "boundary": [
                 28.9,
-                0.2,
+                0.5,
                 3.0,
                 0.5
               ]
@@ -1022,7 +1053,7 @@
               "type": "window",
               "boundary": [
                 31.6,
-                0.2,
+                0.5,
                 3.0,
                 0.5
               ]
@@ -1032,7 +1063,7 @@
               "type": "window",
               "boundary": [
                 34.4,
-                0.2,
+                0.5,
                 3.0,
                 0.5
               ]
@@ -1042,7 +1073,7 @@
               "type": "window",
               "boundary": [
                 37.1,
-                0.2,
+                0.5,
                 3.0,
                 0.5
               ]
@@ -1052,7 +1083,7 @@
               "type": "window",
               "boundary": [
                 1.4,
-                0.2,
+                0.5,
                 3.0,
                 0.5
               ]
@@ -1062,7 +1093,7 @@
               "type": "window",
               "boundary": [
                 4.1,
-                0.2,
+                0.5,
                 3.0,
                 0.5
               ]
@@ -1072,7 +1103,7 @@
               "type": "window",
               "boundary": [
                 6.9,
-                0.2,
+                0.5,
                 3.0,
                 0.5
               ]
@@ -1082,7 +1113,7 @@
               "type": "window",
               "boundary": [
                 9.6,
-                0.2,
+                0.5,
                 3.0,
                 0.5
               ]
@@ -1092,7 +1123,7 @@
               "type": "window",
               "boundary": [
                 12.4,
-                0.2,
+                0.5,
                 3.0,
                 0.5
               ]
@@ -1102,7 +1133,7 @@
               "type": "window",
               "boundary": [
                 15.1,
-                0.2,
+                0.5,
                 3.0,
                 0.5
               ]
@@ -1112,7 +1143,7 @@
               "type": "window",
               "boundary": [
                 17.9,
-                0.2,
+                0.5,
                 3.0,
                 0.5
               ]
@@ -1122,7 +1153,7 @@
               "type": "window",
               "boundary": [
                 20.6,
-                0.2,
+                0.5,
                 3.0,
                 0.5
               ]
@@ -1132,7 +1163,7 @@
               "type": "window",
               "boundary": [
                 23.4,
-                0.2,
+                0.5,
                 3.0,
                 0.5
               ]
@@ -1142,7 +1173,7 @@
               "type": "window",
               "boundary": [
                 26.1,
-                0.2,
+                0.5,
                 3.0,
                 0.5
               ]
@@ -1152,7 +1183,7 @@
               "type": "window",
               "boundary": [
                 31.6,
-                0.2,
+                0.5,
                 3.0,
                 0.5
               ]
@@ -1162,7 +1193,7 @@
               "type": "window",
               "boundary": [
                 34.4,
-                0.2,
+                0.5,
                 3.0,
                 0.5
               ]
@@ -1172,27 +1203,13 @@
               "type": "window",
               "boundary": [
                 37.1,
-                0.2,
+                0.5,
                 3.0,
                 0.5
               ]
             }
           ],
           "fire_compartments": [
-            {
-              "name": "default",
-              "boundary": [
-                0,
-                18,
-                0,
-                38
-              ],
-              "firewall_thickness": 0.25,
-              "firewall_material": "CONCRETE",
-              "openings": [],
-              "combustibles": [],
-              "specialized_components": []
-            },
             {
               "name": "货梯井",
               "boundary": [
@@ -1201,7 +1218,7 @@
                 18,
                 23
               ],
-              "firewall_thickness": 0.25,
+              "firewall_thickness": 0.5,
               "firewall_material": "CONCRETE",
               "openings": [
                 {
@@ -1215,7 +1232,12 @@
                   ]
                 }
               ],
-              "combustibles": [],
+              "combustibles": [
+                {
+                  "key": "CABLE_BUNDLE",
+                  "count": 1
+                }
+              ],
               "specialized_components": []
             },
             {
@@ -1226,7 +1248,7 @@
                 10,
                 29
               ],
-              "firewall_thickness": 0.25,
+              "firewall_thickness": 0.5,
               "firewall_material": "CONCRETE",
               "openings": [
                 {
@@ -1242,16 +1264,12 @@
               ],
               "combustibles": [
                 {
-                  "key": "CABLE_BUNDLE",
-                  "count": 4
-                },
-                {
                   "key": "WOODEN_PALLET",
-                  "count": 3
+                  "count": 2
                 },
                 {
                   "key": "LUBE_OIL_DRUM",
-                  "count": 3
+                  "count": 2
                 }
               ],
               "specialized_components": []
@@ -1264,15 +1282,10 @@
                 29,
                 38
               ],
-              "firewall_thickness": 0.25,
+              "firewall_thickness": 0.5,
               "firewall_material": "CONCRETE",
               "openings": [],
-              "combustibles": [
-                {
-                  "key": "WOODEN_PALLET",
-                  "count": 4
-                }
-              ],
+              "combustibles": [],
               "specialized_components": []
             },
             {
@@ -1283,7 +1296,7 @@
                 29,
                 31
               ],
-              "firewall_thickness": 0.25,
+              "firewall_thickness": 0.5,
               "firewall_material": "CONCRETE",
               "openings": [
                 {
@@ -1328,15 +1341,67 @@
                 31,
                 35
               ],
-              "firewall_thickness": 0.25,
+              "firewall_thickness": 0.5,
               "firewall_material": "CONCRETE",
               "openings": [],
               "combustibles": [],
               "specialized_components": []
             }
           ],
+          "combustibles": [
+            {
+              "key": "WOODEN_PALLET",
+              "count": 9,
+              "boundary": [
+                0,
+                18,
+                0,
+                10
+              ]
+            },
+            {
+              "key": "WOODEN_PALLET",
+              "count": 5,
+              "boundary": [
+                0,
+                6,
+                10,
+                29
+              ]
+            },
+            {
+              "key": "CABLE_BUNDLE",
+              "count": 1,
+              "boundary": [
+                12,
+                18,
+                23,
+                29
+              ]
+            },
+            {
+              "key": "CABLE_BUNDLE",
+              "count": 4,
+              "boundary": [
+                0,
+                14,
+                29,
+                38
+              ]
+            },
+            {
+              "key": "WOODEN_PALLET",
+              "count": 4,
+              "boundary": [
+                0,
+                14,
+                29,
+                38
+              ]
+            }
+          ],
           "roof": {
-            "thickness": 0.2,
+            "thickness": 0.5,
             "material": "CONCRETE",
             "openings": []
           }
@@ -1352,7 +1417,7 @@
         14,
         10
       ],
-      "wall_thickness": 0.15,
+      "wall_thickness": 0.5,
       "height": 5,
       "stories": [
         {
@@ -1368,7 +1433,7 @@
                 0.0,
                 10
               ],
-              "firewall_thickness": 0.15,
+              "firewall_thickness": 0.5,
               "firewall_material": "CONCRETE",
               "openings": [
                 {
@@ -1382,17 +1447,25 @@
                   ]
                 }
               ],
-              "combustibles": [],
+              "combustibles": [
+                {
+                  "key": "LUBE_OIL_DRUM",
+                  "count": 1
+                }
+              ],
               "specialized_components": []
             }
           ],
           "roof": {
-            "thickness": 0.2,
+            "thickness": 0.5,
             "material": "CONCRETE",
             "openings": []
           }
         }
       ]
     }
-  ]
+  ],
+  "domain": {
+    "grid_size": 1.0
+  }
 }

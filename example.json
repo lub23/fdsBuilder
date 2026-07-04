@@ -3,9 +3,14 @@
     "buildings": [
       {
         "name": "Type 1",
-        "cn_name": "小型固定翼与舰载机机库",
-        "boundary": [-14.48, 28.96, -36.0, 72.0],
-        "wall_thickness": 0.3,
+        "cn_name": "小型机库",
+        "boundary": [
+          -14.48,
+          28.96,
+          -36.0,
+          72.0
+        ],
+        "wall_thickness": 0.5,
         "height": 9.9,
         "stories": [
           {
@@ -15,14 +20,24 @@
             "fire_compartments": [
               {
                 "name": "主停机区",
-                "boundary": [0.0, 18.824, 0.0, 72.0],
-                "firewall_thickness": 0.3,
+                "boundary": [
+                  0.0,
+                  18.824,
+                  0.0,
+                  72.0
+                ],
+                "firewall_thickness": 0.5,
                 "firewall_material": "CONCRETE",
                 "openings": [
                   {
                     "wall": "x_min",
                     "type": "door",
-                    "boundary": [7.2, 57.6, 0, 9.0]
+                    "boundary": [
+                      7.2,
+                      57.6,
+                      0,
+                      9.0
+                    ]
                   }
                 ],
                 "combustibles": [
@@ -44,14 +59,24 @@
               },
               {
                 "name": "维修工具区",
-                "boundary": [18.824, 28.96, 0.0, 21.599999999999998],
-                "firewall_thickness": 0.3,
+                "boundary": [
+                  18.824,
+                  28.96,
+                  0.0,
+                  21.599999999999998
+                ],
+                "firewall_thickness": 0.5,
                 "firewall_material": "CONCRETE",
                 "openings": [
                   {
                     "wall": "x_min",
                     "type": "door",
-                    "boundary": [10.395, 0.8099999999999999, 0, 3.5]
+                    "boundary": [
+                      10.395,
+                      0.8099999999999999,
+                      0,
+                      3.5
+                    ]
                   }
                 ],
                 "combustibles": [
@@ -76,14 +101,24 @@
               },
               {
                 "name": "备件存储区",
-                "boundary": [18.824, 28.96, 21.599999999999998, 72.0],
-                "firewall_thickness": 0.3,
+                "boundary": [
+                  18.824,
+                  28.96,
+                  21.599999999999998,
+                  72.0
+                ],
+                "firewall_thickness": 0.5,
                 "firewall_material": "CONCRETE",
                 "openings": [
                   {
                     "wall": "x_min",
                     "type": "door",
-                    "boundary": [24.255000000000003, 1.8900000000000001, 0, 3.5]
+                    "boundary": [
+                      24.255000000000003,
+                      1.8900000000000001,
+                      0,
+                      3.5
+                    ]
                   }
                 ],
                 "combustibles": [
@@ -104,7 +139,7 @@
               }
             ],
             "roof": {
-              "thickness": 0.2,
+              "thickness": 0.5,
               "material": "CONCRETE",
               "openings": []
             }
@@ -113,9 +148,14 @@
       },
       {
         "name": "Type 2",
-        "cn_name": "大型旋翼与倾转机机库",
-        "boundary": [-18.15, 36.3, 50.45, 99.1],
-        "wall_thickness": 0.3,
+        "cn_name": "中型机库",
+        "boundary": [
+          -18.15,
+          36.3,
+          50.45,
+          99.1
+        ],
+        "wall_thickness": 0.5,
         "height": 13.4,
         "stories": [
           {
@@ -125,14 +165,24 @@
             "fire_compartments": [
               {
                 "name": "主停机区",
-                "boundary": [0.0, 36.3, 0.0, 79.28],
-                "firewall_thickness": 0.3,
+                "boundary": [
+                  0.0,
+                  36.3,
+                  0.0,
+                  79.28
+                ],
+                "firewall_thickness": 0.5,
                 "firewall_material": "CONCRETE",
                 "openings": [
                   {
                     "wall": "x_min",
                     "type": "door",
-                    "boundary": [7.928000000000001, 63.42400000000001, 0, 12.0]
+                    "boundary": [
+                      7.928000000000001,
+                      63.42400000000001,
+                      0,
+                      12.0
+                    ]
                   }
                 ],
                 "combustibles": [
@@ -158,19 +208,34 @@
               },
               {
                 "name": "维修辅助区",
-                "boundary": [0.0, 36.3, 79.28, 99.1],
-                "firewall_thickness": 0.3,
+                "boundary": [
+                  0.0,
+                  36.3,
+                  79.28,
+                  99.1
+                ],
+                "firewall_thickness": 0.5,
                 "firewall_material": "CONCRETE",
                 "openings": [
                   {
                     "wall": "y_min",
                     "type": "door",
-                    "boundary": [10.3405632, 1.0988736, 0, 4.0]
+                    "boundary": [
+                      10.3405632,
+                      1.0988736,
+                      0,
+                      4.0
+                    ]
                   },
                   {
                     "wall": "y_min",
                     "type": "door",
-                    "boundary": [24.860563199999998, 1.0988736, 0, 4.0]
+                    "boundary": [
+                      24.860563199999998,
+                      1.0988736,
+                      0,
+                      4.0
+                    ]
                   }
                 ],
                 "combustibles": [
@@ -199,7 +264,7 @@
               }
             ],
             "roof": {
-              "thickness": 0.2,
+              "thickness": 0.5,
               "material": "CONCRETE",
               "openings": []
             }
@@ -208,9 +273,14 @@
       },
       {
         "name": "Type 3",
-        "cn_name": "远程巡逻与运输机机库",
-        "boundary": [74.85, 50.3, -25.15, 50.3],
-        "wall_thickness": 0.3,
+        "cn_name": "大型机库",
+        "boundary": [
+          74.85,
+          50.3,
+          -25.15,
+          50.3
+        ],
+        "wall_thickness": 0.5,
         "height": 15.2,
         "stories": [
           {
@@ -220,14 +290,24 @@
             "fire_compartments": [
               {
                 "name": "主停机区",
-                "boundary": [0.0, 42.754999999999995, 0.0, 50.3],
-                "firewall_thickness": 0.3,
+                "boundary": [
+                  0.0,
+                  42.754999999999995,
+                  0.0,
+                  50.3
+                ],
+                "firewall_thickness": 0.5,
                 "firewall_material": "CONCRETE",
                 "openings": [
                   {
                     "wall": "x_min",
                     "type": "door",
-                    "boundary": [2.515, 45.269999999999996, 0, 14]
+                    "boundary": [
+                      2.515,
+                      45.269999999999996,
+                      0,
+                      14
+                    ]
                   }
                 ],
                 "combustibles": [
@@ -253,14 +333,24 @@
               },
               {
                 "name": "辅助服务区",
-                "boundary": [42.754999999999995, 50.3, 0.0, 50.3],
-                "firewall_thickness": 0.3,
+                "boundary": [
+                  42.754999999999995,
+                  50.3,
+                  0.0,
+                  50.3
+                ],
+                "firewall_thickness": 0.5,
                 "firewall_material": "CONCRETE",
                 "openings": [
                   {
                     "wall": "x_min",
                     "type": "door",
-                    "boundary": [23.1500217, 4.0000069, 0, 5.0]
+                    "boundary": [
+                      23.1500217,
+                      4.0000069,
+                      0,
+                      5.0
+                    ]
                   }
                 ],
                 "combustibles": [
@@ -293,121 +383,7 @@
               }
             ],
             "roof": {
-              "thickness": 0.2,
-              "material": "CONCRETE",
-              "openings": []
-            }
-          }
-        ]
-      },
-      {
-        "name": "Type 4",
-        "cn_name": "大型无人机机库",
-        "boundary": [78.5, 43.0, 75.45, 49.1],
-        "wall_thickness": 0.3,
-        "height": 9.9,
-        "stories": [
-          {
-            "name": "1F",
-            "height": 9.9,
-            "openings": [],
-            "fire_compartments": [
-              {
-                "name": "无人机停放区",
-                "boundary": [0.0, 25.8, 0.0, 49.1],
-                "firewall_thickness": 0.3,
-                "firewall_material": "CONCRETE",
-                "openings": [
-                  {
-                    "wall": "x_min",
-                    "type": "door",
-                    "boundary": [2.455, 44.190000000000005, 0, 9.0]
-                  }
-                ],
-                "combustibles": [
-                  {
-                    "count": 3,
-                    "key": "JET_FUEL_RESIDUE"
-                  },
-                  {
-                    "count": 2,
-                    "key": "INDUSTRIAL_OIL_DRUM"
-                  }
-                ],
-                "specialized_components": [
-                  {
-                    "count": 3,
-                    "key": "AIRCRAFT_SMALL"
-                  }
-                ]
-              },
-              {
-                "name": "维修检测区",
-                "boundary": [25.8, 43.0, 0.0, 24.55],
-                "firewall_thickness": 0.3,
-                "firewall_material": "CONCRETE",
-                "openings": [
-                  {
-                    "wall": "x_min",
-                    "type": "door",
-                    "boundary": [11.5249975, 1.500005, 0, 3.0]
-                  }
-                ],
-                "combustibles": [
-                  {
-                    "count": 3,
-                    "key": "CABLE_BUNDLE"
-                  },
-                  {
-                    "count": 2,
-                    "key": "COATING_AGENT_DRUM"
-                  },
-                  {
-                    "count": 2,
-                    "key": "ADHESIVE_SEALANT_SET"
-                  },
-                  {
-                    "count": 2,
-                    "key": "FOAM_PACKAGING"
-                  }
-                ],
-                "specialized_components": []
-              },
-              {
-                "name": "办公备件区",
-                "boundary": [25.8, 43.0, 24.55, 49.1],
-                "firewall_thickness": 0.3,
-                "firewall_material": "CONCRETE",
-                "openings": [
-                  {
-                    "wall": "x_min",
-                    "type": "door",
-                    "boundary": [19.64, 1.2275, 0, 3.0]
-                  }
-                ],
-                "combustibles": [
-                  {
-                    "count": 4,
-                    "key": "OFFICE_COMPOSITE_FURNITURE"
-                  },
-                  {
-                    "count": 3,
-                    "key": "PAPER_STACK"
-                  },
-                  {
-                    "count": 2,
-                    "key": "UPHOLSTERED_SEAT"
-                  },
-                  {
-                    "count": 2,
-                    "key": "CARPET_FINISH"
-                  }
-                ],
-                "specialized_components": []
-              }
-            ],
-            "roof": {
-              "thickness": 0.2,
+              "thickness": 0.5,
               "material": "CONCRETE",
               "openings": []
             }
@@ -418,7 +394,11 @@
     "heat_source": {},
     "simulation_time": 300,
     "domain": {
-      "mesh_cells": [80, 60, 40],
+      "mesh_cells": [
+        80,
+        60,
+        40
+      ],
       "padding": 5.0
     },
     "output": {

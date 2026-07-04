@@ -6,185 +6,245 @@
     {
       "name": "Launch control center",
       "cn_name": "发射控制中心",
-      "boundary": [
-        -92.5,
-        85,
-        63.75,
-        32.5
-      ],
-      "length_range": [
-        50,
-        120
-      ],
-      "width_range": [
-        15,
-        50
-      ],
-      "height_range": [
-        8,
-        12
-      ],
-      "stories_range": [
-        2,
-        4,
-        2
-      ],
-      "wall_thickness": 0.3,
+      "boundary": [0.0, 85.0, 219.0, 32.5],
+      "length_range": [65.0, 110.0, 85.0],
+      "width_range": [24.0, 42.0, 32.5],
+      "height_range": [9, 12.0, 10.0],
+      "stories_range": [2, 3, 2],
+      "scale_dimensions": {
+        "small": {
+          "length": 65.0,
+          "width": 24.0,
+          "height": 9,
+          "stories": 2
+        },
+        "medium": {
+          "length": 85.0,
+          "width": 32.5,
+          "height": 10.0,
+          "stories": 2
+        },
+        "large": {
+          "length": 110.0,
+          "width": 42.0,
+          "height": 12.0,
+          "stories": 3
+        }
+      },
+      "wall_thickness": 0.5,
       "stories_template": [
         {
           "name": "1F",
-          "height_range": [
-            8,
-            12
-          ],
+          "height_range": [8, 12, 10],
           "doors": {
-            "width": [
-              4,
-              4
-            ],
-            "height": [
-              4,
-              4
-            ],
-            "count": [
-              1,
-              3
-            ]
+            "width": [0, 0, 0],
+            "height": [0, 0, 0],
+            "count": [0, 0, 0]
           },
           "windows": {
-            "width": [
-              0,
-              0
-            ],
-            "height": [
-              0,
-              0
-            ],
-            "count": [
-              0,
-              0
-            ]
+            "width": [0, 0, 0],
+            "height": [0, 0, 0],
+            "count": [0, 0, 0]
           },
           "roof": {
-            "thickness": 0.2,
+            "thickness": 0.5,
             "material": "CONCRETE",
             "openings": []
           },
           "fire_compartment_ratios": [
             {
-              "name": "指挥控制区",
-              "boundary_ratio": [
-                0,
-                0.6,
-                0,
-                1
-              ],
-              "firewall_thickness": 0.3,
+              "name": "指挥控制大厅",
+              "boundary_ratio": [0, 0.5, 0, 1],
+              "firewall_thickness": 0.5,
               "firewall_material": "CONCRETE",
               "combustibles": [
                 {
                   "key": "CABLE_BUNDLE",
-                  "count": 10,
-                  "count_scaled": [
-                    6,
-                    10,
-                    15
-                  ]
-                },
-                {
-                  "key": "WOODEN_PALLET",
-                  "count": 11,
-                  "count_scaled": [
-                    7,
-                    11,
-                    16
-                  ]
-                }
-              ],
-              "specialized_components": [],
-              "opening_templates": [
-                {
-                  "wall": "x_max",
-                  "type": "door",
-                  "w_offset_ratio": 0.48,
-                  "width_ratio": 0.04,
-                  "height": 2.5,
-                  "h_offset": 0
-                }
-              ]
-            },
-            {
-              "name": "设备机房区",
-              "boundary_ratio": [
-                0.6,
-                1.0,
-                0,
-                0.5
-              ],
-              "firewall_thickness": 0.3,
-              "firewall_material": "CONCRETE",
-              "combustibles": [
-                {
-                  "key": "CABLE_BUNDLE",
-                  "count": 10,
-                  "count_scaled": [
-                    6,
-                    10,
-                    15
-                  ]
+                  "count": 5,
+                  "count_scaled": [3, 5, 7]
                 },
                 {
                   "key": "WOODEN_PALLET",
                   "count": 2,
-                  "count_scaled": [
-                    1,
-                    2,
-                    3
-                  ]
+                  "count_scaled": [1, 2, 3]
                 }
               ],
-              "specialized_components": [],
-              "opening_templates": [
+              "specialized_components": [
                 {
-                  "wall": "x_min",
-                  "type": "door",
-                  "w_offset_ratio": 0.485,
-                  "width_ratio": 0.03,
-                  "height": 2.5,
-                  "h_offset": 0
-                }
-              ]
-            },
-            {
-              "name": "办公存储区",
-              "boundary_ratio": [
-                0.6,
-                1.0,
-                0.5,
-                1.0
-              ],
-              "firewall_thickness": 0.3,
-              "firewall_material": "CONCRETE",
-              "combustibles": [
-                {
-                  "key": "WOODEN_PALLET",
-                  "count": 13,
-                  "count_scaled": [
-                    7,
-                    13,
-                    19
-                  ]
+                  "key": "MISSION_CONTROL_CONSOLE_BANK",
+                  "count": 3,
+                  "count_scaled": [2, 3, 4],
+                  "orientation": "y"
                 }
               ],
-              "specialized_components": [],
               "opening_templates": [
                 {
                   "wall": "y_min",
                   "type": "door",
-                  "w_offset_ratio": 0.5,
-                  "width_ratio": 0.3,
-                  "height": 2.5,
+                  "w_offset_ratio": 0.42,
+                  "width_ratio": 0.16,
+                  "height": 2.8,
                   "h_offset": 0
+                },
+                {
+                  "wall": "y_max",
+                  "type": "door",
+                  "w_offset_ratio": 0.42,
+                  "width_ratio": 0.16,
+                  "height": 2.8,
+                  "h_offset": 0
+                },
+                {
+                  "wall": "x_min",
+                  "type": "window",
+                  "w_offset_ratio": 0.15,
+                  "width_ratio": 0.16,
+                  "height": 1.2,
+                  "h_offset": 2.0
+                },
+                {
+                  "wall": "x_min",
+                  "type": "window",
+                  "w_offset_ratio": 0.42,
+                  "width_ratio": 0.16,
+                  "height": 1.2,
+                  "h_offset": 2.0
+                },
+                {
+                  "wall": "x_min",
+                  "type": "window",
+                  "w_offset_ratio": 0.69,
+                  "width_ratio": 0.16,
+                  "height": 1.2,
+                  "h_offset": 2.0
+                }
+              ]
+            },
+            {
+              "name": "航电设备区",
+              "boundary_ratio": [0.6, 1, 0, 0.55],
+              "firewall_thickness": 0.5,
+              "firewall_material": "CONCRETE",
+              "combustibles": [
+                {
+                  "key": "CABLE_BUNDLE",
+                  "count": 6,
+                  "count_scaled": [4, 6, 8]
+                },
+                {
+                  "key": "LUBE_OIL_DRUM",
+                  "count": 4,
+                  "count_scaled": [2, 4, 6]
+                }
+              ],
+              "specialized_components": [
+                {
+                  "key": "AEROSPACE_AVIONICS_RACK",
+                  "count": 2,
+                  "count_scaled": [1, 2, 3],
+                  "orientation": "x"
+                }
+              ],
+              "opening_templates": [
+                {
+                  "wall": "x_min",
+                  "type": "door",
+                  "w_offset_ratio": 0.45,
+                  "width_ratio": 0.15,
+                  "height": 3,
+                  "h_offset": 0
+                },
+                {
+                  "wall": "x_max",
+                  "type": "door",
+                  "w_offset_ratio": 0.45,
+                  "width_ratio": 0.15,
+                  "height": 3,
+                  "h_offset": 0
+                },
+                {
+                  "wall": "y_min",
+                  "type": "window",
+                  "w_offset_ratio": 0.18,
+                  "width_ratio": 0.18,
+                  "height": 1.2,
+                  "h_offset": 2.0
+                },
+                {
+                  "wall": "y_min",
+                  "type": "window",
+                  "w_offset_ratio": 0.58,
+                  "width_ratio": 0.18,
+                  "height": 1.2,
+                  "h_offset": 2.0
+                }
+              ]
+            },
+            {
+              "name": "办公保障区",
+              "boundary_ratio": [0.55, 1, 0.55, 1],
+              "firewall_thickness": 0.5,
+              "firewall_material": "CONCRETE",
+              "combustibles": [
+                {
+                  "key": "WOODEN_PALLET",
+                  "count": 3,
+                  "count_scaled": [2, 3, 4]
+                },
+                {
+                  "key": "CABLE_BUNDLE",
+                  "count": 2,
+                  "count_scaled": [1, 2, 3]
+                }
+              ],
+              "specialized_components": [
+                {
+                  "key": "MISSION_CONTROL_CONSOLE_BANK",
+                  "count": 1,
+                  "count_scaled": [0, 1, 1],
+                  "orientation": "y"
+                }
+              ],
+              "opening_templates": [
+                {
+                  "wall": "x_min",
+                  "type": "door",
+                  "w_offset_ratio": 0.45,
+                  "width_ratio": 0.15,
+                  "height": 3,
+                  "h_offset": 0
+                },
+                {
+                  "wall": "y_max",
+                  "type": "door",
+                  "w_offset_ratio": 0.4,
+                  "width_ratio": 0.2,
+                  "height": 3,
+                  "h_offset": 0
+                },
+                {
+                  "wall": "y_max",
+                  "type": "window",
+                  "w_offset_ratio": 0.1,
+                  "width_ratio": 0.1,
+                  "height": 5,
+                  "h_offset": 4
+                },
+                {
+                  "wall": "y_max",
+                  "type": "window",
+                  "w_offset_ratio": 0.5,
+                  "width_ratio": 0.1,
+                  "height": 2,
+                  "h_offset": 4
+                },
+                {
+                  "wall": "y_max",
+                  "type": "window",
+                  "w_offset_ratio": 0.7,
+                  "width_ratio": 0.1,
+                  "height": 2,
+                  "h_offset": 4
                 }
               ]
             }
@@ -196,249 +256,349 @@
     {
       "name": "Assembly building",
       "cn_name": "总装车间",
-      "boundary": [
-        -87.5,
-        175.0,
-        150.0,
-        130.0
-      ],
-      "length_range": [
-        150,
-        200
-      ],
-      "width_range": [
-        100,
-        160
-      ],
-      "height_range": [
-        30,
-        35
-      ],
-      "stories_range": [
-        1,
-        4,
-        1
-      ],
-      "wall_thickness": 0.3,
+      "boundary": [0.0, 175.0, 0.0, 130.0],
+      "length_range": [140.0, 215.0, 175.0],
+      "width_range": [100.0, 160.0, 130.0],
+      "height_range": [28.0, 35.0, 32],
+      "stories_range": [1, 1, 1],
+      "scale_dimensions": {
+        "small": {
+          "length": 140.0,
+          "width": 100.0,
+          "height": 28.0,
+          "stories": 1
+        },
+        "medium": {
+          "length": 175.0,
+          "width": 130.0,
+          "height": 32,
+          "stories": 1
+        },
+        "large": {
+          "length": 215.0,
+          "width": 160.0,
+          "height": 35.0,
+          "stories": 1
+        }
+      },
+      "wall_thickness": 0.5,
       "stories_template": [
         {
           "name": "1F",
-          "height_range": [
-            30,
-            35
-          ],
           "doors": {
-            "width": [
-              12,
-              15,
-              15
-            ],
-            "height": [
-              25,
-              30,
-              25
-            ],
-            "count": [
-              1,
-              3
-            ]
+            "width": [0, 0, 0],
+            "height": [0, 0, 0],
+            "count": [0, 0, 0]
           },
           "windows": {
-            "width": [
-              2,
-              4
-            ],
-            "height": [
-              2,
-              3
-            ],
-            "count": [
-              10,
-              30
-            ]
+            "width": [0, 0, 0],
+            "height": [0, 0, 0],
+            "count": [0, 0, 0]
           },
           "roof": {
-            "thickness": 0.2,
+            "thickness": 0.5,
             "material": "CONCRETE",
             "openings": []
           },
           "fire_compartment_ratios": [
             {
               "name": "总装主厂区",
-              "boundary_ratio": [
-                0,
-                0.7,
-                0,
-                1
-              ],
-              "firewall_thickness": 0.3,
+              "boundary_ratio": [0, 0.6, 0, 1],
+              "firewall_thickness": 0.5,
               "firewall_material": "CONCRETE",
               "combustibles": [
                 {
                   "key": "WOODEN_PALLET",
-                  "count": 100,
-                  "count_scaled": [
-                    60,
-                    100,
-                    150
-                  ]
+                  "count": 10,
+                  "count_scaled": [8, 10, 14]
                 },
                 {
                   "key": "CABLE_BUNDLE",
-                  "count": 20,
-                  "count_scaled": [
-                    12,
-                    20,
-                    30
-                  ]
+                  "count": 8,
+                  "count_scaled": [4, 8, 12]
+                },
+                {
+                  "key": "LUBE_OIL_DRUM",
+                  "count": 4,
+                  "count_scaled": [2, 4, 6]
                 }
               ],
               "specialized_components": [
                 {
-                  "key": "ROCKET_VEHICLE_LARGE",
+                  "key": "ROCKET_TRANSPORT_CRADLE",
                   "count": 2,
-                  "count_scaled": [
-                    2,
-                    2,
-                    2
-                  ]
+                  "count_scaled": [1, 2, 3],
+                  "orientation": "x"
+                },
+                {
+                  "key": "ROCKET_VEHICLE_SMALL",
+                  "count": 1,
+                  "count_scaled": [1, 0, 0],
+                  "orientation": "x"
                 },
                 {
                   "key": "ROCKET_VEHICLE_MEDIUM",
+                  "count": 1,
+                  "count_scaled": [0, 1, 0],
+                  "orientation": "x"
+                },
+                {
+                  "key": "ROCKET_VEHICLE_LARGE",
+                  "count": 1,
+                  "count_scaled": [0, 0, 1],
+                  "orientation": "x"
+                },
+                {
+                  "key": "PAYLOAD_FAIRING_HALF",
                   "count": 2,
-                  "count_scaled": [
-                    2,
-                    2,
-                    2
-                  ]
+                  "count_scaled": [1, 2, 3],
+                  "orientation": "x"
                 }
               ],
               "opening_templates": [
                 {
                   "wall": "x_max",
                   "type": "door",
-                  "w_offset_ratio": 0.475,
-                  "width_ratio": 0.05,
-                  "height": 10.0,
+                  "w_offset_ratio": 0.45,
+                  "width_ratio": 0.1,
+                  "height": 18.0,
                   "h_offset": 0
+                },
+                {
+                  "wall": "y_max",
+                  "type": "door",
+                  "w_offset_ratio": 0.38,
+                  "width_ratio": 0.18,
+                  "height": 12.0,
+                  "h_offset": 0
+                },
+                {
+                  "wall": "x_min",
+                  "type": "door",
+                  "w_offset_ratio": 0.4,
+                  "width_ratio": 0.1,
+                  "height": 6.0,
+                  "h_offset": 0
+                },
+                {
+                  "wall": "y_min",
+                  "type": "door",
+                  "w_offset_ratio": 0.4,
+                  "width_ratio": 0.1,
+                  "height": 6.0,
+                  "h_offset": 0
+                },
+                {
+                  "wall": "y_min",
+                  "type": "window",
+                  "w_offset_ratio": 0.08,
+                  "width_ratio": 0.08,
+                  "height": 3.0,
+                  "h_offset": 12.0
+                },
+                {
+                  "wall": "y_min",
+                  "type": "window",
+                  "w_offset_ratio": 0.2,
+                  "width_ratio": 0.1,
+                  "height": 3.0,
+                  "h_offset": 12.0
+                },
+                {
+                  "wall": "y_min",
+                  "type": "window",
+                  "w_offset_ratio": 0.4,
+                  "width_ratio": 0.1,
+                  "height": 3.0,
+                  "h_offset": 12.0
+                },
+                {
+                  "wall": "y_min",
+                  "type": "window",
+                  "w_offset_ratio": 0.6,
+                  "width_ratio": 0.1,
+                  "height": 3.0,
+                  "h_offset": 12.0
+                },
+                {
+                  "wall": "y_min",
+                  "type": "window",
+                  "w_offset_ratio": 0.8,
+                  "width_ratio": 0.1,
+                  "height": 3.0,
+                  "h_offset": 12.0
+                },
+                {
+                  "wall": "x_min",
+                  "type": "window",
+                  "w_offset_ratio": 0.1,
+                  "width_ratio": 0.1,
+                  "height": 3.0,
+                  "h_offset": 12.0
+                },
+                {
+                  "wall": "x_min",
+                  "type": "window",
+                  "w_offset_ratio": 0.3,
+                  "width_ratio": 0.1,
+                  "height": 3.0,
+                  "h_offset": 12.0
+                },
+                {
+                  "wall": "x_min",
+                  "type": "window",
+                  "w_offset_ratio": 0.5,
+                  "width_ratio": 0.1,
+                  "height": 3.0,
+                  "h_offset": 12.0
+                },
+                {
+                  "wall": "x_min",
+                  "type": "window",
+                  "w_offset_ratio": 0.7,
+                  "width_ratio": 0.1,
+                  "height": 3.0,
+                  "h_offset": 12.0
                 }
               ]
             },
             {
               "name": "部件存储区",
-              "boundary_ratio": [
-                0.7,
-                1.0,
-                0.5,
-                1
-              ],
-              "firewall_thickness": 0.3,
+              "boundary_ratio": [0.7, 1, 0.55, 1],
+              "firewall_thickness": 0.5,
               "firewall_material": "CONCRETE",
               "combustibles": [
                 {
                   "key": "WOODEN_PALLET",
-                  "count": 90,
-                  "count_scaled": [
-                    54,
-                    90,
-                    135
-                  ]
+                  "count": 10,
+                  "count_scaled": [6, 10, 16]
                 },
                 {
                   "key": "LUBE_OIL_DRUM",
-                  "count": 30,
-                  "count_scaled": [
-                    18,
-                    30,
-                    45
-                  ]
+                  "count": 5,
+                  "count_scaled": [2, 5, 8]
+                },
+                {
+                  "key": "CABLE_BUNDLE",
+                  "count": 3,
+                  "count_scaled": [1, 3, 5]
                 }
               ],
               "specialized_components": [
                 {
-                  "key": "ROCKET_VEHICLE_MEDIUM",
-                  "count": 2,
-                  "count_scaled": [
-                    2,
-                    2,
-                    2
-                  ]
+                  "key": "ROCKET_TRANSPORT_CRADLE",
+                  "count": 1,
+                  "count_scaled": [0, 1, 2],
+                  "orientation": "y"
+                },
+                {
+                  "key": "PAYLOAD_FAIRING_HALF",
+                  "count": 1,
+                  "count_scaled": [1, 1, 2],
+                  "orientation": "x"
                 }
               ],
               "opening_templates": [
                 {
                   "wall": "x_min",
                   "type": "door",
-                  "w_offset_ratio": 0.484375,
-                  "width_ratio": 0.03125,
+                  "w_offset_ratio": 0.45,
+                  "width_ratio": 0.1,
                   "height": 6.0,
                   "h_offset": 0
+                },
+                {
+                  "wall": "y_max",
+                  "type": "door",
+                  "w_offset_ratio": 0.4,
+                  "width_ratio": 0.2,
+                  "height": 5.0,
+                  "h_offset": 0
+                },
+                {
+                  "wall": "y_max",
+                  "type": "window",
+                  "w_offset_ratio": 0.1,
+                  "width_ratio": 0.1,
+                  "height": 2,
+                  "h_offset": 8.0
+                },
+                {
+                  "wall": "y_max",
+                  "type": "window",
+                  "w_offset_ratio": 0.4,
+                  "width_ratio": 0.1,
+                  "height": 2,
+                  "h_offset": 8.0
+                },
+                {
+                  "wall": "y_max",
+                  "type": "window",
+                  "w_offset_ratio": 0.7,
+                  "width_ratio": 0.1,
+                  "height": 2,
+                  "h_offset": 8.0
                 }
               ]
             },
             {
               "name": "办公辅助区",
-              "boundary_ratio": [
-                0.7,
-                0.9,
-                0,
-                0.5
-              ],
-              "firewall_thickness": 0.3,
+              "boundary_ratio": [0.7, 1, 0, 0.45],
+              "firewall_thickness": 0.5,
               "firewall_material": "CONCRETE",
               "combustibles": [
                 {
                   "key": "WOODEN_PALLET",
-                  "count": 12,
-                  "count_scaled": [
-                    7,
-                    12,
-                    18
-                  ]
-                }
-              ],
-              "specialized_components": [],
-              "opening_templates": [
-                {
-                  "wall": "y_max",
-                  "type": "door",
-                  "w_offset_ratio": 0.3,
-                  "width_ratio": 0.4,
-                  "height": 2.5,
-                  "h_offset": 0
-                }
-              ]
-            },
-            {
-              "name": "设备间",
-              "boundary_ratio": [
-                0.9,
-                1.0,
-                0,
-                0.5
-              ],
-              "firewall_thickness": 0.3,
-              "firewall_material": "CONCRETE",
-              "combustibles": [
+                  "count": 4,
+                  "count_scaled": [2, 4, 6]
+                },
                 {
                   "key": "CABLE_BUNDLE",
-                  "count": 7,
-                  "count_scaled": [
-                    4,
-                    7,
-                    10
-                  ]
+                  "count": 3,
+                  "count_scaled": [1, 3, 4]
                 }
               ],
               "specialized_components": [],
               "opening_templates": [
+                {
+                  "wall": "x_min",
+                  "type": "door",
+                  "w_offset_ratio": 0.45,
+                  "width_ratio": 0.1,
+                  "height": 3,
+                  "h_offset": 0
+                },
                 {
                   "wall": "y_min",
                   "type": "door",
-                  "w_offset_ratio": 0.5,
-                  "width_ratio": 0.3,
-                  "height": 2.5,
+                  "w_offset_ratio": 0.45,
+                  "width_ratio": 0.1,
+                  "height": 3.0,
                   "h_offset": 0
+                },
+                {
+                  "wall": "y_min",
+                  "type": "window",
+                  "w_offset_ratio": 0.1,
+                  "width_ratio": 0.1,
+                  "height": 2,
+                  "h_offset": 6
+                },
+                {
+                  "wall": "y_min",
+                  "type": "window",
+                  "w_offset_ratio": 0.5,
+                  "width_ratio": 0.1,
+                  "height": 2,
+                  "h_offset": 6
+                },
+                {
+                  "wall": "y_min",
+                  "type": "window",
+                  "w_offset_ratio": 0.75,
+                  "width_ratio": 0.1,
+                  "height": 2,
+                  "h_offset": 6
                 }
               ]
             }
@@ -450,141 +610,191 @@
     {
       "name": "Sub-assembly building",
       "cn_name": "部装车间",
-      "boundary": [
-        81.25,
-        137.5,
-        70,
-        65.0
-      ],
-      "length_range": [
-        100,
-        175
-      ],
-      "width_range": [
-        30,
-        100
-      ],
-      "height_range": [
-        8,
-        25
-      ],
-      "stories_range": [
-        1,
-        5,
-        1
-      ],
-      "wall_thickness": 0.3,
+      "boundary": [0.0, 137.5, 142.0, 65.0],
+      "length_range": [105.0, 170.0, 137.5],
+      "width_range": [45.0, 90.0, 65.0],
+      "height_range": [10.0, 24.0, 16],
+      "stories_range": [1, 2, 1],
+      "scale_dimensions": {
+        "small": {
+          "length": 105.0,
+          "width": 45.0,
+          "height": 10.0,
+          "stories": 1
+        },
+        "medium": {
+          "length": 137.5,
+          "width": 65.0,
+          "height": 16,
+          "stories": 1
+        },
+        "large": {
+          "length": 170.0,
+          "width": 90.0,
+          "height": 24.0,
+          "stories": 2
+        }
+      },
+      "wall_thickness": 0.5,
       "stories_template": [
         {
           "name": "1F",
-          "height_range": [
-            8,
-            25
-          ],
           "doors": {
-            "width": [
-              6,
-              13
-            ],
-            "height": [
-              9,
-              15
-            ],
-            "count": [
-              1,
-              3
-            ]
+            "width": [0, 0, 0],
+            "height": [0, 0, 0],
+            "count": [0, 0, 0]
           },
           "windows": {
-            "width": [
-              2,
-              4
-            ],
-            "height": [
-              2,
-              3
-            ],
-            "count": [
-              10,
-              30
-            ]
+            "width": [0, 0, 0],
+            "height": [0, 0, 0],
+            "count": [0, 0, 0]
           },
           "roof": {
-            "thickness": 0.2,
+            "thickness": 0.5,
             "material": "CONCRETE",
             "openings": []
           },
           "fire_compartment_ratios": [
             {
               "name": "部件装配区",
-              "boundary_ratio": [
-                0,
-                0.5,
-                0,
-                1
-              ],
-              "firewall_thickness": 0.3,
+              "boundary_ratio": [0, 0.5, 0, 1],
+              "firewall_thickness": 0.5,
               "firewall_material": "CONCRETE",
               "combustibles": [
                 {
                   "key": "CABLE_BUNDLE",
-                  "count": 10,
-                  "count_scaled": [
-                    6,
-                    10,
-                    15
-                  ]
+                  "count": 6,
+                  "count_scaled": [3, 6, 9]
                 },
                 {
-                  "key": "WOODEN_PALLET",
-                  "count": 7,
-                  "count_scaled": [
-                    4,
-                    7,
-                    10
-                  ]
+                  "key": "LUBE_OIL_DRUM",
+                  "count": 2,
+                  "count_scaled": [1, 2, 3]
                 }
               ],
-              "specialized_components": [],
+              "specialized_components": [
+                {
+                  "key": "ROCKET_VEHICLE_SMALL",
+                  "count": 1,
+                  "count_scaled": [1, 1, 0],
+                  "orientation": "y"
+                },
+                {
+                  "key": "ROCKET_TRANSPORT_CRADLE",
+                  "count": 1,
+                  "count_scaled": [1, 1, 1],
+                  "orientation": "y"
+                },
+                {
+                  "key": "PAYLOAD_FAIRING_HALF",
+                  "count": 1,
+                  "count_scaled": [0, 1, 1],
+                  "orientation": "y"
+                }
+              ],
               "opening_templates": [
                 {
                   "wall": "x_max",
                   "type": "door",
-                  "w_offset_ratio": 0.48,
-                  "width_ratio": 0.04,
-                  "height": 5.0,
+                  "w_offset_ratio": 0.45,
+                  "width_ratio": 0.15,
+                  "height": 7,
                   "h_offset": 0
+                },
+                {
+                  "wall": "y_max",
+                  "type": "door",
+                  "w_offset_ratio": 0.4,
+                  "width_ratio": 0.2,
+                  "height": 6,
+                  "h_offset": 0
+                },
+                {
+                  "wall": "y_min",
+                  "type": "door",
+                  "w_offset_ratio": 0.4,
+                  "width_ratio": 0.2,
+                  "height": 6,
+                  "h_offset": 0
+                },
+                {
+                  "wall": "x_min",
+                  "type": "window",
+                  "w_offset_ratio": 0.1,
+                  "width_ratio": 0.1,
+                  "height": 2,
+                  "h_offset": 7
+                },
+                {
+                  "wall": "x_min",
+                  "type": "window",
+                  "w_offset_ratio": 0.3,
+                  "width_ratio": 0.1,
+                  "height": 2,
+                  "h_offset": 7
+                },
+                {
+                  "wall": "x_min",
+                  "type": "window",
+                  "w_offset_ratio": 0.5,
+                  "width_ratio": 0.1,
+                  "height": 2,
+                  "h_offset": 7
+                },
+                {
+                  "wall": "x_min",
+                  "type": "window",
+                  "w_offset_ratio": 0.7,
+                  "width_ratio": 0.1,
+                  "height": 2,
+                  "h_offset": 7
+                },
+                {
+                  "wall": "y_min",
+                  "type": "window",
+                  "w_offset_ratio": 0.1,
+                  "width_ratio": 0.1,
+                  "height": 2,
+                  "h_offset": 7
+                },
+                {
+                  "wall": "y_min",
+                  "type": "window",
+                  "w_offset_ratio": 0.4,
+                  "width_ratio": 0.1,
+                  "height": 2,
+                  "h_offset": 7
+                },
+                {
+                  "wall": "y_min",
+                  "type": "window",
+                  "w_offset_ratio": 0.7,
+                  "width_ratio": 0.1,
+                  "height": 2,
+                  "h_offset": 7
                 }
               ]
             },
             {
-              "name": "化学品存储区",
-              "boundary_ratio": [
-                0.5,
-                0.85,
-                0,
-                1
-              ],
-              "firewall_thickness": 0.3,
+              "name": "材料暂存区",
+              "boundary_ratio": [0.6, 0.9, 0.55, 1],
+              "firewall_thickness": 0.5,
               "firewall_material": "CONCRETE",
               "combustibles": [
                 {
-                  "key": "LUBE_OIL_DRUM",
-                  "count": 7,
-                  "count_scaled": [
-                    4,
-                    7,
-                    10
-                  ]
+                  "key": "WOODEN_PALLET",
+                  "count": 3,
+                  "count_scaled": [1, 3, 5]
                 },
                 {
-                  "key": "WOODEN_PALLET",
-                  "count": 9,
-                  "count_scaled": [
-                    5,
-                    9,
-                    14
-                  ]
+                  "key": "LUBE_OIL_DRUM",
+                  "count": 3,
+                  "count_scaled": [1, 3, 5]
+                },
+                {
+                  "key": "CABLE_BUNDLE",
+                  "count": 2,
+                  "count_scaled": [1, 2, 3]
                 }
               ],
               "specialized_components": [],
@@ -592,43 +802,92 @@
                 {
                   "wall": "x_min",
                   "type": "door",
-                  "w_offset_ratio": 0.485,
-                  "width_ratio": 0.03,
+                  "w_offset_ratio": 0.4,
+                  "width_ratio": 0.2,
                   "height": 4.0,
                   "h_offset": 0
+                },
+                {
+                  "wall": "y_max",
+                  "type": "door",
+                  "w_offset_ratio": 0.4,
+                  "width_ratio": 0.2,
+                  "height": 4.0,
+                  "h_offset": 0
+                },
+                {
+                  "wall": "y_max",
+                  "type": "window",
+                  "w_offset_ratio": 0.2,
+                  "width_ratio": 0.1,
+                  "height": 2,
+                  "h_offset": 5
+                },
+                {
+                  "wall": "y_max",
+                  "type": "window",
+                  "w_offset_ratio": 0.6,
+                  "width_ratio": 0.1,
+                  "height": 2,
+                  "h_offset": 5
                 }
               ]
             },
             {
-              "name": "办公辅助区",
-              "boundary_ratio": [
-                0.85,
-                1.0,
-                0,
-                1
-              ],
-              "firewall_thickness": 0.3,
+              "name": "检修保障区",
+              "boundary_ratio": [0.6, 0.9, 0, 0.45],
+              "firewall_thickness": 0.5,
               "firewall_material": "CONCRETE",
               "combustibles": [
                 {
+                  "key": "LUBE_OIL_DRUM",
+                  "count": 3,
+                  "count_scaled": [1, 3, 4]
+                },
+                {
+                  "key": "CABLE_BUNDLE",
+                  "count": 3,
+                  "count_scaled": [1, 3, 5]
+                },
+                {
                   "key": "WOODEN_PALLET",
-                  "count": 7,
-                  "count_scaled": [
-                    4,
-                    7,
-                    10
-                  ]
+                  "count": 2,
+                  "count_scaled": [1, 2, 3]
                 }
               ],
               "specialized_components": [],
               "opening_templates": [
                 {
+                  "wall": "x_min",
+                  "type": "door",
+                  "w_offset_ratio": 0.4,
+                  "width_ratio": 0.2,
+                  "height": 4,
+                  "h_offset": 0
+                },
+                {
                   "wall": "y_min",
                   "type": "door",
-                  "w_offset_ratio": 0.5,
-                  "width_ratio": 0.3,
-                  "height": 2.5,
+                  "w_offset_ratio": 0.4,
+                  "width_ratio": 0.2,
+                  "height": 4,
                   "h_offset": 0
+                },
+                {
+                  "wall": "y_min",
+                  "type": "window",
+                  "w_offset_ratio": 0.2,
+                  "width_ratio": 0.1,
+                  "height": 2,
+                  "h_offset": 5
+                },
+                {
+                  "wall": "y_min",
+                  "type": "window",
+                  "w_offset_ratio": 0.6,
+                  "width_ratio": 0.1,
+                  "height": 2,
+                  "h_offset": 5
                 }
               ]
             }
@@ -640,189 +899,320 @@
     {
       "name": "Processing plant",
       "cn_name": "加工厂房",
-      "length_range": [
-        70,
-        120
-      ],
-      "width_range": [
-        30,
-        80
-      ],
-      "height_range": [
-        6,
-        20
-      ],
-      "stories_range": [
-        1,
-        3,
-        1
-      ],
-      "wall_thickness": 0.3,
+      "length_range": [75.0, 120.0, 95.0],
+      "width_range": [40.0, 75.0, 55.0],
+      "height_range": [8.0, 18.0, 13.0],
+      "stories_range": [1, 1, 1],
+      "scale_dimensions": {
+        "small": {
+          "length": 75.0,
+          "width": 40.0,
+          "height": 8.0,
+          "stories": 1
+        },
+        "medium": {
+          "length": 95.0,
+          "width": 55.0,
+          "height": 13.0,
+          "stories": 1
+        },
+        "large": {
+          "length": 120.0,
+          "width": 75.0,
+          "height": 18.0,
+          "stories": 1
+        }
+      },
+      "wall_thickness": 0.5,
       "stories_template": [
         {
           "name": "1F",
-          "height_range": [
-            6,
-            20,
-            6
-          ],
           "doors": {
-            "width": [
-              6,
-              10
-            ],
-            "height": [
-              10,
-              15
-            ],
-            "count": [
-              1,
-              3
-            ]
+            "width": [0, 0, 0],
+            "height": [0, 0, 0],
+            "count": [0, 0, 0]
           },
           "windows": {
-            "width": [
-              0,
-              0
-            ],
-            "height": [
-              0,
-              0
-            ],
-            "count": [
-              0,
-              0
-            ]
+            "width": [0, 0, 0],
+            "height": [0, 0, 0],
+            "count": [0, 0, 0]
           },
           "roof": {
-            "thickness": 0.2,
+            "thickness": 0.5,
             "material": "CONCRETE",
             "openings": []
           },
           "fire_compartment_ratios": [
             {
-              "name": "加工作业区",
-              "boundary_ratio": [
-                0,
-                0.45,
-                0,
-                1
-              ],
-              "firewall_thickness": 0.3,
+              "name": "精密加工作业区",
+              "boundary_ratio": [0, 0.5, 0, 1],
+              "firewall_thickness": 0.5,
               "firewall_material": "CONCRETE",
               "combustibles": [
                 {
                   "key": "WOODEN_PALLET",
-                  "count": 4,
-                  "count_scaled": [
-                    2,
-                    4,
-                    6
-                  ]
+                  "count": 3,
+                  "count_scaled": [1, 3, 5]
                 },
                 {
                   "key": "CABLE_BUNDLE",
-                  "count": 20,
-                  "count_scaled": [
-                    12,
-                    20,
-                    30
-                  ]
+                  "count": 5,
+                  "count_scaled": [2, 5, 8]
                 },
                 {
-                  "key": "LUBE_OIL_DRUM",
-                  "count": 8,
-                  "count_scaled": [
-                    5,
-                    8,
-                    12
-                  ]
+                  "key": "CARBON_MATERIAL_STACK",
+                  "count": 4,
+                  "count_scaled": [2, 4, 7]
                 }
               ],
-              "specialized_components": [],
+              "specialized_components": [
+                {
+                  "key": "ROCKET_TRANSPORT_CRADLE",
+                  "count": 1,
+                  "count_scaled": [0, 1, 1],
+                  "orientation": "y"
+                },
+                {
+                  "key": "PAYLOAD_FAIRING_HALF",
+                  "count": 1,
+                  "count_scaled": [1, 1, 2],
+                  "orientation": "x"
+                }
+              ],
               "opening_templates": [
                 {
                   "wall": "x_max",
                   "type": "door",
-                  "w_offset_ratio": 0.475,
-                  "width_ratio": 0.05,
-                  "height": 5.0,
+                  "w_offset_ratio": 0.45,
+                  "width_ratio": 0.1,
+                  "height": 5,
                   "h_offset": 0
+                },
+                {
+                  "wall": "y_max",
+                  "type": "door",
+                  "w_offset_ratio": 0.4,
+                  "width_ratio": 0.2,
+                  "height": 4,
+                  "h_offset": 0
+                },
+                {
+                  "wall": "y_min",
+                  "type": "door",
+                  "w_offset_ratio": 0.4,
+                  "width_ratio": 0.2,
+                  "height": 4,
+                  "h_offset": 0
+                },
+                {
+                  "wall": "x_min",
+                  "type": "window",
+                  "w_offset_ratio": 0.1,
+                  "width_ratio": 0.1,
+                  "height": 2.0,
+                  "h_offset": 4
+                },
+                {
+                  "wall": "x_min",
+                  "type": "window",
+                  "w_offset_ratio": 0.3,
+                  "width_ratio": 0.1,
+                  "height": 2.0,
+                  "h_offset": 4
+                },
+                {
+                  "wall": "x_min",
+                  "type": "window",
+                  "w_offset_ratio": 0.5,
+                  "width_ratio": 0.1,
+                  "height": 2.0,
+                  "h_offset": 4
+                },
+                {
+                  "wall": "x_min",
+                  "type": "window",
+                  "w_offset_ratio": 0.7,
+                  "width_ratio": 0.1,
+                  "height": 2.0,
+                  "h_offset": 4
+                },
+                {
+                  "wall": "y_min",
+                  "type": "window",
+                  "w_offset_ratio": 0.2,
+                  "width_ratio": 0.1,
+                  "height": 2.0,
+                  "h_offset": 4
+                },
+                {
+                  "wall": "y_min",
+                  "type": "window",
+                  "w_offset_ratio": 0.55,
+                  "width_ratio": 0.1,
+                  "height": 2.0,
+                  "h_offset": 4
+                },
+                {
+                  "wall": "y_min",
+                  "type": "window",
+                  "w_offset_ratio": 0.7,
+                  "width_ratio": 0.1,
+                  "height": 2.0,
+                  "h_offset": 4
                 }
               ]
             },
             {
-              "name": "原料存储区",
-              "boundary_ratio": [
-                0.45,
-                0.8,
-                0,
-                1
-              ],
-              "firewall_thickness": 0.3,
+              "name": "原料备件区",
+              "boundary_ratio": [0.5, 0.8, 0.1, 1],
+              "firewall_thickness": 0.5,
               "firewall_material": "CONCRETE",
               "combustibles": [
                 {
                   "key": "WOODEN_PALLET",
-                  "count": 20,
-                  "count_scaled": [
-                    12,
-                    20,
-                    30
-                  ]
+                  "count": 6,
+                  "count_scaled": [3, 6, 9]
                 },
                 {
                   "key": "LUBE_OIL_DRUM",
+                  "count": 3,
+                  "count_scaled": [1, 3, 5]
+                },
+                {
+                  "key": "CARBON_MATERIAL_STACK",
                   "count": 6,
-                  "count_scaled": [
-                    4,
-                    6,
-                    9
-                  ]
+                  "count_scaled": [3, 6, 9]
                 }
               ],
-              "specialized_components": [],
+              "specialized_components": [
+                {
+                  "key": "LONG_RAIL_TANK",
+                  "count": 1,
+                  "count_scaled": [1, 2, 2],
+                  "orientation": "y"
+                }
+              ],
               "opening_templates": [
                 {
-                  "wall": "x_min",
+                  "wall": "y_max",
                   "type": "door",
-                  "w_offset_ratio": 0.48125,
-                  "width_ratio": 0.0375,
+                  "w_offset_ratio": 0.4,
+                  "width_ratio": 0.2,
+                  "height": 4.0,
+                  "h_offset": 0
+                },
+                {
+                  "wall": "y_max",
+                  "type": "window",
+                  "w_offset_ratio": 0.2,
+                  "width_ratio": 0.1,
+                  "height": 2.0,
+                  "h_offset": 4
+                },
+                {
+                  "wall": "y_max",
+                  "type": "window",
+                  "w_offset_ratio": 0.6,
+                  "width_ratio": 0.1,
+                  "height": 2.0,
+                  "h_offset": 4
+                },
+                {
+                  "wall": "y_min",
+                  "type": "door",
+                  "w_offset_ratio": 0.4,
+                  "width_ratio": 0.2,
                   "height": 4.0,
                   "h_offset": 0
                 }
               ]
             },
             {
-              "name": "废料回收区",
-              "boundary_ratio": [
-                0.8,
-                1.0,
-                0,
-                1
-              ],
-              "firewall_thickness": 0.3,
+              "name": "质检办公区",
+              "boundary_ratio": [0.8, 1, 0, 1],
+              "firewall_thickness": 0.5,
               "firewall_material": "CONCRETE",
               "combustibles": [
                 {
                   "key": "WOODEN_PALLET",
-                  "count": 9,
-                  "count_scaled": [
-                    5,
-                    9,
-                    13
-                  ]
+                  "count": 3,
+                  "count_scaled": [1, 3, 4]
+                },
+                {
+                  "key": "LUBE_OIL_DRUM",
+                  "count": 2,
+                  "count_scaled": [1, 2, 3]
+                },
+                {
+                  "key": "CABLE_BUNDLE",
+                  "count": 2,
+                  "count_scaled": [1, 2, 3]
                 }
               ],
-              "specialized_components": [],
+              "specialized_components": [
+                {
+                  "key": "LONG_RAIL_TANK",
+                  "count": 1,
+                  "count_scaled": [1, 1, 1],
+                  "orientation": "y"
+                }
+              ],
               "opening_templates": [
                 {
                   "wall": "y_min",
                   "type": "door",
-                  "w_offset_ratio": 0.5,
-                  "width_ratio": 0.3,
-                  "height": 2.5,
+                  "w_offset_ratio": 0,
+                  "width_ratio": 0.1,
+                  "height": 4,
                   "h_offset": 0
+                },
+                {
+                  "wall": "x_max",
+                  "type": "door",
+                  "w_offset_ratio": 0.4,
+                  "width_ratio": 0.2,
+                  "height": 3,
+                  "h_offset": 0
+                },
+                {
+                  "wall": "x_max",
+                  "type": "window",
+                  "w_offset_ratio": 0.1,
+                  "width_ratio": 0.1,
+                  "height": 2.0,
+                  "h_offset": 4
+                },
+                {
+                  "wall": "x_max",
+                  "type": "window",
+                  "w_offset_ratio": 0.7,
+                  "width_ratio": 0.1,
+                  "height": 2.0,
+                  "h_offset": 4
+                },
+                {
+                  "wall": "x_min",
+                  "type": "door",
+                  "w_offset_ratio": 0,
+                  "width_ratio": 0.1,
+                  "height": 3,
+                  "h_offset": 0
+                },
+                {
+                  "wall": "y_min",
+                  "type": "window",
+                  "w_offset_ratio": 0.2,
+                  "width_ratio": 0.1,
+                  "height": 2.0,
+                  "h_offset": 4
+                },
+                {
+                  "wall": "y_min",
+                  "type": "window",
+                  "w_offset_ratio": 0.6,
+                  "width_ratio": 0.1,
+                  "height": 2.0,
+                  "h_offset": 4
                 }
               ]
             }
@@ -830,129 +1220,116 @@
         }
       ],
       "stories": [],
-      "boundary": [
-        252.5,
-        95.0,
-        70,
-        55.0
-      ]
+      "boundary": [149.5, 95.0, 142.0, 55.0]
     },
     {
       "name": "Launch site",
       "cn_name": "发射场",
-      "boundary": [
-        200,
-        94.5,
-        170,
-        79.5
-      ],
-      "length_range": [
-        70,
-        119
-      ],
-      "width_range": [
-        60,
-        99
-      ],
-      "height_range": [
-        10,
-        25,
-        25
-      ],
-      "stories_range": [
-        1,
-        1
-      ],
-      "wall_thickness": 0.3,
+      "boundary": [97.0, 94.5, 219.0, 79.5],
+      "length_range": [70.0, 119.0, 94.5],
+      "width_range": [60.0, 99.0, 79.5],
+      "height_range": [14.0, 35.0, 25.0],
+      "stories_range": [1, 1, 1],
+      "scale_dimensions": {
+        "small": {
+          "length": 70.0,
+          "width": 60.0,
+          "height": 14.0,
+          "stories": 1
+        },
+        "medium": {
+          "length": 94.5,
+          "width": 79.5,
+          "height": 25.0,
+          "stories": 1
+        },
+        "large": {
+          "length": 119.0,
+          "width": 99.0,
+          "height": 35.0,
+          "stories": 1
+        }
+      },
+      "wall_thickness": 0.5,
       "stories_template": [
         {
           "name": "1F",
-          "height_range": [
-            10,
-            15
-          ],
+          "height_range": [10, 35, 25],
           "doors": {
-            "width": [
-              6,
-              10
-            ],
-            "height": [
-              10,
-              15
-            ],
-            "count": [
-              1,
-              3
-            ]
+            "width": [0, 0, 0],
+            "height": [0, 0, 0],
+            "count": [0, 0, 0]
           },
           "windows": {
-            "width": [
-              0,
-              0
-            ],
-            "height": [
-              0,
-              0
-            ],
-            "count": [
-              0,
-              0
-            ]
+            "width": [0, 0, 0],
+            "height": [0, 0, 0],
+            "count": [0, 0, 0]
           },
           "roof": {
-            "thickness": 0.2,
+            "thickness": 0.5,
             "material": "CONCRETE",
             "openings": []
           },
+          "combustibles": [
+            {
+              "key": "LUBE_OIL_DRUM",
+              "count": 4,
+              "count_scaled": [2, 4, 6],
+              "boundary_ratio": [0, 0.45, 0.85, 0.95]
+            },
+            {
+              "key": "CABLE_BUNDLE",
+              "count": 4,
+              "count_scaled": [2, 4, 6],
+              "boundary_ratio": [0, 0.45, 0.05, 0.15]
+            }
+          ],
           "fire_compartment_ratios": [
             {
               "name": "发射准备区",
-              "boundary_ratio": [
-                0,
-                0.45,
-                0,
-                1
-              ],
-              "firewall_thickness": 0.3,
+              "boundary_ratio": [0, 0.45, 0, 1],
+              "firewall_thickness": 0.5,
               "firewall_material": "CONCRETE",
-              "combustibles": [
+
+              "specialized_components": [
                 {
-                  "key": "LUBE_OIL_DRUM",
-                  "count": 4,
-                  "count_scaled": [
-                    2,
-                    4,
-                    6
-                  ]
+                  "key": "ROCKET_VEHICLE_SMALL",
+                  "count": 1,
+                  "count_scaled": [1, 0, 0],
+                  "orientation": "x"
                 },
                 {
-                  "key": "CABLE_BUNDLE",
-                  "count": 8,
-                  "count_scaled": [
-                    5,
-                    8,
-                    12
-                  ]
-                }
-              ],
-              "specialized_components": [
+                  "key": "ROCKET_VEHICLE_MEDIUM",
+                  "count": 1,
+                  "count_scaled": [0, 1, 0],
+                  "orientation": "x"
+                },
                 {
                   "key": "ROCKET_VEHICLE_LARGE",
                   "count": 1,
-                  "count_scaled": [
-                    1,
-                    1,
-                    1
-                  ]
+                  "count_scaled": [0, 0, 1],
+                  "orientation": "x"
+                },
+                {
+                  "key": "LAUNCH_SERVICE_TOWER",
+                  "count": 1,
+                  "count_scaled": [0, 1, 1],
+                  "orientation": "x"
+                },
+                {
+                  "key": "SATELLITE_PAYLOAD",
+                  "count": 1,
+                  "count_scaled": [1, 1, 1],
+                  "orientation": "y"
                 }
               ],
               "opening_templates": [
                 {
                   "wall": "x_max",
                   "type": "door",
-                  "w_offset_ratio": 0.469697,
-                  "width_ratio": 0.060606,
-                  "height": 8.0,
+                  "w_offset_ratio": 0.45,
+                  "width_ratio": 0.1,
+                  "height": 10.0,
                   "h_offset": 0
                 },
                 {
@@ -960,101 +1337,230 @@
                   "type": "door",
                   "w_offset_ratio": 0.3,
                   "width_ratio": 0.4,
-                  "height": 12.0,
+                  "height": 14,
+                  "h_offset": 0
+                },
+                {
+                  "wall": "y_max",
+                  "type": "door",
+                  "w_offset_ratio": 0.4,
+                  "width_ratio": 0.2,
+                  "height": 8.0,
+                  "h_offset": 0
+                },
+                {
+                  "wall": "y_min",
+                  "type": "door",
+                  "w_offset_ratio": 0.4,
+                  "width_ratio": 0.2,
+                  "height": 8.0,
                   "h_offset": 0
                 }
               ]
             },
             {
-              "name": "设备存储区",
-              "boundary_ratio": [
-                0.45,
-                0.85,
-                0,
-                1
-              ],
-              "firewall_thickness": 0.3,
+              "name": "推进剂保障区",
+              "boundary_ratio": [0.45, 0.75, 0.55, 1],
+              "firewall_thickness": 0.5,
               "firewall_material": "CONCRETE",
               "combustibles": [
                 {
                   "key": "LUBE_OIL_DRUM",
-                  "count": 5,
-                  "count_scaled": [
-                    3,
-                    5,
-                    8
-                  ]
-                },
-                {
-                  "key": "WOODEN_PALLET",
-                  "count": 9,
-                  "count_scaled": [
-                    5,
-                    9,
-                    14
-                  ]
+                  "count": 4,
+                  "count_scaled": [2, 4, 6]
                 },
                 {
                   "key": "CABLE_BUNDLE",
-                  "count": 3,
-                  "count_scaled": [
-                    2,
-                    3,
-                    4
-                  ]
+                  "count": 2,
+                  "count_scaled": [1, 2, 3]
+                },
+                {
+                  "key": "WOODEN_PALLET",
+                  "count": 2,
+                  "count_scaled": [1, 2, 3]
                 }
               ],
-              "specialized_components": [],
+              "specialized_components": [
+                {
+                  "key": "PAYLOAD_FAIRING_HALF",
+                  "count": 1,
+                  "count_scaled": [0, 1, 1],
+                  "orientation": "x"
+                }
+              ],
               "opening_templates": [
                 {
-                  "wall": "x_min",
+                  "wall": "y_min",
                   "type": "door",
-                  "w_offset_ratio": 0.479798,
-                  "width_ratio": 0.040404,
+                  "w_offset_ratio": 0.4,
+                  "width_ratio": 0.18,
                   "height": 5.0,
                   "h_offset": 0
+                },
+                {
+                  "wall": "y_max",
+                  "type": "door",
+                  "w_offset_ratio": 0.45,
+                  "width_ratio": 0.1,
+                  "height": 5.0,
+                  "h_offset": 0
+                },
+                {
+                  "wall": "y_max",
+                  "type": "window",
+                  "w_offset_ratio": 0.2,
+                  "width_ratio": 0.1,
+                  "height": 2.0,
+                  "h_offset": 7
+                },
+                {
+                  "wall": "y_max",
+                  "type": "window",
+                  "w_offset_ratio": 0.67,
+                  "width_ratio": 0.1,
+                  "height": 2.0,
+                  "h_offset": 7
+                }
+              ]
+            },
+            {
+              "name": "地面设备存储区",
+              "boundary_ratio": [0.45, 0.75, 0, 0.45],
+              "firewall_thickness": 0.5,
+              "firewall_material": "CONCRETE",
+              "combustibles": [
+                {
+                  "key": "WOODEN_PALLET",
+                  "count": 4,
+                  "count_scaled": [2, 4, 6]
+                },
+                {
+                  "key": "CABLE_BUNDLE",
+                  "count": 2,
+                  "count_scaled": [1, 2, 4]
+                },
+                {
+                  "key": "LUBE_OIL_DRUM",
+                  "count": 2,
+                  "count_scaled": [1, 2, 3]
+                }
+              ],
+              "specialized_components": [
+                {
+                  "key": "PAYLOAD_FAIRING_HALF",
+                  "count": 1,
+                  "count_scaled": [0, 1, 1],
+                  "orientation": "x"
+                }
+              ],
+              "opening_templates": [
+                {
+                  "wall": "y_max",
+                  "type": "door",
+                  "w_offset_ratio": 0.4,
+                  "width_ratio": 0.2,
+                  "height": 5.0,
+                  "h_offset": 0
+                },
+                {
+                  "wall": "y_min",
+                  "type": "door",
+                  "w_offset_ratio": 0.4,
+                  "width_ratio": 0.2,
+                  "height": 5.0,
+                  "h_offset": 0
+                },
+                {
+                  "wall": "y_min",
+                  "type": "window",
+                  "w_offset_ratio": 0.2,
+                  "width_ratio": 0.1,
+                  "height": 2.0,
+                  "h_offset": 7
+                },
+                {
+                  "wall": "y_min",
+                  "type": "window",
+                  "w_offset_ratio": 0.7,
+                  "width_ratio": 0.1,
+                  "height": 2.0,
+                  "h_offset": 7
                 }
               ]
             },
             {
               "name": "测控区",
-              "boundary_ratio": [
-                0.85,
-                1.0,
-                0,
-                1
-              ],
-              "firewall_thickness": 0.3,
+              "boundary_ratio": [0.75, 1, 0, 1],
+              "firewall_thickness": 0.5,
               "firewall_material": "CONCRETE",
               "combustibles": [
                 {
                   "key": "CABLE_BUNDLE",
-                  "count": 7,
-                  "count_scaled": [
-                    4,
-                    7,
-                    10
-                  ]
+                  "count": 4,
+                  "count_scaled": [2, 4, 6]
                 },
                 {
                   "key": "WOODEN_PALLET",
-                  "count": 2,
-                  "count_scaled": [
-                    1,
-                    2,
-                    3
-                  ]
+                  "count": 4,
+                  "count_scaled": [2, 4, 6]
                 }
               ],
-              "specialized_components": [],
+              "specialized_components": [
+                {
+                  "key": "MISSION_CONTROL_CONSOLE_BANK",
+                  "count": 1,
+                  "count_scaled": [1, 2, 3],
+                  "orientation": "x"
+                }
+              ],
               "opening_templates": [
                 {
-                  "wall": "y_min",
+                  "wall": "x_min",
                   "type": "door",
-                  "w_offset_ratio": 0.5,
-                  "width_ratio": 0.3,
-                  "height": 2.5,
+                  "w_offset_ratio": 0.45,
+                  "width_ratio": 0.1,
+                  "height": 5,
                   "h_offset": 0
+                },
+                {
+                  "wall": "x_max",
+                  "type": "door",
+                  "w_offset_ratio": 0.4,
+                  "width_ratio": 0.2,
+                  "height": 4,
+                  "h_offset": 0
+                },
+                {
+                  "wall": "y_max",
+                  "type": "door",
+                  "w_offset_ratio": 0.4,
+                  "width_ratio": 0.2,
+                  "height": 4,
+                  "h_offset": 0
+                },
+                {
+                  "wall": "x_max",
+                  "type": "window",
+                  "w_offset_ratio": 0.2,
+                  "width_ratio": 0.15,
+                  "height": 2.0,
+                  "h_offset": 6
+                },
+                {
+                  "wall": "x_max",
+                  "type": "window",
+                  "w_offset_ratio": 0.45,
+                  "width_ratio": 0.15,
+                  "height": 2.0,
+                  "h_offset": 6
+                },
+                {
+                  "wall": "x_max",
+                  "type": "window",
+                  "w_offset_ratio": 0.7,
+                  "width_ratio": 0.15,
+                  "height": 2.0,
+                  "h_offset": 6
                 }
               ]
             }
@@ -1082,6 +1588,15 @@
         "grid_size_m": 2.0
       }
     },
-    "notes": "Count scaling convention: small = ceil(count * 0.6) for fuels, medium keeps the JSON value, large = ceil(count * 1.5). Occupancy components (rockets, aircraft, vehicles, electrolysis cells) keep their raw count at every scale."
+    "notes": "Count scaling convention: small = scaled-down fire load, medium keeps the JSON value, large = scaled-up fire load. Explicit scale_dimensions provide the authoritative small/medium/large building dimensions, and layout.rows keeps inter-building gaps fixed."
+  },
+  "layout": {
+    "gap_x": 12.0,
+    "gap_y": 12.0,
+    "rows": [
+      ["Assembly building"],
+      ["Sub-assembly building", "Processing plant"],
+      ["Launch control center", "Launch site"]
+    ]
   }
 }
