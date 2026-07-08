@@ -1446,7 +1446,12 @@ class Viewer3D(QWidget):
         elevation = float(hs.get("elevation", 0))
         q_avg_target = float(hs.get("net_heat_flux", 1000))
         duration = float(hs.get("duration", 1.36))
-        q_set = q_avg_to_q_set(q_avg_target, duration)
+        q_set = q_avg_to_q_set(
+            q_avg_target,
+            duration,
+            facility=getattr(bg, "name", None),
+            azimuth=azimuth,
+        )
 
         # Which walls are active (azimuth only — we handle elevation ourselves)
         fluxes = face_fluxes(azimuth, 0.0, 1.0)

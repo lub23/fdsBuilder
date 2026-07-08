@@ -1267,8 +1267,14 @@ class FDSGenerator:
         elevation = float(hs.get("elevation", 0))
         q_avg_target = float(hs.get("net_heat_flux", 1000))
         duration = float(hs.get("duration", 1.36))
-        q_set = q_avg_to_q_set(q_avg_target, duration)
-        fit = fit_for_duration(duration)
+        facility = getattr(self.bg, "name", None)
+        q_set = q_avg_to_q_set(
+            q_avg_target,
+            duration,
+            facility=facility,
+            azimuth=azimuth,
+        )
+        fit = fit_for_duration(duration, facility=facility, azimuth=azimuth)
 
         # Determine which domain faces are active.  FDS receives q_set; the UI
         # value remains the target q_avg.
@@ -2113,11 +2119,17 @@ class FDSGenerator:
 
         q_avg_kw = float(hs.get("net_heat_flux", 1000))
         duration_s = float(hs.get("duration", 0))
-        q_set_kw = q_avg_to_q_set(q_avg_kw, duration_s)
-        fit = fit_for_duration(duration_s)
+        azimuth = int(hs.get("azimuth", 0))
+        facility = getattr(bg, "name", None)
+        q_set_kw = q_avg_to_q_set(
+            q_avg_kw,
+            duration_s,
+            facility=facility,
+            azimuth=azimuth,
+        )
+        fit = fit_for_duration(duration_s, facility=facility, azimuth=azimuth)
         q_avg_label = int(round(q_avg_kw))
         q_set_label = int(round(q_set_kw))
-        azimuth = int(hs.get("azimuth", 0))
         elevation = int(hs.get("elevation", 0))
         duration = int(duration_s * 1000)
         sim_time = int(bg.simulation_time)
