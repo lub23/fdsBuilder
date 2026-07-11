@@ -9,7 +9,8 @@
 @Desc  : Defining constants and configurations for the GUI
 """
 
-import os, json
+import json
+import os
 
 # Qt GUI
 from PySide6.QtWidgets import (
@@ -17,11 +18,7 @@ from PySide6.QtWidgets import (
     QWidget,
     QVBoxLayout,
     QHBoxLayout,
-    QLabel,
-    QComboBox,
-    QCheckBox,
     QPushButton,
-    QTabWidget,
     QFileDialog,
     QMessageBox,
     QSplitter,
@@ -30,20 +27,20 @@ from PySide6.QtWidgets import (
     QTableWidgetItem,
     QHeaderView,
 )
-from PySide6.QtCore import Qt, QTimer
+from PySide6.QtCore import Qt, QTimer, QSettings
 from PySide6.QtGui import QAction, QKeySequence
-from models.building import BuildingGroup, Building, Story
+from models.building import BuildingGroup, Building
 from models.materials import MATERIAL_LIBRARY
 from models.geometry import clear_layout_cache
 from generators.fds_generator import FDSGenerator, validate_fds
 
 from ui.viewer_3d import Viewer3D, HAS_PYVISTA
-from ui.blueprint_viewer import BlueprintViewer
 from ui.fds_preview import FDSPreviewPanel
 from ui.simulation_control_panel import SimulationControlPanel
-from ui.styles import *
-from ocr.blueprint_ocr import *
+from ui.styles import apply_button_variant
 from ui.facility_panel import FacilityListPanel
+from services.fds_naming import default_fds_filename
+from services.program_paths import save_program_path
 
 
 # ============================================================
@@ -57,6 +54,7 @@ class MainWindow(QMainWindow):
         self.setWindowTitle("FDS建筑模型生成器")
         self.setMinimumSize(1400, 900)
         self.showMaximized()
+        self._settings = QSettings("fdsBuilder", "fdsBuilder")
         self.model = BuildingGroup(buildings=[Building()])
 
         # FDS preview debounce timer — prevents regeneration on rapid slider changes
@@ -71,6 +69,7 @@ class MainWindow(QMainWindow):
         self.update_preview()
         # 同步模拟控制面板
         self.simulation_control.set_model(self.model)
+        self.fds_preview.set_model(self.model)
 
 
     def setup_ui(self):
@@ -93,14 +92,8 @@ class MainWindow(QMainWindow):
         self.facility_panel = FacilityListPanel()
         self.facility_panel.facility_selected.connect(self._on_facility_selected)
         self.facility_panel.building_added.connect(self._on_building_added)
-        self.facility_panel.scene_building_removed.connect(
-            self._on_scene_building_removed
-        )
         self.facility_panel.scene_building_selected.connect(
             self._on_scene_building_selected
-        )
-        self.facility_panel.scene_building_offset_changed.connect(
-            self._on_scene_building_offset_changed
         )
         left_layout.addWidget(self.facility_panel)
 
@@ -124,20 +117,12 @@ class MainWindow(QMainWindow):
         # 刷新按钮放最左边
         refresh_btn = QPushButton("🔄 刷新模型")
         refresh_btn.setFixedHeight(26)
-        refresh_btn.setStyleSheet(
-            "QPushButton{background:#a6e3a1;color:#1e1e2e;font-weight:bold;"
-            "padding:2px 10px;border-radius:3px}"
-            "QPushButton:hover{background:#94e2d5;color:#1e1e2e}"
-        )
+        apply_button_variant(refresh_btn, "success", small=True)
         refresh_btn.clicked.connect(self.refresh_3d)
         toolbar.addWidget(refresh_btn)
         reset_view_btn = QPushButton("🎯 重置视角")
         reset_view_btn.setFixedHeight(26)
-        reset_view_btn.setStyleSheet(
-            "QPushButton{color:#1e1e2e;background:#89b4fa;font-weight:bold;"
-            "padding:2px 8px;border-radius:3px}"
-            "QPushButton:hover{background:#74c7ec}"
-        )
+        apply_button_variant(reset_view_btn, "primary", small=True)
         reset_view_btn.clicked.connect(self.viewer_3d.setup_camera)
         toolbar.addWidget(reset_view_btn)
 
@@ -168,25 +153,15 @@ class MainWindow(QMainWindow):
         right_panel.setMaximumWidth(500)
         splitter.addWidget(right_panel)
 
-        # 设置分割比例
-        splitter.setSizes([400, 600, 400])
+        # 设置/恢复分割比例
+        self.splitter = splitter
+        saved_state = self._settings.value("main_window/splitter_state")
+        if saved_state:
+            splitter.restoreState(saved_state)
+        else:
+            splitter.setSizes([400, 600, 400])
 
         main_layout.addWidget(splitter)
-
-    def _apply_ocr_result(self, data: dict):
-        """将OCR识别结果应用到模型"""
-        try:
-            self.model = BuildingGroup.from_dict(data)
-            # 确保z偏移计算
-            self.model.update_z_offsets()
-            self.update_preview()
-            self.refresh_3d()
-
-            # 重置视角
-            self.viewer_3d._first_render = True
-            self.viewer_3d.update_model(self.model)
-        except Exception as e:
-            QMessageBox.critical(self, "应用失败", f"无法应用识别结果：{str(e)}")
 
     def refresh_3d(self, first_render=False):
         """刷新3D视图"""
@@ -196,7 +171,7 @@ class MainWindow(QMainWindow):
             self.viewer_3d.update_model(model)
         except Exception as e:
             self.statusBar().showMessage(f"3D错误: {str(e)}")
-    
+
     def _on_sim_param_changed(self, kind: str = "sim"):
         """Dispatch 3D update by event kind; FDS text always refreshes."""
         self.update_preview()
@@ -290,6 +265,7 @@ class MainWindow(QMainWindow):
 
             # Validate FDS output
             warnings = validate_fds(fds_code)
+            self.fds_preview.update_warnings(warnings)
             if warnings:
                 warn_text = " | ".join(warnings[:3])
                 if len(warnings) > 3:
@@ -329,6 +305,7 @@ class MainWindow(QMainWindow):
             self.viewer_3d.clear_cache()
             self.model = BuildingGroup(buildings=[Building()])
             self.simulation_control.set_model(self.model)
+            self.fds_preview.set_model(self.model)
             self._refresh_scene_list()
             self.update_preview()
             self.refresh_3d()
@@ -344,6 +321,7 @@ class MainWindow(QMainWindow):
                     data = json.load(f)
                 self.model = BuildingGroup.from_dict(data)
                 self.simulation_control.set_model(self.model)
+                self.fds_preview.set_model(self.model)
                 self._refresh_scene_list()
                 self.update_preview()
                 self.refresh_3d(True)
@@ -365,21 +343,7 @@ class MainWindow(QMainWindow):
                 QMessageBox.critical(self, "错误", f"无法保存配置文件:\n{str(e)}")
 
     def export_fds(self):
-        # Compute CHID for default filename
-        bg = self.model
-        chid = bg.name or "building"
-        chid = chid.replace(" ", "_").replace(".", "_").replace("-", "_")
-        chid = "".join(c for c in chid if ord(c) < 128) or "building"
-
-        hs = bg.heat_source
-        q_avg_kw = int(hs.get("net_heat_flux", 1000))
-        azimuth = int(hs.get("azimuth", 0))
-        elevation = int(hs.get("elevation", 0))
-        duration = int(hs.get("duration", 0) * 1000)
-        sim_time = int(bg.simulation_time)
-
-        chid_suffix = f"q{q_avg_kw}_a{azimuth}_e{elevation}_d{duration}_t{sim_time}"
-        default_filename = f"{chid}_{chid_suffix}.fds"
+        default_filename = default_fds_filename(self.model)
 
         file_path, _ = QFileDialog.getSaveFileName(
             self, "导出FDS文件", default_filename, "FDS文件 (*.fds)"
@@ -405,6 +369,7 @@ class MainWindow(QMainWindow):
         try:
             self.model = BuildingGroup.from_dict(model_dict)
             self.simulation_control.set_model(self.model)
+            self.fds_preview.set_model(self.model)
             self.model.update_z_offsets()
             self._refresh_scene_list()
             self.viewer_3d._first_render = True
@@ -439,6 +404,7 @@ class MainWindow(QMainWindow):
                 self.model.add_building(new_bld)
             self.model.update_z_offsets()
             self.simulation_control.set_model(self.model)
+            self.fds_preview.set_model(self.model)
             self._refresh_scene_list()
             self.viewer_3d._first_render = True
             self.update_preview()
@@ -449,7 +415,7 @@ class MainWindow(QMainWindow):
         except Exception as e:
             QMessageBox.critical(self, "错误", f"无法追加建筑: {str(e)}")
 
-        
+
     def _is_default_building(self, buildings):
         """检测是否为默认空建筑（无楼层或仅一个空楼层）"""
         if len(buildings) != 1:
@@ -459,42 +425,9 @@ class MainWindow(QMainWindow):
             return True
         return len(b.stories) == 1 and len(b.stories[0].openings) == 0 and len(b.stories[0].fire_compartments) == 0
 
-    @staticmethod
-    def _buildings_overlap(a, b, margin=1.0):
-        """Check if two buildings overlap in XY plane (with margin)."""
-        a_xmin = a.x_offset - a.length / 2 - margin
-        a_xmax = a.x_offset + a.length / 2 + margin
-        a_ymin = a.y_offset - a.width / 2 - margin
-        a_ymax = a.y_offset + a.width / 2 + margin
-        b_xmin = b.x_offset - b.length / 2
-        b_xmax = b.x_offset + b.length / 2
-        b_ymin = b.y_offset - b.width / 2
-        b_ymax = b.y_offset + b.width / 2
-        return not (
-            b_xmin >= a_xmax or b_xmax <= a_xmin or b_ymin >= a_ymax or b_ymax <= a_ymin
-        )
-
     def _refresh_scene_list(self):
         """Sync the scene list widget with current model buildings."""
         self.facility_panel.update_scene_list(self.model.buildings)
-
-    def _on_scene_building_removed(self, index):
-        """Remove a building from the scene by index."""
-        buildings = self.model.buildings
-        if index < 0 or index >= len(buildings):
-            return
-        if len(buildings) <= 1:
-            QMessageBox.warning(self, "提示", "至少保留一栋建筑")
-            return
-        name = buildings[index].name
-        del buildings[index]
-
-        self.model.update_z_offsets()
-        self.simulation_control.set_model(self.model)
-        self._refresh_scene_list()
-        self.update_preview()
-        self.refresh_3d(True)
-        self.statusBar().showMessage(f"已删除建筑「{name}」")
 
     def _on_scene_building_selected(self, index):
         """Select a building in the scene and highlight in 3D."""
@@ -504,16 +437,6 @@ class MainWindow(QMainWindow):
             self.statusBar().showMessage(f"已选中建筑 #{index + 1}: {b.name}")
             # Highlight in 3D
             self.viewer_3d.highlight_building(index)
-
-    def _on_scene_building_offset_changed(self, index, x_off, y_off):
-        """Handle building offset change from scene panel."""
-        buildings = self.model.buildings
-        if 0 <= index < len(buildings):
-            buildings[index].x_offset = x_off
-            buildings[index].y_offset = y_off
-            self._refresh_scene_list()
-            self.update_preview()
-            self.refresh_3d()
 
     def show_about(self):
         QMessageBox.about(
@@ -562,67 +485,31 @@ class MainWindow(QMainWindow):
         layout.addWidget(close_btn)
 
         dialog.exec()
-    
-    def set_fds_path(self):
-        """设置FDS程序路径"""
-        # 跨平台: Linux/macOS 默认显示所有文件, Windows 显示可执行文件
-        if os.name == "nt":
-            filter_str = "可执行文件 (*.exe *.bin);;所有文件 (*)"
-        else:
-            filter_str = "所有文件 (*);;可执行文件 (*.exe *.bin)"
+
+    def _choose_program_path(self, program: str, display_name: str):
+        """Choose and persist an external program path."""
+        filter_str = "可执行文件 (*.exe *.bin);;所有文件 (*)" if os.name == "nt" else "所有文件 (*);;可执行文件 (*.exe *.bin)"
         file_path, _ = QFileDialog.getOpenFileName(
-            self, "选择FDS可执行文件", "", filter_str
+            self, f"选择{display_name}可执行文件", "", filter_str
         )
         if file_path:
-            # 保存到配置文件
-            self._save_program_path("fds", file_path)
-            QMessageBox.information(self, "设置成功", f"FDS路径已设置为:\n{file_path}")
+            save_program_path(program, file_path)
+            QMessageBox.information(
+                self, "设置成功", f"{display_name}路径已设置为:\n{file_path}"
+            )
+
+    def set_fds_path(self):
+        """设置FDS程序路径"""
+        self._choose_program_path("fds", "FDS")
 
     def set_smv_path(self):
         """设置Smokeview程序路径"""
-        # 跨平台: Linux/macOS 默认显示所有文件, Windows 显示可执行文件
-        if os.name == "nt":
-            filter_str = "可执行文件 (*.exe *.bin);;所有文件 (*)"
-        else:
-            filter_str = "所有文件 (*);;可执行文件 (*.exe *.bin)"
-        file_path, _ = QFileDialog.getOpenFileName(
-            self, "选择Smokeview可执行文件", "", filter_str
-        )
-        if file_path:
-            self._save_program_path("smokeview", file_path)
-            QMessageBox.information(
-                self, "设置成功", f"Smokeview路径已设置为:\n{file_path}"
-            )
-
-    def _save_program_path(self, program: str, path: str):
-        """保存程序路径到配置文件"""
-        config_dir = os.path.join(os.path.dirname(__file__), "..")
-        config_file = os.path.join(config_dir, "program_paths.json")
-
-        paths = {}
-        if os.path.exists(config_file):
-            with open(config_file, "r") as f:
-                paths = json.load(f)
-
-        paths[program] = path
-
-        with open(config_file, "w") as f:
-            json.dump(paths, f, indent=2)
-
-    @staticmethod
-    def _load_program_path(program: str) -> str:
-        """加载程序路径"""
-        config_dir = os.path.join(os.path.dirname(__file__), "..")
-        config_file = os.path.join(config_dir, "program_paths.json")
-
-        if os.path.exists(config_file):
-            with open(config_file, "r") as f:
-                paths = json.load(f)
-                return paths.get(program, "")
-        return ""
+        self._choose_program_path("smokeview", "Smokeview")
 
     def closeEvent(self, event):
         """关闭窗口时清理资源"""
+        if hasattr(self, "splitter"):
+            self._settings.setValue("main_window/splitter_state", self.splitter.saveState())
         if HAS_PYVISTA:
             self.viewer_3d.close()
         event.accept()

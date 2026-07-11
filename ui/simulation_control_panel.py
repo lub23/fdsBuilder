@@ -13,25 +13,42 @@ from PySide6.QtWidgets import (
     QWidget,
     QVBoxLayout,
     QLabel,
-    QGroupBox,
     QGridLayout,
-    QLineEdit,
     QDoubleSpinBox,
     QComboBox,
     QPushButton,
     QHBoxLayout,
     QSizePolicy,
-    QSpinBox,
-    QDialog,
-    QTextEdit,
+    QCheckBox,
     QSlider,
     QFileDialog,
-    QMessageBox
+    QMessageBox,
 )
-from PySide6.QtCore import Qt, Signal, QProcess, QProcessEnvironment, QTimer
+from PySide6.QtCore import Qt, Signal, QTimer
 import os
 import subprocess
-from ui.styles import CollapsibleGroup
+from ui.styles import CollapsibleGroup, apply_button_variant
+from services.fds_naming import (
+    RESULTS_ROOT,
+    default_fds_filename,
+    default_smv_filename,
+    results_dir_for,
+    results_smv_path,
+    sanitize_chid,
+    simulation_suffix,
+)
+from services.program_paths import load_program_path
+
+
+# ---- Smokeview command-line view options -----------------------------
+# Each entry maps a UI checkbox label to the Smokeview CLI flag passed to
+# the executable when launching.  These are the subset of view-only flags
+# documented in the Smokeview source (firemodels/smv /Source/smokeview/command_args.c).
+SMV_VIEW_OPTIONS: list[tuple[str, str]] = [
+    ("仅轮廓 (Outline)", "-outline"),
+    ("加载温度切片 (Temp)", "-load_temp"),
+    ("加载热通量切片 (HRRPUV)", "-load_hrrpuv"),
+]
 
 
 class SimulationControlPanel(QWidget):
@@ -54,18 +71,7 @@ class SimulationControlPanel(QWidget):
         btn.setCursor(Qt.PointingHandCursor)
         btn.setFixedHeight(26)
         btn.clicked.connect(slot)
-        if danger:
-            btn.setStyleSheet(
-                "QPushButton{background:#f38ba8;color:#1e1e2e;font-weight:bold;"
-                "padding:2px 8px;border-radius:3px}"
-                "QPushButton:hover{background:#e06080;color:#1e1e2e}"
-            )
-        else:
-            btn.setStyleSheet(
-                "QPushButton{background:#89b4fa;color:#1e1e2e;font-weight:bold;"
-                "padding:2px 8px;border-radius:3px}"
-                "QPushButton:hover{background:#74c7ec;color:#1e1e2e}"
-            )
+        apply_button_variant(btn, "danger" if danger else "primary", small=True)
         return btn
 
     # ── 热源 ────────────────────────────────────────
@@ -176,71 +182,58 @@ class SimulationControlPanel(QWidget):
         grp.content_layout.addLayout(g)
         return grp
 
-    # ── FDS仿真执行 ─────────────────────────────────
+    # ── Smokeview 查看 ─────────────────────────────────
     def _build_simulation_run_section(self):
-        grp = CollapsibleGroup("🔥 FDS仿真执行")
+        grp = CollapsibleGroup("🔍 Smokeview 查看结果")
         layout = QVBoxLayout()
         layout.setSpacing(4)
 
         btn_row = QHBoxLayout()
         btn_row.setSpacing(4)
 
-        def _mkbtn(text, bg_color, tooltip=""):
+        def _mkbtn(text, variant="primary", tooltip=""):
             btn = QPushButton(text)
             btn.setFixedHeight(30)
             btn.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
-            btn.setStyleSheet(
-                f"QPushButton{{background:{bg_color};color:#1e1e2e;font-weight:bold;"
-                f"padding:3px 6px;border-radius:3px;font-size:12px}}"
-                f"QPushButton:disabled{{background:#45475a;color:#6c7086}}"
-            )
+            apply_button_variant(btn, variant, small=True)
             if tooltip:
                 btn.setToolTip(tooltip)
             return btn
 
-        self.run_fds_btn = _mkbtn("▶️ 运行", "#a6e3a1", "运行FDS仿真")
-        self.run_fds_btn.clicked.connect(self.run_fds_simulation)
-        btn_row.addWidget(self.run_fds_btn)
+        self.result_label = QLabel("就绪：选择设施后点开将打开对应.results/.smv")
+        self.result_label.setStyleSheet("color: #a6adc8; font-size: 12px;")
+        self.result_label.setWordWrap(True)
+        layout.addWidget(self.result_label)
 
-        self.stop_fds_btn = _mkbtn("⏹️ 停止", "#f38ba8", "停止当前仿真")
-        self.stop_fds_btn.setEnabled(False)
-        self.stop_fds_btn.clicked.connect(self.stop_fds_simulation)
-        btn_row.addWidget(self.stop_fds_btn)
-
-        self.smv_btn = _mkbtn("🔍 查看", "#89b4fa", "用Smokeview打开仿真结果")
-        self.smv_btn.setEnabled(False)
+        self.smv_btn = _mkbtn("🔍 打开结果", "primary", "用Smokeview打开预计算仿真结果")
         self.smv_btn.clicked.connect(self.open_smokeview)
         btn_row.addWidget(self.smv_btn)
 
-        self.predict_btn = _mkbtn("⚡ 预测", "#f9e2af", "工程快速预测(毁伤代理模型)")
-        self.predict_btn.clicked.connect(self.run_predict)
-        btn_row.addWidget(self.predict_btn)
+        self.browse_smv_btn = _mkbtn("📂浏览…", "primary", "手动选择一个 .smv 文件打开")
+        self.browse_smv_btn.clicked.connect(self.browse_and_open_smv)
+        btn_row.addWidget(self.browse_smv_btn)
 
         layout.addLayout(btn_row)
 
-        self.progress_label = QLabel("就绪")
-        self.progress_label.setStyleSheet("color: #a6adc8; font-size: 12px;")
-        layout.addWidget(self.progress_label)
+        predict_row = QHBoxLayout()
+        predict_row.setSpacing(4)
+        self.predict_btn = _mkbtn("⚡ 预测", "warning", "工程快速预测(毁伤代理模型)")
+        self.predict_btn.clicked.connect(self.run_predict)
+        predict_row.addWidget(self.predict_btn)
+        predict_row.addStretch()
+        layout.addLayout(predict_row)
 
-        self.output_text = QLabel("")
-        self.output_text.setStyleSheet("color: #cdd6f4; font-size: 11px;")
-        self.output_text.setWordWrap(True)
-        self.output_text.setMaximumHeight(40)
-        layout.addWidget(self.output_text)
-
-        # -- Window heat flux display --
-        flux_row = QHBoxLayout()
-        flux_row.setSpacing(4)
-        self.flux_label = QLabel("窗口热通量: -- kW/m²")
-        self.flux_label.setStyleSheet(
-            "color: #f9e2af; font-size: 12px; font-weight: bold;"
-        )
-        flux_row.addWidget(self.flux_label)
-        self.flux_peak_label = QLabel("峰值: --")
-        self.flux_peak_label.setStyleSheet("color: #a6adc8; font-size: 11px;")
-        flux_row.addWidget(self.flux_peak_label)
-        flux_row.addStretch()
-        layout.addLayout(flux_row)
+        # ---- SMV view option checkboxes (set initial display state) ----
+        options_row = QHBoxLayout()
+        options_row.setSpacing(6)
+        self.smv_option_checks: list[QCheckBox] = []
+        for label, _flag in SMV_VIEW_OPTIONS:
+            cb = QCheckBox(label)
+            cb.setStyleSheet("font-size:11px; padding:1px 4px;")
+            options_row.addWidget(cb, alignment=Qt.AlignLeft)
+            self.smv_option_checks.append(cb)
+        options_row.addStretch()
+        layout.addLayout(options_row)
 
         grp.content_layout.addLayout(layout)
         return grp
@@ -316,376 +309,162 @@ class SimulationControlPanel(QWidget):
         idx = self._DURATION_VALUES.index(nearest)
         self.heat_duration_spin.setCurrentIndex(idx)
 
-    # ── FDS仿真执行 ─────────────────────────────────
-    def run_fds_simulation(self):
-        """运行FDS仿真"""
-        bg = self.model
-        chid = bg.name or "building"
-        chid = chid.replace(" ", "_").replace(".", "_").replace("-", "_")
-        chid = "".join(c for c in chid if ord(c) < 128) or "building"
+    # ── Smokeview 启动 ─────────────────────────────────
+    def _resolve_results_dir(self) -> str:
+        """Return the expected results directory for the current model.
 
-        hs = bg.heat_source
-        q_avg_kw = int(hs.get("net_heat_flux", 1000))
-        azimuth = int(hs.get("azimuth", 0))
-        elevation = int(hs.get("elevation", 0))
-        duration = int(hs.get("duration", 0) * 1000)
-        sim_time = int(bg.simulation_time)
+        Falls back to ``results/`` itself when the model is missing.
+        """
+        if not hasattr(self, "model") or self.model is None:
+            return RESULTS_ROOT
+        return results_dir_for(self.model)
 
-        chid_suffix = f"q{q_avg_kw}_a{azimuth}_e{elevation}_d{duration}_t{sim_time}"
-        default_filename = f"{chid}_{chid_suffix}.fds"
-        # 1. 先导出FDS文件
-        fds_path, _ = QFileDialog.getSaveFileName(
-            self, "保存FDS文件", default_filename, "FDS文件 (*.fds)"
+    def _resolve_results_smv(self) -> str | None:
+        """Return the expected ``.smv`` path for the current model.
+
+        Returns ``None`` if no model is loaded.
+        """
+        if not hasattr(self, "model") or self.model is None:
+            return None
+        return results_smv_path(self.model)
+
+    def _selected_smv_view_flags(self) -> list[str]:
+        flags: list[str] = []
+        for cb, (_label, flag) in zip(self.smv_option_checks, SMV_VIEW_OPTIONS):
+            if cb.isChecked():
+                flags.append(flag)
+        return flags
+
+    def browse_and_open_smv(self):
+        """Pick any ``.smv`` file on disk and open it in Smokeview."""
+        start_dir = self._resolve_results_dir()
+        if not os.path.isdir(start_dir):
+            start_dir = RESULTS_ROOT
+        path, _ = QFileDialog.getOpenFileName(
+            self, "选择Smokeview文件 (.smv)", start_dir, "Smokeview (*.smv)"
         )
-        if not fds_path:
+        if not path:
             return
-
-        # 确保扩展名
-        if not fds_path.endswith(".fds"):
-            fds_path += ".fds"
-
-        # 生成FDS代码
-        from generators.fds_generator import FDSGenerator
-
-        generator = FDSGenerator(self.model)
-        fds_code = generator.generate()
-        num_meshes = getattr(generator, "_num_meshes", 1)
-
-        # 写入文件
-        try:
-            with open(fds_path, "w", encoding="utf-8") as f:
-                f.write(fds_code)
-        except Exception as e:
-            QMessageBox.critical(self.window(), "错误", f"无法保存FDS文件: {str(e)}")
-            return
-
-        # 2. 查找FDS可执行文件
-        fds_exe = self._find_fds_exe()
-        if not fds_exe:
-            QMessageBox.warning(
-                self.window(),
-                "未找到FDS",
-                "未找到FDS可执行文件。请确保FDS已安装并添加到系统PATH。\n"
-                "FDS文件已保存到: " + fds_path,
-            )
-            return
-
-        # 3. 运行FDS
-        self.progress_label.setText("正在运行FDS仿真...")
-        self.output_text.setText(f"网格: {num_meshes} | 执行: {fds_exe}\n文件: {fds_path}")
-        self.run_fds_btn.setEnabled(False)
-        self.stop_fds_btn.setEnabled(True)
-
-        # 保存当前FDS路径用于smokeview
-        self._current_fds_path = fds_path
-        # SMV文件使用CHID命名，在工作目录中
-        work_dir = os.path.dirname(fds_path)
-        chid = getattr(self, "model", None) and self.model.chid or "building"
-        sanitized = chid.replace(" ", "_").replace(".", "_").replace("-", "_")
-        sanitized = "".join(c for c in sanitized if ord(c) < 128) or "building"
-        self._current_smv_file = os.path.join(work_dir, sanitized + ".smv")
-
-        # 仿真启动后即可尝试打开Smokeview
-        self.smv_btn.setEnabled(True)
-
-        # 使用QProcess运行
-        self._fds_process = QProcess(self)
-        self._fds_process.setProcessChannelMode(QProcess.MergedChannels)
-        self._fds_process.readyReadStandardOutput.connect(self._on_fds_output)
-        self._fds_process.finished.connect(self._on_fds_finished)
-        self._fds_process.errorOccurred.connect(self._on_fds_error)
-
-        self._fds_process.setWorkingDirectory(work_dir)
-
-        # Build environment with FDS DLL directories in PATH
-        env = QProcessEnvironment.systemEnvironment()
-        fds_dir = os.path.dirname(os.path.abspath(fds_exe))
-        extra_dirs = self._collect_fds_lib_dirs(fds_dir)
-        current_path = env.value("PATH", "")
-        for d in extra_dirs:
-            if d not in current_path:
-                current_path = d + os.pathsep + current_path
-        env.insert("PATH", current_path)
-
-        # 多核并行：多 MPI 进程 × 多 OpenMP 线程
-        # 每个 mesh 的 OMP 线程数 = ceil(cpu / num_meshes)，这样
-        # 6 mesh × 32 核 = 6 线程/mesh（理论 36 线程超线程），4 mesh
-        # × 32 核 = 8 线程/mesh。若 num_meshes 误设为 1，会自动用满 cpu。
-        import math as _math
-        import os as _os
-        cpu_count = len(_os.sched_getaffinity(0)) if hasattr(_os, "sched_getaffinity") else _os.cpu_count() or 1
-        omp_threads = max(1, _math.ceil(cpu_count / num_meshes))
-        env.insert("OMP_NUM_THREADS", str(omp_threads))
-        env.insert("I_MPI_FABRICS", "shm")
-
-        # 栈空间：Intel FDS 在栈上分配大数组，默认 8MB 会 segfault
-        import resource
-        try:
-            resource.setrlimit(
-                resource.RLIMIT_STACK,
-                (resource.RLIM_INFINITY, resource.RLIM_INFINITY),
-            )
-        except (ValueError, resource.error):
-            pass
-
-        # 查找 Intel MPI 启动器
-        mpirun = self._find_mpirun(fds_exe)
-
-        if mpirun and num_meshes > 1:
-            args = ["-np", str(num_meshes), fds_exe, fds_path]
-            self.output_text.append(f"MPI 启动: {mpirun} {' '.join(args)}")
-            self._fds_process.setProcessEnvironment(env)
-            self._fds_process.start(mpirun, args)
-        else:
-            self._fds_process.setProcessEnvironment(env)
-            self._fds_process.start(fds_exe, [fds_path])
-            self.progress_label.setText("MPI 不可用，单进程运行")
-
-    @staticmethod
-    def _collect_fds_lib_dirs(fds_dir: str) -> list:
-        """Collect directories that may contain FDS runtime DLLs."""
-        dirs = [fds_dir]
-        parent = os.path.dirname(fds_dir)
-        # Common sub-directories shipped with FDS installations
-        for sub in (
-            "bin",
-            "lib",
-            os.path.join("bin", "mpi"),
-            "mpi",
-            "FDS",
-            os.path.join("FDS", "bin"),
-        ):
-            candidate = os.path.join(parent, sub)
-            if os.path.isdir(candidate):
-                dirs.append(candidate)
-        # Also check MPICH / Intel MPI typical locations
-        for env_var in ("I_MPI_ROOT", "MSMPI_BIN"):
-            val = os.environ.get(env_var)
-            if val:
-                for sub in ("", "bin", "lib"):
-                    p = os.path.join(val, sub) if sub else val
-                    if os.path.isdir(p):
-                        dirs.append(p)
-        return dirs
-
-    def _on_fds_error(self, error):
-        """QProcess startup / runtime error handler."""
-        error_msgs = {
-            QProcess.FailedToStart: "无法启动FDS进程（可能缺少DLL或权限不足）",
-            QProcess.Crashed: "FDS进程崩溃",
-            QProcess.Timedout: "FDS进程超时",
-            QProcess.WriteError: "写入FDS进程失败",
-            QProcess.ReadError: "读取FDS进程输出失败",
-        }
-        msg = error_msgs.get(error, f"FDS进程错误 (code={error})")
-        self.progress_label.setText(f"错误: {msg}")
-        self.output_text.setText(
-            f"{msg}\n\n请检查:\n"
-            "1. FDS程序路径是否正确\n"
-            "2. MPI运行时是否已安装\n"
-            "3. 系统环境变量PATH是否包含FDS目录"
-        )
-        self.run_fds_btn.setEnabled(True)
-        self.stop_fds_btn.setEnabled(False)
-
-    def _find_fds_exe(self):
-        """查找FDS可执行文件"""
-        # 先检查用户设置的路径
-        from ui.mainwindow import MainWindow
-
-        user_path = MainWindow._load_program_path("fds")
-        if user_path and os.path.exists(user_path):
-            return user_path
-
-        # 尝试从PATH中查找 (跨平台: Windows用where, Linux/macOS用which)
-        try:
-            cmd = "where" if os.name == "nt" else "which"
-            result = subprocess.run([cmd, "fds"], capture_output=True, text=True)
-            if result.returncode == 0:
-                return result.stdout.strip().split("\n")[0]
-        except:
-            pass
-
-        return None
-
-    @staticmethod
-    def _find_mpirun(fds_exe: str | None = None) -> str | None:
-        """查找 Intel MPI mpirun，优先 fds 同级 INTEL 目录"""
-        # 优先：fds_exe 同级 INTEL/bin/mpirun
-        if fds_exe:
-            fds_dir = os.path.dirname(os.path.abspath(fds_exe))
-            candidates = [
-                os.path.join(fds_dir, "INTEL", "bin", "mpirun"),
-                os.path.join(fds_dir, "..", "INTEL", "bin", "mpirun"),
-            ]
-            for c in candidates:
-                norm = os.path.normpath(c)
-                if os.path.isfile(norm) and os.access(norm, os.X_OK):
-                    return norm
-
-        # I_MPI_ROOT 环境变量
-        impi_root = os.environ.get("I_MPI_ROOT")
-        if impi_root:
-            c = os.path.join(impi_root, "bin", "mpirun")
-            if os.path.isfile(c) and os.access(c, os.X_OK):
-                return c
-
-        # PATH 中的 mpirun
-        try:
-            cmd = "where" if os.name == "nt" else "which"
-            result = subprocess.run([cmd, "mpirun"], capture_output=True, text=True)
-            if result.returncode == 0:
-                return result.stdout.strip().split("\n")[0]
-        except Exception:
-            pass
-
-        return None
-
-    def _on_fds_output(self):
-        """FDS输出"""
-        output = (
-            self._fds_process.readAllStandardOutput()
-            .data()
-            .decode("utf-8", errors="ignore")
-        )
-        if output:
-            lines = output.strip().split("\n")
-            if lines:
-                self.progress_label.setText(lines[-1][:100])
-                self.output_text.setText("\n".join(lines[-5:]))
-
-    def _parse_window_flux(self):
-        """Parse `*_devc.csv` for the `window_heat_flux` channel."""
-        work_dir = getattr(self, "_current_fds_path", None)
-        if not work_dir:
-            return
-        work_dir = os.path.dirname(work_dir)
-        import glob
-        csv_files = glob.glob(os.path.join(work_dir, "*_devc.csv"))
-        if not csv_files:
-            return
-        try:
-            with open(csv_files[0], "r") as f:
-                lines = f.readlines()
-            if len(lines) < 2:
-                return
-            header = [h.strip() for h in lines[0].split(",")]
-            # Find window_heat_flux column index
-            col = None
-            for i, h in enumerate(header):
-                if "window_heat_flux" in h or "WINDOW_HEAT_FLUX" in h:
-                    col = i
-                    break
-            if col is None:
-                return
-            # Parse last few rows for current and peak value
-            values = []
-            for row in lines[1:]:
-                parts = row.split(",")
-                if len(parts) > col:
-                    try:
-                        v = float(parts[col])
-                        values.append(v)
-                    except ValueError:
-                        pass
-            if values:
-                latest = values[-1]
-                peak = max(values)
-                self.flux_label.setText(f"窗口热通量: {latest:.1f} kW/m²")
-                self.flux_peak_label.setText(f"峰值: {peak:.1f} kW/m²")
-                # Color-code: yellow for moderate, red for high
-                if peak > 100:
-                    self.flux_label.setStyleSheet(
-                        "color: #f38ba8; font-size: 12px; font-weight: bold;"
-                    )
-                elif peak > 20:
-                    self.flux_label.setStyleSheet(
-                        "color: #f9e2af; font-size: 12px; font-weight: bold;"
-                    )
-                else:
-                    self.flux_label.setStyleSheet(
-                        "color: #a6e3a1; font-size: 12px; font-weight: bold;"
-                    )
-        except Exception:
-            pass
-
-    def _on_fds_finished(self, exit_code, exit_status):
-        """FDS完成"""
-        self.run_fds_btn.setEnabled(True)
-        self.stop_fds_btn.setEnabled(False)
-
-        if exit_code == 0:
-            self.progress_label.setText("仿真完成!")
-            self._parse_window_flux()
-        else:
-            # Decode Windows NTSTATUS codes
-            hint = ""
-            unsigned = exit_code & 0xFFFFFFFF
-            if unsigned == 0xC0000135:
-                hint = "\n原因: 缺少DLL（STATUS_DLL_NOT_FOUND）\n请确保MPI和FDS运行时DLL在系统PATH中"
-            elif unsigned == 0xC0000142:
-                hint = "\n原因: DLL初始化失败\n请检查FDS版本与系统兼容性"
-            self.progress_label.setText(
-                f"仿真失败 (退出码: {exit_code} / 0x{unsigned:08X})"
-            )
-            if hint:
-                self.output_text.setText(self.output_text.text() + hint)
-
-    def stop_fds_simulation(self):
-        """停止FDS仿真"""
-        if hasattr(self, "_fds_process") and self._fds_process:
-            self._fds_process.kill()
-            self._fds_process.waitForFinished()
-            self.progress_label.setText("已停止")
-            self.run_fds_btn.setEnabled(True)
-            self.stop_fds_btn.setEnabled(False)
+        self._launch_smokeview(path)
 
     def open_smokeview(self):
-        """用Smokeview打开结果"""
-        smv_file = getattr(self, "_current_smv_file", None)
-        if not smv_file or not os.path.exists(smv_file):
-            from PySide6.QtWidgets import QMessageBox
+        """Open the Smokeview result for the currently-loaded facility + params.
 
-            msg = f"找不到仿真结果文件:\n{smv_file}" if smv_file else "未运行仿真"
-            if (
-                hasattr(self, "_fds_process")
-                and self._fds_process
-                and self._fds_process.state() != QProcess.NotRunning
-            ):
-                msg += "\n\n仿真正在运行中，请稍等片刻再试。"
-            QMessageBox.warning(self.window(), "提示", msg)
+        Resolution order:
+        1. Build the expected path ``results/{name}/{name}_{suffix}/{name}_{suffix}.smv``
+           from the current model and parameters.
+        2. If it does not exist, scan ``results/{name}/`` for any subdirectory
+           whose ``.smv`` name matches the current heat-source parameters, then
+           for any subdirectory containing ``.smv`` files at all.
+        3. If still nothing, fall back to opening ``results/{name}/`` in the
+           OS file manager so the user can pick manually.
+        """
+        expected = self._resolve_results_smv()
+        if expected and os.path.isfile(expected):
+            self._launch_smokeview(expected)
             return
 
-        # 查找smokeview
+        candidates = self._scan_available_smv_files()
+        if not candidates:
+            QMessageBox.warning(
+                self.window(),
+                "未找到结果",
+                f"找不到预计算的 Smokeview 结果。\n\n期望路径:\n{expected or '(未加载设施)'}\n\n"
+                f"请确认 results/ 下已有对应的设施文件夹。\n"
+                "可点击「📂浏览…」手动选择任意 .smv 文件。",
+            )
+            return
+
+        # Single candidate — open directly. Multiple — pick first and inform.
+        chosen = candidates[0]
+        if len(candidates) > 1:
+            items = [os.path.basename(p) for p in candidates[:50]]
+            from PySide6.QtWidgets import QInputDialog
+
+            chosen_name, ok = QInputDialog.getItem(
+                self,
+                "选择结果",
+                f"找到 {len(candidates)} 个结果文件，请选择一个打开:",
+                items,
+                0,
+                False,
+            )
+            if not ok:
+                return
+            chosen = next(p for p in candidates if os.path.basename(p) == chosen_name)
+        self._launch_smokeview(chosen)
+
+    def _scan_available_smv_files(self) -> list[str]:
+        """Scan ``results/{model.name}/`` for ``.smv`` files, ordered by
+        closeness to the current parameters' suffix."""
+        if not hasattr(self, "model") or self.model is None:
+            return []
+        name = sanitize_chid(getattr(self.model, "name", "") or "building")
+        base_dir = os.path.join(RESULTS_ROOT, name)
+        if not os.path.isdir(base_dir):
+            return []
+        try:
+            subdirs = [
+                os.path.join(base_dir, d)
+                for d in os.listdir(base_dir)
+                if os.path.isdir(os.path.join(base_dir, d))
+            ]
+        except OSError:
+            return []
+        try:
+            target_suffix = simulation_suffix(self.model)
+        except Exception:
+            target_suffix = ""
+
+        matching: list[str] = []
+        for sd in subdirs:
+            smv_in_sd = [
+                os.path.join(sd, f)
+                for f in os.listdir(sd)
+                if f.lower().endswith(".smv")
+            ]
+            if not smv_in_sd:
+                continue
+            if target_suffix and target_suffix in os.path.basename(sd):
+                matching.append(smv_in_sd[0])
+        if matching:
+            return matching
+        fallback: list[str] = []
+        for sd in subdirs:
+            for f in os.listdir(sd):
+                if f.lower().endswith(".smv"):
+                    fallback.append(os.path.join(sd, f))
+        fallback.sort()
+        return fallback
+
+    def _launch_smokeview(self, smv_file: str):
+        """Find Smokeview executable and launch it on ``smv_file`` with the
+        currently-selected view option flags."""
         smv_exe = self._find_smokeview_exe()
         if not smv_exe:
-            from PySide6.QtWidgets import QMessageBox
-
             QMessageBox.warning(
                 self.window(),
                 "未找到Smokeview",
-                "未找到Smokeview可执行文件。请确保Smokeview已安装并添加到系统PATH。",
+                "未找到Smokeview可执行文件。\n"
+                "请通过菜单 → 设置 → 设置Smokeview程序路径 指定 smokeview 可执行文件路径,\n"
+                "或确保 smokeview 已添加到系统 PATH。",
             )
             return
-
-        # 启动smokeview
+        flags = self._selected_smv_view_flags()
+        cmd = [smv_exe] + flags + [smv_file]
         try:
-            subprocess.Popen([smv_exe, smv_file])
+            subprocess.Popen(cmd)
+            self.result_label.setText(
+                f"已启动: smokeview {' '.join(flags)} {os.path.basename(smv_file)}"
+            )
         except Exception as e:
-            from PySide6.QtWidgets import QMessageBox
-
             QMessageBox.critical(self.window(), "错误", f"无法启动Smokeview: {str(e)}")
 
     def _find_smokeview_exe(self):
-        """查找Smokeview可执行文件"""
-        # 先检查用户设置的路径
-        from ui.mainwindow import MainWindow
-
-        user_path = MainWindow._load_program_path("smokeview")
+        """查找Smokeview可执行文件 — 用于启动查看程序。"""
+        user_path = load_program_path("smokeview")
         if user_path and os.path.exists(user_path):
             return user_path
-
-        # 跨平台: Windows用where, Linux/macOS用which
         try:
             cmd = "where" if os.name == "nt" else "which"
             result = subprocess.run(
@@ -693,55 +472,26 @@ class SimulationControlPanel(QWidget):
             )
             if result.returncode == 0:
                 return result.stdout.strip().split("\n")[0]
-        except:
+        except Exception:
             pass
-
-        # Windows 常见安装路径
         common_paths = [
             "smokeview",
             "C:/Program Files/FDS/Smokeview/bin/smokeview.exe",
             "C:/Program Files (x86)/FDS/Smokeview/bin/smokeview.exe",
             "C:/FDS/Smokeview/bin/smokeview.exe",
         ]
-        # Linux 常见安装路径
         if os.name != "nt":
             common_paths += [
                 "/usr/local/bin/smokeview",
                 "/usr/bin/smokeview",
                 "/opt/fds/bin/smokeview",
             ]
-
         for path in common_paths:
             if os.path.exists(path):
                 return path
-
         return None
 
     # ── 同步方法 ────────────────────────────────────────
-    def _update_default_output_labels(self, model):
-        """Update labels showing default auto-generated slices/devices."""
-        buildings = model.building_group.buildings
-        total_h = model.total_height
-        lines_s = []
-        lines_d = []
-        for b in buildings:
-            cx, cy = 0.0, 0.0  # FDS coords centered
-            cz = total_h / 2
-            lines_s.append(f"PBX={cx:.1f} TEMP")
-            lines_s.append(f"PBY={cy:.1f} TEMP+HRRPUV")
-            lines_s.append(f"PBZ={cz:.1f} TEMP")
-            for story in b.stories:
-                z_mid = story.z_bottom + story.height / 2
-                lines_d.append(
-                    f"{b.name}_{story.name} ({b.x_offset:.0f},{b.y_offset:.0f},{z_mid:.1f})"
-                )
-        self._default_slice_label.setText(
-            "默认切片: " + "; ".join(lines_s) if lines_s else "默认切片: (无建筑)"
-        )
-        self._default_device_label.setText(
-            "默认测点: " + "; ".join(lines_d) if lines_d else "默认测点: (无建筑)"
-        )
-
     def sync_ui_from_model(self, model):
         """从模型同步UI状态"""
         self._syncing = True
@@ -811,7 +561,6 @@ class SimulationControlPanel(QWidget):
             )
             from agent_damage.src.processing.heat_source import (
                 AZIMUTH_OPTIONS,
-                DURATION_OPTIONS,
                 ELEVATION_OPTIONS,
                 HEAT_FLUX_OPTIONS,
                 HeatSourceParams,
