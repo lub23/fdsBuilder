@@ -80,15 +80,15 @@
 
 | 阶段 | 状态 | 说明 |
 |---|---|---|
-| 0. 写入计划文档 | 进行中 | 创建本文件 |
-| 1. 修改前安全提交 | 未开始 | 提交当前状态，尤其保护 `viewer_3d.py` 修改前快照 |
-| 2. 工具抽取与主窗口清理 | 未开始 | `services/program_paths.py`、`services/fds_naming.py` 等 |
-| 3. 仿真日志与 FDS 预览优化 | 未开始 | 修复日志 append，增强预览面板 |
-| 4. 移除图纸识别 UI | 未开始 | 移除主窗口引用和不再使用的 UI 文件/导入 |
-| 5. 设施面板冗余清理 | 未开始 | 删除位置编辑功能和无用控件/导入 |
-| 6. viewer_3d 冗余清理 | 未开始 | 不拆分，删除 legacy/未使用逻辑，保持功能 |
-| 7. dialogs.py 拆分 | 未开始 | 拆成多个 dialog 模块并保持兼容 |
-| 8. 测试与收尾 | 未开始 | 运行 compileall/pytest，更新结果 |
+| 0. 写入计划文档 | 已完成 | 创建本文件 |
+| 1. 修改前安全提交 | 已完成 | 安全提交 `be9ad63 chore: checkpoint before ui cleanup` |
+| 2. 工具抽取与主窗口清理 | 已完成 | 新增 `services/program_paths.py`、`services/fds_naming.py`；主窗口改为显式导入并保存/恢复分割器状态 |
+| 3. 仿真日志与 FDS 预览优化 | 已完成 | FDS 日志改为可滚动只读控件；预览面板增加搜索/复制/保存/警告展示 |
+| 4. 移除图纸识别 UI | 已完成 | 删除 `ui/blueprint_viewer.py`，移除主窗口 OCR/Blueprint 引用；保留后端 `ocr/blueprint_ocr.py` 以免影响脚本 |
+| 5. 设施面板冗余清理 | 已完成 | 删除位置编辑信号和行内编辑逻辑；场景表保留展示/选择/删除 |
+| 6. viewer_3d 冗余清理 | 已完成 | 不拆分文件；删除 legacy 渲染/绘制私有函数和未使用导入；保留当前缓存渲染主路径 |
+| 7. dialogs.py 拆分 | 已完成 | 新增 `ui/dialog_windows/` 多个模块；`ui/dialogs.py` 保持兼容导出 |
+| 8. 测试与收尾 | 已完成 | `compileall`、`pytest`、offscreen UI smoke 均通过 |
 
 ## 测试基线
 
@@ -103,3 +103,8 @@ python -m pytest -q
 ## 实时日志
 
 - 2026-07-09：根据用户确认范围创建本执行计划。
+
+- 2026-07-09：已完成修改前安全提交 `be9ad63 chore: checkpoint before ui cleanup`。
+
+- 2026-07-09：完成工具抽取、主窗口清理、仿真日志修复、FDS 预览增强、图纸识别 UI 移除、设施面板位置编辑移除、`viewer_3d.py` legacy 私有渲染代码清理、`dialogs.py` 拆分。
+- 2026-07-09：验证通过：`python -m compileall -q main.py services ui models generators tests`；`python -m pytest -q` → `453 passed, 1 skipped`；`QT_QPA_PLATFORM=offscreen` 组件 smoke 测试通过。

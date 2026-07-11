@@ -1033,7 +1033,7 @@ def main() -> None:
     parser.add_argument("--durations", default=",".join(str(x) for x in DEFAULT_DURATIONS))
     parser.add_argument("--azimuths", default=",".join(str(int(x)) for x in DEFAULT_AZIMUTHS))
     parser.add_argument("--fluxes", default=",".join(str(int(x)) for x in DEFAULT_FLUXES))
-    parser.add_argument("--dt-devc", type=float, default=0.01)
+    parser.add_argument("--dt-devc", type=float, default=0.1)
     parser.add_argument("--time-dt", type=float, default=None)
     parser.add_argument("--lock-time-step", action="store_true")
     parser.add_argument("--np", type=int, default=4)

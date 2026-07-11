@@ -15,9 +15,7 @@ import sys
 
 from PySide6.QtWidgets import QApplication
 from PySide6.QtCore import Qt
-from PySide6.QtGui import QIcon
-
-from ui.styles import *
+from ui.styles import DARK_STYLE
 from ui.mainwindow import MainWindow
 
 
@@ -26,13 +24,13 @@ def main():
     app = QApplication(sys.argv)
     app.setStyle("Fusion")
     app.setStyleSheet(DARK_STYLE)
-    
+
     # icon
     # app.setWindowIcon(QIcon("icon.png"))
-    
+
     window = MainWindow()
     window.show()
-    
+
     sys.exit(app.exec())
 
 
