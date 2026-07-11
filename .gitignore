@@ -24,6 +24,9 @@ _backup/
 # fds file
 *.fds
 
+# Simulation results
+results/
+
 *.md
 
 # Agent damage training artifacts
