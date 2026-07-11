@@ -19,16 +19,12 @@ from PySide6.QtWidgets import (
     QPushButton,
     QHBoxLayout,
     QMessageBox,
-    QGroupBox,
-    QFormLayout,
     QDialog,
     QDoubleSpinBox,
     QSpinBox,
     QComboBox,
     QGridLayout,
-    QCheckBox,
     QScrollArea,
-    QSizePolicy,
     QTableWidget,
     QTableWidgetItem,
     QHeaderView,
@@ -36,8 +32,8 @@ from PySide6.QtWidgets import (
 from PySide6.QtCore import Qt, Signal
 from PySide6.QtGui import QFont, QColor, QBrush
 from models.facility import FacilityManager
-from models.building import Building, BuildingGroup, Story
-from ui.styles import CollapsibleGroup
+from models.building import BuildingGroup
+from ui.styles import CollapsibleGroup, apply_button_variant
 
 # Alias for backwards compatibility within this file
 CollapsibleSection = CollapsibleGroup
@@ -48,9 +44,7 @@ class FacilityListPanel(QWidget):
 
     facility_selected = Signal(dict)  # replace entire model (category generation)
     building_added = Signal(object)  # append one Building object
-    scene_building_removed = Signal(int)  # remove building by index
     scene_building_selected = Signal(int)  # select building for editing
-    scene_building_offset_changed = Signal(int, float, float)  # index, x, y
 
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -179,11 +173,7 @@ class FacilityListPanel(QWidget):
         # -- 7. Combustible button --
         self.combustible_btn = QPushButton("可燃物管理…")
         self.combustible_btn.setFixedHeight(34)
-        self.combustible_btn.setStyleSheet(
-            "QPushButton{background:#89b4fa;color:#1e1e2e;font-weight:bold;"
-            "padding:4px 10px;border-radius:3px;font-size:13px}"
-            "QPushButton:hover{background:#74c7ec}"
-        )
+        apply_button_variant(self.combustible_btn, "primary")
         self.combustible_btn.setEnabled(False)
         self.combustible_btn.clicked.connect(self._on_combustible_clicked)
         outer.addWidget(self.combustible_btn)
@@ -195,24 +185,14 @@ class FacilityListPanel(QWidget):
         self.generate_btn = QPushButton("生成建筑")
         self.generate_btn.setEnabled(False)
         self.generate_btn.setFixedHeight(34)
-        self.generate_btn.setStyleSheet(
-            "QPushButton{background:#a6e3a1;color:#1e1e2e;font-weight:bold;"
-            "border-radius:3px;font-size:13px;padding:4px 10px}"
-            "QPushButton:hover{background:#94e2d5}"
-            "QPushButton:disabled{background:#45475a;color:#6c7086}"
-        )
+        apply_button_variant(self.generate_btn, "success")
         self.generate_btn.clicked.connect(self._on_generate)
         btn_layout.addWidget(self.generate_btn)
 
         self.generate_category_btn = QPushButton("生成设施全部建筑")
         self.generate_category_btn.setEnabled(False)
         self.generate_category_btn.setFixedHeight(34)
-        self.generate_category_btn.setStyleSheet(
-            "QPushButton{background:#89b4fa;color:#1e1e2e;font-weight:bold;"
-            "border-radius:3px;font-size:13px;padding:4px 10px}"
-            "QPushButton:hover{background:#74c7ec}"
-            "QPushButton:disabled{background:#45475a;color:#6c7086}"
-        )
+        apply_button_variant(self.generate_category_btn, "primary")
         self.generate_category_btn.clicked.connect(self._on_generate_category)
         btn_layout.addWidget(self.generate_category_btn)
 
@@ -224,19 +204,13 @@ class FacilityListPanel(QWidget):
         scroll.setWidgetResizable(True)
         scroll.setStyleSheet("QScrollArea{border:none;}")
         self.scene_table = QTableWidget()
-        self.scene_table.setColumnCount(5)
-        self.scene_table.setHorizontalHeaderLabels(["名称", "尺寸", "位置", "操作", ""])
+        self.scene_table.setColumnCount(3)
+        self.scene_table.setHorizontalHeaderLabels(["名称", "尺寸", "位置"])
         self.scene_table.horizontalHeader().setSectionResizeMode(0, QHeaderView.Stretch)
         self.scene_table.horizontalHeader().setSectionResizeMode(
             1, QHeaderView.ResizeToContents
         )
-        self.scene_table.setColumnWidth(2, 180)  # position column fixed 180px
-        self.scene_table.horizontalHeader().setSectionResizeMode(
-            3, QHeaderView.ResizeToContents
-        )
-        self.scene_table.horizontalHeader().setSectionResizeMode(
-            4, QHeaderView.ResizeToContents
-        )
+        self.scene_table.setColumnWidth(2, 160)  # position column fixed width
         self.scene_table.setSelectionBehavior(QTableWidget.SelectRows)
         self.scene_table.setSelectionMode(QTableWidget.SingleSelection)
         self.scene_table.setMinimumHeight(100)
@@ -247,9 +221,6 @@ class FacilityListPanel(QWidget):
         scroll.setWidget(self.scene_table)
         sec_scene.content_layout.addWidget(scroll)
 
-        # Track editing state
-        self._editing_row = -1
-        self._editing_widgets = {}  # row -> {x_spin, y_spin}
 
         outer.addWidget(sec_scene)
 
@@ -778,21 +749,8 @@ class FacilityListPanel(QWidget):
 
     def update_scene_list(self, buildings):
         """Update scene table from list of Building objects."""
-        self._editing_row = -1
-        self._editing_widgets = {}
         self.scene_table.setRowCount(len(buildings))
-        self._scene_buildings = buildings  # keep reference for editing
-
-        btn_style_edit = (
-            "QPushButton{background:#89b4fa;color:#1e1e2e;font-weight:bold;"
-            "padding:2px 6px;border-radius:3px;font-size:11px}"
-            "QPushButton:hover{background:#74c7ec}"
-        )
-        btn_style_del = (
-            "QPushButton{background:#f38ba8;color:#1e1e2e;font-weight:bold;"
-            "padding:2px 6px;border-radius:3px;font-size:11px}"
-            "QPushButton:hover{background:#e06080}"
-        )
+        self._scene_buildings = buildings  # keep reference for selection
 
         for i, b in enumerate(buildings):
             name_item = QTableWidgetItem(b.cn_name or b.name)
@@ -807,19 +765,6 @@ class FacilityListPanel(QWidget):
             pos_item.setFlags(pos_item.flags() & ~Qt.ItemIsEditable)
             self.scene_table.setItem(i, 2, pos_item)
 
-            edit_btn = QPushButton("编辑")
-            edit_btn.setFixedHeight(24)
-            edit_btn.setStyleSheet(btn_style_edit)
-            edit_btn.clicked.connect(lambda checked, idx=i: self._toggle_edit(idx))
-            self.scene_table.setCellWidget(i, 3, edit_btn)
-
-            del_btn = QPushButton("删除")
-            del_btn.setFixedHeight(24)
-            del_btn.setStyleSheet(btn_style_del)
-            del_btn.setEnabled(len(buildings) > 1)  # single building: disable delete
-            del_btn.clicked.connect(lambda checked, idx=i: self._on_scene_delete_row(idx))
-            self.scene_table.setCellWidget(i, 4, del_btn)
-
         self.scene_table.resizeColumnsToContents()
 
     def _on_scene_table_clicked(self, row, col):
@@ -827,115 +772,3 @@ class FacilityListPanel(QWidget):
         if 0 <= row < len(getattr(self, "_scene_buildings", [])):
             self._selected_scene_idx = row
             self.scene_building_selected.emit(row)
-
-    def _toggle_edit(self, row):
-        """Toggle inline editing for a scene building row."""
-        if self._editing_row == row:
-            # Finish editing: read values, emit changes, restore display
-            self._finish_edit(row)
-            return
-
-        # If editing another row, finish that first
-        if self._editing_row >= 0:
-            self._finish_edit(self._editing_row)
-
-        buildings = getattr(self, "_scene_buildings", [])
-        if row >= len(buildings):
-            return
-        b = buildings[row]
-
-        # Replace position cell with spinboxes
-        widget = QWidget()
-        hl = QHBoxLayout(widget)
-        hl.setContentsMargins(0, 0, 0, 0)
-        hl.setSpacing(2)
-        x_spin = QDoubleSpinBox()
-        x_spin.setRange(-1000, 10000)
-        x_spin.setDecimals(1)
-        x_spin.setValue(b.offset_x)
-        x_spin.setFixedHeight(24)
-        x_spin.setMinimumWidth(80)
-        x_spin.setPrefix("X:")
-        hl.addWidget(x_spin)
-
-        y_spin = QDoubleSpinBox()
-        y_spin.setRange(-1000, 10000)
-        y_spin.setDecimals(1)
-        y_spin.setValue(b.offset_y)
-        y_spin.setFixedHeight(24)
-        y_spin.setMinimumWidth(80)
-        y_spin.setPrefix("Y:")
-        hl.addWidget(y_spin)
-
-        self.scene_table.setCellWidget(row, 2, widget)
-
-        # Change edit button to "完成"
-        btn = self.scene_table.cellWidget(row, 3)
-        if btn:
-            btn.setText("完成")
-
-        self._editing_row = row
-        self._editing_widgets[row] = {"x_spin": x_spin, "y_spin": y_spin}
-
-    def _finish_edit(self, row):
-        """Complete inline editing and apply changes."""
-        widgets = self._editing_widgets.get(row)
-        if not widgets:
-            self._editing_row = -1
-            return
-
-        buildings = getattr(self, "_scene_buildings", [])
-        if row < len(buildings):
-            x_val = widgets["x_spin"].value()
-            y_val = widgets["y_spin"].value()
-            self.scene_building_offset_changed.emit(row, x_val, y_val)
-
-        # Restore button text
-        btn = self.scene_table.cellWidget(row, 3)
-        if btn:
-            btn.setText("编辑")
-
-        # Restore position cell as text (will be refreshed by update_scene_list)
-        self.scene_table.removeCellWidget(row, 2)
-        if row < len(buildings):
-            b = buildings[row]
-            pos_item = QTableWidgetItem(f"({b.offset_x:.1f}, {b.offset_y:.1f})")
-            pos_item.setFlags(pos_item.flags() & ~Qt.ItemIsEditable)
-            self.scene_table.setItem(row, 2, pos_item)
-
-        self.scene_table.setColumnWidth(2, 180)
-
-        self._editing_row = -1
-        if row in self._editing_widgets:
-            del self._editing_widgets[row]
-
-    def _on_scene_delete_row(self, row):
-        """Delete a building with confirmation."""
-        buildings = getattr(self, "_scene_buildings", [])
-        if row < 0 or row >= len(buildings):
-            return
-        name = buildings[row].cn_name or buildings[row].name
-        reply = QMessageBox.question(
-            self.window(),
-            "确认删除",
-            f"确定要删除建筑「{name}」吗？",
-            QMessageBox.Yes | QMessageBox.No,
-        )
-        if reply == QMessageBox.Yes:
-            self.scene_building_removed.emit(row)
-
-    def _on_scene_offset_changed(self):
-        if self._syncing:
-            return
-        idx = getattr(self, "_selected_scene_idx", None)
-        if idx is not None:
-            widgets = self._editing_widgets.get(idx)
-            if widgets:
-                self.scene_building_offset_changed.emit(
-                    idx, widgets["x_spin"].value(), widgets["y_spin"].value()
-                )
-
-    def _on_scene_delete(self):
-        row = self.scene_table.currentRow()
-        if row >= 0:
-            self._on_scene_delete_row(row)

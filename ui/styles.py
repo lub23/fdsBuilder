@@ -95,20 +95,52 @@ QPushButton:disabled {
     color: #6c7086;
 }
 
-QPushButton#dangerBtn {
-    background-color: #f38ba8;
+
+/* Shared button variants. Prefer setting objectName instead of per-widget style strings. */
+QPushButton#primaryBtn {
+    background-color: #89b4fa;
+    color: #1e1e2e;
+    font-weight: bold;
 }
 
-QPushButton#dangerBtn:hover {
-    background-color: #eba0ac;
+QPushButton#primaryBtn:hover {
+    background-color: #74c7ec;
 }
 
 QPushButton#successBtn {
     background-color: #a6e3a1;
+    color: #1e1e2e;
+    font-weight: bold;
 }
 
 QPushButton#successBtn:hover {
     background-color: #94e2d5;
+}
+
+QPushButton#dangerBtn {
+    background-color: #f38ba8;
+    color: #1e1e2e;
+    font-weight: bold;
+}
+
+QPushButton#dangerBtn:hover {
+    background-color: #e06080;
+}
+
+QPushButton#warningBtn {
+    background-color: #f9e2af;
+    color: #1e1e2e;
+    font-weight: bold;
+}
+
+QPushButton#warningBtn:hover {
+    background-color: #fab387;
+}
+
+QPushButton[compact="true"] {
+    padding: 2px 8px;
+    border-radius: 3px;
+    font-size: 12px;
 }
 
 QPushButton#secondaryBtn {
@@ -212,6 +244,15 @@ QHeaderView::section {
     padding: 10px;
     border: none;
     font-weight: bold;
+}
+
+QHeaderView::section:vertical {
+    background-color: #45475a;
+    color: #cdd6f4;
+    padding: 0px 2px;
+    border: none;
+    font-weight: bold;
+    min-width: 28px;
 }
 
 QTextEdit {
@@ -379,3 +420,27 @@ class CollapsibleGroup(QGroupBox):
     @property
     def content_layout(self):
         return self._content_layout
+
+
+def apply_button_variant(button, variant: str = "primary", small: bool = False):
+    """Assign a shared style objectName to a QPushButton.
+
+    Variants: primary, success, danger, warning, secondary.
+    Set `small=True` for compact toolbar/table buttons.
+    """
+
+    object_names = {
+        "primary": "primaryBtn",
+        "success": "successBtn",
+        "danger": "dangerBtn",
+        "warning": "warningBtn",
+        "secondary": "secondaryBtn",
+    }
+    button.setObjectName(object_names.get(variant, "primaryBtn"))
+    if small:
+        # Qt only supports one objectName, so keep compact sizing in properties.
+        button.setProperty("compact", True)
+        button.setFixedHeight(26)
+    button.style().unpolish(button)
+    button.style().polish(button)
+    return button
