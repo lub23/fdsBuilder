@@ -45,12 +45,19 @@ class ExperimentalDkPredictor:
         dk_thresholds: tuple[float, float, float] = DK_THRESHOLDS,
         dk_grade_names: tuple[str, str, str, str] = DK_GRADE_NAMES,
         facility_index_map: Mapping[str, int] | None = None,
+        facility_onehot_columns: tuple[str, ...] = (),
     ) -> None:
         self.model = model
         self.feature_columns = tuple(feature_columns)
         self.dk_thresholds = tuple(dk_thresholds)
         self.dk_grade_names = tuple(dk_grade_names)
         self.facility_index_map = dict(facility_index_map or {})
+        self.facility_onehot_columns = tuple(facility_onehot_columns)
+        self._known_facilities = {col.replace("facility_oh_", "", 1) for col in self.facility_onehot_columns}
+
+    def _facility_onehot(self, facility_name: str) -> dict[str, float]:
+        target_col = "facility_oh_" + str(facility_name).replace("-", "_")
+        return {col: 1.0 if col == target_col else 0.0 for col in self.facility_onehot_columns}
 
     def _feature_row(self, fds_path: Path, case_name: str) -> np.ndarray:
         case = parse_case_name(case_name)
@@ -62,6 +69,9 @@ class ExperimentalDkPredictor:
             "facility_index": float(self.facility_index_map.get(case.facility, -1)),
         }
         features = {**features, **compact_experimental_features(features)}
+        onehot = self._facility_onehot(case.facility)
+        for column, value in onehot.items():
+            features[column] = value
         row = [float(features.get(column, 0.0)) for column in self.feature_columns]
         return np.asarray(row, dtype=float).reshape(1, -1)
 
@@ -94,4 +104,5 @@ def load_experimental_dk_predictor(path: Path | None = None) -> ExperimentalDkPr
         dk_thresholds=tuple(artifact.get("dk_thresholds", DK_THRESHOLDS)),
         dk_grade_names=tuple(artifact.get("dk_grade_names", DK_GRADE_NAMES)),
         facility_index_map=artifact.get("facility_index_map", {}),
+        facility_onehot_columns=tuple(artifact.get("facility_onehot_columns", ())),
     )

@@ -6,6 +6,7 @@ from __future__ import annotations
 import argparse
 import html
 import json
+import logging
 import pickle
 import sys
 from pathlib import Path
@@ -43,6 +44,15 @@ from agent_damage.src.data.experimental import (  # noqa: E402
     load_experimental_dataset,
     parse_fds_features,
 )
+from agent_damage.src.data.cases_loader import (  # noqa: E402
+    facility_first_fds,
+    find_zero_dk_facilities,
+    iter_facilities,
+)
+from agent_damage.src.data.zero_dk_diagnostic import (  # noqa: E402
+    build_facility_diagnostic,
+    write_zero_dk_report,
+)
 from agent_damage.src.training.regression import (  # noqa: E402
     compact_metrics,
     evaluate_dk_regressor,
@@ -50,9 +60,11 @@ from agent_damage.src.training.regression import (  # noqa: E402
     logit_transform,
 )
 
+LOG = logging.getLogger(__name__)
+
 
 ROOT = Path(__file__).resolve().parents[1]
-RAW_DIR = ROOT / "raw_results"
+CASES_DIR = ROOT / "cases"
 DATA_DIR = ROOT / "data"
 CKPT_DIR = ROOT / "checkpoints"
 OUTPUT_DIR = ROOT / "output"
@@ -278,7 +290,10 @@ def _candidate_models(seed: int) -> Dict[str, Any]:
 
 
 def _arrays(df: pd.DataFrame) -> tuple[np.ndarray, np.ndarray]:
-    X = df[list(COMPACT_EXPERIMENT_FEATURE_COLUMNS)].to_numpy(dtype=float)
+    columns = list(COMPACT_EXPERIMENT_FEATURE_COLUMNS) + list(
+        df.attrs.get("facility_onehot_columns", ())
+    )
+    X = df[columns].to_numpy(dtype=float)
     y = df["Dk"].to_numpy(dtype=float)
     return X, y
 
@@ -373,6 +388,7 @@ def _feature_row(
     fds_features: dict[str, float],
     facility_name: str,
     facility_index_map: dict[str, int],
+    facility_onehot_columns: tuple[str, ...],
     heat_flux: float,
     azimuth: float,
     elevation: float,
@@ -394,7 +410,11 @@ def _feature_row(
         "facility_index": float(facility_index_map.get(facility_name, -1)),
     }
     features = {**features, **compact_experimental_features(features)}
-    return [float(features.get(column, 0.0)) for column in COMPACT_EXPERIMENT_FEATURE_COLUMNS]
+    onehot_target = "facility_oh_" + str(facility_name).replace("-", "_")
+    for column in facility_onehot_columns:
+        features[column] = 1.0 if column == onehot_target else 0.0
+    columns = list(COMPACT_EXPERIMENT_FEATURE_COLUMNS) + list(facility_onehot_columns)
+    return [float(features.get(column, 0.0)) for column in columns]
 
 
 def _set_prediction_n_jobs(model: Any, n_jobs: int) -> None:
@@ -720,6 +740,7 @@ def _threshold_table_for_facility(
     fds_features: dict[str, float],
     facility_name: str,
     facility_index_map: dict[str, int],
+    facility_onehot_columns: tuple[str, ...],
     azimuths: np.ndarray,
     elevations: np.ndarray,
     duration_s: float,
@@ -735,6 +756,7 @@ def _threshold_table_for_facility(
                         fds_features,
                         facility_name,
                         facility_index_map,
+                        facility_onehot_columns,
                         heat_flux=float(flux),
                         azimuth=float(azimuth),
                         elevation=float(elevation),
@@ -884,8 +906,9 @@ def _plot_facility_threshold_grid(
 def _generate_threshold_heatmaps(
     model: Any,
     df: pd.DataFrame,
-    raw_dir: Path,
+    cases_dir: Path,
     facility_index_map: dict[str, int],
+    facility_onehot_columns: tuple[str, ...],
     figure_dir: Path,
     max_flux: float,
     flux_points: int,
@@ -910,9 +933,14 @@ def _generate_threshold_heatmaps(
     figure_paths: list[str] = []
     for _, row in facility_rows.iterrows():
         facility_name = str(row["facility_name"])
-        fds_path = raw_dir / str(row["fds_file"])
+        facility_root = cases_dir / facility_name
+        fds_path = facility_root / str(row["fds_file"])
         if not fds_path.exists():
-            continue
+            candidates = sorted(facility_root.glob("*.fds"))
+            if candidates:
+                fds_path = candidates[0]
+            else:
+                continue
         print(f"[train_experimental] threshold scan {facility_name}")
         fds_features = parse_fds_features(fds_path)
         maps_by_duration: dict[float, dict[str, np.ndarray]] = {}
@@ -922,6 +950,7 @@ def _generate_threshold_heatmaps(
                 fds_features,
                 facility_name,
                 facility_index_map,
+                facility_onehot_columns,
                 azimuths,
                 elevations,
                 duration_s,
@@ -1387,8 +1416,8 @@ def _params_json_safe(value: Any) -> Any:
 
 def main() -> int:
     parser = argparse.ArgumentParser()
-    parser.add_argument("--raw-dir", type=Path, default=RAW_DIR)
-    parser.add_argument("--min-completion", type=float, default=0.95)
+    parser.add_argument("--cases-dir", type=Path, default=CASES_DIR)
+    parser.add_argument("--min-completion", type=float, default=0.0)
     parser.add_argument("--seed", type=int, default=42)
     parser.add_argument("--test-size", type=float, default=0.20)
     parser.add_argument("--val-size", type=float, default=0.20)
@@ -1413,7 +1442,7 @@ def main() -> int:
     FIGURE_DIR.mkdir(parents=True, exist_ok=True)
     THRESHOLD_FIGURE_DIR.mkdir(parents=True, exist_ok=True)
 
-    df = load_experimental_dataset(args.raw_dir, min_completion=args.min_completion)
+    df = load_experimental_dataset(args.cases_dir, min_completion=args.min_completion)
     if len(df) < 30:
         raise RuntimeError(f"Not enough usable experimental rows: {len(df)}")
 
@@ -1498,13 +1527,15 @@ def main() -> int:
         str(name): int(index)
         for name, index in df.groupby("facility_name")["facility_index"].first().items()
     }
+    facility_onehot_columns = tuple(df.attrs.get("facility_onehot_columns", ()))
     artifact = {
         "model": final_model,
         "model_name": best_name,
-        "feature_columns": list(COMPACT_EXPERIMENT_FEATURE_COLUMNS),
+        "feature_columns": list(COMPACT_EXPERIMENT_FEATURE_COLUMNS) + list(facility_onehot_columns),
         "dk_thresholds": DK_THRESHOLDS,
         "dk_grade_names": DK_GRADE_NAMES,
         "facility_index_map": facility_index_map,
+        "facility_onehot_columns": list(facility_onehot_columns),
         "min_completion": args.min_completion,
     }
     model_path = CKPT_DIR / "experimental_dk_regressor.pkl"
@@ -1546,8 +1577,9 @@ def main() -> int:
         threshold_rows, threshold_figure_paths = _generate_threshold_heatmaps(
             final_model,
             df,
-            Path(args.raw_dir),
+            Path(args.cases_dir),
             facility_index_map,
+            facility_onehot_columns,
             FIGURE_DIR,
             max_flux=args.scan_max_flux,
             flux_points=args.scan_flux_points,
@@ -1562,11 +1594,11 @@ def main() -> int:
         json.dump(_params_json_safe(final_model.get_params(deep=True)), f, ensure_ascii=False, indent=2)
 
     summary = {
-        "raw_dir": str(args.raw_dir),
+        "cases_dir": str(args.cases_dir),
         "dataset_path": str(dataset_path),
         "model_path": str(model_path),
         "cv_predictions_path": str(cv_predictions_path),
-        "feature_columns": list(COMPACT_EXPERIMENT_FEATURE_COLUMNS),
+        "feature_columns": list(COMPACT_EXPERIMENT_FEATURE_COLUMNS) + list(facility_onehot_columns),
         "dk_thresholds": list(DK_THRESHOLDS),
         "dk_grade_names": list(DK_GRADE_NAMES),
         "model_parameters_path": str(model_params_path),
@@ -1579,6 +1611,7 @@ def main() -> int:
             "test": int(len(test_df)),
         },
         "facility_index_map": facility_index_map,
+        "facility_onehot_columns": list(facility_onehot_columns),
         "facility_counts": df["facility_name"].value_counts().sort_index().to_dict(),
         "grade_counts": df["dk_grade_name"].value_counts().to_dict(),
         "candidate_models": model_reports,
@@ -1615,6 +1648,31 @@ def main() -> int:
     summary_path = OUTPUT_DIR / "experimental_train_summary.json"
     with open(summary_path, "w", encoding="utf-8") as f:
         json.dump(_json_safe(summary), f, ensure_ascii=False, indent=2)
+
+    # Generate zero-Dk facility diagnostic report (if any).
+    zero_dk_diagnostics: list = []
+    facility_summaries_for_diag = list(iter_facilities(Path(args.cases_dir)))
+    zero_dk_summaries = find_zero_dk_facilities(facility_summaries_for_diag)
+    for summary in zero_dk_summaries:
+        if summary.fds_path is None:
+            continue
+        try:
+            fds_features_for_diag = parse_fds_features(summary.fds_path)
+        except Exception as exc:
+            LOG.warning("diagnostic: failed to parse FDS for %s (%s)", summary.facility_name, exc)
+            continue
+        diag = build_facility_diagnostic(
+            facility_name=summary.facility_name,
+            case_count=len(summary.cases),
+            max_observed_dk=summary.max_dk,
+            facility_root=Path(args.cases_dir) / summary.facility_name / "damage_results",
+            fds_features=fds_features_for_diag,
+        )
+        zero_dk_diagnostics.append(diag)
+    diagnostic_path = OUTPUT_DIR / "zero_dk_facility_diagnostic.md"
+    if zero_dk_diagnostics:
+        write_zero_dk_report(zero_dk_diagnostics, diagnostic_path)
+        print(f"[train_experimental] zero-Dk diagnostic saved to {diagnostic_path}")
 
     report_path = OUTPUT_DIR / "experimental_model_report.md"
     _write_report(

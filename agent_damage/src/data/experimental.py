@@ -808,71 +808,145 @@ def _case_columns(df: pd.DataFrame) -> tuple[str, str | None]:
     return case_col, grade_col
 
 
-def _fds_lookup(raw_dir: Path) -> Dict[str, Path]:
-    paths = sorted(Path(raw_dir).glob("*.fds"))
-    return {path.stem.lower(): path for path in paths}
+# Default facility one-hot columns used by the 48-dim compact model. When
+# :func:`load_experimental_dataset` builds the dataset it materialises the
+# list every facility it actually sees, so the model only ever sees the
+# one-hot tensor at inference time (no out-of-vocabulary facility can leak).
+DEFAULT_FACILITY_ONEHOT_COLUMNS: tuple[str, ...] = (
+    "facility_oh_aerospace_large",
+    "facility_oh_aerospace_medium",
+    "facility_oh_aerospace_small",
+    "facility_oh_airport_hangar_large",
+    "facility_oh_airport_hangar_medium",
+    "facility_oh_airport_hangar_small",
+    "facility_oh_alcoa",
+    "facility_oh_Boeing_Satellite",
+    "facility_oh_boeing",
+    "facility_oh_factory",
+    "facility_oh_frymaster_corporation",
+    "facility_oh_gleason_cutting_tools_corporation",
+    "facility_oh_Hangar",
+    "facility_oh_hanger1and2",
+    "facility_oh_harbison_fischer",
+    "facility_oh_lcc",
+    "facility_oh_ligen",
+    "facility_oh_lob",
+    "facility_oh_maf",
+    "facility_oh_materion_buffalo",
+    "facility_oh_materion_newton",
+    "facility_oh_metallurgical_facilities_large",
+    "facility_oh_metallurgical_facilities_medium",
+    "facility_oh_MPPF",
+    "facility_oh_ocb",
+    "facility_oh_SLC",
+    "facility_oh_sspf",
+    "facility_oh_tesla",
+    "facility_oh_TWA",
+    "facility_oh_vab",
+    "facility_oh_warrick_power_plant",
+    "facility_oh_yjc",
+)
 
 
-def _resolve_fds(case_name: str, lookup: Mapping[str, Path]) -> Path | None:
-    key = case_name.lower()
-    if key in lookup:
-        return lookup[key]
-    try:
-        facility = parse_case_name(case_name).facility.lower()
-    except ValueError:
-        return None
-    prefix = facility + "_q"
-    candidates = [path for stem, path in lookup.items() if stem.startswith(prefix)]
-    if candidates:
-        return sorted(candidates, key=lambda p: p.name.lower())[0]
-    return None
+def _facility_onehot_column(facility_name: str) -> str:
+    """Return the canonical one-hot column name for the given facility."""
+    return "facility_oh_" + str(facility_name).replace("-", "_")
+
+
+def _ensure_onehot_columns(facilities: list[str]) -> tuple[str, ...]:
+    """Build the materialized list of facility one-hot columns seen in ``facilities``.
+
+    The always-known baseline list
+    (:data:`DEFAULT_FACILITY_ONEHOT_COLUMNS`) is preserved as the canonical
+    dimensional ordering; additional facilities observed at training time
+    extend the list and the new entries are added after the baseline.
+    """
+    seen: set[str] = set(DEFAULT_FACILITY_ONEHOT_COLUMNS)
+    extras: list[str] = []
+    for facility in facilities:
+        column = _facility_onehot_column(facility)
+        if column in seen:
+            continue
+        seen.add(column)
+        extras.append(column)
+    return tuple(DEFAULT_FACILITY_ONEHOT_COLUMNS) + tuple(extras)
+
+
+def _onehot_row(facility_name: str, columns: tuple[str, ...]) -> dict[str, float]:
+    target_col = _facility_onehot_column(facility_name)
+    return {column: 1.0 if column == target_col else 0.0 for column in columns}
 
 
 def load_experimental_dataset(
-    raw_dir: Path,
-    min_completion: float = 0.95,
-    drop_constant_zero_facilities: bool = True,
+    cases_root: Path,
+    min_completion: float = 0.0,
+    drop_constant_zero_facilities: bool = False,
 ) -> pd.DataFrame:
-    """Load all usable raw result rows and join them with parsed FDS features."""
-    raw_dir = Path(raw_dir)
-    fds_by_stem = _fds_lookup(raw_dir)
+    """Load all usable case rows from ``cases/<facility>/damage_results/`` and
+    join them with parsed FDS features.
+
+    ``cases_root`` is expected to contain one directory per facility, each
+    holding the geometry-shaped reference FDS at its root and the per-case
+    damage outputs under ``damage_results/``. Only ``raw_results/`` was used
+    before; the old layout is no longer supported.
+
+    Rows whose ``completion_ratio < min_completion`` are filtered. The default
+    is ``0.0`` because the new simulation pipeline auto-stops early once
+    the heat release rate plateaus, so a low completion still represents a
+    fully-evolved fire (rather than a partial simulation).
+    """
+    from .cases_loader import (
+        FacilitySummary,
+        iter_facilities,
+    )
+
+    cases_root = Path(cases_root)
+    if not cases_root.is_dir():
+        return pd.DataFrame()
     fds_feature_cache: Dict[Path, Dict[str, float]] = {}
     rows: list[dict[str, object]] = []
+    facility_summaries: list[FacilitySummary] = list(iter_facilities(cases_root))
 
-    for csv_path in sorted(raw_dir.glob("*_summary.csv")):
-        summary = pd.read_csv(csv_path, encoding="utf-8-sig")
-        case_col, source_grade_col = _case_columns(summary)
-        for _, raw_row in summary.iterrows():
-            case_name = str(raw_row[case_col]).strip()
+    for summary in facility_summaries:
+        fds_path = summary.fds_path
+        if fds_path is None:
+            continue
+        if fds_path not in fds_feature_cache:
+            fds_feature_cache[fds_path] = parse_fds_features(fds_path)
+        fds_features = fds_feature_cache[fds_path]
+        facility = summary.facility_name
+        for case in summary.cases:
             try:
-                case = parse_case_name(case_name)
+                case_obj = parse_case_name(case.case_name)
             except ValueError:
                 continue
-            dk = float(raw_row.get("Dk", np.nan))
-            completion = float(raw_row.get("completion_ratio", 1.0))
-            if not math.isfinite(dk) or dk < 0.0 or dk > 1.0:
+            case_facility = case_obj.facility
+            if case_facility != facility and not facility.startswith(case_facility):
                 continue
+            completion = case.completion_ratio
             if not math.isfinite(completion) or completion < min_completion:
                 continue
-            fds_path = _resolve_fds(case_name, fds_by_stem)
-            if fds_path is None:
+            dk = float(case.dk)
+            if not math.isfinite(dk) or dk < 0.0 or dk > 1.0:
                 continue
-            if fds_path not in fds_feature_cache:
-                fds_feature_cache[fds_path] = parse_fds_features(fds_path)
-            fds_features = fds_feature_cache[fds_path]
             row: dict[str, object] = {
                 **fds_features,
-                **case_condition_features(case),
-                **directional_case_features(fds_features, case),
-                "facility_name": case.facility,
-                "case_name": case_name,
-                "csv_file": csv_path.name,
+                **case_condition_features(case_obj),
+                **directional_case_features(fds_features, case_obj),
+                "facility_name": facility,
+                "case_name": case.case_name,
+                "csv_file": f"{facility}/damage_results/04_all_cases_Dk_summary.csv",
                 "fds_file": fds_path.name,
-                "source_damage_grade": raw_row.get(source_grade_col, "") if source_grade_col else "",
+                "source_damage_grade": case.damage_grade_raw,
                 "completion_ratio": completion,
+                "simulation_time_s": case.simulation_time_s,
+                "target_T_END_s": case.target_t_end_s,
                 "Dk": dk,
                 "dk_grade": dk_to_grade(dk),
                 "dk_grade_name": grade_name(dk_to_grade(dk)),
+                "total_repair_cost_cny": case.total_repair_cost_cny,
+                "total_asset_value_cny": case.total_asset_value_cny,
+                "total_asset_quantity": case.total_asset_quantity,
             }
             rows.append(row)
 
@@ -888,6 +962,10 @@ def load_experimental_dataset(
     facility_index = {name: idx for idx, name in enumerate(facilities)}
     df["facility_index"] = df["facility_name"].map(facility_index).astype(float)
 
+    onehot_columns = _ensure_onehot_columns(facilities)
+    onehot_rows = [_onehot_row(name, onehot_columns) for name in df["facility_name"]]
+    onehot_df = pd.DataFrame(onehot_rows, index=df.index).astype(float)
+
     for column in EXPERIMENT_FEATURE_COLUMNS:
         if column not in df.columns:
             df[column] = 0.0
@@ -895,7 +973,17 @@ def load_experimental_dataset(
     df[list(EXPERIMENT_FEATURE_COLUMNS)] = df[list(EXPERIMENT_FEATURE_COLUMNS)].fillna(0.0)
     compact_rows = [compact_experimental_features(row) for row in df.to_dict("records")]
     compact_df = pd.DataFrame(compact_rows, index=df.index).astype(float)
-    compact_df = compact_df[list(COMPACT_EXPERIMENT_FEATURE_COLUMNS)].fillna(0.0)
-    df = df.drop(columns=[c for c in COMPACT_EXPERIMENT_FEATURE_COLUMNS if c in df.columns])
+    compact_columns = list(COMPACT_EXPERIMENT_FEATURE_COLUMNS) + list(onehot_columns)
+    compact_cols_present = [c for c in COMPACT_EXPERIMENT_FEATURE_COLUMNS if c in compact_df.columns]
+    missing_cols = [c for c in COMPACT_EXPERIMENT_FEATURE_COLUMNS if c not in compact_cols_present]
+    if missing_cols:
+        for c in missing_cols:
+            compact_df[c] = 0.0
+    compact_df = compact_df.reindex(columns=compact_columns, fill_value=0.0)
+    compact_df[list(onehot_columns)] = onehot_df.reindex(columns=onehot_columns, fill_value=0.0)
+
+    df = df.drop(columns=[c for c in compact_columns if c in df.columns])
     df = pd.concat([df, compact_df], axis=1)
+    df.attrs["facility_onehot_columns"] = list(onehot_columns)
+    df.attrs["facility_index_map"] = dict(facility_index)
     return df.reset_index(drop=True)
