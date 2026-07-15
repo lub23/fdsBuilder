@@ -1,13 +1,5 @@
-from .ensemble import WeightedEnsemble, prediction_uncertainty
-from .evaluator import evaluate_classifier
-from .sklearn_trainer import train_sklearn_model
-from .torch_trainer import TorchTrainConfig, train_torch_model
+"""Training helpers for the production ExtraTrees Dk surrogate."""
 
-__all__ = [
-    "TorchTrainConfig",
-    "WeightedEnsemble",
-    "evaluate_classifier",
-    "prediction_uncertainty",
-    "train_sklearn_model",
-    "train_torch_model",
-]
+from .regression import GradeConstrainedRegressor, evaluate_dk_regressor
+
+__all__ = ["GradeConstrainedRegressor", "evaluate_dk_regressor"]

@@ -189,6 +189,6 @@
         "grid_size_m": 2.0
       }
     },
-    "notes": "Airport hangar is exposed as one equivalent facility. Selecting small, medium, or large generates the corresponding hangar type; the UAV hangar variant is intentionally excluded."
+    "notes": "Airport hangar is exposed as one equivalent facility. Selecting small, medium, or large generates the corresponding hangar type"
   }
 }

@@ -1,7 +1,8 @@
-"""Build experimental Dk regression data from raw FDS and summary CSV files."""
+"""Build experimental Dk regression data from per-facility FDS and damage summaries."""
 
 from __future__ import annotations
 
+import logging
 import math
 import re
 from dataclasses import dataclass
@@ -12,6 +13,8 @@ import numpy as np
 import pandas as pd
 
 
+LOG = logging.getLogger(__name__)
+
 DK_THRESHOLDS: tuple[float, float, float] = (0.04, 0.10, 0.40)
 DK_GRADE_NAMES: tuple[str, str, str, str] = (
     "未达到破坏等级/基本完好",
@@ -19,6 +22,151 @@ DK_GRADE_NAMES: tuple[str, str, str, str] = (
     "中等破坏",
     "严重破坏",
 )
+
+# Canonical facility metadata supplied with the authoritative case inventory.
+# ``facility_type_index`` intentionally uses the four broad families already
+# used by the application (aerospace / airport hangar / machinery /
+# metallurgical).  Previously this feature accidentally reused the alphabetical
+# per-facility identity index, duplicating the facility one-hot columns and
+# giving the numeric value a misleading name.
+FACILITY_CLASSIFICATION_ZH: Mapping[str, str] = {
+    "hanger1and2": "火箭发射场机库",
+    "lcc": "发射控制中心",
+    "maf": "加工厂房",
+    "MPPF": "加工厂房",
+    "ocb": "部装车间",
+    "lob": "发射控制中心",
+    "SLC": "发射台+发射塔",
+    "sspf": "部装车间",
+    "vab": "总装车间",
+    "Hangar": "机场机库",
+    "boeing": "飞机工厂（总装车间+部装车间）",
+    "TWA": "机场机库",
+    "ligen": "机场机库",
+    "Boeing_Satellite": "卫星工厂（多功能分区）",
+    "factory": "飞机工厂（总装车间+部装车间）",
+    "yjc": "冶金-钢铁厂",
+    "aerospace_large": "航空航天设施（大）",
+    "aerospace_medium": "航空航天设施（中）",
+    "aerospace_small": "航空航天设施（小）",
+    "airport_hangar_large": "机场机库设施（大）",
+    "airport_hangar_medium": "机场机库设施（中）",
+    "airport_hangar_small": "机场机库设施（小）",
+    "machinery_manufacturing_large": "机械加工设施（大）",
+    "machinery_manufacturing_medium": "机械加工设施（中）",
+    "machinery_manufacturing_small": "机械加工设施（小）",
+    "metallurgical_facilities_large": "冶金设施（大）",
+    "metallurgical_facilities_medium": "冶金设施（中）",
+    "metallurgical_facilities_small": "冶金设施（小）",
+    "alcoa": "冶金-电解厂",
+    "frymaster_corporation": "机械-总装",
+    "gleason_cutting_tools_corporation": "机械-机械加工",
+    "harbison_fischer": "机械-部装",
+    "materion_buffalo": "冶金-金精炼",
+    "materion_newton": "冶金-钽精炼",
+    "warrick_power_plant": "冶金-发电厂",
+    "tesla": "机械",
+}
+
+FACILITY_TYPE_NAMES: tuple[str, ...] = (
+    "aerospace",
+    "airport_hangar",
+    "machinery_manufacturing",
+    "metallurgical",
+)
+FACILITY_TYPE_TO_INDEX: Mapping[str, int] = {
+    name: index for index, name in enumerate(FACILITY_TYPE_NAMES)
+}
+FACILITY_TYPE_ONEHOT_COLUMNS: tuple[str, ...] = tuple(
+    f"facility_type_oh_{name}" for name in FACILITY_TYPE_NAMES
+)
+
+# Explicit membership is deliberate: it makes the four-family code stable and
+# auditable instead of inferring it from alphabetical facility identity or
+# fragile name prefixes. Counts are 15 / 6 / 7 / 8 respectively.
+FACILITIES_BY_TYPE: Mapping[str, frozenset[str]] = {
+    "aerospace": frozenset(
+        {
+            "Boeing_Satellite",
+            "MPPF",
+            "SLC",
+            "aerospace_large",
+            "aerospace_medium",
+            "aerospace_small",
+            "boeing",
+            "factory",
+            "hanger1and2",
+            "lcc",
+            "lob",
+            "maf",
+            "ocb",
+            "sspf",
+            "vab",
+        }
+    ),
+    "airport_hangar": frozenset(
+        {
+            "Hangar",
+            "TWA",
+            "ligen",
+            "airport_hangar_large",
+            "airport_hangar_medium",
+            "airport_hangar_small",
+        }
+    ),
+    "machinery_manufacturing": frozenset(
+        {
+            "frymaster_corporation",
+            "gleason_cutting_tools_corporation",
+            "harbison_fischer",
+            "tesla",
+            "machinery_manufacturing_large",
+            "machinery_manufacturing_medium",
+            "machinery_manufacturing_small",
+        }
+    ),
+    "metallurgical": frozenset(
+        {
+            "alcoa",
+            "materion_buffalo",
+            "materion_newton",
+            "warrick_power_plant",
+            "yjc",
+            "metallurgical_facilities_large",
+            "metallurgical_facilities_medium",
+            "metallurgical_facilities_small",
+        }
+    ),
+}
+FACILITY_TO_TYPE: Mapping[str, str] = {
+    facility: family
+    for family, facilities in FACILITIES_BY_TYPE.items()
+    for facility in facilities
+}
+
+
+def facility_type_index(facility_name: str, default: float = -1.0) -> float:
+    """Return the stable 0..3 family code, never an identity-derived index."""
+    family = FACILITY_TO_TYPE.get(str(facility_name))
+    return float(FACILITY_TYPE_TO_INDEX[family]) if family is not None else float(default)
+
+
+def facility_type_name(facility_name: str) -> str:
+    """Return one of the four stable family names, or ``unknown``."""
+    return FACILITY_TO_TYPE.get(str(facility_name), "unknown")
+
+
+def facility_type_onehot_features(
+    facility_name: str | None = None,
+    *,
+    type_index: float | None = None,
+) -> Dict[str, float]:
+    """Encode shared family membership alongside per-facility one-hot inputs."""
+    index = facility_type_index(facility_name or "") if type_index is None else float(type_index)
+    return {
+        column: float(math.isclose(index, float(family_index), abs_tol=1e-9))
+        for family_index, column in enumerate(FACILITY_TYPE_ONEHOT_COLUMNS)
+    }
 
 COMBUSTIBLE_CATEGORIES: tuple[str, ...] = (
     "wood_paper",
@@ -193,6 +341,7 @@ COMPACT_EXPERIMENT_FEATURE_COLUMNS: tuple[str, ...] = (
     "azimuth_sin",
     "azimuth_cos",
     "facility_type_index",
+    *FACILITY_TYPE_ONEHOT_COLUMNS,
     "log_floor_area",
     "log_volume",
     "height",
@@ -202,6 +351,11 @@ COMPACT_EXPERIMENT_FEATURE_COLUMNS: tuple[str, ...] = (
     "incident_total_opening_ratio",
     "combustible_target_density",
     "incident_combustible_target_ratio",
+    # Keep only raw fields that are not redundant with the transformed inputs.
+    # Raw heat flux and azimuth are deliberately excluded: log10(flux) and
+    # azimuth sin/cos retain their useful information with fewer dimensions.
+    "heat_elevation_deg",
+    "radiation_duration_ms",
 )
 
 _CASE_RE = re.compile(
@@ -214,6 +368,25 @@ _CASE_RE = re.compile(
 )
 
 _RECORD_RE = re.compile(r"&(?P<kind>[A-Z0-9_]+)\b(?P<body>.*?)/", re.IGNORECASE | re.DOTALL)
+
+# Four observed directory names omit one field marker (``_d`` or ``_e``).
+# Keep this narrowly scoped so arbitrary malformed names are still rejected.
+_CASE_MISSING_D_RE = re.compile(
+    r"^(?P<facility>.+?)_q(?P<q>-?\d+(?:\.\d+)?)"
+    r"_a(?P<a>-?\d+(?:\.\d+)?)"
+    r"_e(?P<e>-?\d+(?:\.\d+)?)"
+    r"_(?P<d>-?\d+(?:\.\d+)?)"
+    r"_t(?P<t>-?\d+(?:\.\d+)?)$",
+    re.IGNORECASE,
+)
+_CASE_MISSING_E_RE = re.compile(
+    r"^(?P<facility>.+?)_q(?P<q>-?\d+(?:\.\d+)?)"
+    r"_a(?P<a>-?\d+(?:\.\d+)?)"
+    r"_(?P<e>-?\d+(?:\.\d+)?)"
+    r"_d(?P<d>-?\d+(?:\.\d+)?)"
+    r"_t(?P<t>-?\d+(?:\.\d+)?)$",
+    re.IGNORECASE,
+)
 _FLOAT_RE = re.compile(r"[-+]?(?:\d+(?:\.\d*)?|\.\d+)(?:[Ee][-+]?\d+)?")
 _KEYWORDS: Mapping[str, tuple[str, ...]] = {
     "wood_paper": (
@@ -296,7 +469,8 @@ def grade_name(grade: int) -> str:
 
 
 def parse_case_name(case_name: str) -> CaseParams:
-    match = _CASE_RE.match(str(case_name).strip())
+    text = str(case_name).strip()
+    match = _CASE_RE.match(text) or _CASE_MISSING_D_RE.match(text) or _CASE_MISSING_E_RE.match(text)
     if not match:
         raise ValueError(f"Cannot parse case name: {case_name!r}")
     return CaseParams(
@@ -422,19 +596,26 @@ def directional_case_features(
 
 
 def compact_experimental_features(features: Mapping[str, float]) -> Dict[str, float]:
-    """Build the compact, presentation-facing 20-dim experimental feature set."""
+    """Build the compact, presentation-facing experimental feature set."""
     floor_area = max(float(features.get("domain_floor_area", 0.0)), 0.0)
     volume = max(float(features.get("domain_volume", 0.0)), 0.0)
     azimuth = float(features.get("heat_azimuth_deg", 0.0))
     incident_wall_area = max(_weighted_wall_feature(features, "wall_area", azimuth), 0.0)
+    type_index = float(features.get("facility_type_index", -1.0))
+    family_onehot = facility_type_onehot_features(type_index=type_index)
     return {
+        "heat_flux_kw_m2": float(features.get("heat_flux_kw_m2", 0.0)),
         "heat_flux_log10": float(features.get("heat_flux_log10", 0.0)),
+        "heat_azimuth_deg": float(features.get("heat_azimuth_deg", 0.0)),
+        "heat_elevation_deg": float(features.get("heat_elevation_deg", 0.0)),
+        "radiation_duration_ms": float(features.get("radiation_duration_ms", 0.0)),
         "duration_s": float(features.get("radiation_duration_s", 0.0)),
         "heat_dose_log10": float(features.get("heat_dose_log10", 0.0)),
         "elevation_sin": float(features.get("heat_elevation_sin", 0.0)),
         "azimuth_sin": float(features.get("heat_azimuth_sin", 0.0)),
         "azimuth_cos": float(features.get("heat_azimuth_cos", 0.0)),
-        "facility_type_index": float(features.get("facility_index", 0.0)),
+        "facility_type_index": type_index,
+        **family_onehot,
         "log_floor_area": math.log1p(floor_area),
         "log_volume": math.log1p(volume),
         "height": float(features.get("domain_height", 0.0)),
@@ -880,6 +1061,7 @@ def _onehot_row(facility_name: str, columns: tuple[str, ...]) -> dict[str, float
 def load_experimental_dataset(
     cases_root: Path,
     min_completion: float = 0.0,
+    min_simulation_time_s: float = 100.0,
     drop_constant_zero_facilities: bool = False,
 ) -> pd.DataFrame:
     """Load all usable case rows from ``cases/<facility>/damage_results/`` and
@@ -890,10 +1072,11 @@ def load_experimental_dataset(
     damage outputs under ``damage_results/``. Only ``raw_results/`` was used
     before; the old layout is no longer supported.
 
-    Rows whose ``completion_ratio < min_completion`` are filtered. The default
-    is ``0.0`` because the new simulation pipeline auto-stops early once
-    the heat release rate plateaus, so a low completion still represents a
-    fully-evolved fire (rather than a partial simulation).
+    Rows whose ``completion_ratio < min_completion`` are filtered. A short run
+    is filtered only when its actual ``simulation_time_s < min_simulation_time_s``
+    *and* its Dk remains in grade 0 (基本完好). Short runs that already reached a
+    damage grade are valid observations and are retained. Runtime comes from the
+    damage summary rather than the nominal ``t...`` case-name field.
     """
     from .cases_loader import (
         FacilitySummary,
@@ -906,6 +1089,9 @@ def load_experimental_dataset(
     fds_feature_cache: Dict[Path, Dict[str, float]] = {}
     rows: list[dict[str, object]] = []
     facility_summaries: list[FacilitySummary] = list(iter_facilities(cases_root))
+    facility_alias_map: dict[str, str] = {}
+    source_case_count = 0
+    excluded_short_run_count = 0
 
     for summary in facility_summaries:
         fds_path = summary.fds_path
@@ -916,30 +1102,49 @@ def load_experimental_dataset(
         fds_features = fds_feature_cache[fds_path]
         facility = summary.facility_name
         for case in summary.cases:
+            source_case_count += 1
             try:
                 case_obj = parse_case_name(case.case_name)
             except ValueError:
+                LOG.warning("facility %s: skipping malformed case name %r", facility, case.case_name)
                 continue
-            case_facility = case_obj.facility
-            if case_facility != facility and not facility.startswith(case_facility):
-                continue
+            # The directory is the canonical facility identity. Some datasets use
+            # a historical case prefix (e.g. ligen -> hangar_ligen), which must not
+            # cause the entire facility to be silently discarded.
+            facility_alias_map.setdefault(case_obj.facility, facility)
             completion = case.completion_ratio
             if not math.isfinite(completion) or completion < min_completion:
                 continue
+            simulation_time_s = float(case.simulation_time_s)
+            if not math.isfinite(simulation_time_s):
+                continue
             dk = float(case.dk)
             if not math.isfinite(dk) or dk < 0.0 or dk > 1.0:
+                continue
+            if (
+                simulation_time_s < float(min_simulation_time_s)
+                and dk_to_grade(dk) == 0
+            ):
+                excluded_short_run_count += 1
                 continue
             row: dict[str, object] = {
                 **fds_features,
                 **case_condition_features(case_obj),
                 **directional_case_features(fds_features, case_obj),
                 "facility_name": facility,
+                "facility_classification_zh": FACILITY_CLASSIFICATION_ZH.get(
+                    facility, facility
+                ),
+                "facility_type_name": facility_type_name(facility),
+                "facility_type_index": facility_type_index(
+                    facility, default=float("nan")
+                ),
                 "case_name": case.case_name,
-                "csv_file": f"{facility}/damage_results/04_all_cases_Dk_summary.csv",
+                "csv_file": str(case.source_csv.relative_to(cases_root)) if case.source_csv else "",
                 "fds_file": fds_path.name,
                 "source_damage_grade": case.damage_grade_raw,
                 "completion_ratio": completion,
-                "simulation_time_s": case.simulation_time_s,
+                "simulation_time_s": simulation_time_s,
                 "target_T_END_s": case.target_t_end_s,
                 "Dk": dk,
                 "dk_grade": dk_to_grade(dk),
@@ -961,6 +1166,9 @@ def load_experimental_dataset(
     facilities = sorted(df["facility_name"].unique())
     facility_index = {name: idx for idx, name in enumerate(facilities)}
     df["facility_index"] = df["facility_name"].map(facility_index).astype(float)
+    # Unknown/synthetic facilities receive -1 and all-zero family one-hot
+    # values; never leak an alphabetical identity index into the family code.
+    df["facility_type_index"] = df["facility_type_index"].fillna(-1.0)
 
     onehot_columns = _ensure_onehot_columns(facilities)
     onehot_rows = [_onehot_row(name, onehot_columns) for name in df["facility_name"]]
@@ -984,6 +1192,11 @@ def load_experimental_dataset(
 
     df = df.drop(columns=[c for c in compact_columns if c in df.columns])
     df = pd.concat([df, compact_df], axis=1)
-    df.attrs["facility_onehot_columns"] = list(onehot_columns)
-    df.attrs["facility_index_map"] = dict(facility_index)
-    return df.reset_index(drop=True)
+    result = df.reset_index(drop=True)
+    result.attrs["facility_onehot_columns"] = list(onehot_columns)
+    result.attrs["facility_index_map"] = dict(facility_index)
+    result.attrs["facility_alias_map"] = dict(facility_alias_map)
+    result.attrs["source_case_count"] = int(source_case_count)
+    result.attrs["excluded_short_run_count"] = int(excluded_short_run_count)
+    result.attrs["min_simulation_time_s"] = float(min_simulation_time_s)
+    return result

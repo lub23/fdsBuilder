@@ -45,3 +45,42 @@ def test_program_path_round_trip(tmp_path):
 
     assert load_program_path("fds", config_file=config_file) == "/opt/fds/bin/fds"
     assert json.loads(config_file.read_text())["fds"] == "/opt/fds/bin/fds"
+
+
+def test_damage_facility_resolves_specialized_identity():
+    from services.damage_prediction import resolve_damage_facility
+
+    model = BuildingGroup(name="Frymaster Corporation")
+    assert resolve_damage_facility(model, {"frymaster_corporation"}) == (
+        "frymaster_corporation",
+        None,
+    )
+
+
+def test_damage_facility_resolves_equivalent_scale_from_dimensions():
+    from models.facility import FacilityManager
+    from services.damage_prediction import resolve_damage_facility
+
+    manager = FacilityManager()
+    buildings = []
+    for name in manager.list_buildings("aerospace"):
+        params = manager.params_for_scale("aerospace", name, scale_idx=2)
+        buildings.append(manager.load_equivalent("aerospace", name, params))
+    model = BuildingGroup(name="aerospace", buildings=buildings)
+
+    assert resolve_damage_facility(
+        model,
+        {"aerospace_small", "aerospace_medium", "aerospace_large"},
+    ) == ("aerospace_large", "large")
+
+
+def test_damage_facility_rejects_unknown_custom_model():
+    import pytest
+
+    from services.damage_prediction import (
+        UnsupportedDamageFacility,
+        resolve_damage_facility,
+    )
+
+    with pytest.raises(UnsupportedDamageFacility, match="不在当前代理模型"):
+        resolve_damage_facility(BuildingGroup(name="custom"), {"aerospace_small"})

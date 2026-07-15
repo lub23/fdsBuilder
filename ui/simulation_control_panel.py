@@ -543,8 +543,7 @@ class SimulationControlPanel(QWidget):
 
     # ── 工程快速预测 ────────────────────────────────────────
     def run_predict(self):
-        """运行工程快速预测（使用 agent_damage 的融合模型）"""
-        from PySide6.QtWidgets import QMessageBox
+        """使用真实 FDS 工况训练的设施级 Dk 代理模型进行快速预测。"""
         import time
 
         if not hasattr(self, "model") or not self.model.buildings:
@@ -552,85 +551,67 @@ class SimulationControlPanel(QWidget):
             return
 
         try:
-            from agent_damage.src.inference import (
-                CheckpointError,
-                group_to_facility,
-                list_available_checkpoints,
-                load_predictor_from_checkpoints,
-                nearest_enum,
+            from agent_damage.src.inference.experimental_predictor import (
+                DEFAULT_EXPERIMENTAL_MODEL,
+                load_experimental_dk_predictor,
             )
-            from agent_damage.src.processing.heat_source import (
-                AZIMUTH_OPTIONS,
-                ELEVATION_OPTIONS,
-                HEAT_FLUX_OPTIONS,
-                HeatSourceParams,
+            from services.damage_prediction import (
+                UnsupportedDamageFacility,
+                predict_current_model,
             )
-            from ui.damage_result_dialog import DamageResultDialog
+            from ui.damage_result_dialog import ExperimentalDamageResultDialog
         except ImportError as exc:
             QMessageBox.critical(
                 self.window(),
                 "预测失败",
-                f"无法导入 agent_damage 模块：{exc}",
+                f"无法导入最新毁伤代理模型依赖：{exc}\n\n"
+                "请执行 uv sync 安装 pandas 与 scikit-learn。",
             )
             return
 
-        # 1. Build heat source, clamping UI values to enum-valid options.
-        # UI heat_flux is now kW/m²; convert to nearest enum value (stored as kW/m²).
-        ui_flux_kw = max(self.heat_flux_spin.value(), 1e-3)
         try:
-            heat_source = HeatSourceParams(
-                elevation=ELEVATION_OPTIONS[min(self.heat_elevation_slider.value(), 3)],
-                azimuth=int(nearest_enum(self.heat_azimuth_slider.value(), AZIMUTH_OPTIONS)),
-                duration=self._current_duration(),
-                heat_flux=float(nearest_enum(ui_flux_kw, HEAT_FLUX_OPTIONS)),
+            # The artifact is ~130 MB. Cache the deserialised predictor on the
+            # panel so repeated predictions do not reload it from disk.
+            predictor = getattr(self, "_experimental_damage_predictor", None)
+            if predictor is None:
+                predictor = load_experimental_dk_predictor()
+                self._experimental_damage_predictor = predictor
+        except FileNotFoundError:
+            QMessageBox.warning(
+                self.window(),
+                "预测模型不存在",
+                f"未找到最新模型文件：\n{DEFAULT_EXPERIMENTAL_MODEL}\n\n"
+                "请先运行 agent_damage/scripts/train_experimental.py 生成模型。",
             )
-        except ValueError as exc:
-            QMessageBox.critical(self.window(), "预测失败", f"热源参数无效：{exc}")
-            return
-
-        # 2. Load the ensemble predictor from checkpoints.
-        try:
-            predictor = load_predictor_from_checkpoints()
-        except CheckpointError as exc:
-            available = list_available_checkpoints()
-            msg = str(exc)
-            if available:
-                msg += "\n\n当前检测到: " + ", ".join(available)
-            msg += (
-                "\n\n请先在 agent_damage 目录下运行训练脚本：\n"
-                "    python agent_damage/scripts/generate_data.py\n"
-                "    python agent_damage/scripts/train.py --models svm rf mlp cnn1d"
-            )
-            QMessageBox.warning(self.window(), "预测", msg)
             return
         except Exception as exc:
-            QMessageBox.critical(self.window(), "预测失败", f"加载模型失败：{exc}")
+            QMessageBox.critical(self.window(), "预测失败", f"加载最新模型失败：{exc}")
             return
 
-        # 3. Convert main-app BuildingGroup → agent_damage Facility and predict.
         try:
-            facility = group_to_facility(self.model)
-            if not facility.buildings:
-                QMessageBox.warning(self.window(), "预测", "当前设施没有可预测的建筑")
-                return
             t0 = time.perf_counter()
-            result = predictor.predict_facility(facility, heat_source)
+            context = predict_current_model(self.model, predictor)
             infer_ms = (time.perf_counter() - t0) * 1000.0
+        except UnsupportedDamageFacility as exc:
+            QMessageBox.warning(self.window(), "暂不支持该设施", str(exc))
+            return
         except Exception as exc:
             import traceback
 
             traceback.print_exc()
-            QMessageBox.critical(self.window(), "预测失败", f"推理出错：{exc}")
+            QMessageBox.critical(self.window(), "预测失败", f"生成特征或推理出错：{exc}")
             return
 
-        # 4. Display beautified dialog.
-        model_names = [name.upper() for name in predictor.models.keys()]
-        dialog = DamageResultDialog(
-            facility_result=result,
-            heat_source=heat_source,
+        hs = self.model.heat_source
+        dialog = ExperimentalDamageResultDialog(
+            context=context,
+            heat_source={
+                "azimuth": float(hs.get("azimuth", 0)),
+                "elevation": float(hs.get("elevation", 0)),
+                "heat_flux": float(hs.get("net_heat_flux", 0)),
+                "duration": float(hs.get("duration", 0)),
+            },
             infer_time_ms=infer_ms,
-            model_names=model_names,
-            algorithm="max",
             parent=self,
         )
         dialog.exec()

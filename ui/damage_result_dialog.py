@@ -344,3 +344,117 @@ class DamageResultDialog(QDialog):
         close_btn.clicked.connect(self.accept)
         row.addWidget(close_btn)
         return row
+
+
+EXPERIMENTAL_GRADE_COLORS = {
+    0: {"bright": "#a6e3a1", "dark": "#40a02b", "icon": "🟢"},
+    1: {"bright": "#94e2d5", "dark": "#179299", "icon": "🔵"},
+    2: {"bright": "#f9e2af", "dark": "#df8e1d", "icon": "🟡"},
+    3: {"bright": "#f38ba8", "dark": "#d20f39", "icon": "🔴"},
+}
+
+
+class ExperimentalDamageResultDialog(QDialog):
+    """Display one facility-level prediction from the FDS-trained Dk model."""
+
+    def __init__(
+        self,
+        context: Any,
+        heat_source: dict[str, float],
+        infer_time_ms: float,
+        parent=None,
+    ):
+        super().__init__(parent)
+        self._context = context
+        self._prediction = context.prediction
+        self._heat_source = heat_source
+        self._infer_time_ms = infer_time_ms
+        self.setWindowTitle("毁伤等级预测结果")
+        self.setMinimumSize(680, 390)
+        self.setStyleSheet(f"QDialog {{ background: {BG_ROOT}; }}")
+        self._setup_experimental_ui()
+
+    def _setup_experimental_ui(self) -> None:
+        root = QVBoxLayout(self)
+        root.setContentsMargins(18, 18, 18, 18)
+        root.setSpacing(12)
+        root.addWidget(self._build_experimental_header())
+        root.addWidget(self._build_experimental_heat_panel())
+        root.addStretch()
+
+        close_row = QHBoxLayout()
+        close_row.addStretch()
+        close_btn = QPushButton("关闭")
+        close_btn.setFixedSize(100, 34)
+        close_btn.setCursor(Qt.PointingHandCursor)
+        close_btn.setStyleSheet(
+            f"QPushButton {{ background: {ACCENT_BLUE}; color: {BG_ROOT}; "
+            "border: none; border-radius: 6px; font-weight: bold; }"
+            "QPushButton:hover { background: #b4befe; }"
+        )
+        close_btn.clicked.connect(self.accept)
+        close_row.addWidget(close_btn)
+        root.addLayout(close_row)
+
+    def _build_experimental_header(self) -> QFrame:
+        grade = int(self._prediction.damage_grade)
+        palette = EXPERIMENTAL_GRADE_COLORS[grade]
+        banner = QFrame()
+        banner.setStyleSheet(
+            f"""
+            QFrame {{
+                background: qlineargradient(x1:0, y1:0, x2:1, y2:1,
+                    stop:0 {palette['bright']}, stop:1 {palette['dark']});
+                border-radius: 14px;
+            }}
+            QLabel {{ background: transparent; color: {BG_ROOT}; }}
+            """
+        )
+        layout = QVBoxLayout(banner)
+        layout.setContentsMargins(28, 22, 28, 22)
+        title = QLabel(
+            f"{palette['icon']}  整体毁伤等级：{self._prediction.damage_grade_name}"
+        )
+        title.setAlignment(Qt.AlignCenter)
+        title.setWordWrap(True)
+        title.setStyleSheet("font-size: 24px; font-weight: 800;")
+        layout.addWidget(title)
+        accuracy = self._prediction.validation_accuracy
+        subtitle_parts = []
+        if accuracy is not None:
+            subtitle_parts.append(f"五折验证准确率 {accuracy * 100:.1f}%")
+        overall_accuracy = self._prediction.overall_validation_accuracy
+        if (
+            overall_accuracy is not None
+            and accuracy is not None
+            and abs(overall_accuracy - accuracy) > 5e-4
+        ):
+            subtitle_parts.append(f"整体 {overall_accuracy * 100:.1f}%")
+        subtitle_parts.append(f"推理 {self._infer_time_ms / 1000.0:.2f} s")
+        subtitle = QLabel("  •  ".join(subtitle_parts))
+        subtitle.setAlignment(Qt.AlignCenter)
+        subtitle.setStyleSheet("font-size: 13px; font-weight: 500;")
+        layout.addWidget(subtitle)
+        return banner
+
+    def _build_experimental_heat_panel(self) -> QFrame:
+        panel = QFrame()
+        panel.setStyleSheet(f"QFrame {{ background: {BG_CARD}; border-radius: 10px; }}")
+        grid = QGridLayout(panel)
+        grid.setContentsMargins(18, 14, 18, 14)
+        title = QLabel("🔥 本次预测工况")
+        title.setStyleSheet(f"color: {ACCENT_BLUE}; font-weight: bold; font-size: 14px;")
+        grid.addWidget(title, 0, 0, 1, 4)
+        items = (
+            ("方位角", f"{self._heat_source['azimuth']:g}°"),
+            ("俯仰角", f"{self._heat_source['elevation']:g}°"),
+            ("目标热通量", f"{self._heat_source['heat_flux']:g} kW/m²"),
+            ("持续时间", f"{self._heat_source['duration']:g} s"),
+        )
+        for column, (name, value) in enumerate(items):
+            label = QLabel(f"{name}\n{value}")
+            label.setAlignment(Qt.AlignCenter)
+            label.setStyleSheet(f"color: {FG_MAIN}; font-size: 13px;")
+            grid.addWidget(label, 1, column)
+            grid.setColumnStretch(column, 1)
+        return panel

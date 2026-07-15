@@ -58,6 +58,7 @@ class FacilityCase:
     total_asset_quantity: int | None = None
     case_subdir: Path | None = None
     fds_file: str = ""
+    source_csv: Path | None = None
 
 
 @dataclass(frozen=True)
@@ -202,25 +203,27 @@ def _per_case_diagnostic_table(facility_root: Path) -> pd.DataFrame | None:
     return out
 
 
-def _load_facility_rollup(facility_name: str, facility_root: Path) -> list[FacilityCase]:
-    rollup = facility_root / "04_all_cases_Dk_summary.csv"
-    if not rollup.is_file():
-        LOG.warning("facility %s: missing %s", facility_name, rollup)
-        return []
+def _rows_from_summary(
+    facility_name: str,
+    damage_results: Path,
+    csv_path: Path,
+    *,
+    default_case_name: str = "",
+) -> list[FacilityCase]:
+    """Normalize rows from either the facility rollup or one per-case summary."""
     try:
-        df = _read_csv(rollup)
+        df = _read_csv(csv_path)
     except (OSError, pd.errors.ParserError, UnicodeDecodeError) as exc:
-        LOG.warning("facility %s: failed to read %s (%s)", facility_name, rollup, exc)
+        LOG.warning("facility %s: failed to read %s (%s)", facility_name, csv_path, exc)
         return []
     if df.empty:
         return []
 
     columns = df.columns.tolist()
-
     case_col = _resolve_case_name_column(columns)
-    if case_col is None:
+    if case_col is None and not default_case_name:
         LOG.warning(
-            "facility %s: rollup missing case identifier column (case_name/case); headers=%s",
+            "facility %s: summary missing case identifier column (case_name/case); headers=%s",
             facility_name,
             columns[:5],
         )
@@ -229,7 +232,8 @@ def _load_facility_rollup(facility_name: str, facility_root: Path) -> list[Facil
     rows: list[FacilityCase] = []
     for _, raw_row in df.iterrows():
         row_dict = raw_row.to_dict()
-        case_name = str(row_dict.get(case_col) or "").strip()
+        case_name = str(row_dict.get(case_col) or "").strip() if case_col else default_case_name
+        case_name = case_name or default_case_name
         if not case_name:
             continue
         dk_value = _resolve_dk(row_dict, columns)
@@ -243,11 +247,18 @@ def _load_facility_rollup(facility_name: str, facility_root: Path) -> list[Facil
         asset_value = _resolve_optional_float(row_dict, "total_asset_value_CNY")
         if asset_value is None:
             asset_value = _resolve_optional_float(row_dict, "total_repair_base_value_CNY")
+        if asset_value is None:
+            asset_value = _resolve_optional_float(row_dict, "total_value_CNY")
+        if asset_value is None:
+            asset_value = _resolve_optional_float(row_dict, "total_base_value_CNY")
         asset_quantity = _resolve_optional_int(row_dict, "total_asset_quantity")
         if asset_quantity is None:
             asset_quantity = _resolve_optional_int(row_dict, "asset_quantity")
         if asset_quantity is None:
+            asset_quantity = _resolve_optional_int(row_dict, "asset_quantity_total")
+        if asset_quantity is None:
             asset_quantity = _resolve_optional_int(row_dict, "asset_count")
+        case_subdir = damage_results / case_name
         rows.append(FacilityCase(
             facility_name=facility_name,
             case_name=case_name,
@@ -259,9 +270,50 @@ def _load_facility_rollup(facility_name: str, facility_root: Path) -> list[Facil
             total_repair_cost_cny=repair_cost,
             total_asset_value_cny=asset_value,
             total_asset_quantity=asset_quantity,
-            case_subdir=None,
-            fds_file="",
+            case_subdir=case_subdir if case_subdir.is_dir() else None,
+            source_csv=csv_path,
         ))
+    return rows
+
+
+def _load_facility_rollup(facility_name: str, damage_results: Path) -> list[FacilityCase]:
+    """Load a facility rollup and supplement it with newly-added case folders.
+
+    The rollup is preferred because it is cheap to read and already contains one
+    row per case.  Contributors may copy a new case directory before regenerating
+    ``04_all_cases_Dk_summary.csv``; any such directory is read from its own
+    ``Dk_summary_*.csv`` so incremental/incomplete facilities remain usable.
+    """
+    rollup = damage_results / "04_all_cases_Dk_summary.csv"
+    rows = _rows_from_summary(facility_name, damage_results, rollup) if rollup.is_file() else []
+    if not rollup.is_file():
+        LOG.warning("facility %s: missing %s; falling back to per-case summaries", facility_name, rollup)
+
+    deduplicated: list[FacilityCase] = []
+    seen: set[str] = set()
+    for row in rows:
+        if row.case_name not in seen:
+            deduplicated.append(row)
+            seen.add(row.case_name)
+    rows = deduplicated
+
+    for case_dir in sorted(path for path in damage_results.iterdir() if path.is_dir()):
+        if case_dir.name in seen:
+            continue
+        summaries = sorted(case_dir.glob("Dk_summary_*.csv"))
+        if not summaries:
+            LOG.warning("facility %s: case %s has no Dk summary", facility_name, case_dir.name)
+            continue
+        additions = _rows_from_summary(
+            facility_name,
+            damage_results,
+            summaries[0],
+            default_case_name=case_dir.name,
+        )
+        for row in additions:
+            if row.case_name not in seen:
+                rows.append(row)
+                seen.add(row.case_name)
     return rows
 
 

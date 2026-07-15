@@ -1,25 +1,13 @@
-"""Agent damage prediction module (rebuilt)."""
+"""FDS damage prediction using the production ExtraTrees surrogate."""
 
-from .src import (
-    Building,
-    BuildingDamageResult,
-    DamageLevel,
-    EnsemblePredictor,
-    Facility,
-    FacilityDamageResult,
-    FacilityType,
-    HeatSourceParams,
-    load_core_facilities,
+from .src.inference.experimental_predictor import (
+    DkPrediction,
+    ExperimentalDkPredictor,
+    load_experimental_dk_predictor,
 )
 
 __all__ = [
-    "Building",
-    "BuildingDamageResult",
-    "DamageLevel",
-    "EnsemblePredictor",
-    "Facility",
-    "FacilityDamageResult",
-    "FacilityType",
-    "HeatSourceParams",
-    "load_core_facilities",
+    "DkPrediction",
+    "ExperimentalDkPredictor",
+    "load_experimental_dk_predictor",
 ]

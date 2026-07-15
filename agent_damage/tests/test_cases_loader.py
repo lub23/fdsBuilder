@@ -24,6 +24,7 @@ from agent_damage.src.data.cases_loader import (  # noqa: E402
     parse_case_name,
 )
 from agent_damage.src.data.experimental import (  # noqa: E402
+    FACILITY_TYPE_ONEHOT_COLUMNS,
     _ensure_onehot_columns,
     _facility_onehot_column,
     _onehot_row,
@@ -195,7 +196,7 @@ def test_facility_onehot_columns_helpers() -> None:
     assert sum(row.values()) == 1.0
 
 
-def test_compact_experimental_features_uses_facility_index() -> None:
+def test_compact_experimental_features_never_uses_identity_as_family() -> None:
     features = {
         "facility_index": 5,
         "domain_floor_area": 3600.0,
@@ -211,7 +212,8 @@ def test_compact_experimental_features_uses_facility_index() -> None:
         "incident_asset_front_ratio": 0.1,
     }
     pack = compact_experimental_features(features)
-    assert pack["facility_type_index"] == 5
+    assert pack["facility_type_index"] == -1.0
+    assert sum(pack[column] for column in FACILITY_TYPE_ONEHOT_COLUMNS) == 0.0
     assert pack["log_floor_area"] >= 0.0
 
 
@@ -308,9 +310,9 @@ def _make_fds_text() -> str:
 
 def test_load_experimental_dataset_honours_min_completion_threshold(cases_root: Path) -> None:
     df = load_experimental_dataset(cases_root, min_completion=0.05)
-    bad_min = df[df["facility_name"] == "beta"][df["completion_ratio"] < 0.05]
+    bad_min = df.loc[(df["facility_name"] == "beta") & (df["completion_ratio"] < 0.05)]
     assert bad_min.empty
-    full_run = df[df["facility_name"] == "beta"][df["completion_ratio"] >= 0.05]
+    full_run = df.loc[(df["facility_name"] == "beta") & (df["completion_ratio"] >= 0.05)]
     assert not full_run.empty
 
 
@@ -320,6 +322,29 @@ def test_load_experimental_dataset_default_min_completion_is_zero(
     df = load_experimental_dataset(cases_root)
     assert (df["completion_ratio"] >= 0.0).all()
     assert df.attrs["facility_onehot_columns"]
+
+
+def test_load_experimental_dataset_excludes_only_short_basic_intact_cases(
+    cases_root: Path,
+) -> None:
+    damaged_case = "alpha_q20000_a270_e60_d7500_t1800"
+    case_dir = cases_root / "alpha" / "damage_results" / damaged_case
+    case_dir.mkdir()
+    _write_csv(
+        case_dir / f"Dk_summary_{damaged_case}.csv",
+        "case_name,Dk,damage_level,simulation_time_s,target_T_END_s,completion_ratio",
+        [f"{damaged_case},0.50,严重破坏,20,1800,0.01"],
+    )
+
+    filtered = load_experimental_dataset(cases_root, min_simulation_time_s=50.0)
+    assert not ((filtered["simulation_time_s"] < 50.0) & (filtered["dk_grade"] == 0)).any()
+    retained = filtered.loc[filtered["case_name"] == damaged_case]
+    assert len(retained) == 1
+    assert retained.iloc[0]["dk_grade"] == 3
+    assert filtered.attrs["excluded_short_run_count"] == 1
+
+    unfiltered = load_experimental_dataset(cases_root, min_simulation_time_s=-1.0)
+    assert ((unfiltered["simulation_time_s"] < 50.0) & (unfiltered["dk_grade"] == 0)).any()
 
 
 def test_parse_case_name_round_trip() -> None:
@@ -346,3 +371,59 @@ def test_json_dump_artifact_loads(cases_root: Path) -> None:
     j = json.dumps(artifact)
     reloaded = json.loads(j)
     assert reloaded == artifact
+
+
+def test_iter_facilities_supplements_stale_rollup_from_per_case_summary(
+    cases_root: Path,
+) -> None:
+    case_name = "alpha_q20000_a270_e60_d7500_t1800"
+    case_dir = cases_root / "alpha" / "damage_results" / case_name
+    case_dir.mkdir()
+    per_case = _write_csv(
+        case_dir / f"Dk_summary_{case_name}.csv",
+        "case_name,Dk,damage_level,simulation_time_s,target_T_END_s,completion_ratio",
+        [f"{case_name},0.75,严重破坏,1800,1800,1.0"],
+    )
+
+    alpha = next(item for item in iter_facilities(cases_root) if item.facility_name == "alpha")
+    added = next(case for case in alpha.cases if case.case_name == case_name)
+    assert len(alpha.cases) == 4
+    assert added.dk == 0.75
+    assert added.case_subdir == case_dir
+    assert added.source_csv == per_case
+
+
+def test_dataset_uses_directory_as_canonical_facility_identity(cases_root: Path) -> None:
+    rollup = cases_root / "alpha" / "damage_results" / "04_all_cases_Dk_summary.csv"
+    rollup.write_text(
+        rollup.read_text(encoding="utf-8").replace("alpha_q", "historic_alpha_q"),
+        encoding="utf-8",
+    )
+
+    df = load_experimental_dataset(cases_root)
+    alpha = df[df["facility_name"] == "alpha"]
+    assert len(alpha) == 3
+    assert df.attrs["facility_alias_map"]["historic_alpha"] == "alpha"
+
+
+def test_predictor_applies_persisted_facility_alias(cases_root: Path) -> None:
+    fds = cases_root / "alpha" / "alpha_q500_a0_e0_d1360_t1800.fds"
+    fds.write_text(_make_fds_text(), encoding="utf-8")
+    onehot = ("facility_oh_alpha", "facility_oh_historic_alpha")
+    predictor = ExperimentalDkPredictor(
+        model=_ConstantRegressor(0.1),
+        feature_columns=onehot,
+        facility_index_map={"alpha": 0},
+        facility_onehot_columns=onehot,
+        facility_alias_map={"historic_alpha": "alpha"},
+    )
+
+    row = predictor._feature_row(fds, "historic_alpha_q500_a0_e0_d1360_t1800")
+    assert row.tolist() == [[1.0, 0.0]]
+
+
+def test_experimental_case_parser_accepts_observed_missing_field_markers() -> None:
+    missing_d = experimental_parse_case_name("Hangar_q1500_a270_e45_2100_t1800")
+    assert missing_d.radiation_duration_ms == 2100
+    missing_e = experimental_parse_case_name("TWA_q15000_a270_0_d1360_t1800")
+    assert missing_e.heat_elevation_deg == 0

@@ -5,6 +5,7 @@ from __future__ import annotations
 from typing import Any, Dict
 
 import numpy as np
+from sklearn.base import BaseEstimator, RegressorMixin, clone
 from sklearn.metrics import (
     accuracy_score,
     confusion_matrix,
@@ -17,15 +18,57 @@ from sklearn.metrics import (
 from ..data.experimental import DK_THRESHOLDS, dk_to_grade
 
 
-def logit_transform(y: np.ndarray) -> np.ndarray:
-    eps = 1e-4
-    clipped = np.clip(np.asarray(y, dtype=float), eps, 1.0 - eps)
-    return np.log(clipped / (1.0 - clipped))
+class GradeConstrainedRegressor(RegressorMixin, BaseEstimator):
+    """Continuous Dk regressor constrained by an auxiliary grade classifier.
 
+    The continuous estimator preserves Dk magnitude for plots and engineering
+    diagnostics.  The classifier is trained on the same folds to optimise the
+    four user-facing damage grades directly.  Whenever the two heads disagree,
+    the returned Dk is clipped into the interval selected by the classifier;
+    therefore the public Dk thresholds and the reported grade can never
+    contradict each other.
+    """
 
-def inverse_logit_transform(z: np.ndarray) -> np.ndarray:
-    z = np.asarray(z, dtype=float)
-    return 1.0 / (1.0 + np.exp(-z))
+    def __init__(
+        self,
+        regressor: Any,
+        classifier: Any,
+        thresholds: tuple[float, float, float] = DK_THRESHOLDS,
+    ) -> None:
+        self.regressor = regressor
+        self.classifier = classifier
+        self.thresholds = thresholds
+
+    def fit(self, X: np.ndarray, y: np.ndarray) -> "GradeConstrainedRegressor":
+        y_array = np.asarray(y, dtype=float)
+        grades = np.asarray(
+            [dk_to_grade(value, tuple(self.thresholds)) for value in y_array],
+            dtype=int,
+        )
+        self.regressor_ = clone(self.regressor).fit(X, y_array)
+        self.classifier_ = clone(self.classifier).fit(X, grades)
+        self.n_features_in_ = int(np.asarray(X).shape[1])
+        return self
+
+    def predict(self, X: np.ndarray) -> np.ndarray:
+        continuous = np.clip(
+            np.asarray(self.regressor_.predict(X), dtype=float), 0.0, 1.0
+        )
+        grades = np.asarray(self.classifier_.predict(X), dtype=int)
+        thresholds = np.asarray(tuple(self.thresholds), dtype=float)
+        lower = np.concatenate(([0.0], thresholds))
+        # dk_to_grade uses inclusive lower bounds and exclusive upper bounds.
+        upper = np.concatenate((thresholds, [1.0]))
+        upper = np.nextafter(upper, -np.inf)
+        upper[-1] = 1.0
+        return np.clip(continuous, lower[grades], upper[grades])
+
+    @property
+    def feature_importances_(self) -> np.ndarray:
+        """Average both fitted heads' tree importances for reporting."""
+        reg = np.asarray(self.regressor_.feature_importances_, dtype=float)
+        clf = np.asarray(self.classifier_.feature_importances_, dtype=float)
+        return (reg + clf) / 2.0
 
 
 def clipped_dk_predictions(model: Any, X: np.ndarray) -> np.ndarray:
