@@ -1,5 +1,0 @@
-uv add PySide6 pyvista pyvistaqt numpy Pillow
-
-uv add pymupdf opencv-python paddlepaddle paddleocr
-
-uv add python-dotenv
