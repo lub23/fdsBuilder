@@ -41,10 +41,10 @@ def test_results_paths_match_precomputed_layout():
 
 def test_program_path_round_trip(tmp_path):
     config_file = tmp_path / "program_paths.json"
-    save_program_path("fds", "/opt/fds/bin/fds", config_file=config_file)
+    save_program_path("test_tool", "/opt/fds/bin/test_tool", config_file=config_file)
 
-    assert load_program_path("fds", config_file=config_file) == "/opt/fds/bin/fds"
-    assert json.loads(config_file.read_text())["fds"] == "/opt/fds/bin/fds"
+    assert load_program_path("test_tool", config_file=config_file) == "/opt/fds/bin/test_tool"
+    assert json.loads(config_file.read_text())["test_tool"] == "/opt/fds/bin/test_tool"
 
 
 def test_damage_facility_resolves_specialized_identity():

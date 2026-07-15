@@ -219,10 +219,6 @@ class MainWindow(QMainWindow):
         # 设置菜单
         settings_menu = menubar.addMenu("设置")
 
-        fds_path_action = QAction("设置FDS程序路径", self)
-        fds_path_action.triggered.connect(self.set_fds_path)
-        settings_menu.addAction(fds_path_action)
-
         smv_path_action = QAction("设置Smokeview程序路径", self)
         smv_path_action.triggered.connect(self.set_smv_path)
         settings_menu.addAction(smv_path_action)
@@ -497,10 +493,6 @@ class MainWindow(QMainWindow):
             QMessageBox.information(
                 self, "设置成功", f"{display_name}路径已设置为:\n{file_path}"
             )
-
-    def set_fds_path(self):
-        """设置FDS程序路径"""
-        self._choose_program_path("fds", "FDS")
 
     def set_smv_path(self):
         """设置Smokeview程序路径"""
