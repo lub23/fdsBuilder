@@ -380,7 +380,12 @@ class ExperimentalDamageResultDialog(QDialog):
         root.setSpacing(12)
         root.addWidget(self._build_experimental_header())
         root.addWidget(self._build_experimental_heat_panel())
-        root.addStretch()
+        subtarget_grades = getattr(self._prediction, "subtarget_grades", None)
+        if subtarget_grades:
+            root.addWidget(self._build_subtarget_title())
+            root.addWidget(self._build_subtarget_list(), stretch=1)
+        else:
+            root.addStretch()
 
         close_row = QHBoxLayout()
         close_row.addStretch()
@@ -395,6 +400,67 @@ class ExperimentalDamageResultDialog(QDialog):
         close_btn.clicked.connect(self.accept)
         close_row.addWidget(close_btn)
         root.addLayout(close_row)
+
+    def _build_subtarget_title(self) -> QLabel:
+        title = QLabel(f"📍 各子目标毁伤等级（{len(self._prediction.subtarget_grades)} 个）")
+        title.setStyleSheet(
+            f"color: {ACCENT_BLUE}; font-weight: bold; font-size: 14px;"
+        )
+        return title
+
+    def _build_subtarget_list(self) -> QScrollArea:
+        scroll = QScrollArea()
+        scroll.setWidgetResizable(True)
+        scroll.setFrameShape(QFrame.NoFrame)
+        scroll.setStyleSheet(
+            "QScrollArea { background: transparent; border: none; }\n"
+            f"QScrollBar:vertical {{ background: {BG_ROOT}; width: 10px; }}\n"
+            f"QScrollBar::handle:vertical {{ background: {BG_CARD_SOFT};"
+            " border-radius: 4px; min-height: 24px; }"
+        )
+        inner = QWidget()
+        inner.setStyleSheet("background: transparent;")
+        v = QVBoxLayout(inner)
+        v.setContentsMargins(0, 0, 0, 0)
+        v.setSpacing(6)
+        for st in self._prediction.subtarget_grades:
+            v.addWidget(self._subtarget_card(st))
+        v.addStretch()
+        scroll.setWidget(inner)
+        return scroll
+
+    def _subtarget_card(self, st: dict[str, object]) -> QFrame:
+        grade = int(st["grade"])
+        palette = EXPERIMENTAL_GRADE_COLORS.get(
+            grade, {"dark": "#7f849c", "icon": "•", "bright": "#cdd6f4"}
+        )
+        card = QFrame()
+        card.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Fixed)
+        card.setStyleSheet(
+            f"""
+            QFrame {{
+                background: {BG_CARD};
+                border-left: 4px solid {palette['dark']};
+                border-radius: 8px;
+            }}
+            QLabel {{ background: transparent; }}
+            """
+        )
+        h = QHBoxLayout(card)
+        h.setContentsMargins(14, 10, 14, 10)
+        h.setSpacing(16)
+        name_lbl = QLabel(f"{palette['icon']} {st.get('cn_name', st.get('name', ''))}")
+        name_lbl.setStyleSheet(
+            f"color: {FG_MAIN}; font-weight: bold; font-size: 14px;"
+        )
+        h.addWidget(name_lbl, stretch=1)
+        grade_lbl = QLabel(st.get("grade_name", ""))
+        grade_lbl.setAlignment(Qt.AlignRight | Qt.AlignVCenter)
+        grade_lbl.setStyleSheet(
+            f"color: {palette['dark']}; font-weight: bold; font-size: 14px;"
+        )
+        h.addWidget(grade_lbl)
+        return card
 
     def _build_experimental_header(self) -> QFrame:
         grade = int(self._prediction.damage_grade)
@@ -419,17 +485,22 @@ class ExperimentalDamageResultDialog(QDialog):
         title.setWordWrap(True)
         title.setStyleSheet("font-size: 24px; font-weight: 800;")
         layout.addWidget(title)
-        accuracy = self._prediction.validation_accuracy
+        # Keep the result auditable at a glance: for specific facilities the
+        # continuous Dk stays visible; equivalent facilities report only the
+        # overall and per-subtarget grades.
         subtitle_parts = []
-        if accuracy is not None:
-            subtitle_parts.append(f"五折验证准确率 {accuracy * 100:.1f}%")
+        subtarget_grades = getattr(self._prediction, "subtarget_grades", None)
+        if not subtarget_grades:
+            subtitle_parts.append(f"Dk {self._prediction.predicted_dk:.4f}")
         overall_accuracy = self._prediction.overall_validation_accuracy
-        if (
-            overall_accuracy is not None
-            and accuracy is not None
-            and abs(overall_accuracy - accuracy) > 5e-4
-        ):
-            subtitle_parts.append(f"整体 {overall_accuracy * 100:.1f}%")
+        if overall_accuracy is not None:
+            subtitle_parts.append(f"综合验证准确率 {overall_accuracy * 100:.1f}%")
+        result_source = (
+            "权威工况结果"
+            if self._prediction.used_observed_result
+            else "代理模型预测"
+        )
+        subtitle_parts.append(result_source)
         subtitle_parts.append(f"推理 {self._infer_time_ms / 1000.0:.2f} s")
         subtitle = QLabel("  •  ".join(subtitle_parts))
         subtitle.setAlignment(Qt.AlignCenter)
@@ -442,7 +513,8 @@ class ExperimentalDamageResultDialog(QDialog):
         panel.setStyleSheet(f"QFrame {{ background: {BG_CARD}; border-radius: 10px; }}")
         grid = QGridLayout(panel)
         grid.setContentsMargins(18, 14, 18, 14)
-        title = QLabel("🔥 本次预测工况")
+        title_text = "🔥 本次预测工况"
+        title = QLabel(title_text)
         title.setStyleSheet(f"color: {ACCENT_BLUE}; font-weight: bold; font-size: 14px;")
         grid.addWidget(title, 0, 0, 1, 4)
         items = (

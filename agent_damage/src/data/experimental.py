@@ -358,6 +358,64 @@ COMPACT_EXPERIMENT_FEATURE_COLUMNS: tuple[str, ...] = (
     "radiation_duration_ms",
 )
 
+# Per-model input columns for single-template surrogates.  When one model is
+# trained per facility template, the building descriptors that are constant
+# inside that template (floor area, volume, height, combustible density,
+# facility type and one-hot codes) carry zero within-model information and are
+# excluded.  The remaining columns describe the radiation condition and the
+# azimuth-dependent incident-face exposure, i.e. the only inputs that vary
+# across cases of the same template.  ``incident_door_window_count`` and
+# ``incident_door_window_ratio`` are included in the candidate set because they
+# can be constant for some templates (wall openings are azimuth-weighted); the
+# caller runs a variance check per facility and drops those that do not vary.
+PER_MODEL_FEATURE_CANDIDATES: tuple[str, ...] = (
+    "heat_flux_log10",
+    "duration_s",
+    "heat_dose_log10",
+    "elevation_sin",
+    "azimuth_sin",
+    "azimuth_cos",
+    "heat_elevation_deg",
+    "radiation_duration_ms",
+    "incident_wall_area_log",
+    "incident_door_window_count",
+    "incident_door_window_ratio",
+    "incident_total_opening_ratio",
+    "incident_combustible_target_ratio",
+)
+
+PER_MODEL_VARIANCE_CHECKED_COLUMNS: tuple[str, ...] = (
+    "incident_door_window_count",
+    "incident_door_window_ratio",
+)
+
+
+def select_per_model_feature_columns(
+    facility_df: pd.DataFrame,
+    candidates: tuple[str, ...] = PER_MODEL_FEATURE_CANDIDATES,
+    variance_checked: tuple[str, ...] = PER_MODEL_VARIANCE_CHECKED_COLUMNS,
+) -> list[str]:
+    """Return the feature columns that actually vary inside one facility.
+
+    ``facility_df`` must contain only rows of a single facility template.
+    Columns that are constant within the template are dropped from the
+    candidate set, so the resulting model input contains only physically
+    varying drivers.
+    """
+    if facility_df.empty:
+        return list(candidates)
+    selected: list[str] = []
+    for column in candidates:
+        if column not in facility_df.columns:
+            continue
+        values = facility_df[column].to_numpy(dtype=float)
+        if not np.all(np.isfinite(values)):
+            values = np.nan_to_num(values, nan=0.0, posinf=0.0, neginf=0.0)
+        if column in variance_checked and float(np.nanstd(values)) < 1e-12:
+            continue
+        selected.append(column)
+    return selected
+
 _CASE_RE = re.compile(
     r"^(?P<facility>.+?)_q(?P<q>-?\d+(?:\.\d+)?)"
     r"_a(?P<a>-?\d+(?:\.\d+)?)"
@@ -1072,11 +1130,13 @@ def load_experimental_dataset(
     damage outputs under ``damage_results/``. Only ``raw_results/`` was used
     before; the old layout is no longer supported.
 
-    Rows whose ``completion_ratio < min_completion`` are filtered. A short run
-    is filtered only when its actual ``simulation_time_s < min_simulation_time_s``
-    *and* its Dk remains in grade 0 (基本完好). Short runs that already reached a
-    damage grade are valid observations and are retained. Runtime comes from the
-    damage summary rather than the nominal ``t...`` case-name field.
+    Rows whose ``completion_ratio < min_completion`` are filtered. A run is
+    kept when its actual ``simulation_time_s`` covers the heat-source
+    duration (``radiation_duration_s`` parsed from the case name) *or* its Dk
+    already reached 严重破坏 (>= 0.40): either condition means the damage
+    state is trustworthy. ``min_simulation_time_s`` acts as an extra absolute
+    lower bound (0.0 disables it). Runtime comes from the damage summary
+    rather than the nominal ``t...`` case-name field.
     """
     from .cases_loader import (
         FacilitySummary,
@@ -1121,9 +1181,12 @@ def load_experimental_dataset(
             dk = float(case.dk)
             if not math.isfinite(dk) or dk < 0.0 or dk > 1.0:
                 continue
+            heat_source_duration_s = case_obj.radiation_duration_ms / 1000.0
             if (
-                simulation_time_s < float(min_simulation_time_s)
-                and dk_to_grade(dk) == 0
+                simulation_time_s < max(
+                    heat_source_duration_s, float(min_simulation_time_s)
+                )
+                and dk < DK_THRESHOLDS[2]
             ):
                 excluded_short_run_count += 1
                 continue

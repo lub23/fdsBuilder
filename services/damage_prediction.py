@@ -9,6 +9,7 @@ the model with the reference feature profile persisted at training time.
 from __future__ import annotations
 
 import math
+import re
 import tempfile
 from dataclasses import dataclass
 from pathlib import Path
@@ -53,6 +54,34 @@ _UI_FACILITY_ALIASES = {
 
 def _normalised_name(value: str) -> str:
     return sanitize_chid(value).strip("_").lower()
+
+
+_CONDITION_SUFFIX_RE = re.compile(r"_q\d+_a\d+_e\d+_d\d+_t\d+$")
+
+
+def default_cases_root() -> Path:
+    """Root directory holding per-facility reference case FDS files."""
+    return Path(__file__).resolve().parents[1] / "agent_damage" / "cases"
+
+
+def reference_case_base_name(
+    facility_name: str, cases_dir: Path | None = None
+) -> str:
+    """Return the CHID prefix of a trained facility's reference case FDS.
+
+    Reference case files are named ``{base}_{condition_suffix}.fds`` where
+    ``base`` is the facility prefix used in the rendered artifacts (e.g.
+    ``hangar_ligen`` for the ``ligen`` code).  Falls back to the facility
+    code itself when no cases directory or FDS file is available.
+    """
+    root = cases_dir or default_cases_root()
+    fac_dir = root / facility_name
+    fds_files = sorted(fac_dir.glob("*.fds")) if fac_dir.is_dir() else []
+    if not fds_files:
+        return facility_name
+    stem = Path(fds_files[0]).stem
+    match = _CONDITION_SUFFIX_RE.search(stem)
+    return stem[: match.start()] if match else stem
 
 
 def _scale_distance(model: Any, facility_name: str, scale_idx: int) -> float:
@@ -149,4 +178,55 @@ def predict_current_model(model: Any, predictor: Any) -> DamagePredictionContext
         facility_name=facility_name,
         ui_facility_name=str(getattr(model, "name", "") or ""),
         scale_name=scale_name,
+    )
+
+
+def predict_facility_by_name(
+    facility_name: str,
+    predictor: Any,
+    heat_source: dict[str, float] | None = None,
+    cases_dir: Path | None = None,
+) -> DamagePredictionContext:
+    """Predict a facility that has a trained split model but no facilities JSON.
+
+    Facilities without a JSON definition (e.g. ``boeing``, ``hanger``, ``ligen``,
+    ``MPPF``, ``SLC`` ...) have no BuildingGroup geometry, so the normal
+    ``predict_current_model`` path (FDS generation from buildings) cannot run.
+    This uses one of the facility's own training-case FDS files as the feature
+    source — the same geometry the model was trained on — and builds the case
+    name from the requested heat-source condition.
+    """
+    cases_root = cases_dir or default_cases_root()
+    known = set(getattr(predictor, "_known_facilities", set()) or set())
+    if facility_name not in known:
+        raise UnsupportedDamageFacility(
+            f"设施“{facility_name}”不在逐设施模型的训练设施中。"
+        )
+    fac_dir = cases_root / facility_name
+    if not fac_dir.is_dir():
+        raise UnsupportedDamageFacility(
+            f"设施“{facility_name}”没有可用的参考工况目录：{fac_dir}"
+        )
+    fds_files = sorted(fac_dir.glob("*.fds"))
+    if not fds_files:
+        raise UnsupportedDamageFacility(
+            f"设施“{facility_name}”的参考工况目录中没有 .fds 文件。"
+        )
+    reference_fds = fds_files[0]
+
+    hs = dict(heat_source or {})
+    suffix = (
+        f"q{int(hs.get('heat_flux', 1000))}"
+        f"_a{int(hs.get('azimuth', 0))}"
+        f"_e{int(hs.get('elevation', 0))}"
+        f"_d{int(float(hs.get('duration', 1.36)) * 1000)}"
+        f"_t1800"
+    )
+    case_name = f"{facility_name}_{suffix}"
+    prediction = predictor.predict(reference_fds, case_name)
+    return DamagePredictionContext(
+        prediction=prediction,
+        facility_name=facility_name,
+        ui_facility_name=facility_name,
+        scale_name=None,
     )

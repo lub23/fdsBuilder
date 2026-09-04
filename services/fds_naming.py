@@ -10,6 +10,11 @@ from typing import Any
 # pre-computed `{facility_name}_{simulation_suffix(model)}.smv` files.
 RESULTS_ROOT = "results"
 
+# Directory holding pre-rendered demo videos (mp4), named
+# `{facility_name}_{simulation_suffix(model)}.mp4` to match FDS/Smokeview
+# naming so a condition maps 1:1 to its demo clip.
+VIDEO_ROOT = "video"
+
 
 def sanitize_chid(value: str | None, default: str = "building") -> str:
     """Return an ASCII-only CHID-safe identifier.
@@ -83,3 +88,13 @@ def results_smv_path(model: Any, default: str = "building") -> str:
 
     folder = results_dir_for(model, default=default)
     return f"{folder}/{default_smv_filename(model, default=default)}"
+
+
+def video_path_for(model: Any, default: str = "building") -> str:
+    """Return the relative path to the demo video for a model's condition.
+
+    Path: ``video/{name}_{suffix}.mp4``
+    """
+
+    name = sanitize_chid(getattr(model, "name", "") or default, default=default)
+    return f"{VIDEO_ROOT}/{name}_{simulation_suffix(model)}.mp4"

@@ -219,7 +219,7 @@
                   "type": "door",
                   "w_offset_ratio": 0.4,
                   "width_ratio": 0.2,
-                  "height": 3,
+                  "height": 2,
                   "h_offset": 0
                 },
                 {
@@ -227,16 +227,8 @@
                   "type": "window",
                   "w_offset_ratio": 0.1,
                   "width_ratio": 0.1,
-                  "height": 5,
-                  "h_offset": 4
-                },
-                {
-                  "wall": "y_max",
-                  "type": "window",
-                  "w_offset_ratio": 0.5,
-                  "width_ratio": 0.1,
                   "height": 2,
-                  "h_offset": 4
+                  "h_offset": 2
                 },
                 {
                   "wall": "y_max",
@@ -244,7 +236,7 @@
                   "w_offset_ratio": 0.7,
                   "width_ratio": 0.1,
                   "height": 2,
-                  "h_offset": 4
+                  "h_offset": 2
                 }
               ]
             }

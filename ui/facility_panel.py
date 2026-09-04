@@ -22,12 +22,11 @@ from PySide6.QtWidgets import (
     QDialog,
     QDoubleSpinBox,
     QSpinBox,
-    QComboBox,
     QGridLayout,
-    QScrollArea,
     QTableWidget,
     QTableWidgetItem,
     QHeaderView,
+    QRadioButton,
 )
 from PySide6.QtCore import Qt, Signal
 from PySide6.QtGui import QFont, QColor, QBrush
@@ -39,12 +38,131 @@ from ui.styles import CollapsibleGroup, apply_button_variant
 CollapsibleSection = CollapsibleGroup
 
 
+# Facilities with a trained per-facility model but no facilities/*.json
+# definition (hence no 3D preview geometry). They remain fully predictable
+# via their training-case FDS reference. Code -> Chinese display name.
+TRAINED_NO_JSON_FACILITIES: list[tuple[str, str]] = [
+    ("Boeing_Satellite", "波音卫星制造厂"),
+    ("MPPF", "多载荷处理厂房"),
+    ("SLC", "SLC3发射塔与移动发射台"),
+    ("boeing", "波音飞机主厂房及相邻机身辅助厂"),
+    ("factory", "沃斯堡空军4号飞机工厂"),
+    ("hanger", "40号发射场机库"),
+    ("lcc", "发射控制中心"),
+    ("lob", "SLC3发射操作楼"),
+    ("maf", "加工厂房"),
+    ("ocb", "操作测试大楼"),
+    ("sspf", "空间系统处理设施"),
+    ("vab", "总装大楼"),
+    ("Hangar", "埃格林空军基地一号机库"),
+    ("TWA", "费城国际机场TWA维修机库"),
+    ("ligen", "华盛顿里根国家机场机库"),
+    ("tesla", "特斯拉机械制造设施"),
+    ("yjc", "冶金钢铁厂"),
+]
+
+# Three top-level categories shown in the facility tree. Each maps to the
+# facility code (JSON facility stem or trained-only code) plus its Chinese
+# display name. Equivalent facilities (aerospace / airport_hangar /
+# machinery_manufacturing / metallurgical_facilities) keep their building
+# sub-nodes; specialized ones are single nodes.
+FACILITY_CATEGORIES: list[tuple[str, str, list[tuple[str, str, bool]]]] = [
+    (
+        "航空航天（含机场机库）",
+        "#a6e3a1",
+        [
+            ("aerospace", "航空航天设施", True),
+            ("airport_hangar", "机场机库", True),
+            ("Boeing_Satellite", "波音卫星制造厂", False),
+            ("Boeing_Satellite01", "波音卫星制造厂（二）", False),
+            ("MPPF", "多载荷处理厂房", False),
+            ("SLC", "SLC3发射塔与移动发射台", False),
+            ("boeing", "波音飞机主厂房及相邻机身辅助厂", False),
+            ("factory", "沃斯堡空军4号飞机工厂", False),
+            ("hanger", "40号发射场机库", False),
+            ("lcc", "发射控制中心", False),
+            ("lob", "SLC3发射操作楼", False),
+            ("maf", "加工厂房", False),
+            ("ocb", "操作测试大楼", False),
+            ("sspf", "空间系统处理设施", False),
+            ("vab", "总装大楼", False),
+            ("Hangar", "埃格林空军基地一号机库", False),
+            ("TWA", "费城国际机场TWA维修机库", False),
+            ("ligen", "华盛顿里根国家机场机库", False),
+        ],
+    ),
+    (
+        "机械制造",
+        "#f9e2af",
+        [
+            ("machinery_manufacturing", "机械制造设施", True),
+            ("frymaster_corporation", "弗莱马斯特总装设施", False),
+            ("gleason_cutting_tools_corporation", "格里森切削工具设施", False),
+            ("harbison_fischer", "哈比森-费希尔部装设施", False),
+            ("tesla", "特斯拉机械制造设施", False),
+        ],
+    ),
+    (
+        "冶金",
+        "#f38ba8",
+        [
+            ("metallurgical_facilities", "冶金设施", True),
+            ("alcoa", "美铝电解设施", False),
+            ("materion_buffalo", "马特里昂布法罗金精炼设施", False),
+            ("materion_newton", "马特里昂牛顿钽精炼设施", False),
+            ("warrick_power_plant", "沃里克专用电厂", False),
+            ("yjc", "冶金钢铁厂", False),
+        ],
+    ),
+]
+
+
+class _SizeRadioGroupFacade:
+    """Compatibility facade exposing the old ``size_combo`` API over a dict of
+    mutually-exclusive QRadioButtons ("小"/"中"/"大")."""
+
+    def __init__(self, radios: dict[str, QRadioButton]):
+        self._radios = radios
+        self._blocked = False
+
+    def currentText(self) -> str:
+        for size, rb in self._radios.items():
+            if rb.isChecked():
+                return size
+        return "中"
+
+    def isEnabled(self) -> bool:
+        return any(rb.isEnabled() for rb in self._radios.values())
+
+    def setEnabled(self, enabled: bool) -> None:
+        for rb in self._radios.values():
+            rb.setEnabled(enabled)
+        if not enabled:
+            self._radios["中"].setChecked(True)
+
+    def blockSignals(self, blocked: bool) -> bool:
+        prev = self._blocked
+        self._blocked = blocked
+        for rb in self._radios.values():
+            rb.blockSignals(blocked)
+        return prev
+
+    def setCurrentText(self, text: str) -> None:
+        if text in self._radios:
+            self._radios[text].setChecked(True)
+
+    def setToolTip(self, tip: str) -> None:
+        for rb in self._radios.values():
+            rb.setToolTip(tip)
+
+
 class FacilityListPanel(QWidget):
     """Left sidebar: facility tree + inline params + scene list."""
 
     facility_selected = Signal(dict)  # replace entire model (category generation)
     building_added = Signal(object)  # append one Building object
     scene_building_selected = Signal(int)  # select building for editing
+    facility_predict_requested = Signal(str)  # direct prediction for a trained-only facility
 
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -58,7 +176,7 @@ class FacilityListPanel(QWidget):
         self.setStyleSheet(
             "QLabel{font-size:15px;} QGroupBox{font-size:15px;} "
             "QSpinBox{font-size:15px;} QDoubleSpinBox{font-size:15px;} "
-            "QComboBox{font-size:15px;} QPushButton{font-size:15px;} "
+            "QRadioButton{font-size:15px;} QPushButton{font-size:15px;} "
             "QTreeWidget{font-size:15px;} QTableWidget{font-size:15px;}"
         )
         self.setup_ui()
@@ -77,7 +195,7 @@ class FacilityListPanel(QWidget):
         sec_tree = CollapsibleSection("设施类型")
         self.facility_tree = QTreeWidget()
         self.facility_tree.setHeaderHidden(True)
-        self.facility_tree.setMinimumHeight(400)
+        self.facility_tree.setMinimumHeight(540)
         self.facility_tree.setStyleSheet(
             "QTreeWidget{font-size:13px;}"
             "QTreeWidget::item{padding:3px 0;min-height:22px;}"
@@ -111,16 +229,42 @@ class FacilityListPanel(QWidget):
                 lbl.setMinimumWidth(width)
             return lbl
 
-        # Size class combo (大/中/小) for equivalent models
-        self.size_combo = QComboBox()
-        self.size_combo.addItems(["小", "中", "大"])
-        self.size_combo.setEnabled(False)
-        self.size_combo.currentTextChanged.connect(self._on_size_class_changed)
+        # Size class is intentionally the only visible scale control. Exact
+        # dimensions are already shown in the scene table after generation.
+        # Three mutually-exclusive radio buttons sit on the same row as the
+        # label; they fade when the control is disabled.
+        self.size_radios: dict[str, QRadioButton] = {}
+        size_row = QHBoxLayout()
+        size_row.setSpacing(14)
+        for size in ("小", "中", "大"):
+            rb = QRadioButton(size)
+            rb.setEnabled(False)
+            rb.setStyleSheet(
+                "QRadioButton{font-size:14px;color:#cdd6f4;font-weight:bold;padding:2px 0;}"
+                "QRadioButton:hover{color:#ffffff;}"
+                "QRadioButton:disabled{color:#6c7086;font-weight:normal;}"
+                "QRadioButton::indicator{width:18px;height:18px;"
+                "border:2px solid #6c7086;border-radius:9px;background:#313244;}"
+                "QRadioButton::indicator:checked{border:2px solid #89b4fa;"
+                "background:#89b4fa;}"
+                "QRadioButton::indicator:disabled{border:2px solid #45475a;"
+                "background:#313244;}"
+                "QRadioButton::indicator:disabled:checked{border:2px solid #585b70;"
+                "background:#585b70;}"
+            )
+            rb.toggled.connect(lambda checked, s=size: self._on_size_class_changed(s) if checked else None)
+            self.size_radios[size] = rb
+            size_row.addWidget(rb)
+        size_row.addStretch()
+        self.size_combo = _SizeRadioGroupFacade(self.size_radios)
         r = 0
         g.addWidget(_lbl("规模:"), r, 0)
-        g.addWidget(self.size_combo, r, 1)
-        self.rng_size = _range_label(width=200)
-        g.addWidget(self.rng_size, r, 2, 1, 4)
+        g.addLayout(size_row, r, 1, 1, 5)
+
+        # Kept as a hidden compatibility field for older integrations that may
+        # still access ``rng_size``; it is never added to the visible layout.
+        self.rng_size = QLabel("")
+        self.rng_size.setVisible(False)
 
         sec_bld.content_layout.addLayout(g)
 
@@ -168,59 +312,63 @@ class FacilityListPanel(QWidget):
         self._param_ranges = {}  # raw [min, max, ...] per field
         self._param_scale_values = {}  # field -> (small, medium, large)
 
+        # Keep the parameter section compact so the facility tree gets the
+        # extra vertical space. Leave enough room for the size combo to render
+        # fully with a little breathing space.
+        sec_bld.setMinimumHeight(104)
+        sec_bld.setMaximumHeight(110)
         outer.addWidget(sec_bld)
 
-        # -- 7. Combustible button --
+        # -- Primary actions --
+        # Keep the two facility-level actions on one row. Individual-building
+        # generation is deliberately omitted to make the main workflow clear.
+        action_layout = QHBoxLayout()
+        action_layout.setSpacing(6)
+
         self.combustible_btn = QPushButton("可燃物管理…")
-        self.combustible_btn.setFixedHeight(34)
-        apply_button_variant(self.combustible_btn, "primary")
         self.combustible_btn.setEnabled(False)
+        self.combustible_btn.setMinimumHeight(36)
+        self.combustible_btn.setToolTip("查看或配置当前设施 / 建筑的可燃物")
+        apply_button_variant(self.combustible_btn, "primary")
         self.combustible_btn.clicked.connect(self._on_combustible_clicked)
-        outer.addWidget(self.combustible_btn)
+        action_layout.addWidget(self.combustible_btn, 1)
 
-        # -- Action buttons --
-        btn_layout = QHBoxLayout()
-        btn_layout.setSpacing(4)
-
-        self.generate_btn = QPushButton("生成建筑")
-        self.generate_btn.setEnabled(False)
-        self.generate_btn.setFixedHeight(34)
-        apply_button_variant(self.generate_btn, "success")
-        self.generate_btn.clicked.connect(self._on_generate)
-        btn_layout.addWidget(self.generate_btn)
-
-        self.generate_category_btn = QPushButton("生成设施全部建筑")
+        self.generate_category_btn = QPushButton("生成设施")
         self.generate_category_btn.setEnabled(False)
-        self.generate_category_btn.setFixedHeight(34)
-        apply_button_variant(self.generate_category_btn, "primary")
+        self.generate_category_btn.setMinimumHeight(36)
+        self.generate_category_btn.setToolTip("按当前规模生成所选设施的全部建筑")
+        apply_button_variant(self.generate_category_btn, "success")
         self.generate_category_btn.clicked.connect(self._on_generate_category)
-        btn_layout.addWidget(self.generate_category_btn)
+        action_layout.addWidget(self.generate_category_btn, 1)
 
-        outer.addLayout(btn_layout)
+        outer.addLayout(action_layout)
 
         # -- 8. Scene object list --
         sec_scene = CollapsibleSection("场景目标列表")
-        scroll = QScrollArea()
-        scroll.setWidgetResizable(True)
-        scroll.setStyleSheet("QScrollArea{border:none;}")
         self.scene_table = QTableWidget()
         self.scene_table.setColumnCount(3)
-        self.scene_table.setHorizontalHeaderLabels(["名称", "尺寸", "位置"])
-        self.scene_table.horizontalHeader().setSectionResizeMode(0, QHeaderView.Stretch)
-        self.scene_table.horizontalHeader().setSectionResizeMode(
-            1, QHeaderView.ResizeToContents
-        )
-        self.scene_table.setColumnWidth(2, 160)  # position column fixed width
+        self.scene_table.setHorizontalHeaderLabels(["名称", "尺寸（m）", "位置（m）"])
+        header = self.scene_table.horizontalHeader()
+        # All three columns participate in stretch sizing, so the available
+        # width is always filled without nested horizontal scroll bars.
+        for column in range(3):
+            header.setSectionResizeMode(column, QHeaderView.Stretch)
+        header.setSectionsClickable(False)
+        header.setHighlightSections(False)
+        self.scene_table.verticalHeader().setVisible(False)
+        self.scene_table.verticalHeader().setDefaultSectionSize(30)
         self.scene_table.setSelectionBehavior(QTableWidget.SelectRows)
         self.scene_table.setSelectionMode(QTableWidget.SingleSelection)
-        self.scene_table.setMinimumHeight(100)
+        self.scene_table.setAlternatingRowColors(True)
+        self.scene_table.setShowGrid(False)
+        self.scene_table.setMinimumHeight(130)
         self.scene_table.setStyleSheet(
-            "QTableWidget{font-size:12px;}QTableWidget::item{padding:2px 0;}"
+            "QTableWidget{font-size:12px;}"
+            "QTableWidget::item{padding:3px 6px;}"
+            "QTableWidget::item:alternate{background:#2b2d3d;}"
         )
         self.scene_table.cellClicked.connect(self._on_scene_table_clicked)
-        scroll.setWidget(self.scene_table)
-        sec_scene.content_layout.addWidget(scroll)
-
+        sec_scene.content_layout.addWidget(self.scene_table)
 
         outer.addWidget(sec_scene)
 
@@ -229,58 +377,61 @@ class FacilityListPanel(QWidget):
     # ==================================================
 
     def _populate_tree(self):
-        """Populate the facility tree with two root groups: equivalent and specialized."""
+        """Populate the facility tree grouped by the three engineering categories."""
         self.facility_tree.clear()
 
-        # Create two root-level group nodes
-        equiv_root = QTreeWidgetItem(["\u7b49\u6548\u6a21\u578b"])
-        spec_root = QTreeWidgetItem(["\u7279\u5f02\u6a21\u578b"])
-
-        # Style root nodes: bold font and distinct color
         bold_font = QFont()
         bold_font.setBold(True)
         bold_font.setPointSize(bold_font.pointSize() + 1)
-        equiv_color = QBrush(QColor("#a6e3a1"))  # green
-        spec_color = QBrush(QColor("#f9e2af"))  # yellow
 
-        for root_item, color in [(equiv_root, equiv_color), (spec_root, spec_color)]:
-            root_item.setFont(0, bold_font)
-            root_item.setForeground(0, color)
-            # Root group nodes carry no actionable data
-            root_item.setData(0, Qt.UserRole, {"node": "group"})
+        for cat_name, color, entries in FACILITY_CATEGORIES:
+            cat_root = QTreeWidgetItem([cat_name])
+            cat_root.setFont(0, bold_font)
+            cat_root.setForeground(0, QBrush(QColor(color)))
+            cat_root.setData(0, Qt.UserRole, {"node": "group"})
 
-        for name, data in self.facility_manager.facilities.items():
-            ftype = data["type"]  # "equivalent" / "specialized"
-            parent_root = equiv_root if ftype == "equivalent" else spec_root
+            for code, cn, is_equivalent in entries:
+                fac_data = self.facility_manager.facilities.get(code)
+                if fac_data is not None:
+                    # Facility defined in facilities/*.json
+                    if is_equivalent:
+                        category_item = QTreeWidgetItem([f"{cn}（等效）"])
+                        category_item.setData(
+                            0, Qt.UserRole, {"facility": code, "type": "equivalent", "node": "facility"}
+                        )
+                        for building in fac_data.get("buildings", []):
+                            child_label = building.get("cn_name", building["name"])
+                            child = QTreeWidgetItem([child_label])
+                            child.setData(
+                                0,
+                                Qt.UserRole,
+                                {
+                                    "facility": code,
+                                    "building": building["name"],
+                                    "type": "equivalent",
+                                    "node": "building",
+                                },
+                            )
+                            category_item.addChild(child)
+                    else:
+                        category_item = QTreeWidgetItem([cn])
+                        category_item.setData(
+                            0, Qt.UserRole, {"facility": code, "type": "specialized", "node": "facility"}
+                        )
+                    cat_root.addChild(category_item)
+                else:
+                    # Trained-only facility (no JSON / no 3D geometry): Chinese
+                    # name only; prediction happens via the 预测 button.
+                    item = QTreeWidgetItem([cn])
+                    item.setData(
+                        0,
+                        Qt.UserRole,
+                        {"facility": code, "type": "specialized", "node": "trained_only"},
+                    )
+                    cat_root.addChild(item)
 
-            # Facility-level node
-            category_item = QTreeWidgetItem([data["cn_name"]])
-            category_item.setData(
-                0, Qt.UserRole, {"facility": name, "type": ftype, "node": "facility"}
-            )
-
-            # Building-level leaf nodes
-            for building in data["buildings"]:
-                child_label = building.get("cn_name", building["name"])
-                child = QTreeWidgetItem([child_label])
-                child.setData(
-                    0,
-                    Qt.UserRole,
-                    {
-                        "facility": name,
-                        "building": building["name"],
-                        "type": ftype,
-                        "node": "building",
-                    },
-                )
-                category_item.addChild(child)
-
-            parent_root.addChild(category_item)
-
-        self.facility_tree.addTopLevelItem(equiv_root)
-        self.facility_tree.addTopLevelItem(spec_root)
-        self.facility_tree.expandItem(equiv_root)
-        self.facility_tree.expandItem(spec_root)
+            self.facility_tree.addTopLevelItem(cat_root)
+            self.facility_tree.expandItem(cat_root)
 
     # Alias for backward compatibility
     def load_facilities(self):
@@ -310,14 +461,24 @@ class FacilityListPanel(QWidget):
             else:
                 self._show_specialized_params(facility_name, building_name)
 
-            self.generate_btn.setEnabled(True)
-            self.generate_category_btn.setEnabled(False)
+            self.generate_category_btn.setEnabled(True)
             self.combustible_btn.setEnabled(True)
+
+        elif node == "trained_only":
+            # A trained-only facility (no JSON / no 3D geometry): no model
+            # generation and no combustibles. Notify the prediction panel of
+            # the selection; the user clicks 预测 with their own conditions.
+            self.selected_facility_data = data
+            cn = dict(TRAINED_NO_JSON_FACILITIES).get(facility_name, facility_name)
+            self.desc_label.setText(f"{cn} — 训练设施，无三维模型，可直接预测")
+            self.generate_category_btn.setEnabled(False)
+            self.combustible_btn.setEnabled(False)
+            self.size_combo.setEnabled(False)
+            self.facility_predict_requested.emit(facility_name)
 
         elif node == "facility":
             self.selected_facility_data = data
             self._show_facility_params(facility_name)
-            self.generate_btn.setEnabled(False)
             self.generate_category_btn.setEnabled(True)
             self.combustible_btn.setEnabled(True)
 
@@ -340,16 +501,8 @@ class FacilityListPanel(QWidget):
         self._param_ranges = ranges
         self._param_scale_values = scale_values
 
-        # Populate size class combo (大/中/小) from ranges
-        size_hints = self._scale_hints_from_params(scale_values, ranges)
-
-        l_s, l_m, l_l = size_hints["length"]
-        w_s, w_m, w_l = size_hints["width"]
-        self.rng_size.setText(
-            f"小: {l_s:.0f}×{w_s:.0f} / "
-            f"中: {l_m:.0f}×{w_m:.0f} / "
-            f"大: {l_l:.0f}×{w_l:.0f}"
-        )
+        # Populate the compact size selector (大/中/小). Exact dimensions
+        # are intentionally deferred to the generated scene table.
         self.size_combo.setEnabled(True)
         self.size_combo.blockSignals(True)
         self.size_combo.setCurrentText("中")
@@ -493,13 +646,6 @@ class FacilityListPanel(QWidget):
                     facility_name, bname
                 )
 
-            # Compute overall span for description
-            span = {}
-            for field in ["length", "width", "height", "stories"]:
-                mins = [all_scale_values[b][field][0] for b in all_scale_values]
-                maxs = [all_scale_values[b][field][2] for b in all_scale_values]
-                span[field] = (min(mins), max(maxs))
-
             # Use first building's ranges for preview & _param_ranges
             first_bname = buildings[0]["name"]
             first_ranges = all_ranges[first_bname]
@@ -507,32 +653,13 @@ class FacilityListPanel(QWidget):
             self._param_ranges = first_ranges  # so _on_size_class_changed works
             self._param_scale_values = first_scale_values
 
-            # Size hints from first building (reference display)
-            first_hints = self._scale_hints_from_params(first_scale_values, first_ranges)
-            l_s, l_m, l_l = first_hints["length"]
-            w_s, w_m, w_l = first_hints["width"]
-            h_s, h_m, h_l = first_hints["height"]
-            n_s, n_m, n_l = first_hints["stories"]
-
-            self.rng_size.setText(
-                f"小: {l_s:.0f}×{w_s:.0f}×{h_s:.0f} / "
-                f"中: {l_m:.0f}×{w_m:.0f}×{h_m:.0f} / "
-                f"大: {l_l:.0f}×{w_l:.0f}×{h_l:.0f}"
-            )
             self.size_combo.setEnabled(True)
             self.size_combo.blockSignals(True)
             self.size_combo.setCurrentText("中")
             self.size_combo.blockSignals(False)
 
-            # Description: show facility name + overall range span
-            sl, lmin, lmax = "长", span["length"][0], span["length"][1]
-            sw, wmin, wmax = "宽", span["width"][0], span["width"][1]
-            sh, hmin, hmax = "高", span["height"][0], span["height"][1]
-            sn, nmin, nmax = "层", int(span["stories"][0]), int(span["stories"][1])
-            range_str = f"{sl}: {lmin:.0f}~{lmax:.0f}  {sw}: {wmin:.0f}~{wmax:.0f}  {sh}: {hmin:.0f}~{hmax:.0f}  {sn}: {nmin}~{nmax}"
             self.desc_label.setText(
-                f"{cn_name} (等效模型) — 共 {len(buildings)} 个建筑\n"
-                f"尺寸 {range_str}"
+                f"{cn_name} (等效模型) — 共 {len(buildings)} 个建筑"
             )
             self.sp_N.setVisible(False)
             self.rng_N.setVisible(False)
@@ -757,15 +884,13 @@ class FacilityListPanel(QWidget):
             name_item.setFlags(name_item.flags() & ~Qt.ItemIsEditable)
             self.scene_table.setItem(i, 0, name_item)
 
-            size_item = QTableWidgetItem(f"{b.length:.1f}x{b.width:.1f}x{b.height:.1f}")
+            size_item = QTableWidgetItem(f"{b.length:.1f} × {b.width:.1f} × {b.height:.1f}")
             size_item.setFlags(size_item.flags() & ~Qt.ItemIsEditable)
             self.scene_table.setItem(i, 1, size_item)
 
             pos_item = QTableWidgetItem(f"({b.offset_x:.1f}, {b.offset_y:.1f})")
             pos_item.setFlags(pos_item.flags() & ~Qt.ItemIsEditable)
             self.scene_table.setItem(i, 2, pos_item)
-
-        self.scene_table.resizeColumnsToContents()
 
     def _on_scene_table_clicked(self, row, col):
         """Handle scene table click - select building."""

@@ -71,6 +71,77 @@ class GradeConstrainedRegressor(RegressorMixin, BaseEstimator):
         return (reg + clf) / 2.0
 
 
+class MultiTargetGradeConstrainedRegressor(RegressorMixin, BaseEstimator):
+    """Multi-output Dk regressor with per-target grade constraints.
+
+    Fits one ExtraTrees regressor and one ExtraTrees classifier; both heads are
+    multi-output so the same forest predicts every sub-target column (one per
+    building of an equivalent facility).  Each predicted sub-target Dk is
+    clipped into the interval selected by its own grade classifier, so the four
+    public thresholds and every reported grade stay consistent per column.
+    """
+
+    def __init__(
+        self,
+        regressor: Any,
+        classifier: Any,
+        thresholds: tuple[float, float, float] = DK_THRESHOLDS,
+    ) -> None:
+        self.regressor = regressor
+        self.classifier = classifier
+        self.thresholds = thresholds
+
+    def fit(self, X: np.ndarray, y: np.ndarray) -> "MultiTargetGradeConstrainedRegressor":
+        y_array = np.asarray(y, dtype=float)
+        if y_array.ndim == 1:
+            y_array = y_array.reshape(-1, 1)
+        grades = np.asarray(
+            [[dk_to_grade(value, tuple(self.thresholds)) for value in row] for row in y_array],
+            dtype=int,
+        )
+        self.regressor_ = clone(self.regressor).fit(X, y_array)
+        self.classifier_ = clone(self.classifier).fit(X, grades)
+        self.n_features_in_ = int(np.asarray(X).shape[1])
+        self.n_targets_ = int(y_array.shape[1])
+        return self
+
+    def predict(self, X: np.ndarray) -> np.ndarray:
+        continuous = np.clip(
+            np.asarray(self.regressor_.predict(X), dtype=float), 0.0, 1.0
+        )
+        if continuous.ndim == 1:
+            continuous = continuous.reshape(-1, 1)
+        grades = np.asarray(self.classifier_.predict(X), dtype=int)
+        if grades.ndim == 1:
+            grades = grades.reshape(-1, 1)
+        thresholds = np.asarray(tuple(self.thresholds), dtype=float)
+        lower = np.concatenate(([0.0], thresholds))
+        upper = np.concatenate((thresholds, [1.0]))
+        upper = np.nextafter(upper, -np.inf)
+        upper[-1] = 1.0
+        clipped = np.empty_like(continuous, dtype=float)
+        for target in range(continuous.shape[1]):
+            clipped[:, target] = np.clip(
+                continuous[:, target],
+                lower[grades[:, target]],
+                upper[grades[:, target]],
+            )
+        return clipped
+
+    def predict_grades(self, X: np.ndarray) -> np.ndarray:
+        grades = np.asarray(self.classifier_.predict(X), dtype=int)
+        if grades.ndim == 1:
+            grades = grades.reshape(-1, 1)
+        return grades
+
+    @property
+    def feature_importances_(self) -> np.ndarray:
+        """Average both fitted heads' tree importances for reporting."""
+        reg = np.asarray(self.regressor_.feature_importances_, dtype=float)
+        clf = np.asarray(self.classifier_.feature_importances_, dtype=float)
+        return (reg + clf) / 2.0
+
+
 def clipped_dk_predictions(model: Any, X: np.ndarray) -> np.ndarray:
     return np.clip(np.asarray(model.predict(X), dtype=float), 0.0, 1.0)
 

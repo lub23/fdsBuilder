@@ -13,6 +13,7 @@
 
 import json
 import os
+import sys
 from typing import Dict
 
 from models.building import Building
@@ -30,7 +31,14 @@ SCALE_INDICES = {value: key for key, value in SCALE_KEYS.items()}
 class FacilityManager:
     def __init__(self):
         self.facilities: Dict[str, dict] = {}
-        facilities_dir = os.path.join(os.path.dirname(__file__), "..", "facilities")
+        # In a PyInstaller bundle Python modules live in the temporary
+        # extraction directory while package data is copied to its root.
+        # Prefer that root when available, then retain the source-tree path.
+        bundle_root = getattr(sys, "_MEIPASS", None)
+        if bundle_root:
+            facilities_dir = os.path.join(bundle_root, "facilities")
+        else:
+            facilities_dir = os.path.join(os.path.dirname(__file__), "..", "facilities")
         self._load_all(facilities_dir)
 
     def _load_all(self, data_dir: str):
@@ -268,6 +276,53 @@ class FacilityManager:
             y_cursor += row_width + gap_y
 
         return bool(placed)
+
+    def resolve_scale(
+        self,
+        facility_name: str,
+        building_name: str,
+        length: float,
+        width: float,
+        height: float,
+    ) -> tuple[str | None, dict | None]:
+        """Map actual building dimensions to the nearest small/medium/large.
+
+        Uses ``scale_dimensions`` when present, comparing each axis against
+        the scale table's own span so no single dimension dominates; falls
+        back to the legacy ``*_range`` triplets otherwise.
+        """
+        bdata = self._find_building(facility_name, building_name)
+        scale_dims = bdata.get("scale_dimensions", {})
+        if not scale_dims:
+            options = self.scale_dimension_options(facility_name, building_name)
+            if not any(options["length"]) and not any(options["width"]):
+                return None, None
+            scale_dims = {
+                key: {
+                    "length": options["length"][i],
+                    "width": options["width"][i],
+                    "height": options["height"][i],
+                    "stories": options["stories"][i],
+                }
+                for i, key in enumerate(("small", "medium", "large"))
+            }
+
+        def dist(dims: dict) -> float:
+            lengths = [d["length"] for d in scale_dims.values()]
+            widths = [d["width"] for d in scale_dims.values()]
+            heights = [d["height"] for d in scale_dims.values()]
+            return (
+                abs(length - dims["length"]) / (max(lengths) - min(lengths) or 1.0)
+                + abs(width - dims["width"]) / (max(widths) - min(widths) or 1.0)
+                + abs(height - dims["height"]) / (max(heights) - min(heights) or 1.0)
+            )
+
+        best_key, best_dims, best_dist = None, None, float("inf")
+        for key, dims in scale_dims.items():
+            distance = dist(dims)
+            if distance < best_dist:
+                best_key, best_dims, best_dist = key, dims, distance
+        return best_key, best_dims
 
     def _find_building(self, facility_name: str, building_name: str) -> dict:
         """Find a building by name within a facility"""

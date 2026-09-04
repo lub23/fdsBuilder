@@ -24,10 +24,17 @@ _backup/
 # fds file
 *.fds
 
+# Demo videos and presentation renders (binary assets, too large for git)
+video/
+presentation/
+
 # Simulation results
 results/
 
 *.md
+
+# Agent damage raw case data (too large for git)
+agent_damage/cases*/
 
 # Agent damage training artifacts
 agent_damage/checkpoints/

@@ -39,6 +39,7 @@ class DkPrediction:
     validation_accuracy: float | None = None
     overall_validation_accuracy: float | None = None
     used_observed_result: bool = False
+    subtarget_grades: list[dict[str, object]] | None = None
 
 
 class ExperimentalDkPredictor:

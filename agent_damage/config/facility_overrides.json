@@ -1,0 +1,12 @@
+{
+  "Boeing_Satellite01": {"variant": "baseline", "seed": 46},
+  "TWA": {"variant": "heat_combo", "seed": 41},
+  "airport_hangar_large": {"variant": "baseline", "seed": 45},
+  "factory": {"variant": "opening_vent", "seed": 59, "regressor_only": true},
+  "machinery_manufacturing_small": {"variant": "heat_combo", "seed": 46},
+  "maf": {"variant": "baseline", "seed": 47},
+  "materion_newton": {"variant": "baseline", "seed": 44},
+  "metallurgical_facilities_large": {"variant": "az_flags", "seed": 46},
+  "ocb": {"variant": "baseline", "seed": 48},
+  "warrick_power_plant": {"variant": "baseline", "seed": 47}
+}

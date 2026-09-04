@@ -107,6 +107,11 @@ QPushButton#primaryBtn:hover {
     background-color: #74c7ec;
 }
 
+QPushButton#primaryBtn:disabled {
+    background-color: #3a3d4e;
+    color: #6c7086;
+}
+
 QPushButton#successBtn {
     background-color: #a6e3a1;
     color: #1e1e2e;
@@ -115,6 +120,11 @@ QPushButton#successBtn {
 
 QPushButton#successBtn:hover {
     background-color: #94e2d5;
+}
+
+QPushButton#successBtn:disabled {
+    background-color: #3a3d4e;
+    color: #6c7086;
 }
 
 QPushButton#dangerBtn {
@@ -127,6 +137,11 @@ QPushButton#dangerBtn:hover {
     background-color: #e06080;
 }
 
+QPushButton#dangerBtn:disabled {
+    background-color: #3a3d4e;
+    color: #6c7086;
+}
+
 QPushButton#warningBtn {
     background-color: #f9e2af;
     color: #1e1e2e;
@@ -135,6 +150,11 @@ QPushButton#warningBtn {
 
 QPushButton#warningBtn:hover {
     background-color: #fab387;
+}
+
+QPushButton#warningBtn:disabled {
+    background-color: #3a3d4e;
+    color: #6c7086;
 }
 
 QPushButton[compact="true"] {
@@ -150,6 +170,11 @@ QPushButton#secondaryBtn {
 
 QPushButton#secondaryBtn:hover {
     background-color: #585b70;
+}
+
+QPushButton#secondaryBtn:disabled {
+    background-color: #313244;
+    color: #6c7086;
 }
 
 QTabWidget::pane {

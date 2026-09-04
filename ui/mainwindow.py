@@ -10,8 +10,6 @@
 """
 
 import json
-import os
-
 # Qt GUI
 from PySide6.QtWidgets import (
     QMainWindow,
@@ -40,7 +38,6 @@ from ui.simulation_control_panel import SimulationControlPanel
 from ui.styles import apply_button_variant
 from ui.facility_panel import FacilityListPanel
 from services.fds_naming import default_fds_filename
-from services.program_paths import save_program_path
 
 
 # ============================================================
@@ -92,6 +89,9 @@ class MainWindow(QMainWindow):
         self.facility_panel = FacilityListPanel()
         self.facility_panel.facility_selected.connect(self._on_facility_selected)
         self.facility_panel.building_added.connect(self._on_building_added)
+        self.facility_panel.facility_predict_requested.connect(
+            self._on_facility_predict_requested
+        )
         self.facility_panel.scene_building_selected.connect(
             self._on_scene_building_selected
         )
@@ -215,13 +215,6 @@ class MainWindow(QMainWindow):
         exit_action.setShortcut(QKeySequence.Quit)
         exit_action.triggered.connect(self.close)
         file_menu.addAction(exit_action)
-
-        # 设置菜单
-        settings_menu = menubar.addMenu("设置")
-
-        smv_path_action = QAction("设置Smokeview程序路径", self)
-        smv_path_action.triggered.connect(self.set_smv_path)
-        settings_menu.addAction(smv_path_action)
 
         # 帮助菜单
         help_menu = menubar.addMenu("帮助")
@@ -377,6 +370,10 @@ class MainWindow(QMainWindow):
         except Exception as e:
             QMessageBox.critical(self, "错误", f"无法应用等效模型: {str(e)}")
 
+    def _on_facility_predict_requested(self, facility_name: str):
+        """记录当前选中的训练设施（无三维模型），供右侧预测按钮使用。"""
+        self.simulation_control.set_pending_trained_facility(facility_name)
+
     def _on_building_added(self, building_obj):
         """追加或替换一栋子目标建筑到现有模型"""
         try:
@@ -481,22 +478,6 @@ class MainWindow(QMainWindow):
         layout.addWidget(close_btn)
 
         dialog.exec()
-
-    def _choose_program_path(self, program: str, display_name: str):
-        """Choose and persist an external program path."""
-        filter_str = "可执行文件 (*.exe *.bin);;所有文件 (*)" if os.name == "nt" else "所有文件 (*);;可执行文件 (*.exe *.bin)"
-        file_path, _ = QFileDialog.getOpenFileName(
-            self, f"选择{display_name}可执行文件", "", filter_str
-        )
-        if file_path:
-            save_program_path(program, file_path)
-            QMessageBox.information(
-                self, "设置成功", f"{display_name}路径已设置为:\n{file_path}"
-            )
-
-    def set_smv_path(self):
-        """设置Smokeview程序路径"""
-        self._choose_program_path("smokeview", "Smokeview")
 
     def closeEvent(self, event):
         """关闭窗口时清理资源"""

@@ -7,6 +7,7 @@ from services.fds_naming import (
     results_dir_for,
     results_smv_path,
     sanitize_chid,
+    video_path_for,
 )
 from services.program_paths import load_program_path, save_program_path
 
@@ -37,6 +38,22 @@ def test_results_paths_match_precomputed_layout():
         "results/frymaster_corporation/frymaster_corporation_q500_a0_e0_d1360_t1800/"
         "frymaster_corporation_q500_a0_e0_d1360_t1800.smv"
     )
+
+
+def test_video_path_matches_demo_clip_naming():
+    model = BuildingGroup(name="hangar lingen")
+    model.heat_source.update({"net_heat_flux": 30000, "azimuth": 270, "elevation": 60, "duration": 7.5})
+    model.simulation_time = 1800
+
+    assert video_path_for(model) == "video/hangar_lingen_q30000_a270_e60_d7500_t1800.mp4"
+
+
+def test_reference_case_base_name_strips_condition_suffix():
+    from services.damage_prediction import reference_case_base_name
+
+    assert reference_case_base_name("ligen") == "hangar_ligen"
+    assert reference_case_base_name("hanger") == "hanger"
+    assert reference_case_base_name("unknown_facility_code") == "unknown_facility_code"
 
 
 def test_program_path_round_trip(tmp_path):
