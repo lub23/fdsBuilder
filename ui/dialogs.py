@@ -13,6 +13,7 @@ from ui.dialog_windows import (
     CombustibleDialog,
     CombustibleSelectionDialog,
     FacilityCombustibleOverviewDialog,
+    FdsCombustibleOverviewDialog,
     FireCompartmentDialog,
     OpeningDialog,
 )
@@ -24,4 +25,5 @@ __all__ = [
     "CategoryGenerateDialog",
     "CombustibleSelectionDialog",
     "FacilityCombustibleOverviewDialog",
+    "FdsCombustibleOverviewDialog",
 ]

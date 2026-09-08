@@ -1,7 +1,7 @@
 {
   "type": "specialized",
   "name": "Frymaster Corporation",
-  "cn_name": "Frymaster Corporation机械总装区",
+  "cn_name": "机械-总装",
   "buildings": [
     {
       "name": "Main_Production_Hall",

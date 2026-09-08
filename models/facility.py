@@ -28,18 +28,22 @@ SCALE_KEYS = {
 SCALE_INDICES = {value: key for key, value in SCALE_KEYS.items()}
 
 
+def facilities_dir() -> str:
+    """Directory holding facility definitions (JSON + reference FDS files).
+
+    In a PyInstaller bundle package data is copied to the extraction root;
+    in a source tree it is the project's ``facilities/`` folder.
+    """
+    bundle_root = getattr(sys, "_MEIPASS", None)
+    if bundle_root:
+        return os.path.join(bundle_root, "facilities")
+    return os.path.join(os.path.dirname(__file__), "..", "facilities")
+
+
 class FacilityManager:
     def __init__(self):
         self.facilities: Dict[str, dict] = {}
-        # In a PyInstaller bundle Python modules live in the temporary
-        # extraction directory while package data is copied to its root.
-        # Prefer that root when available, then retain the source-tree path.
-        bundle_root = getattr(sys, "_MEIPASS", None)
-        if bundle_root:
-            facilities_dir = os.path.join(bundle_root, "facilities")
-        else:
-            facilities_dir = os.path.join(os.path.dirname(__file__), "..", "facilities")
-        self._load_all(facilities_dir)
+        self._load_all(facilities_dir())
 
     def _load_all(self, data_dir: str):
         """Load all JSON files from ./facilities/"""

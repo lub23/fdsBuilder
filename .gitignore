@@ -23,9 +23,12 @@ _backup/
 
 # fds file
 *.fds
+# Facility reference FDS files (geometry preview source, tracked on purpose)
+!facilities/*.fds
 
 # Demo videos and presentation renders (binary assets, too large for git)
-video/
+video/*
+!video/*.mp4
 presentation/
 
 # Simulation results
@@ -37,11 +40,15 @@ results/
 agent_damage/cases*/
 
 # Agent damage training artifacts
-agent_damage/checkpoints/
+agent_damage/checkpoints/*
+!agent_damage/checkpoints/split_models/
 agent_damage/data/
-agent_damage/output/
+agent_damage/output/*
+!agent_damage/output/split_model_evaluation.json
 agent_damage/raw_results/
 agent_damage/reports/
+# Generated packaging staging is disposable; built artifacts stay out of git.
+packaging/debroot/
 
 # Project export artifacts
 export/*.xlsx

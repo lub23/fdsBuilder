@@ -1,4 +1,5 @@
 import json
+from pathlib import Path
 
 from models.building import BuildingGroup
 from services.fds_naming import (
@@ -45,7 +46,9 @@ def test_video_path_matches_demo_clip_naming():
     model.heat_source.update({"net_heat_flux": 30000, "azimuth": 270, "elevation": 60, "duration": 7.5})
     model.simulation_time = 1800
 
-    assert video_path_for(model) == "video/hangar_lingen_q30000_a270_e60_d7500_t1800.mp4"
+    video_path = video_path_for(model)
+    assert Path(video_path).name == "hangar_lingen_q30000_a270_e60_d7500_t1800.mp4"
+    assert Path(video_path).parent.name == "video"
 
 
 def test_reference_case_base_name_strips_condition_suffix():

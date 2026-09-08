@@ -9,6 +9,8 @@ import os
 
 from PySide6.QtCore import Qt, QUrl
 from PySide6.QtCore import QTimer
+from PySide6.QtCore import QPointF, QRectF, QSize
+from PySide6.QtGui import QColor, QIcon, QPainter, QPolygonF, QPixmap
 from PySide6.QtMultimedia import QAudioOutput, QMediaPlayer
 from PySide6.QtMultimediaWidgets import QVideoWidget
 from PySide6.QtWidgets import (
@@ -51,6 +53,25 @@ def _format_time(seconds: int) -> str:
     return f"{seconds // 60:02d}:{seconds % 60:02d}"
 
 
+def _media_icon(kind: str, color: str = "#cdd6f4") -> QIcon:
+    """Draw a play/pause glyph so the button never depends on the UI font."""
+    pixmap = QPixmap(24, 24)
+    pixmap.fill(Qt.transparent)
+    painter = QPainter(pixmap)
+    painter.setRenderHint(QPainter.RenderHint.Antialiasing)
+    painter.setBrush(QColor(color))
+    painter.setPen(Qt.NoPen)
+    if kind == "play":
+        painter.drawPolygon(
+            QPolygonF([QPointF(7.0, 4.0), QPointF(7.0, 20.0), QPointF(19.0, 12.0)])
+        )
+    else:
+        painter.drawRect(QRectF(6.0, 4.0, 4.5, 16.0))
+        painter.drawRect(QRectF(13.5, 4.0, 4.5, 16.0))
+    painter.end()
+    return QIcon(pixmap)
+
+
 class VideoPlayerDialog(QDialog):
     """Modal dialog that plays a local mp4 with play/pause and a seek bar.
 
@@ -64,7 +85,7 @@ class VideoPlayerDialog(QDialog):
         condition_text = format_condition(condition)
         facility = str((condition or {}).get("facility_name") or "").strip()
         self.setWindowTitle(f"工况演示 - {facility}" if facility else "工况演示")
-        self.resize(960, 640)
+        self.resize(1280, 800)
 
         layout = QVBoxLayout(self)
         layout.setContentsMargins(10, 10, 10, 10)
@@ -80,23 +101,21 @@ class VideoPlayerDialog(QDialog):
         self._video_widget.setMinimumSize(640, 360)
         layout.addWidget(self._video_widget, 1)
 
-        # ── control row: play icon | pause icon | seek bar | time | status ──
+        # ── control row: play/pause icon | seek bar | time | status ──
         control_row = QHBoxLayout()
         control_row.setSpacing(8)
 
-        def _icon_btn(text: str, tip: str, slot) -> QPushButton:
-            btn = QPushButton(text)
-            btn.setFixedSize(36, 36)
-            btn.setCursor(Qt.PointingHandCursor)
-            btn.setStyleSheet("font-size: 15px;")
-            btn.setToolTip(tip)
-            btn.clicked.connect(slot)
-            return btn
-
-        self._play_btn = _icon_btn("▶", "播放（播完后从头播放）", self._on_play_clicked)
+        # Single button that toggles between play and pause states.
+        self._icon_play = _media_icon("play")
+        self._icon_pause = _media_icon("pause")
+        self._play_btn = QPushButton()
+        self._play_btn.setFixedSize(36, 36)
+        self._play_btn.setCursor(Qt.PointingHandCursor)
+        self._play_btn.setIconSize(QSize(20, 20))
+        self._play_btn.setIcon(self._icon_pause)  # autoplay: shows the pause glyph
+        self._play_btn.setToolTip("暂停")
+        self._play_btn.clicked.connect(self._toggle_play)
         control_row.addWidget(self._play_btn)
-        self._pause_btn = _icon_btn("⏸", "暂停", self._on_pause_clicked)
-        control_row.addWidget(self._pause_btn)
 
         self._pos_slider = QSlider(Qt.Horizontal)
         self._pos_slider.setRange(0, 0)
@@ -171,33 +190,29 @@ class VideoPlayerDialog(QDialog):
         self._on_duration_changed(*_args[:1])
 
     # ── playback control ──────────────────────────────
-    def _on_play_clicked(self):
+    def _toggle_play(self):
         state = self._player.playbackState()
         if state == QMediaPlayer.PlaybackState.PlayingState:
-            return
-        if state == QMediaPlayer.PlaybackState.PausedState:
+            self._player.pause()
+        elif state == QMediaPlayer.PlaybackState.PausedState:
             self._player.play()
         else:  # StoppedState — ended or errored, restart from the beginning
             self._player.setPosition(0)
             self._player.play()
 
-    def _on_pause_clicked(self):
-        if self._player.playbackState() == QMediaPlayer.PlaybackState.PlayingState:
-            self._player.pause()
-
     def _on_playback_state_changed(self, state):
         if state == QMediaPlayer.PlaybackState.PlayingState:
-            self._play_btn.setEnabled(False)
-            self._pause_btn.setEnabled(True)
             self.status_label.setText("播放中")
+            self._play_btn.setIcon(self._icon_pause)
+            self._play_btn.setToolTip("暂停")
         elif state == QMediaPlayer.PlaybackState.PausedState:
-            self._play_btn.setEnabled(True)
-            self._pause_btn.setEnabled(False)
             self.status_label.setText("已暂停")
+            self._play_btn.setIcon(self._icon_play)
+            self._play_btn.setToolTip("播放")
         else:
-            self._play_btn.setEnabled(True)
-            self._pause_btn.setEnabled(False)
             self.status_label.setText("播放完成")
+            self._play_btn.setIcon(self._icon_play)
+            self._play_btn.setToolTip("重新播放")
 
     def _on_player_error(self, error, message):
         self.status_label.setText(f"播放失败: {message or str(error)}")

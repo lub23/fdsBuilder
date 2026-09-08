@@ -1,6 +1,11 @@
 {
-  "Boeing_Satellite01": {"variant": "baseline", "seed": 46},
-  "TWA": {"variant": "heat_combo", "seed": 41},
+  "SLC": {"variant": "baseline", "seed": 52},
+  "Hangar": {"variant": "baseline", "seed": 59},
+  "ligen": {"variant": "baseline", "seed": 45},
+  "TWA": {"variant": "baseline", "seed": 58},
+  "boeing": {"variant": "el_flags", "seed": 66},
+  "aerospace_medium": {"variant": "baseline", "seed": 58},
+  "aerospace_small": {"variant": "baseline", "seed": 59, "regressor_only": true},
   "airport_hangar_large": {"variant": "baseline", "seed": 45},
   "factory": {"variant": "opening_vent", "seed": 59, "regressor_only": true},
   "machinery_manufacturing_small": {"variant": "heat_combo", "seed": 46},

@@ -43,6 +43,10 @@ FAMILY_LABELS: Mapping[str, str] = {
     "hangar": "机场机库（单建筑规模族，每规模一个单目标模型）",
 }
 
+FACILITY_DIR_ALIASES: Mapping[str, str] = {
+    "Boeing_Satellite01": "Boeing_Satellite",
+}
+
 
 def _facility_scale_suffix(name: str) -> str | None:
     """Return ``small``/``medium``/``large`` when the name carries a scale."""
@@ -114,6 +118,10 @@ def classify_facilities(
         known_facilities[name] = summary
 
     for name, summary in known_facilities.items():
+        if name in FACILITY_DIR_ALIASES:
+            # Its cases are loaded under the canonical facility by the
+            # experimental dataset loader.
+            continue
         if summary.fds_path is None and not summary.cases:
             skipped.append(name)
             continue

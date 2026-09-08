@@ -12,11 +12,13 @@ ROOT = Path(SPECPATH)
 # Torch and notebook stacks, making the executable several gigabytes larger.
 datas = [
     (str(ROOT / "facilities"), "facilities"),
-    (
-        str(ROOT / "agent_damage" / "checkpoints" / "experimental_dk_regressor.pkl"),
-        "agent_damage/checkpoints",
-    ),
 ]
+datas.extend(
+    (str(path), "agent_damage/checkpoints/split_models")
+    for path in sorted((ROOT / "agent_damage" / "checkpoints" / "split_models").glob("*.pkl"))
+)
+if (ROOT / "video").is_dir():
+    datas.append((str(ROOT / "video"), "video"))
 binaries = []
 hiddenimports = collect_submodules("agent_damage.src")
 

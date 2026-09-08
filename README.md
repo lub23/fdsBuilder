@@ -20,6 +20,23 @@ dist\fdsBuilder.exe
 
 该文件已经包含 Python、Qt、VTK、项目设施数据和毁伤预测模型，目标电脑不需要安装 Python。FDS/Smokeview 属于外部仿真软件，若使用“运行 FDS”或结果查看功能，仍需在程序设置中选择相应程序路径。
 
+### Ubuntu 安装包
+
+在 Ubuntu x64 构建机上执行：
+
+```bash
+./packaging/build_linux.sh
+```
+
+完成后安装包位于 `dist/fdsbuilder_0.1.0_amd64.deb`。安装方式：
+
+```bash
+sudo apt update
+sudo apt install ./dist/fdsbuilder_0.1.0_amd64.deb
+```
+
+安装后可从应用菜单启动 `fdsBuilder`，或执行 `/opt/fdsbuilder/fdsBuilder`。打包文件内含设施数据、参考 FDS、逐设施代理模型和当前演示视频；FDS/Smokeview 仍需目标机器单独安装。
+
 ### 使用 GitHub Actions 打包（无需 Windows 电脑）
 
 1. 打开 GitHub 仓库的 **Actions** 页面。

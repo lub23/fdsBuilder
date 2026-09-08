@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=fdsBuilder
+Comment=FDS facility modeling and damage prediction
+Exec=/opt/fdsbuilder/fdsBuilder
+Icon=applications-science
+Terminal=false
+Categories=Science;Engineering;

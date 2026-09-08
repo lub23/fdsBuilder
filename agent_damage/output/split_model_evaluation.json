@@ -1,0 +1,2013 @@
+{
+  "models": [
+    {
+      "facility_name": "Boeing_Satellite",
+      "family": "specific",
+      "feature_count": 11,
+      "feature_columns": [
+        "heat_flux_log10",
+        "duration_s",
+        "heat_dose_log10",
+        "elevation_sin",
+        "azimuth_sin",
+        "azimuth_cos",
+        "heat_elevation_deg",
+        "radiation_duration_ms",
+        "incident_wall_area_log",
+        "incident_total_opening_ratio",
+        "incident_combustible_target_ratio"
+      ],
+      "case_count": 359,
+      "cv_case_count": 359,
+      "holdout_case_count": 72,
+      "holdout_grade_accuracy": 1.0,
+      "cv_grade_accuracy": 0.9888579387186629,
+      "holdout_mae": 0.00015067012485570002,
+      "holdout_rmse": 0.0007465628603518354,
+      "cv_mae": 0.0004182841295808949,
+      "cv_rmse": 0.003663461643739335,
+      "subtarget_names": [],
+      "subtarget_weights": {},
+      "subtarget_holdout_accuracy": [
+        {
+          "subtarget": "overall",
+          "accuracy": 1.0
+        }
+      ],
+      "subtarget_cv_accuracy": [
+        {
+          "subtarget": "overall",
+          "accuracy": 0.9888579387186629
+        }
+      ],
+      "config": {
+        "seed": 42,
+        "variant": "baseline",
+        "regressor_only": false
+      },
+      "model_path": "agent_damage/checkpoints/split_models/Boeing_Satellite.pkl"
+    },
+    {
+      "facility_name": "Hangar",
+      "family": "specific",
+      "feature_count": 11,
+      "feature_columns": [
+        "heat_flux_log10",
+        "duration_s",
+        "heat_dose_log10",
+        "elevation_sin",
+        "azimuth_sin",
+        "azimuth_cos",
+        "heat_elevation_deg",
+        "radiation_duration_ms",
+        "incident_wall_area_log",
+        "incident_total_opening_ratio",
+        "incident_combustible_target_ratio"
+      ],
+      "case_count": 276,
+      "cv_case_count": 276,
+      "holdout_case_count": 56,
+      "holdout_grade_accuracy": 1.0,
+      "cv_grade_accuracy": 0.9927536231884058,
+      "holdout_mae": 0.003315642008805518,
+      "holdout_rmse": 0.014832287262375449,
+      "cv_mae": 0.005149488700467714,
+      "cv_rmse": 0.04325057719211321,
+      "subtarget_names": [],
+      "subtarget_weights": {},
+      "subtarget_holdout_accuracy": [
+        {
+          "subtarget": "overall",
+          "accuracy": 1.0
+        }
+      ],
+      "subtarget_cv_accuracy": [
+        {
+          "subtarget": "overall",
+          "accuracy": 0.9927536231884058
+        }
+      ],
+      "config": {
+        "seed": 59,
+        "variant": "baseline",
+        "regressor_only": false
+      },
+      "model_path": "agent_damage/checkpoints/split_models/Hangar.pkl"
+    },
+    {
+      "facility_name": "MPPF",
+      "family": "specific",
+      "feature_count": 11,
+      "feature_columns": [
+        "heat_flux_log10",
+        "duration_s",
+        "heat_dose_log10",
+        "elevation_sin",
+        "azimuth_sin",
+        "azimuth_cos",
+        "heat_elevation_deg",
+        "radiation_duration_ms",
+        "incident_wall_area_log",
+        "incident_total_opening_ratio",
+        "incident_combustible_target_ratio"
+      ],
+      "case_count": 313,
+      "cv_case_count": 313,
+      "holdout_case_count": 63,
+      "holdout_grade_accuracy": 0.9682539682539683,
+      "cv_grade_accuracy": 0.952076677316294,
+      "holdout_mae": 0.007278364004029445,
+      "holdout_rmse": 0.012601011053442005,
+      "cv_mae": 0.00890937095075426,
+      "cv_rmse": 0.015109848870588055,
+      "subtarget_names": [],
+      "subtarget_weights": {},
+      "subtarget_holdout_accuracy": [
+        {
+          "subtarget": "overall",
+          "accuracy": 0.9682539682539683
+        }
+      ],
+      "subtarget_cv_accuracy": [
+        {
+          "subtarget": "overall",
+          "accuracy": 0.952076677316294
+        }
+      ],
+      "config": {
+        "seed": 42,
+        "variant": "baseline",
+        "regressor_only": false
+      },
+      "model_path": "agent_damage/checkpoints/split_models/MPPF.pkl"
+    },
+    {
+      "facility_name": "SLC",
+      "family": "specific",
+      "feature_count": 13,
+      "feature_columns": [
+        "heat_flux_log10",
+        "duration_s",
+        "heat_dose_log10",
+        "elevation_sin",
+        "azimuth_sin",
+        "azimuth_cos",
+        "heat_elevation_deg",
+        "radiation_duration_ms",
+        "incident_wall_area_log",
+        "incident_door_window_count",
+        "incident_door_window_ratio",
+        "incident_total_opening_ratio",
+        "incident_combustible_target_ratio"
+      ],
+      "case_count": 209,
+      "cv_case_count": 209,
+      "holdout_case_count": 42,
+      "holdout_grade_accuracy": 0.9761904761904762,
+      "cv_grade_accuracy": 0.9425837320574163,
+      "holdout_mae": 0.011854558115550638,
+      "holdout_rmse": 0.03883027150099423,
+      "cv_mae": 0.03515220091184011,
+      "cv_rmse": 0.11930781442991525,
+      "subtarget_names": [],
+      "subtarget_weights": {},
+      "subtarget_holdout_accuracy": [
+        {
+          "subtarget": "overall",
+          "accuracy": 0.9761904761904762
+        }
+      ],
+      "subtarget_cv_accuracy": [
+        {
+          "subtarget": "overall",
+          "accuracy": 0.9425837320574163
+        }
+      ],
+      "config": {
+        "seed": 52,
+        "variant": "baseline",
+        "regressor_only": false
+      },
+      "model_path": "agent_damage/checkpoints/split_models/SLC.pkl"
+    },
+    {
+      "facility_name": "TWA",
+      "family": "specific",
+      "feature_count": 13,
+      "feature_columns": [
+        "heat_flux_log10",
+        "duration_s",
+        "heat_dose_log10",
+        "elevation_sin",
+        "azimuth_sin",
+        "azimuth_cos",
+        "heat_elevation_deg",
+        "radiation_duration_ms",
+        "incident_wall_area_log",
+        "incident_door_window_count",
+        "incident_door_window_ratio",
+        "incident_total_opening_ratio",
+        "incident_combustible_target_ratio"
+      ],
+      "case_count": 325,
+      "cv_case_count": 325,
+      "holdout_case_count": 65,
+      "holdout_grade_accuracy": 0.9692307692307692,
+      "cv_grade_accuracy": 0.9507692307692308,
+      "holdout_mae": 0.027912128280237744,
+      "holdout_rmse": 0.08876859442838919,
+      "cv_mae": 0.027636674273322715,
+      "cv_rmse": 0.08525206009640512,
+      "subtarget_names": [],
+      "subtarget_weights": {},
+      "subtarget_holdout_accuracy": [
+        {
+          "subtarget": "overall",
+          "accuracy": 0.9692307692307692
+        }
+      ],
+      "subtarget_cv_accuracy": [
+        {
+          "subtarget": "overall",
+          "accuracy": 0.9507692307692308
+        }
+      ],
+      "config": {
+        "seed": 58,
+        "variant": "baseline",
+        "regressor_only": false
+      },
+      "model_path": "agent_damage/checkpoints/split_models/TWA.pkl"
+    },
+    {
+      "facility_name": "aerospace_large",
+      "family": "equivalent",
+      "feature_count": 11,
+      "feature_columns": [
+        "heat_flux_log10",
+        "duration_s",
+        "heat_dose_log10",
+        "elevation_sin",
+        "azimuth_sin",
+        "azimuth_cos",
+        "heat_elevation_deg",
+        "radiation_duration_ms",
+        "incident_wall_area_log",
+        "incident_total_opening_ratio",
+        "incident_combustible_target_ratio"
+      ],
+      "case_count": 114,
+      "cv_case_count": 114,
+      "holdout_case_count": 23,
+      "holdout_grade_accuracy": 1.0,
+      "cv_grade_accuracy": 1.0,
+      "holdout_mae": 1.0468675777036676e-06,
+      "holdout_rmse": 2.7256952065365236e-06,
+      "cv_mae": 9.600937027062577e-07,
+      "cv_rmse": 2.868825469044321e-06,
+      "subtarget_names": [
+        "Assembly building",
+        "Launch control center",
+        "Launch site",
+        "Processing plant",
+        "Sub-assembly building"
+      ],
+      "subtarget_weights": {
+        "Assembly building": 539685040.0,
+        "Launch control center": 13695480.0,
+        "Launch site": 547861280.0,
+        "Processing plant": 4721360.0,
+        "Sub-assembly building": 9114960.0
+      },
+      "subtarget_holdout_accuracy": [
+        {
+          "subtarget": "Assembly building",
+          "accuracy": 1.0
+        },
+        {
+          "subtarget": "Launch control center",
+          "accuracy": 1.0
+        },
+        {
+          "subtarget": "Launch site",
+          "accuracy": 1.0
+        },
+        {
+          "subtarget": "Processing plant",
+          "accuracy": 1.0
+        },
+        {
+          "subtarget": "Sub-assembly building",
+          "accuracy": 1.0
+        }
+      ],
+      "subtarget_cv_accuracy": [
+        {
+          "subtarget": "Assembly building",
+          "accuracy": 1.0
+        },
+        {
+          "subtarget": "Launch control center",
+          "accuracy": 1.0
+        },
+        {
+          "subtarget": "Launch site",
+          "accuracy": 1.0
+        },
+        {
+          "subtarget": "Processing plant",
+          "accuracy": 1.0
+        },
+        {
+          "subtarget": "Sub-assembly building",
+          "accuracy": 1.0
+        }
+      ],
+      "config": {
+        "seed": 42,
+        "variant": "baseline",
+        "regressor_only": false
+      },
+      "model_path": "agent_damage/checkpoints/split_models/aerospace_large.pkl"
+    },
+    {
+      "facility_name": "aerospace_medium",
+      "family": "equivalent",
+      "feature_count": 11,
+      "feature_columns": [
+        "heat_flux_log10",
+        "duration_s",
+        "heat_dose_log10",
+        "elevation_sin",
+        "azimuth_sin",
+        "azimuth_cos",
+        "heat_elevation_deg",
+        "radiation_duration_ms",
+        "incident_wall_area_log",
+        "incident_total_opening_ratio",
+        "incident_combustible_target_ratio"
+      ],
+      "case_count": 168,
+      "cv_case_count": 168,
+      "holdout_case_count": 34,
+      "holdout_grade_accuracy": 0.9705882352941176,
+      "cv_grade_accuracy": 0.9404761904761905,
+      "holdout_mae": 0.0037359414322883228,
+      "holdout_rmse": 0.010589545987179387,
+      "cv_mae": 0.009571933238331295,
+      "cv_rmse": 0.03701001268605702,
+      "subtarget_names": [
+        "Assembly building",
+        "Launch control center",
+        "Launch site",
+        "Processing plant",
+        "Sub-assembly building"
+      ],
+      "subtarget_weights": {
+        "Assembly building": 436833000.0,
+        "Launch control center": 6278400.0,
+        "Launch site": 445633240.0,
+        "Processing plant": 2808000.0,
+        "Sub-assembly building": 146484240.0
+      },
+      "subtarget_holdout_accuracy": [
+        {
+          "subtarget": "Assembly building",
+          "accuracy": 1.0
+        },
+        {
+          "subtarget": "Launch control center",
+          "accuracy": 1.0
+        },
+        {
+          "subtarget": "Launch site",
+          "accuracy": 1.0
+        },
+        {
+          "subtarget": "Processing plant",
+          "accuracy": 1.0
+        },
+        {
+          "subtarget": "Sub-assembly building",
+          "accuracy": 1.0
+        }
+      ],
+      "subtarget_cv_accuracy": [
+        {
+          "subtarget": "Assembly building",
+          "accuracy": 0.9761904761904762
+        },
+        {
+          "subtarget": "Launch control center",
+          "accuracy": 1.0
+        },
+        {
+          "subtarget": "Launch site",
+          "accuracy": 0.9821428571428571
+        },
+        {
+          "subtarget": "Processing plant",
+          "accuracy": 1.0
+        },
+        {
+          "subtarget": "Sub-assembly building",
+          "accuracy": 1.0
+        }
+      ],
+      "config": {
+        "seed": 58,
+        "variant": "baseline",
+        "regressor_only": false
+      },
+      "model_path": "agent_damage/checkpoints/split_models/aerospace_medium.pkl"
+    },
+    {
+      "facility_name": "aerospace_small",
+      "family": "equivalent",
+      "feature_count": 11,
+      "feature_columns": [
+        "heat_flux_log10",
+        "duration_s",
+        "heat_dose_log10",
+        "elevation_sin",
+        "azimuth_sin",
+        "azimuth_cos",
+        "heat_elevation_deg",
+        "radiation_duration_ms",
+        "incident_wall_area_log",
+        "incident_total_opening_ratio",
+        "incident_combustible_target_ratio"
+      ],
+      "case_count": 168,
+      "cv_case_count": 168,
+      "holdout_case_count": 34,
+      "holdout_grade_accuracy": 0.9705882352941176,
+      "cv_grade_accuracy": 0.9583333333333334,
+      "holdout_mae": 0.00915761789969551,
+      "holdout_rmse": 0.029510705409253584,
+      "cv_mae": 0.0082592748935809,
+      "cv_rmse": 0.025052403678022774,
+      "subtarget_names": [
+        "Assembly building",
+        "Launch control center",
+        "Launch site",
+        "Processing plant",
+        "Sub-assembly building"
+      ],
+      "subtarget_weights": {
+        "Assembly building": 56506160.0,
+        "Launch control center": 3139920.0,
+        "Launch site": 65553760.0,
+        "Processing plant": 1723480.0,
+        "Sub-assembly building": 55249480.0
+      },
+      "subtarget_holdout_accuracy": [
+        {
+          "subtarget": "Assembly building",
+          "accuracy": 1.0
+        },
+        {
+          "subtarget": "Launch control center",
+          "accuracy": 0.9705882352941176
+        },
+        {
+          "subtarget": "Launch site",
+          "accuracy": 0.9411764705882353
+        },
+        {
+          "subtarget": "Processing plant",
+          "accuracy": 1.0
+        },
+        {
+          "subtarget": "Sub-assembly building",
+          "accuracy": 1.0
+        }
+      ],
+      "subtarget_cv_accuracy": [
+        {
+          "subtarget": "Assembly building",
+          "accuracy": 1.0
+        },
+        {
+          "subtarget": "Launch control center",
+          "accuracy": 0.9821428571428571
+        },
+        {
+          "subtarget": "Launch site",
+          "accuracy": 0.9345238095238095
+        },
+        {
+          "subtarget": "Processing plant",
+          "accuracy": 1.0
+        },
+        {
+          "subtarget": "Sub-assembly building",
+          "accuracy": 1.0
+        }
+      ],
+      "config": {
+        "seed": 59,
+        "variant": "baseline",
+        "regressor_only": true
+      },
+      "model_path": "agent_damage/checkpoints/split_models/aerospace_small.pkl"
+    },
+    {
+      "facility_name": "airport_hangar_large",
+      "family": "hangar",
+      "feature_count": 11,
+      "feature_columns": [
+        "heat_flux_log10",
+        "duration_s",
+        "heat_dose_log10",
+        "elevation_sin",
+        "azimuth_sin",
+        "azimuth_cos",
+        "heat_elevation_deg",
+        "radiation_duration_ms",
+        "incident_wall_area_log",
+        "incident_total_opening_ratio",
+        "incident_combustible_target_ratio"
+      ],
+      "case_count": 148,
+      "cv_case_count": 148,
+      "holdout_case_count": 30,
+      "holdout_grade_accuracy": 1.0,
+      "cv_grade_accuracy": 0.972972972972973,
+      "holdout_mae": 0.011813215286601527,
+      "holdout_rmse": 0.044400228273817184,
+      "cv_mae": 0.02514046331030955,
+      "cv_rmse": 0.10204165494530826,
+      "subtarget_names": [],
+      "subtarget_weights": {},
+      "subtarget_holdout_accuracy": [
+        {
+          "subtarget": "overall",
+          "accuracy": 1.0
+        }
+      ],
+      "subtarget_cv_accuracy": [
+        {
+          "subtarget": "overall",
+          "accuracy": 0.972972972972973
+        }
+      ],
+      "config": {
+        "seed": 45,
+        "variant": "baseline",
+        "regressor_only": false
+      },
+      "model_path": "agent_damage/checkpoints/split_models/airport_hangar_large.pkl"
+    },
+    {
+      "facility_name": "airport_hangar_medium",
+      "family": "hangar",
+      "feature_count": 11,
+      "feature_columns": [
+        "heat_flux_log10",
+        "duration_s",
+        "heat_dose_log10",
+        "elevation_sin",
+        "azimuth_sin",
+        "azimuth_cos",
+        "heat_elevation_deg",
+        "radiation_duration_ms",
+        "incident_wall_area_log",
+        "incident_total_opening_ratio",
+        "incident_combustible_target_ratio"
+      ],
+      "case_count": 144,
+      "cv_case_count": 144,
+      "holdout_case_count": 29,
+      "holdout_grade_accuracy": 0.9655172413793104,
+      "cv_grade_accuracy": 0.9861111111111112,
+      "holdout_mae": 0.030915913344789565,
+      "holdout_rmse": 0.113765476846286,
+      "cv_mae": 0.019192245174673172,
+      "cv_rmse": 0.07769688846710479,
+      "subtarget_names": [],
+      "subtarget_weights": {},
+      "subtarget_holdout_accuracy": [
+        {
+          "subtarget": "overall",
+          "accuracy": 0.9655172413793104
+        }
+      ],
+      "subtarget_cv_accuracy": [
+        {
+          "subtarget": "overall",
+          "accuracy": 0.9861111111111112
+        }
+      ],
+      "config": {
+        "seed": 42,
+        "variant": "baseline",
+        "regressor_only": false
+      },
+      "model_path": "agent_damage/checkpoints/split_models/airport_hangar_medium.pkl"
+    },
+    {
+      "facility_name": "airport_hangar_small",
+      "family": "hangar",
+      "feature_count": 11,
+      "feature_columns": [
+        "heat_flux_log10",
+        "duration_s",
+        "heat_dose_log10",
+        "elevation_sin",
+        "azimuth_sin",
+        "azimuth_cos",
+        "heat_elevation_deg",
+        "radiation_duration_ms",
+        "incident_wall_area_log",
+        "incident_total_opening_ratio",
+        "incident_combustible_target_ratio"
+      ],
+      "case_count": 144,
+      "cv_case_count": 144,
+      "holdout_case_count": 29,
+      "holdout_grade_accuracy": 1.0,
+      "cv_grade_accuracy": 0.9652777777777778,
+      "holdout_mae": 0.009756791265412082,
+      "holdout_rmse": 0.021915542390744516,
+      "cv_mae": 0.008437599186958243,
+      "cv_rmse": 0.02160380120314758,
+      "subtarget_names": [],
+      "subtarget_weights": {},
+      "subtarget_holdout_accuracy": [
+        {
+          "subtarget": "overall",
+          "accuracy": 1.0
+        }
+      ],
+      "subtarget_cv_accuracy": [
+        {
+          "subtarget": "overall",
+          "accuracy": 0.9652777777777778
+        }
+      ],
+      "config": {
+        "seed": 42,
+        "variant": "baseline",
+        "regressor_only": false
+      },
+      "model_path": "agent_damage/checkpoints/split_models/airport_hangar_small.pkl"
+    },
+    {
+      "facility_name": "alcoa",
+      "family": "specific",
+      "feature_count": 11,
+      "feature_columns": [
+        "heat_flux_log10",
+        "duration_s",
+        "heat_dose_log10",
+        "elevation_sin",
+        "azimuth_sin",
+        "azimuth_cos",
+        "heat_elevation_deg",
+        "radiation_duration_ms",
+        "incident_wall_area_log",
+        "incident_total_opening_ratio",
+        "incident_combustible_target_ratio"
+      ],
+      "case_count": 86,
+      "cv_case_count": 86,
+      "holdout_case_count": 18,
+      "holdout_grade_accuracy": 1.0,
+      "cv_grade_accuracy": 1.0,
+      "holdout_mae": 5.77001674907564e-06,
+      "holdout_rmse": 2.4480107824987694e-05,
+      "cv_mae": 3.7213253370636325e-05,
+      "cv_rmse": 0.0001310741889522552,
+      "subtarget_names": [],
+      "subtarget_weights": {},
+      "subtarget_holdout_accuracy": [
+        {
+          "subtarget": "overall",
+          "accuracy": 1.0
+        }
+      ],
+      "subtarget_cv_accuracy": [
+        {
+          "subtarget": "overall",
+          "accuracy": 1.0
+        }
+      ],
+      "config": {
+        "seed": 42,
+        "variant": "baseline",
+        "regressor_only": false
+      },
+      "model_path": "agent_damage/checkpoints/split_models/alcoa.pkl"
+    },
+    {
+      "facility_name": "boeing",
+      "family": "specific",
+      "feature_count": 17,
+      "feature_columns": [
+        "heat_flux_log10",
+        "duration_s",
+        "heat_dose_log10",
+        "elevation_sin",
+        "azimuth_sin",
+        "azimuth_cos",
+        "heat_elevation_deg",
+        "radiation_duration_ms",
+        "incident_wall_area_log",
+        "incident_door_window_count",
+        "incident_door_window_ratio",
+        "incident_total_opening_ratio",
+        "incident_combustible_target_ratio",
+        "heat_elevation_is_0",
+        "heat_elevation_is_30",
+        "heat_elevation_is_45",
+        "heat_elevation_is_60"
+      ],
+      "case_count": 243,
+      "cv_case_count": 243,
+      "holdout_case_count": 49,
+      "holdout_grade_accuracy": 0.9387755102040817,
+      "cv_grade_accuracy": 0.8888888888888888,
+      "holdout_mae": 0.011715888300287879,
+      "holdout_rmse": 0.02286560639125131,
+      "cv_mae": 0.01563536399293882,
+      "cv_rmse": 0.03989220972921632,
+      "subtarget_names": [],
+      "subtarget_weights": {},
+      "subtarget_holdout_accuracy": [
+        {
+          "subtarget": "overall",
+          "accuracy": 0.9387755102040817
+        }
+      ],
+      "subtarget_cv_accuracy": [
+        {
+          "subtarget": "overall",
+          "accuracy": 0.8888888888888888
+        }
+      ],
+      "config": {
+        "seed": 66,
+        "variant": "el_flags",
+        "regressor_only": false
+      },
+      "model_path": "agent_damage/checkpoints/split_models/boeing.pkl"
+    },
+    {
+      "facility_name": "factory",
+      "family": "specific",
+      "feature_count": 23,
+      "feature_columns": [
+        "heat_flux_log10",
+        "duration_s",
+        "heat_dose_log10",
+        "elevation_sin",
+        "azimuth_sin",
+        "azimuth_cos",
+        "heat_elevation_deg",
+        "radiation_duration_ms",
+        "incident_wall_area_log",
+        "incident_door_window_count",
+        "incident_door_window_ratio",
+        "incident_total_opening_ratio",
+        "incident_combustible_target_ratio",
+        "incident_open_vent_count",
+        "incident_open_vent_area",
+        "incident_open_vent_ratio",
+        "incident_radiation_vent_count",
+        "incident_radiation_vent_area",
+        "incident_radiation_vent_ratio",
+        "incident_total_opening_count",
+        "incident_total_opening_area",
+        "incident_has_opening",
+        "incident_windowless_wall"
+      ],
+      "case_count": 176,
+      "cv_case_count": 176,
+      "holdout_case_count": 36,
+      "holdout_grade_accuracy": 0.8888888888888888,
+      "cv_grade_accuracy": 0.9261363636363636,
+      "holdout_mae": 0.0045189971491398405,
+      "holdout_rmse": 0.00765399139376978,
+      "cv_mae": 0.0037611858494409987,
+      "cv_rmse": 0.006607035982858889,
+      "subtarget_names": [],
+      "subtarget_weights": {},
+      "subtarget_holdout_accuracy": [
+        {
+          "subtarget": "overall",
+          "accuracy": 0.8888888888888888
+        }
+      ],
+      "subtarget_cv_accuracy": [
+        {
+          "subtarget": "overall",
+          "accuracy": 0.9261363636363636
+        }
+      ],
+      "config": {
+        "seed": 59,
+        "variant": "opening_vent",
+        "regressor_only": true
+      },
+      "model_path": "agent_damage/checkpoints/split_models/factory.pkl"
+    },
+    {
+      "facility_name": "frymaster_corporation",
+      "family": "specific",
+      "feature_count": 11,
+      "feature_columns": [
+        "heat_flux_log10",
+        "duration_s",
+        "heat_dose_log10",
+        "elevation_sin",
+        "azimuth_sin",
+        "azimuth_cos",
+        "heat_elevation_deg",
+        "radiation_duration_ms",
+        "incident_wall_area_log",
+        "incident_total_opening_ratio",
+        "incident_combustible_target_ratio"
+      ],
+      "case_count": 108,
+      "cv_case_count": 108,
+      "holdout_case_count": 22,
+      "holdout_grade_accuracy": 1.0,
+      "cv_grade_accuracy": 1.0,
+      "holdout_mae": 0.0006386897364815281,
+      "holdout_rmse": 0.0016423181339112545,
+      "cv_mae": 0.0013032285703158412,
+      "cv_rmse": 0.002615693846243898,
+      "subtarget_names": [],
+      "subtarget_weights": {},
+      "subtarget_holdout_accuracy": [
+        {
+          "subtarget": "overall",
+          "accuracy": 1.0
+        }
+      ],
+      "subtarget_cv_accuracy": [
+        {
+          "subtarget": "overall",
+          "accuracy": 1.0
+        }
+      ],
+      "config": {
+        "seed": 42,
+        "variant": "baseline",
+        "regressor_only": false
+      },
+      "model_path": "agent_damage/checkpoints/split_models/frymaster_corporation.pkl"
+    },
+    {
+      "facility_name": "gleason_cutting_tools_corporation",
+      "family": "specific",
+      "feature_count": 11,
+      "feature_columns": [
+        "heat_flux_log10",
+        "duration_s",
+        "heat_dose_log10",
+        "elevation_sin",
+        "azimuth_sin",
+        "azimuth_cos",
+        "heat_elevation_deg",
+        "radiation_duration_ms",
+        "incident_wall_area_log",
+        "incident_total_opening_ratio",
+        "incident_combustible_target_ratio"
+      ],
+      "case_count": 108,
+      "cv_case_count": 108,
+      "holdout_case_count": 22,
+      "holdout_grade_accuracy": 1.0,
+      "cv_grade_accuracy": 1.0,
+      "holdout_mae": 0.00015926298512203827,
+      "holdout_rmse": 0.0003615626086520301,
+      "cv_mae": 5.591147350029004e-05,
+      "cv_rmse": 0.00027098158788303517,
+      "subtarget_names": [],
+      "subtarget_weights": {},
+      "subtarget_holdout_accuracy": [
+        {
+          "subtarget": "overall",
+          "accuracy": 1.0
+        }
+      ],
+      "subtarget_cv_accuracy": [
+        {
+          "subtarget": "overall",
+          "accuracy": 1.0
+        }
+      ],
+      "config": {
+        "seed": 42,
+        "variant": "baseline",
+        "regressor_only": false
+      },
+      "model_path": "agent_damage/checkpoints/split_models/gleason_cutting_tools_corporation.pkl"
+    },
+    {
+      "facility_name": "hanger",
+      "family": "specific",
+      "feature_count": 13,
+      "feature_columns": [
+        "heat_flux_log10",
+        "duration_s",
+        "heat_dose_log10",
+        "elevation_sin",
+        "azimuth_sin",
+        "azimuth_cos",
+        "heat_elevation_deg",
+        "radiation_duration_ms",
+        "incident_wall_area_log",
+        "incident_door_window_count",
+        "incident_door_window_ratio",
+        "incident_total_opening_ratio",
+        "incident_combustible_target_ratio"
+      ],
+      "case_count": 192,
+      "cv_case_count": 192,
+      "holdout_case_count": 39,
+      "holdout_grade_accuracy": 1.0,
+      "cv_grade_accuracy": 1.0,
+      "holdout_mae": 0.004873258130308218,
+      "holdout_rmse": 0.030410618530364978,
+      "cv_mae": 0.0022674641910936885,
+      "cv_rmse": 0.018230704073504127,
+      "subtarget_names": [],
+      "subtarget_weights": {},
+      "subtarget_holdout_accuracy": [
+        {
+          "subtarget": "overall",
+          "accuracy": 1.0
+        }
+      ],
+      "subtarget_cv_accuracy": [
+        {
+          "subtarget": "overall",
+          "accuracy": 1.0
+        }
+      ],
+      "config": {
+        "seed": 42,
+        "variant": "baseline",
+        "regressor_only": false
+      },
+      "model_path": "agent_damage/checkpoints/split_models/hanger.pkl"
+    },
+    {
+      "facility_name": "harbison_fischer",
+      "family": "specific",
+      "feature_count": 11,
+      "feature_columns": [
+        "heat_flux_log10",
+        "duration_s",
+        "heat_dose_log10",
+        "elevation_sin",
+        "azimuth_sin",
+        "azimuth_cos",
+        "heat_elevation_deg",
+        "radiation_duration_ms",
+        "incident_wall_area_log",
+        "incident_total_opening_ratio",
+        "incident_combustible_target_ratio"
+      ],
+      "case_count": 108,
+      "cv_case_count": 108,
+      "holdout_case_count": 22,
+      "holdout_grade_accuracy": 1.0,
+      "cv_grade_accuracy": 1.0,
+      "holdout_mae": 1.182766006347823e-19,
+      "holdout_rmse": 5.547664316357248e-19,
+      "cv_mae": 2.168404344971009e-19,
+      "cv_rmse": 7.511572993685796e-19,
+      "subtarget_names": [],
+      "subtarget_weights": {},
+      "subtarget_holdout_accuracy": [
+        {
+          "subtarget": "overall",
+          "accuracy": 1.0
+        }
+      ],
+      "subtarget_cv_accuracy": [
+        {
+          "subtarget": "overall",
+          "accuracy": 1.0
+        }
+      ],
+      "config": {
+        "seed": 42,
+        "variant": "baseline",
+        "regressor_only": false
+      },
+      "model_path": "agent_damage/checkpoints/split_models/harbison_fischer.pkl"
+    },
+    {
+      "facility_name": "lcc",
+      "family": "specific",
+      "feature_count": 11,
+      "feature_columns": [
+        "heat_flux_log10",
+        "duration_s",
+        "heat_dose_log10",
+        "elevation_sin",
+        "azimuth_sin",
+        "azimuth_cos",
+        "heat_elevation_deg",
+        "radiation_duration_ms",
+        "incident_wall_area_log",
+        "incident_total_opening_ratio",
+        "incident_combustible_target_ratio"
+      ],
+      "case_count": 182,
+      "cv_case_count": 182,
+      "holdout_case_count": 37,
+      "holdout_grade_accuracy": 0.8648648648648649,
+      "cv_grade_accuracy": 0.8516483516483516,
+      "holdout_mae": 0.018284707492302408,
+      "holdout_rmse": 0.030993375222349025,
+      "cv_mae": 0.02272686048129086,
+      "cv_rmse": 0.05209661435142819,
+      "subtarget_names": [],
+      "subtarget_weights": {},
+      "subtarget_holdout_accuracy": [
+        {
+          "subtarget": "overall",
+          "accuracy": 0.8648648648648649
+        }
+      ],
+      "subtarget_cv_accuracy": [
+        {
+          "subtarget": "overall",
+          "accuracy": 0.8516483516483516
+        }
+      ],
+      "config": {
+        "seed": 42,
+        "variant": "baseline",
+        "regressor_only": false
+      },
+      "model_path": "agent_damage/checkpoints/split_models/lcc.pkl"
+    },
+    {
+      "facility_name": "ligen",
+      "family": "specific",
+      "feature_count": 13,
+      "feature_columns": [
+        "heat_flux_log10",
+        "duration_s",
+        "heat_dose_log10",
+        "elevation_sin",
+        "azimuth_sin",
+        "azimuth_cos",
+        "heat_elevation_deg",
+        "radiation_duration_ms",
+        "incident_wall_area_log",
+        "incident_door_window_count",
+        "incident_door_window_ratio",
+        "incident_total_opening_ratio",
+        "incident_combustible_target_ratio"
+      ],
+      "case_count": 248,
+      "cv_case_count": 248,
+      "holdout_case_count": 50,
+      "holdout_grade_accuracy": 0.94,
+      "cv_grade_accuracy": 0.8790322580645161,
+      "holdout_mae": 0.04188298498404637,
+      "holdout_rmse": 0.10490251495802379,
+      "cv_mae": 0.04680266092198651,
+      "cv_rmse": 0.11631887480454613,
+      "subtarget_names": [],
+      "subtarget_weights": {},
+      "subtarget_holdout_accuracy": [
+        {
+          "subtarget": "overall",
+          "accuracy": 0.94
+        }
+      ],
+      "subtarget_cv_accuracy": [
+        {
+          "subtarget": "overall",
+          "accuracy": 0.8790322580645161
+        }
+      ],
+      "config": {
+        "seed": 45,
+        "variant": "baseline",
+        "regressor_only": false
+      },
+      "model_path": "agent_damage/checkpoints/split_models/ligen.pkl"
+    },
+    {
+      "facility_name": "lob",
+      "family": "specific",
+      "feature_count": 11,
+      "feature_columns": [
+        "heat_flux_log10",
+        "duration_s",
+        "heat_dose_log10",
+        "elevation_sin",
+        "azimuth_sin",
+        "azimuth_cos",
+        "heat_elevation_deg",
+        "radiation_duration_ms",
+        "incident_wall_area_log",
+        "incident_total_opening_ratio",
+        "incident_combustible_target_ratio"
+      ],
+      "case_count": 143,
+      "cv_case_count": 143,
+      "holdout_case_count": 29,
+      "holdout_grade_accuracy": 1.0,
+      "cv_grade_accuracy": 0.9790209790209791,
+      "holdout_mae": 0.0003983353151010718,
+      "holdout_rmse": 0.0018715244141568944,
+      "cv_mae": 0.0007740535326742228,
+      "cv_rmse": 0.0028729040317791743,
+      "subtarget_names": [],
+      "subtarget_weights": {},
+      "subtarget_holdout_accuracy": [
+        {
+          "subtarget": "overall",
+          "accuracy": 1.0
+        }
+      ],
+      "subtarget_cv_accuracy": [
+        {
+          "subtarget": "overall",
+          "accuracy": 0.9790209790209791
+        }
+      ],
+      "config": {
+        "seed": 42,
+        "variant": "baseline",
+        "regressor_only": false
+      },
+      "model_path": "agent_damage/checkpoints/split_models/lob.pkl"
+    },
+    {
+      "facility_name": "machinery_manufacturing_large",
+      "family": "equivalent",
+      "feature_count": 11,
+      "feature_columns": [
+        "heat_flux_log10",
+        "duration_s",
+        "heat_dose_log10",
+        "elevation_sin",
+        "azimuth_sin",
+        "azimuth_cos",
+        "heat_elevation_deg",
+        "radiation_duration_ms",
+        "incident_wall_area_log",
+        "incident_total_opening_ratio",
+        "incident_combustible_target_ratio"
+      ],
+      "case_count": 180,
+      "cv_case_count": 180,
+      "holdout_case_count": 36,
+      "holdout_grade_accuracy": 0.9444444444444444,
+      "cv_grade_accuracy": 0.9722222222222222,
+      "holdout_mae": 0.0007854962271758574,
+      "holdout_rmse": 0.0015091352406426978,
+      "cv_mae": 0.0018807701169287496,
+      "cv_rmse": 0.0055879327966300105,
+      "subtarget_names": [
+        "Assembly building",
+        "Machining workshop",
+        "Sub-assembly building"
+      ],
+      "subtarget_weights": {
+        "Assembly building": 7204800.0,
+        "Machining workshop": 8820960.0,
+        "Sub-assembly building": 7122240.0
+      },
+      "subtarget_holdout_accuracy": [
+        {
+          "subtarget": "Assembly building",
+          "accuracy": 1.0
+        },
+        {
+          "subtarget": "Machining workshop",
+          "accuracy": 1.0
+        },
+        {
+          "subtarget": "Sub-assembly building",
+          "accuracy": 0.9444444444444444
+        }
+      ],
+      "subtarget_cv_accuracy": [
+        {
+          "subtarget": "Assembly building",
+          "accuracy": 1.0
+        },
+        {
+          "subtarget": "Machining workshop",
+          "accuracy": 0.95
+        },
+        {
+          "subtarget": "Sub-assembly building",
+          "accuracy": 0.9388888888888889
+        }
+      ],
+      "config": {
+        "seed": 42,
+        "variant": "baseline",
+        "regressor_only": false
+      },
+      "model_path": "agent_damage/checkpoints/split_models/machinery_manufacturing_large.pkl"
+    },
+    {
+      "facility_name": "machinery_manufacturing_medium",
+      "family": "equivalent",
+      "feature_count": 11,
+      "feature_columns": [
+        "heat_flux_log10",
+        "duration_s",
+        "heat_dose_log10",
+        "elevation_sin",
+        "azimuth_sin",
+        "azimuth_cos",
+        "heat_elevation_deg",
+        "radiation_duration_ms",
+        "incident_wall_area_log",
+        "incident_total_opening_ratio",
+        "incident_combustible_target_ratio"
+      ],
+      "case_count": 156,
+      "cv_case_count": 156,
+      "holdout_case_count": 32,
+      "holdout_grade_accuracy": 0.90625,
+      "cv_grade_accuracy": 0.9615384615384616,
+      "holdout_mae": 0.012831508822603178,
+      "holdout_rmse": 0.027415279837119427,
+      "cv_mae": 0.007146978851087045,
+      "cv_rmse": 0.017576599962495547,
+      "subtarget_names": [
+        "Assembly building",
+        "Machining workshop",
+        "Sub-assembly building"
+      ],
+      "subtarget_weights": {
+        "Assembly building": 5528680.0,
+        "Machining workshop": 5664960.0,
+        "Sub-assembly building": 5064600.0
+      },
+      "subtarget_holdout_accuracy": [
+        {
+          "subtarget": "Assembly building",
+          "accuracy": 1.0
+        },
+        {
+          "subtarget": "Machining workshop",
+          "accuracy": 0.8125
+        },
+        {
+          "subtarget": "Sub-assembly building",
+          "accuracy": 0.84375
+        }
+      ],
+      "subtarget_cv_accuracy": [
+        {
+          "subtarget": "Assembly building",
+          "accuracy": 1.0
+        },
+        {
+          "subtarget": "Machining workshop",
+          "accuracy": 0.9166666666666666
+        },
+        {
+          "subtarget": "Sub-assembly building",
+          "accuracy": 0.8782051282051282
+        }
+      ],
+      "config": {
+        "seed": 42,
+        "variant": "baseline",
+        "regressor_only": false
+      },
+      "model_path": "agent_damage/checkpoints/split_models/machinery_manufacturing_medium.pkl"
+    },
+    {
+      "facility_name": "machinery_manufacturing_small",
+      "family": "equivalent",
+      "feature_count": 18,
+      "feature_columns": [
+        "heat_flux_log10",
+        "duration_s",
+        "heat_dose_log10",
+        "elevation_sin",
+        "azimuth_sin",
+        "azimuth_cos",
+        "heat_elevation_deg",
+        "radiation_duration_ms",
+        "incident_wall_area_log",
+        "incident_total_opening_ratio",
+        "incident_combustible_target_ratio",
+        "incident_opening_heat_dose",
+        "incident_radiation_heat_dose",
+        "no_opening_heat_flux",
+        "incident_asset_front_ratio",
+        "incident_asset_front_count",
+        "heat_dose_kw_s_m2",
+        "heat_flux_squared"
+      ],
+      "case_count": 180,
+      "cv_case_count": 180,
+      "holdout_case_count": 36,
+      "holdout_grade_accuracy": 0.9444444444444444,
+      "cv_grade_accuracy": 0.9388888888888889,
+      "holdout_mae": 0.00928160235737591,
+      "holdout_rmse": 0.02061971832421828,
+      "cv_mae": 0.009845755373708964,
+      "cv_rmse": 0.024675367397667337,
+      "subtarget_names": [
+        "Assembly building",
+        "Machining workshop",
+        "Sub-assembly building"
+      ],
+      "subtarget_weights": {
+        "Assembly building": 2127560.0,
+        "Machining workshop": 2884480.0,
+        "Sub-assembly building": 2496120.0
+      },
+      "subtarget_holdout_accuracy": [
+        {
+          "subtarget": "Assembly building",
+          "accuracy": 1.0
+        },
+        {
+          "subtarget": "Machining workshop",
+          "accuracy": 0.9166666666666666
+        },
+        {
+          "subtarget": "Sub-assembly building",
+          "accuracy": 1.0
+        }
+      ],
+      "subtarget_cv_accuracy": [
+        {
+          "subtarget": "Assembly building",
+          "accuracy": 1.0
+        },
+        {
+          "subtarget": "Machining workshop",
+          "accuracy": 0.9277777777777778
+        },
+        {
+          "subtarget": "Sub-assembly building",
+          "accuracy": 0.9777777777777777
+        }
+      ],
+      "config": {
+        "seed": 46,
+        "variant": "heat_combo",
+        "regressor_only": false
+      },
+      "model_path": "agent_damage/checkpoints/split_models/machinery_manufacturing_small.pkl"
+    },
+    {
+      "facility_name": "maf",
+      "family": "specific",
+      "feature_count": 11,
+      "feature_columns": [
+        "heat_flux_log10",
+        "duration_s",
+        "heat_dose_log10",
+        "elevation_sin",
+        "azimuth_sin",
+        "azimuth_cos",
+        "heat_elevation_deg",
+        "radiation_duration_ms",
+        "incident_wall_area_log",
+        "incident_total_opening_ratio",
+        "incident_combustible_target_ratio"
+      ],
+      "case_count": 175,
+      "cv_case_count": 175,
+      "holdout_case_count": 35,
+      "holdout_grade_accuracy": 1.0,
+      "cv_grade_accuracy": 0.9542857142857143,
+      "holdout_mae": 0.0016541668731734345,
+      "holdout_rmse": 0.004696641053827112,
+      "cv_mae": 0.003900738176693973,
+      "cv_rmse": 0.01417039359316146,
+      "subtarget_names": [],
+      "subtarget_weights": {},
+      "subtarget_holdout_accuracy": [
+        {
+          "subtarget": "overall",
+          "accuracy": 1.0
+        }
+      ],
+      "subtarget_cv_accuracy": [
+        {
+          "subtarget": "overall",
+          "accuracy": 0.9542857142857143
+        }
+      ],
+      "config": {
+        "seed": 47,
+        "variant": "baseline",
+        "regressor_only": false
+      },
+      "model_path": "agent_damage/checkpoints/split_models/maf.pkl"
+    },
+    {
+      "facility_name": "materion_buffalo",
+      "family": "specific",
+      "feature_count": 11,
+      "feature_columns": [
+        "heat_flux_log10",
+        "duration_s",
+        "heat_dose_log10",
+        "elevation_sin",
+        "azimuth_sin",
+        "azimuth_cos",
+        "heat_elevation_deg",
+        "radiation_duration_ms",
+        "incident_wall_area_log",
+        "incident_total_opening_ratio",
+        "incident_combustible_target_ratio"
+      ],
+      "case_count": 228,
+      "cv_case_count": 228,
+      "holdout_case_count": 46,
+      "holdout_grade_accuracy": 0.9782608695652174,
+      "cv_grade_accuracy": 0.9868421052631579,
+      "holdout_mae": 0.0016201779675752914,
+      "holdout_rmse": 0.0073511700434533405,
+      "cv_mae": 0.0011969924914645538,
+      "cv_rmse": 0.005118713754545881,
+      "subtarget_names": [],
+      "subtarget_weights": {},
+      "subtarget_holdout_accuracy": [
+        {
+          "subtarget": "overall",
+          "accuracy": 0.9782608695652174
+        }
+      ],
+      "subtarget_cv_accuracy": [
+        {
+          "subtarget": "overall",
+          "accuracy": 0.9868421052631579
+        }
+      ],
+      "config": {
+        "seed": 42,
+        "variant": "baseline",
+        "regressor_only": false
+      },
+      "model_path": "agent_damage/checkpoints/split_models/materion_buffalo.pkl"
+    },
+    {
+      "facility_name": "materion_newton",
+      "family": "specific",
+      "feature_count": 11,
+      "feature_columns": [
+        "heat_flux_log10",
+        "duration_s",
+        "heat_dose_log10",
+        "elevation_sin",
+        "azimuth_sin",
+        "azimuth_cos",
+        "heat_elevation_deg",
+        "radiation_duration_ms",
+        "incident_wall_area_log",
+        "incident_total_opening_ratio",
+        "incident_combustible_target_ratio"
+      ],
+      "case_count": 235,
+      "cv_case_count": 235,
+      "holdout_case_count": 47,
+      "holdout_grade_accuracy": 1.0,
+      "cv_grade_accuracy": 0.9702127659574468,
+      "holdout_mae": 0.0023963914033832594,
+      "holdout_rmse": 0.00468038472934952,
+      "cv_mae": 0.0030030054240331176,
+      "cv_rmse": 0.009181392610645616,
+      "subtarget_names": [],
+      "subtarget_weights": {},
+      "subtarget_holdout_accuracy": [
+        {
+          "subtarget": "overall",
+          "accuracy": 1.0
+        }
+      ],
+      "subtarget_cv_accuracy": [
+        {
+          "subtarget": "overall",
+          "accuracy": 0.9702127659574468
+        }
+      ],
+      "config": {
+        "seed": 44,
+        "variant": "baseline",
+        "regressor_only": false
+      },
+      "model_path": "agent_damage/checkpoints/split_models/materion_newton.pkl"
+    },
+    {
+      "facility_name": "metallurgical_facilities_large",
+      "family": "equivalent",
+      "feature_count": 15,
+      "feature_columns": [
+        "heat_flux_log10",
+        "duration_s",
+        "heat_dose_log10",
+        "elevation_sin",
+        "azimuth_sin",
+        "azimuth_cos",
+        "heat_elevation_deg",
+        "radiation_duration_ms",
+        "incident_wall_area_log",
+        "incident_total_opening_ratio",
+        "incident_combustible_target_ratio",
+        "heat_azimuth_is_0",
+        "heat_azimuth_is_90",
+        "heat_azimuth_is_180",
+        "heat_azimuth_is_270"
+      ],
+      "case_count": 276,
+      "cv_case_count": 276,
+      "holdout_case_count": 56,
+      "holdout_grade_accuracy": 0.9642857142857143,
+      "cv_grade_accuracy": 0.9601449275362319,
+      "holdout_mae": 0.003782497740443417,
+      "holdout_rmse": 0.011770312991894299,
+      "cv_mae": 0.003759844514457536,
+      "cv_rmse": 0.011181860758855034,
+      "subtarget_names": [
+        "Dedicated power plant",
+        "Electrolytic plant",
+        "Steel plant"
+      ],
+      "subtarget_weights": {
+        "Dedicated power plant": 31312800.0,
+        "Electrolytic plant": 34279920.0,
+        "Steel plant": 11362960.0
+      },
+      "subtarget_holdout_accuracy": [
+        {
+          "subtarget": "Dedicated power plant",
+          "accuracy": 0.9821428571428571
+        },
+        {
+          "subtarget": "Electrolytic plant",
+          "accuracy": 1.0
+        },
+        {
+          "subtarget": "Steel plant",
+          "accuracy": 1.0
+        }
+      ],
+      "subtarget_cv_accuracy": [
+        {
+          "subtarget": "Dedicated power plant",
+          "accuracy": 0.9528985507246377
+        },
+        {
+          "subtarget": "Electrolytic plant",
+          "accuracy": 1.0
+        },
+        {
+          "subtarget": "Steel plant",
+          "accuracy": 1.0
+        }
+      ],
+      "config": {
+        "seed": 46,
+        "variant": "az_flags",
+        "regressor_only": false
+      },
+      "model_path": "agent_damage/checkpoints/split_models/metallurgical_facilities_large.pkl"
+    },
+    {
+      "facility_name": "metallurgical_facilities_medium",
+      "family": "equivalent",
+      "feature_count": 11,
+      "feature_columns": [
+        "heat_flux_log10",
+        "duration_s",
+        "heat_dose_log10",
+        "elevation_sin",
+        "azimuth_sin",
+        "azimuth_cos",
+        "heat_elevation_deg",
+        "radiation_duration_ms",
+        "incident_wall_area_log",
+        "incident_total_opening_ratio",
+        "incident_combustible_target_ratio"
+      ],
+      "case_count": 204,
+      "cv_case_count": 204,
+      "holdout_case_count": 41,
+      "holdout_grade_accuracy": 0.975609756097561,
+      "cv_grade_accuracy": 0.9558823529411765,
+      "holdout_mae": 0.004472340008521793,
+      "holdout_rmse": 0.015687106345493657,
+      "cv_mae": 0.005838261402178773,
+      "cv_rmse": 0.015698043025155647,
+      "subtarget_names": [
+        "Dedicated power plant",
+        "Electrolytic plant",
+        "Steel plant"
+      ],
+      "subtarget_weights": {
+        "Dedicated power plant": 15202440.0,
+        "Electrolytic plant": 22906440.0,
+        "Steel plant": 5983880.0
+      },
+      "subtarget_holdout_accuracy": [
+        {
+          "subtarget": "Dedicated power plant",
+          "accuracy": 0.9512195121951219
+        },
+        {
+          "subtarget": "Electrolytic plant",
+          "accuracy": 1.0
+        },
+        {
+          "subtarget": "Steel plant",
+          "accuracy": 1.0
+        }
+      ],
+      "subtarget_cv_accuracy": [
+        {
+          "subtarget": "Dedicated power plant",
+          "accuracy": 0.9362745098039216
+        },
+        {
+          "subtarget": "Electrolytic plant",
+          "accuracy": 1.0
+        },
+        {
+          "subtarget": "Steel plant",
+          "accuracy": 1.0
+        }
+      ],
+      "config": {
+        "seed": 42,
+        "variant": "baseline",
+        "regressor_only": false
+      },
+      "model_path": "agent_damage/checkpoints/split_models/metallurgical_facilities_medium.pkl"
+    },
+    {
+      "facility_name": "metallurgical_facilities_small",
+      "family": "equivalent",
+      "feature_count": 11,
+      "feature_columns": [
+        "heat_flux_log10",
+        "duration_s",
+        "heat_dose_log10",
+        "elevation_sin",
+        "azimuth_sin",
+        "azimuth_cos",
+        "heat_elevation_deg",
+        "radiation_duration_ms",
+        "incident_wall_area_log",
+        "incident_total_opening_ratio",
+        "incident_combustible_target_ratio"
+      ],
+      "case_count": 108,
+      "cv_case_count": 108,
+      "holdout_case_count": 22,
+      "holdout_grade_accuracy": 1.0,
+      "cv_grade_accuracy": 1.0,
+      "holdout_mae": 0.0009679128388289916,
+      "holdout_rmse": 0.002011225057456008,
+      "cv_mae": 0.002064515508974791,
+      "cv_rmse": 0.007567871260129579,
+      "subtarget_names": [
+        "Dedicated power plant",
+        "Electrolytic plant",
+        "Steel plant"
+      ],
+      "subtarget_weights": {
+        "Dedicated power plant": 7719480.0,
+        "Electrolytic plant": 11597760.0,
+        "Steel plant": 2879800.0
+      },
+      "subtarget_holdout_accuracy": [
+        {
+          "subtarget": "Dedicated power plant",
+          "accuracy": 1.0
+        },
+        {
+          "subtarget": "Electrolytic plant",
+          "accuracy": 1.0
+        },
+        {
+          "subtarget": "Steel plant",
+          "accuracy": 1.0
+        }
+      ],
+      "subtarget_cv_accuracy": [
+        {
+          "subtarget": "Dedicated power plant",
+          "accuracy": 1.0
+        },
+        {
+          "subtarget": "Electrolytic plant",
+          "accuracy": 1.0
+        },
+        {
+          "subtarget": "Steel plant",
+          "accuracy": 1.0
+        }
+      ],
+      "config": {
+        "seed": 42,
+        "variant": "baseline",
+        "regressor_only": false
+      },
+      "model_path": "agent_damage/checkpoints/split_models/metallurgical_facilities_small.pkl"
+    },
+    {
+      "facility_name": "ocb",
+      "family": "specific",
+      "feature_count": 11,
+      "feature_columns": [
+        "heat_flux_log10",
+        "duration_s",
+        "heat_dose_log10",
+        "elevation_sin",
+        "azimuth_sin",
+        "azimuth_cos",
+        "heat_elevation_deg",
+        "radiation_duration_ms",
+        "incident_wall_area_log",
+        "incident_total_opening_ratio",
+        "incident_combustible_target_ratio"
+      ],
+      "case_count": 155,
+      "cv_case_count": 155,
+      "holdout_case_count": 31,
+      "holdout_grade_accuracy": 1.0,
+      "cv_grade_accuracy": 0.9806451612903225,
+      "holdout_mae": 0.0050118919134988235,
+      "holdout_rmse": 0.013511633076046085,
+      "cv_mae": 0.00646735419914458,
+      "cv_rmse": 0.018435919364578838,
+      "subtarget_names": [],
+      "subtarget_weights": {},
+      "subtarget_holdout_accuracy": [
+        {
+          "subtarget": "overall",
+          "accuracy": 1.0
+        }
+      ],
+      "subtarget_cv_accuracy": [
+        {
+          "subtarget": "overall",
+          "accuracy": 0.9806451612903225
+        }
+      ],
+      "config": {
+        "seed": 48,
+        "variant": "baseline",
+        "regressor_only": false
+      },
+      "model_path": "agent_damage/checkpoints/split_models/ocb.pkl"
+    },
+    {
+      "facility_name": "sspf",
+      "family": "specific",
+      "feature_count": 13,
+      "feature_columns": [
+        "heat_flux_log10",
+        "duration_s",
+        "heat_dose_log10",
+        "elevation_sin",
+        "azimuth_sin",
+        "azimuth_cos",
+        "heat_elevation_deg",
+        "radiation_duration_ms",
+        "incident_wall_area_log",
+        "incident_door_window_count",
+        "incident_door_window_ratio",
+        "incident_total_opening_ratio",
+        "incident_combustible_target_ratio"
+      ],
+      "case_count": 55,
+      "cv_case_count": 55,
+      "holdout_case_count": 11,
+      "holdout_grade_accuracy": 0.9090909090909091,
+      "cv_grade_accuracy": 0.8363636363636363,
+      "holdout_mae": 0.011907406832833466,
+      "holdout_rmse": 0.0165073117579687,
+      "cv_mae": 0.019285381114903306,
+      "cv_rmse": 0.023996918835883087,
+      "subtarget_names": [],
+      "subtarget_weights": {},
+      "subtarget_holdout_accuracy": [
+        {
+          "subtarget": "overall",
+          "accuracy": 0.9090909090909091
+        }
+      ],
+      "subtarget_cv_accuracy": [
+        {
+          "subtarget": "overall",
+          "accuracy": 0.8363636363636363
+        }
+      ],
+      "config": {
+        "seed": 42,
+        "variant": "baseline",
+        "regressor_only": false
+      },
+      "model_path": "agent_damage/checkpoints/split_models/sspf.pkl"
+    },
+    {
+      "facility_name": "tesla",
+      "family": "specific",
+      "feature_count": 11,
+      "feature_columns": [
+        "heat_flux_log10",
+        "duration_s",
+        "heat_dose_log10",
+        "elevation_sin",
+        "azimuth_sin",
+        "azimuth_cos",
+        "heat_elevation_deg",
+        "radiation_duration_ms",
+        "incident_wall_area_log",
+        "incident_total_opening_ratio",
+        "incident_combustible_target_ratio"
+      ],
+      "case_count": 83,
+      "cv_case_count": 83,
+      "holdout_case_count": 17,
+      "holdout_grade_accuracy": 1.0,
+      "cv_grade_accuracy": 0.963855421686747,
+      "holdout_mae": 0.00955496791800278,
+      "holdout_rmse": 0.028807884606585787,
+      "cv_mae": 0.019447562541096433,
+      "cv_rmse": 0.06729202085326248,
+      "subtarget_names": [],
+      "subtarget_weights": {},
+      "subtarget_holdout_accuracy": [
+        {
+          "subtarget": "overall",
+          "accuracy": 1.0
+        }
+      ],
+      "subtarget_cv_accuracy": [
+        {
+          "subtarget": "overall",
+          "accuracy": 0.963855421686747
+        }
+      ],
+      "config": {
+        "seed": 42,
+        "variant": "baseline",
+        "regressor_only": false
+      },
+      "model_path": "agent_damage/checkpoints/split_models/tesla.pkl"
+    },
+    {
+      "facility_name": "vab",
+      "family": "specific",
+      "feature_count": 11,
+      "feature_columns": [
+        "heat_flux_log10",
+        "duration_s",
+        "heat_dose_log10",
+        "elevation_sin",
+        "azimuth_sin",
+        "azimuth_cos",
+        "heat_elevation_deg",
+        "radiation_duration_ms",
+        "incident_wall_area_log",
+        "incident_total_opening_ratio",
+        "incident_combustible_target_ratio"
+      ],
+      "case_count": 186,
+      "cv_case_count": 186,
+      "holdout_case_count": 38,
+      "holdout_grade_accuracy": 0.9736842105263158,
+      "cv_grade_accuracy": 0.9946236559139785,
+      "holdout_mae": 0.004170277296360486,
+      "holdout_rmse": 0.015311210426187187,
+      "cv_mae": 0.0030663680326494074,
+      "cv_rmse": 0.00850070366250941,
+      "subtarget_names": [],
+      "subtarget_weights": {},
+      "subtarget_holdout_accuracy": [
+        {
+          "subtarget": "overall",
+          "accuracy": 0.9736842105263158
+        }
+      ],
+      "subtarget_cv_accuracy": [
+        {
+          "subtarget": "overall",
+          "accuracy": 0.9946236559139785
+        }
+      ],
+      "config": {
+        "seed": 42,
+        "variant": "baseline",
+        "regressor_only": false
+      },
+      "model_path": "agent_damage/checkpoints/split_models/vab.pkl"
+    },
+    {
+      "facility_name": "warrick_power_plant",
+      "family": "specific",
+      "feature_count": 11,
+      "feature_columns": [
+        "heat_flux_log10",
+        "duration_s",
+        "heat_dose_log10",
+        "elevation_sin",
+        "azimuth_sin",
+        "azimuth_cos",
+        "heat_elevation_deg",
+        "radiation_duration_ms",
+        "incident_wall_area_log",
+        "incident_total_opening_ratio",
+        "incident_combustible_target_ratio"
+      ],
+      "case_count": 192,
+      "cv_case_count": 192,
+      "holdout_case_count": 39,
+      "holdout_grade_accuracy": 1.0,
+      "cv_grade_accuracy": 0.9635416666666666,
+      "holdout_mae": 0.0031811160900049127,
+      "holdout_rmse": 0.0095639082479012,
+      "cv_mae": 0.005528572855727806,
+      "cv_rmse": 0.01987925724598572,
+      "subtarget_names": [],
+      "subtarget_weights": {},
+      "subtarget_holdout_accuracy": [
+        {
+          "subtarget": "overall",
+          "accuracy": 1.0
+        }
+      ],
+      "subtarget_cv_accuracy": [
+        {
+          "subtarget": "overall",
+          "accuracy": 0.9635416666666666
+        }
+      ],
+      "config": {
+        "seed": 47,
+        "variant": "baseline",
+        "regressor_only": false
+      },
+      "model_path": "agent_damage/checkpoints/split_models/warrick_power_plant.pkl"
+    },
+    {
+      "facility_name": "yjc",
+      "family": "specific",
+      "feature_count": 13,
+      "feature_columns": [
+        "heat_flux_log10",
+        "duration_s",
+        "heat_dose_log10",
+        "elevation_sin",
+        "azimuth_sin",
+        "azimuth_cos",
+        "heat_elevation_deg",
+        "radiation_duration_ms",
+        "incident_wall_area_log",
+        "incident_door_window_count",
+        "incident_door_window_ratio",
+        "incident_total_opening_ratio",
+        "incident_combustible_target_ratio"
+      ],
+      "case_count": 183,
+      "cv_case_count": 183,
+      "holdout_case_count": 37,
+      "holdout_grade_accuracy": 0.972972972972973,
+      "cv_grade_accuracy": 0.9726775956284153,
+      "holdout_mae": 0.008317935465345821,
+      "holdout_rmse": 0.012446019176131985,
+      "cv_mae": 0.011585023597171739,
+      "cv_rmse": 0.01678366400961069,
+      "subtarget_names": [],
+      "subtarget_weights": {},
+      "subtarget_holdout_accuracy": [
+        {
+          "subtarget": "overall",
+          "accuracy": 0.972972972972973
+        }
+      ],
+      "subtarget_cv_accuracy": [
+        {
+          "subtarget": "overall",
+          "accuracy": 0.9726775956284153
+        }
+      ],
+      "config": {
+        "seed": 42,
+        "variant": "baseline",
+        "regressor_only": false
+      },
+      "model_path": "agent_damage/checkpoints/split_models/yjc.pkl"
+    }
+  ]
+}

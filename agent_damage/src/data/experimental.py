@@ -23,6 +23,13 @@ DK_GRADE_NAMES: tuple[str, str, str, str] = (
     "严重破坏",
 )
 
+# Historical case directories that describe the same physical facility. The
+# canonical name is the model/UI identity; duplicate directories still
+# contribute training samples but never produce a second model.
+FACILITY_DIR_ALIASES: Mapping[str, str] = {
+    "Boeing_Satellite01": "Boeing_Satellite",
+}
+
 # Canonical facility metadata supplied with the authoritative case inventory.
 # ``facility_type_index`` intentionally uses the four broad families already
 # used by the application (aerospace / airport hangar / machinery /
@@ -30,7 +37,6 @@ DK_GRADE_NAMES: tuple[str, str, str, str] = (
 # per-facility identity index, duplicating the facility one-hot columns and
 # giving the numeric value a misleading name.
 FACILITY_CLASSIFICATION_ZH: Mapping[str, str] = {
-    "hanger1and2": "火箭发射场机库",
     "lcc": "发射控制中心",
     "maf": "加工厂房",
     "MPPF": "加工厂房",
@@ -1160,7 +1166,7 @@ def load_experimental_dataset(
         if fds_path not in fds_feature_cache:
             fds_feature_cache[fds_path] = parse_fds_features(fds_path)
         fds_features = fds_feature_cache[fds_path]
-        facility = summary.facility_name
+        facility = FACILITY_DIR_ALIASES.get(summary.facility_name, summary.facility_name)
         for case in summary.cases:
             source_case_count += 1
             try:

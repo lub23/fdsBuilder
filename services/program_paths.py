@@ -3,9 +3,17 @@
 from __future__ import annotations
 
 import json
+import os
+import sys
 from pathlib import Path
 
-ROOT_DIR = Path(__file__).resolve().parent.parent
+def _writable_root() -> Path:
+    if getattr(sys, "frozen", False):
+        return Path(sys.executable).resolve().parent
+    return Path(__file__).resolve().parent.parent
+
+
+ROOT_DIR = _writable_root()
 CONFIG_FILE = ROOT_DIR / "program_paths.json"
 
 

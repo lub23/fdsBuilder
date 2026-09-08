@@ -49,6 +49,7 @@ def main():
     # app.setWindowIcon(QIcon("icon.png"))
 
     window = MainWindow()
+    window.resize(1440, 900)
     window.show()
 
     sys.exit(app.exec())

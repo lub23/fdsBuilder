@@ -12,6 +12,7 @@ and applies the configured head.
 from __future__ import annotations
 
 import json
+from dataclasses import replace
 import pickle
 from pathlib import Path
 from typing import Any
@@ -39,6 +40,10 @@ DEFAULT_SPLIT_MODEL_DIR = (
 
 FACILITIES_DIR = Path(__file__).resolve().parents[2].parent / "facilities"
 
+MODEL_ALIASES: dict[str, str] = {
+    "Boeing_Satellite01": "Boeing_Satellite",
+}
+
 
 class SplitModelNotFound(FileNotFoundError):
     """Raised when no per-facility split model exists for a facility."""
@@ -56,7 +61,7 @@ class SplitModelPredictor:
         self.dk_grade_names: tuple[str, str, str, str] = dk_grade_names
         self._cache: dict[str, dict[str, Any]] = {}
         self._known_facilities: set[str] = {
-            p.stem for p in self.model_dir.glob("*.pkl")
+            MODEL_ALIASES.get(p.stem, p.stem) for p in self.model_dir.glob("*.pkl")
         }
         self._subtarget_cn: dict[str, dict[str, str]] = self._load_subtarget_cn()
 
@@ -105,8 +110,15 @@ class SplitModelPredictor:
         return artifact
 
     @staticmethod
-    def _feature_row(fds_path: Path, case_name: str, feature_columns: list[str]) -> np.ndarray:
+    def _feature_row(
+        fds_path: Path,
+        case_name: str,
+        feature_columns: list[str],
+        facility_name: str | None = None,
+    ) -> np.ndarray:
         case = parse_case_name(case_name)
+        if facility_name:
+            case = replace(case, facility=facility_name)
         fds_features = parse_fds_features(fds_path)
         features = {
             **fds_features,
@@ -136,13 +148,16 @@ class SplitModelPredictor:
         if observed_dk is not None:
             predicted_dk = float(np.clip(observed_dk, 0.0, 1.0))
         else:
-            X = self._feature_row(fds_path, case_name, feature_columns)
+            X = self._feature_row(fds_path, case_name, feature_columns, facility_name)
             family = str(report.get("family", "specific"))
             if family == "equivalent":
-                from agent_damage.scripts.train_split_models import load_subtarget_targets
+                names = list(report.get("subtarget_names", []))
+                weights = dict(report.get("subtarget_weights", {}))
+                if not names:
+                    from agent_damage.scripts.train_split_models import load_subtarget_targets
 
-                cases_dir = Path(__file__).resolve().parents[2] / "cases"
-                _, names, weights = load_subtarget_targets(facility_name, cases_dir)
+                    cases_dir = Path(__file__).resolve().parents[2] / "cases"
+                    _, names, weights = load_subtarget_targets(facility_name, cases_dir)
                 weight_vector = np.asarray(
                     [weights.get(n, 1.0) for n in names], dtype=float
                 )
@@ -213,7 +228,7 @@ class SplitModelPredictor:
     def predict(self, fds_path: Path, case_name: str) -> DkPrediction:
         fds_path = Path(fds_path)
         case = parse_case_name(case_name)
-        facility_name = case.facility
+        facility_name = MODEL_ALIASES.get(case.facility, case.facility)
         if facility_name not in self._known_facilities:
             raise SplitModelNotFound(
                 f"设施“{facility_name}”不在逐设施模型的训练设施中。"

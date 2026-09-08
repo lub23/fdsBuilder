@@ -129,6 +129,7 @@ class Viewer3D(QWidget):
         }
         self._building_cache: dict = {}
         self._cache_max = 100
+        self._fds_scene = None  # active FDS preview scene (or None)
         self._debounce_timer = None
         self._pending_update = False
         self.setup_ui()
@@ -263,6 +264,10 @@ class Viewer3D(QWidget):
         if model and hasattr(model, 'heat_source'):
             new_heat_flux = model.heat_source.get('net_heat_flux')
 
+        if self._fds_scene is not None:
+            # FDS preview is active; do not clobber it with building renders.
+            return
+
         self.model = model
         self._bg = self._resolve_building_group(model)
 
@@ -316,6 +321,62 @@ class Viewer3D(QWidget):
         self._render_slices_devices_group(bg, bbox)
         self._render_origin(bg)
         self._finalize_camera(bbox)
+
+    # ── FDS preview scene ─────────────────────────────────────
+    def clear_fds_scene(self):
+        """Drop the FDS preview so building renders take over again."""
+        self._fds_scene = None
+
+    def update_fds_scene(self, scene):
+        """Render an FDS file's geometry (domain + obstruction boxes)."""
+        self._fds_scene = scene
+        if not HAS_PYVISTA or scene is None:
+            return
+        self._render_fds_scene(scene)
+
+    def _render_fds_scene(self, scene):
+        # Detach cached building actors (keeps meshes cached for later).
+        for bundle in self._building_cache.values():
+            if bundle.actors:
+                for a in bundle.actors.values():
+                    try:
+                        self.plotter.remove_actor(a)
+                    except Exception:
+                        pass
+                bundle.actors.clear()
+        for group in list(self._actor_groups.keys()):
+            self._clear_group(group)
+
+        domain = scene.domain or (0, 10, 0, 10, 0, 1)
+        xmin, xmax, ymin, ymax, zmin, zmax = domain
+
+        box = pv.Box(bounds=(xmin, xmax, ymin, ymax, zmin, zmax))
+        actor = self.plotter.add_mesh(
+            box, color="#5c6b8a", style="wireframe", line_width=1.2
+        )
+        self._add_to_group("origin", actor)
+
+        comb_parts: list = []
+        noncomb_parts: list = []
+        for o in scene.obstacles:
+            parts = comb_parts if scene.combustible(o) else noncomb_parts
+            parts.append(pv.Box(bounds=(o.xmin, o.xmax, o.ymin, o.ymax, o.zmin, o.zmax)))
+        if comb_parts:
+            actor = self.plotter.add_mesh(
+                pv.merge(comb_parts), color="#e0703c", opacity=0.55
+            )
+            self._add_to_group("combustibles", actor)
+        if noncomb_parts:
+            actor = self.plotter.add_mesh(
+                pv.merge(noncomb_parts), color="#707888", opacity=0.35
+            )
+            self._add_to_group("buildings", actor)
+
+        # No heat-source marker in FDS preview mode: the reference file's
+        # heat location does not correspond to the conditions configured in
+        # the right panel.
+        self._first_render = True
+        self._finalize_camera((xmin, xmax, ymin, ymax, zmax))
 
     def _render_buildings_group(self, bg):
         """Render building bundles from cache; returns bbox tuple or None."""

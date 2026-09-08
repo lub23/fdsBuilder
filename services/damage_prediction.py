@@ -51,6 +51,10 @@ _UI_FACILITY_ALIASES = {
     "warrick_power_plant": "warrick_power_plant",
 }
 
+_TRAINED_FACILITY_ALIASES = {
+    "Boeing_Satellite01": "Boeing_Satellite",
+}
+
 
 def _normalised_name(value: str) -> str:
     return sanitize_chid(value).strip("_").lower()
@@ -75,6 +79,8 @@ def reference_case_base_name(
     code itself when no cases directory or FDS file is available.
     """
     root = cases_dir or default_cases_root()
+    if facility_name == "Boeing_Satellite01":
+        facility_name = "Boeing_Satellite"
     fac_dir = root / facility_name
     fds_files = sorted(fac_dir.glob("*.fds")) if fac_dir.is_dir() else []
     if not fds_files:
@@ -197,22 +203,27 @@ def predict_facility_by_name(
     name from the requested heat-source condition.
     """
     cases_root = cases_dir or default_cases_root()
+    if facility_name in _TRAINED_FACILITY_ALIASES:
+        facility_name = _TRAINED_FACILITY_ALIASES[facility_name]
     known = set(getattr(predictor, "_known_facilities", set()) or set())
     if facility_name not in known:
         raise UnsupportedDamageFacility(
             f"设施“{facility_name}”不在逐设施模型的训练设施中。"
         )
     fac_dir = cases_root / facility_name
-    if not fac_dir.is_dir():
+    reference_fds: Path | None = None
+    if fac_dir.is_dir():
+        fds_files = sorted(fac_dir.glob("*.fds"))
+        reference_fds = fds_files[0] if fds_files else None
+    if reference_fds is None:
+        from models.facility import facilities_dir
+        from services.fds_parser import resolve_reference_fds
+
+        reference_fds = resolve_reference_fds(facility_name)
+    if reference_fds is None:
         raise UnsupportedDamageFacility(
             f"设施“{facility_name}”没有可用的参考工况目录：{fac_dir}"
         )
-    fds_files = sorted(fac_dir.glob("*.fds"))
-    if not fds_files:
-        raise UnsupportedDamageFacility(
-            f"设施“{facility_name}”的参考工况目录中没有 .fds 文件。"
-        )
-    reference_fds = fds_files[0]
 
     hs = dict(heat_source or {})
     suffix = (

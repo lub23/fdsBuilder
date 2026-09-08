@@ -1,7 +1,7 @@
 {
   "type": "specialized",
   "name": "Warrick Power Plant",
-  "cn_name": "Warrick发电厂",
+  "cn_name": "冶金-发电厂",
   "buildings": [
     {
       "name": "Main powerhouse",

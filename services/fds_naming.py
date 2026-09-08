@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import os
+import sys
 from typing import Any
 
 # Directory where pre-computed SMV results are stored.
@@ -10,10 +12,17 @@ from typing import Any
 # pre-computed `{facility_name}_{simulation_suffix(model)}.smv` files.
 RESULTS_ROOT = "results"
 
-# Directory holding pre-rendered demo videos (mp4), named
-# `{facility_name}_{simulation_suffix(model)}.mp4` to match FDS/Smokeview
-# naming so a condition maps 1:1 to its demo clip.
-VIDEO_ROOT = "video"
+# Directory holding pre-rendered demo videos. Resolve against the bundle when
+# packaged; otherwise a desktop launch from an arbitrary CWD would miss clips.
+def _resource_root() -> str:
+    bundle_root = os.environ.get("_MEIPASS2") or getattr(sys, "_MEIPASS", None)
+    if bundle_root:
+        return str(bundle_root)
+    return os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+
+RESULTS_ROOT = "results"
+VIDEO_ROOT = os.path.join(_resource_root(), "video")
 
 
 def sanitize_chid(value: str | None, default: str = "building") -> str:

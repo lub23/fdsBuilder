@@ -1,0 +1,10 @@
+Package: fdsbuilder
+Version: 0.1.0
+Architecture: amd64
+Section: science
+Priority: optional
+Maintainer: fdsBuilder Maintainers <maintainers@fdsbuilder.invalid>
+Depends: libc6, libfontconfig1, libgl1, libglib2.0-0, libxkbcommon0, libdbus-1-3
+Description: FDS facility modeling and damage prediction desktop application
+ PySide6/PyVista desktop application for FDS facility modeling and fast
+ damage prediction using per-facility surrogate models.

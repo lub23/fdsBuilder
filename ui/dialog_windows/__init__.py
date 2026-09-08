@@ -6,6 +6,7 @@ from .fire_compartment_dialog import FireCompartmentDialog
 from .category_generate_dialog import CategoryGenerateDialog
 from .combustible_selection_dialog import CombustibleSelectionDialog
 from .facility_combustible_overview_dialog import FacilityCombustibleOverviewDialog
+from .fds_combustible_overview_dialog import FdsCombustibleOverviewDialog
 
 __all__ = [
     "OpeningDialog",
@@ -14,4 +15,5 @@ __all__ = [
     "CategoryGenerateDialog",
     "CombustibleSelectionDialog",
     "FacilityCombustibleOverviewDialog",
+    "FdsCombustibleOverviewDialog",
 ]

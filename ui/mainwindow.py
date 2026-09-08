@@ -11,6 +11,8 @@
 
 import json
 # Qt GUI
+from pathlib import Path
+
 from PySide6.QtWidgets import (
     QMainWindow,
     QWidget,
@@ -36,7 +38,7 @@ from ui.viewer_3d import Viewer3D, HAS_PYVISTA
 from ui.fds_preview import FDSPreviewPanel
 from ui.simulation_control_panel import SimulationControlPanel
 from ui.styles import apply_button_variant
-from ui.facility_panel import FacilityListPanel
+from ui.facility_panel import FacilityListPanel, TRAINED_NO_JSON_FACILITIES
 from services.fds_naming import default_fds_filename
 
 
@@ -53,6 +55,7 @@ class MainWindow(QMainWindow):
         self.showMaximized()
         self._settings = QSettings("fdsBuilder", "fdsBuilder")
         self.model = BuildingGroup(buildings=[Building()])
+        self._fds_preview = None  # facility code whose FDS geometry is previewed
 
         # FDS preview debounce timer — prevents regeneration on rapid slider changes
         self._fds_preview_timer = QTimer(self)
@@ -89,9 +92,10 @@ class MainWindow(QMainWindow):
         self.facility_panel = FacilityListPanel()
         self.facility_panel.facility_selected.connect(self._on_facility_selected)
         self.facility_panel.building_added.connect(self._on_building_added)
-        self.facility_panel.facility_predict_requested.connect(
-            self._on_facility_predict_requested
+        self.facility_panel.trained_facility_selected.connect(
+            self._on_trained_facility_selected
         )
+        self.facility_panel.normal_facility_selected.connect(self._clear_fds_preview)
         self.facility_panel.scene_building_selected.connect(
             self._on_scene_building_selected
         )
@@ -165,6 +169,8 @@ class MainWindow(QMainWindow):
 
     def refresh_3d(self, first_render=False):
         """刷新3D视图"""
+        if self._fds_preview is not None:
+            return
         try:
             model = self.model
             self.viewer_3d._first_render = first_render
@@ -237,6 +243,9 @@ class MainWindow(QMainWindow):
             self._do_update_preview()
 
     def _do_update_preview(self):
+        if self._fds_preview is not None:
+            # FDS preview mode: keep the imported FDS text and status as-is.
+            return
         try:
             model = self.model
 
@@ -291,6 +300,7 @@ class MainWindow(QMainWindow):
             QMessageBox.Yes | QMessageBox.No,
         )
         if reply == QMessageBox.Yes:
+            self._clear_fds_preview()
             self.viewer_3d.clear_cache()
             self.model = BuildingGroup(buildings=[Building()])
             self.simulation_control.set_model(self.model)
@@ -306,6 +316,7 @@ class MainWindow(QMainWindow):
         )
         if file_path:
             try:
+                self._clear_fds_preview()
                 with open(file_path, "r", encoding="utf-8") as f:
                     data = json.load(f)
                 self.model = BuildingGroup.from_dict(data)
@@ -356,6 +367,7 @@ class MainWindow(QMainWindow):
     def _on_facility_selected(self, model_dict):
         """处理从设施面板选择的等效模型（替换整个模型，用于一级目标）"""
         try:
+            self._clear_fds_preview()
             self.model = BuildingGroup.from_dict(model_dict)
             self.simulation_control.set_model(self.model)
             self.fds_preview.set_model(self.model)
@@ -370,13 +382,59 @@ class MainWindow(QMainWindow):
         except Exception as e:
             QMessageBox.critical(self, "错误", f"无法应用等效模型: {str(e)}")
 
-    def _on_facility_predict_requested(self, facility_name: str):
-        """记录当前选中的训练设施（无三维模型），供右侧预测按钮使用。"""
+    def _on_trained_facility_selected(self, facility_name: str):
+        """Trained-only facility selected: remember for 预测 and preview its FDS."""
         self.simulation_control.set_pending_trained_facility(facility_name)
+        self._load_fds_preview(facility_name)
+
+    def _clear_fds_preview(self):
+        """Leave FDS preview mode so building renders take over again."""
+        if self._fds_preview is None:
+            return
+        self._fds_preview = None
+        self.viewer_3d.clear_fds_scene()
+
+    def _load_fds_preview(self, facility_name: str):
+        """Load facilities/{code}.fds and render its geometry in the 3D view."""
+        from models.facility import facilities_dir
+        from services.fds_parser import load_fds_scene
+
+        candidate = Path(facilities_dir()) / f"{facility_name}.fds"
+        if not candidate.is_file():
+            # Fallback: reference cases directory (absent on fresh clones).
+            cases_dir = Path("agent_damage") / "cases" / facility_name
+            matches = sorted(cases_dir.glob("*.fds")) if cases_dir.is_dir() else []
+            if matches:
+                candidate = matches[0]
+        if not candidate.is_file():
+            cn = dict(TRAINED_NO_JSON_FACILITIES).get(facility_name, facility_name)
+            QMessageBox.warning(
+                self,
+                "预览失败",
+                f"未找到设施“{cn}”的FDS文件：\n{candidate}\n\n"
+                f"请将某一工况的FDS文件复制为 facilities/{facility_name}.fds。",
+            )
+            return
+        try:
+            scene = load_fds_scene(candidate)
+        except Exception as e:
+            QMessageBox.critical(self, "预览失败", f"解析FDS文件失败：\n{candidate}\n\n{e}")
+            return
+
+        self._fds_preview = facility_name
+        self.viewer_3d.update_fds_scene(scene)
+        self.fds_preview.update_code(scene.raw_text)
+        cn = dict(TRAINED_NO_JSON_FACILITIES).get(facility_name, facility_name)
+        combustibles = scene.combustible_materials()
+        self.statusBar().showMessage(
+            f"设施预览: {cn}  |  障碍物: {len(scene.obstacles)}  |  "
+            f"可燃材料: {len(combustibles)}"
+        )
 
     def _on_building_added(self, building_obj):
         """追加或替换一栋子目标建筑到现有模型"""
         try:
+            self._clear_fds_preview()
             # building_obj is a Building instance emitted by FacilityPanel
             if isinstance(building_obj, Building):
                 new_bld = building_obj

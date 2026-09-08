@@ -457,12 +457,10 @@ class SimulationControlPanel(QWidget):
                 return
 
             try:
-                # The per-facility split models are cached on the panel so repeated
-                # predictions do not reload every facility checkpoint from disk.
-                predictor = getattr(self, "_experimental_damage_predictor", None)
-                if predictor is None:
-                    predictor = load_split_model_predictor()
-                    self._experimental_damage_predictor = predictor
+                t0 = time.perf_counter()
+                predictor = load_split_model_predictor()
+                context = predict_current_model(self.model, predictor)
+                infer_ms = (time.perf_counter() - t0) * 1000.0
             except FileNotFoundError:
                 QMessageBox.warning(
                     self.window(),
@@ -471,14 +469,6 @@ class SimulationControlPanel(QWidget):
                     "请先运行 agent_damage/scripts/train_split_models.py 生成模型。",
                 )
                 return
-            except Exception as exc:
-                QMessageBox.critical(self.window(), "预测失败", f"加载最新模型失败：{exc}")
-                return
-
-            try:
-                t0 = time.perf_counter()
-                context = predict_current_model(self.model, predictor)
-                infer_ms = (time.perf_counter() - t0) * 1000.0
             except UnsupportedDamageFacility as exc:
                 QMessageBox.warning(self.window(), "暂不支持该设施", str(exc))
                 return
@@ -543,23 +533,6 @@ class SimulationControlPanel(QWidget):
                 )
                 return
 
-            try:
-                predictor = getattr(self, "_experimental_damage_predictor", None)
-                if predictor is None:
-                    predictor = load_split_model_predictor()
-                    self._experimental_damage_predictor = predictor
-            except FileNotFoundError:
-                QMessageBox.warning(
-                    self.window(),
-                    "预测模型不存在",
-                    f"未找到逐设施模型目录：\n{DEFAULT_SPLIT_MODEL_DIR}\n\n"
-                    "请先运行 agent_damage/scripts/train_split_models.py 生成模型。",
-                )
-                return
-            except Exception as exc:
-                QMessageBox.critical(self.window(), "预测失败", f"加载最新模型失败：{exc}")
-                return
-
             hs = dict(getattr(self, "heat_source", None) or {})
             if hasattr(self, "model") and self.model is not None:
                 hs = dict(getattr(self.model, "heat_source", {}) or {})
@@ -571,8 +544,17 @@ class SimulationControlPanel(QWidget):
             }
             try:
                 t0 = time.perf_counter()
+                predictor = load_split_model_predictor()
                 context = predict_facility_by_name(facility_name, predictor, heat_source)
                 infer_ms = (time.perf_counter() - t0) * 1000.0
+            except FileNotFoundError:
+                QMessageBox.warning(
+                    self.window(),
+                    "预测模型不存在",
+                    f"未找到逐设施模型目录：\n{DEFAULT_SPLIT_MODEL_DIR}\n\n"
+                    "请先运行 agent_damage/scripts/train_split_models.py 生成模型。",
+                )
+                return
             except UnsupportedDamageFacility as exc:
                 QMessageBox.warning(self.window(), "暂不支持该设施", str(exc))
                 return

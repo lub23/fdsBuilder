@@ -262,7 +262,13 @@ def _train_single(
     return {
         "model": model,
         "holdout_grade_accuracy": _grade_accuracy(y_test, y_pred),
+        "holdout_case_count": int(len(y_test)),
+        "holdout_mae": float(np.mean(np.abs(y_test - y_pred))),
+        "holdout_rmse": float(np.sqrt(np.mean((y_test - y_pred) ** 2))),
         "cv_grade_accuracy": _grade_accuracy(targets, cv_pred),
+        "cv_case_count": int(len(targets)),
+        "cv_mae": float(np.mean(np.abs(targets - cv_pred))),
+        "cv_rmse": float(np.sqrt(np.mean((targets - cv_pred) ** 2))),
         "subtarget_holdout_accuracy": _subtarget_accuracy(y_test, y_pred, ["overall"]),
         "subtarget_cv_accuracy": _subtarget_accuracy(targets, cv_pred, ["overall"]),
     }
@@ -306,7 +312,13 @@ def _train_multi(
     return {
         "model": model,
         "holdout_grade_accuracy": _grade_accuracy(overall_true_test, overall_pred_test),
+        "holdout_case_count": int(len(y_test)),
+        "holdout_mae": float(np.mean(np.abs(overall_true_test - overall_pred_test))),
+        "holdout_rmse": float(np.sqrt(np.mean((overall_true_test - overall_pred_test) ** 2))),
         "cv_grade_accuracy": _grade_accuracy(overall_true, overall_cv_pred),
+        "cv_case_count": int(len(matrix)),
+        "cv_mae": float(np.mean(np.abs(overall_true - overall_cv_pred))),
+        "cv_rmse": float(np.sqrt(np.mean((overall_true - overall_cv_pred) ** 2))),
         "subtarget_holdout_accuracy": _subtarget_accuracy(y_test, y_pred, names),
         "subtarget_cv_accuracy": _subtarget_accuracy(matrix, cv_pred, names),
     }
@@ -408,8 +420,20 @@ def run() -> int:
             "feature_count": int(len(feature_columns)),
             "feature_columns": list(feature_columns),
             "case_count": int(len(facility_df)),
+            "cv_case_count": int(result["cv_case_count"]),
+            "holdout_case_count": int(result["holdout_case_count"]),
             "holdout_grade_accuracy": float(result["holdout_grade_accuracy"]),
             "cv_grade_accuracy": float(result["cv_grade_accuracy"]),
+            "holdout_mae": float(result["holdout_mae"]),
+            "holdout_rmse": float(result["holdout_rmse"]),
+            "cv_mae": float(result["cv_mae"]),
+            "cv_rmse": float(result["cv_rmse"]),
+            "subtarget_names": (names if family == "equivalent" else []),
+            "subtarget_weights": (
+                {name: float(weights.get(name, 1.0)) for name in names}
+                if family == "equivalent"
+                else {}
+            ),
             "subtarget_holdout_accuracy": result["subtarget_holdout_accuracy"],
             "subtarget_cv_accuracy": result["subtarget_cv_accuracy"],
             "config": {
