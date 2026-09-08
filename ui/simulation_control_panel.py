@@ -22,6 +22,7 @@ from PySide6.QtWidgets import (
     QSizePolicy,
     QSlider,
     QMessageBox,
+    QProgressDialog,
 )
 from PySide6.QtCore import Qt, Signal, QTimer
 import os
@@ -423,6 +424,32 @@ class SimulationControlPanel(QWidget):
         )
         QApplication.processEvents()
 
+    def _show_predict_progress(self):
+        """Show a modal busy dialog for first-load model initialization."""
+        self._close_predict_progress()
+        progress = QProgressDialog(
+            "正在加载毁伤模型和计算特征，首次加载可能需要数秒…",
+            None,
+            0,
+            0,
+            self,
+        )
+        progress.setWindowTitle("工程预测")
+        progress.setWindowModality(Qt.WindowModal)
+        progress.setMinimumDuration(0)
+        progress.setCancelButton(None)
+        progress.setMinimumWidth(420)
+        progress.show()
+        QApplication.processEvents()
+        self._predict_progress = progress
+
+    def _close_predict_progress(self):
+        progress = getattr(self, "_predict_progress", None)
+        if progress is not None:
+            progress.close()
+            progress.deleteLater()
+        self._predict_progress = None
+
     def run_predict(self):
         """使用真实 FDS 工况训练的设施级 Dk 代理模型进行快速预测。"""
         import time
@@ -436,6 +463,8 @@ class SimulationControlPanel(QWidget):
             return
 
         self._set_predicting(True)
+        t0 = time.perf_counter()
+        self._show_predict_progress()
         try:
             try:
                 from agent_damage.src.inference.split_model_predictor import (
@@ -457,7 +486,6 @@ class SimulationControlPanel(QWidget):
                 return
 
             try:
-                t0 = time.perf_counter()
                 predictor = load_split_model_predictor()
                 context = predict_current_model(self.model, predictor)
                 infer_ms = (time.perf_counter() - t0) * 1000.0
@@ -493,6 +521,7 @@ class SimulationControlPanel(QWidget):
             )
             dialog.exec()
         finally:
+            self._close_predict_progress()
             self._set_predicting(False)
 
     def set_pending_trained_facility(self, facility_name: str):
@@ -513,6 +542,8 @@ class SimulationControlPanel(QWidget):
         import time
 
         self._set_predicting(True)
+        t0 = time.perf_counter()
+        self._show_predict_progress()
         try:
             try:
                 from agent_damage.src.inference.split_model_predictor import (
@@ -543,7 +574,6 @@ class SimulationControlPanel(QWidget):
                 "duration": float(hs.get("duration", 1.36)),
             }
             try:
-                t0 = time.perf_counter()
                 predictor = load_split_model_predictor()
                 context = predict_facility_by_name(facility_name, predictor, heat_source)
                 infer_ms = (time.perf_counter() - t0) * 1000.0
@@ -574,4 +604,5 @@ class SimulationControlPanel(QWidget):
             dialog.exec()
             self._pending_trained_facility = None
         finally:
+            self._close_predict_progress()
             self._set_predicting(False)

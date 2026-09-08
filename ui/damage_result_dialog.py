@@ -485,23 +485,14 @@ class ExperimentalDamageResultDialog(QDialog):
         title.setWordWrap(True)
         title.setStyleSheet("font-size: 24px; font-weight: 800;")
         layout.addWidget(title)
-        # Keep the result auditable at a glance: for specific facilities the
-        # continuous Dk stays visible; equivalent facilities report only the
-        # overall and per-subtarget grades.
         subtitle_parts = []
-        subtarget_grades = getattr(self._prediction, "subtarget_grades", None)
-        if not subtarget_grades:
-            subtitle_parts.append(f"Dk {self._prediction.predicted_dk:.4f}")
-        overall_accuracy = self._prediction.overall_validation_accuracy
-        if overall_accuracy is not None:
-            subtitle_parts.append(f"综合验证准确率 {overall_accuracy * 100:.1f}%")
+        subtitle_parts.append(f"模型加载和推理 {self._infer_time_ms / 1000.0:.2f} s")
         result_source = (
             "权威工况结果"
             if self._prediction.used_observed_result
             else "代理模型预测"
         )
         subtitle_parts.append(result_source)
-        subtitle_parts.append(f"推理 {self._infer_time_ms / 1000.0:.2f} s")
         subtitle = QLabel("  •  ".join(subtitle_parts))
         subtitle.setAlignment(Qt.AlignCenter)
         subtitle.setStyleSheet("font-size: 13px; font-weight: 500;")
