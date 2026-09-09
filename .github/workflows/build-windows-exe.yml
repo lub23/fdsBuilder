@@ -1,0 +1,36 @@
+name: Build Windows EXE
+
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  build-windows:
+    runs-on: windows-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v6
+        with:
+          enable-cache: true
+
+      - name: Install Python
+        run: uv python install 3.13
+
+      - name: Build single-file executable
+        shell: cmd
+        run: build_windows.bat
+
+      - name: Upload executable
+        uses: actions/upload-artifact@v4
+        with:
+          name: fdsBuilder-windows-x64
+          path: dist/fdsBuilder.exe
+          if-no-files-found: error
+          compression-level: 0

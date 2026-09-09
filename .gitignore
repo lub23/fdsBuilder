@@ -59,6 +59,8 @@ export/*.xlsx
 projects/
 
 .*/
+!.github/
+!.github/**
 !README.md
 !.env.example
 !.gitignore
