@@ -39,6 +39,11 @@ class FdsMaterial:
     heat_of_combustion: float | None = None
     hrrpuv: float | None = None
     tig: float | None = None
+    density: float | None = None
+    conductivity: float | None = None
+    specific_heat: float | None = None
+    emissivity: float | None = None
+    thickness: float | None = None
 
 
 @dataclass
@@ -62,6 +67,8 @@ class FdsScene:
     obstacles: list[FdsObstacle] = field(default_factory=list)
     materials: dict[str, FdsMaterial] = field(default_factory=dict)
     surfaces: dict[str, str] = field(default_factory=dict)  # SURF_ID -> MATL_ID
+    radiation_surfaces: set[str] = field(default_factory=set)
+    radiation_faces: set[str] = field(default_factory=set)
     heat: FdsHeat | None = None
 
     def combustible(self, obstacle: FdsObstacle) -> bool:
@@ -77,6 +84,7 @@ class FdsScene:
 
 
 _CARD_RE = re.compile(r"^\s*&([A-Za-z_][A-Za-z0-9_]*)\s*(.*)$")
+_VENT_FACE_RE = re.compile(r"\[(XMIN|XMAX|YMIN|YMAX|ZMIN|ZMAX)\]")
 
 
 def _split_top_level(text: str) -> list[str]:
@@ -263,6 +271,11 @@ def parse_fds_text(text: str, source: str = "") -> FdsScene:
             hoc = p.get("HEAT_OF_COMBUSTION")
             hrrpuv = p.get("HRRPUV")
             tig = p.get("TIG")
+            reference_temperature = p.get("REFERENCE_TEMPERATURE")
+            density = p.get("DENSITY")
+            conductivity = p.get("CONDUCTIVITY")
+            specific_heat = p.get("SPECIFIC_HEAT")
+            emissivity = p.get("EMISSIVITY")
             # New-style materials declare FUEL/COMB; older PyroSim-style
             # materials define a reaction with HEAT_OF_COMBUSTION instead.
             if isinstance(comb, (int, float)):
@@ -277,12 +290,39 @@ def parse_fds_text(text: str, source: str = "") -> FdsScene:
                 combustible=combustible,
                 heat_of_combustion=float(hoc) if isinstance(hoc, (int, float)) else None,
                 hrrpuv=float(hrrpuv) if isinstance(hrrpuv, (int, float)) else None,
-                tig=float(tig) if isinstance(tig, (int, float)) else None,
+                tig=(
+                    float(tig)
+                    if isinstance(tig, (int, float))
+                    else float(reference_temperature)
+                    if isinstance(reference_temperature, (int, float))
+                    else None
+                ),
+                density=float(density) if isinstance(density, (int, float)) else None,
+                conductivity=float(conductivity) if isinstance(conductivity, (int, float)) else None,
+                specific_heat=float(specific_heat) if isinstance(specific_heat, (int, float)) else None,
+                emissivity=float(emissivity) if isinstance(emissivity, (int, float)) else None,
             )
         elif name == "SURF":
             surf_id = str(p.get("ID", ""))
             matl_id = _first_string(p, "MATL_ID")
             hrrpuv = p.get("HRRPUA", p.get("HRRPUV"))
+            net_heat_flux = p.get("NET_HEAT_FLUX")
+            thickness = p.get("THICKNESS")
+            surface_thickness = (
+                float(thickness[0] if isinstance(thickness, list) else thickness)
+                if isinstance(thickness, (int, float, list))
+                else None
+            )
+            ignition_temperature = p.get("IGNITION_TEMPERATURE")
+            surface_ignition = (
+                float(ignition_temperature)
+                if isinstance(ignition_temperature, (int, float))
+                else None
+            )
+            if surf_id and (
+                isinstance(net_heat_flux, (int, float)) or "radiation" in surf_id.lower()
+            ):
+                scene.radiation_surfaces.add(surf_id)
             if surf_id and isinstance(hrrpuv, (int, float)) and float(hrrpuv) > 0:
                 # PyroSim commonly models combustible inventory directly on a
                 # SURF with HRRPUA, without declaring an FDS MATL record. Keep
@@ -293,10 +333,57 @@ def parse_fds_text(text: str, source: str = "") -> FdsScene:
                     fuel=str(p.get("FUEL", "") or ""),
                     combustible=True,
                     hrrpuv=float(hrrpuv),
+                    thickness=surface_thickness,
+                    tig=surface_ignition,
                 )
                 scene.surfaces[surf_id] = surf_id
             elif surf_id and matl_id:
                 scene.surfaces[surf_id] = matl_id
+                material = scene.materials.get(matl_id)
+                if material is not None:
+                    if isinstance(hrrpuv, (int, float)) and float(hrrpuv) > 0:
+                        material.hrrpuv = max(material.hrrpuv or 0.0, float(hrrpuv))
+                    if material.thickness is None and surface_thickness is not None:
+                        material.thickness = surface_thickness
+                    if material.tig is None and surface_ignition is not None:
+                        material.tig = surface_ignition
+        elif name == "VENT":
+            surf_id = str(p.get("SURF_ID", ""))
+            if surf_id not in scene.radiation_surfaces:
+                continue
+            box = _as_float_list(p.get("XB"), 6)
+            if not box:
+                continue
+            xmin, xmax, ymin, ymax, zmin, zmax = box
+            bounds = scene.domain
+            face_from_name = None
+            match = _VENT_FACE_RE.search(str(p.get("ID", "")))
+            if match:
+                face_from_name = match.group(1)
+            if face_from_name:
+                scene.radiation_faces.add(face_from_name)
+                continue
+            if abs(xmin - xmax) <= 1e-6:
+                if bounds and abs(xmin - bounds[0]) <= 1e-6:
+                    scene.radiation_faces.add("XMIN")
+                elif bounds and abs(xmin - bounds[1]) <= 1e-6:
+                    scene.radiation_faces.add("XMAX")
+                else:
+                    scene.radiation_faces.add("XEDGE")
+            elif abs(ymin - ymax) <= 1e-6:
+                if bounds and abs(ymin - bounds[2]) <= 1e-6:
+                    scene.radiation_faces.add("YMIN")
+                elif bounds and abs(ymin - bounds[3]) <= 1e-6:
+                    scene.radiation_faces.add("YMAX")
+                else:
+                    scene.radiation_faces.add("YEDGE")
+            elif abs(zmin - zmax) <= 1e-6:
+                if bounds and abs(zmin - bounds[4]) <= 1e-6:
+                    scene.radiation_faces.add("ZMIN")
+                elif bounds and abs(zmin - bounds[5]) <= 1e-6:
+                    scene.radiation_faces.add("ZMAX")
+                else:
+                    scene.radiation_faces.add("ZEDGE")
         elif name == "HEAT" and scene.heat is None:
             heat = FdsHeat()
             xyz = p.get("XYZ")
@@ -337,12 +424,13 @@ def resolve_reference_fds(facility_name: str) -> Path | None:
 
 
 def combustible_summary(scene: FdsScene) -> list[dict]:
-    """Aggregate the combustible load per material, ordered by volume.
-
-    Each row: material id, fuel, heat of combustion, HRRPUV, number of
-    obstruction boxes and their total volume (m³).
-    """
+    """Aggregate combustible materials and geometry, ordered by volume."""
     per_material: dict[str, dict] = {}
+    for material in scene.combustible_materials():
+        per_material.setdefault(
+            material.id,
+            {"boxes": 0, "volume": 0.0},
+        )
     for o in scene.obstacles:
         matl_id = None
         for surf in o.surf_ids:
@@ -364,8 +452,14 @@ def combustible_summary(scene: FdsScene) -> list[dict]:
             "fuel": material.fuel,
             "heat_of_combustion": material.heat_of_combustion,
             "hrrpuv": material.hrrpuv,
+            "density": material.density,
+            "conductivity": material.conductivity,
+            "specific_heat": material.specific_heat,
+            "emissivity": material.emissivity,
+            "thickness": material.thickness,
+            "ignition_temperature": material.tig,
             "boxes": agg["boxes"],
             "volume": agg["volume"],
         })
-    rows.sort(key=lambda row: -row["volume"])
+    rows.sort(key=lambda row: (-row["volume"], -row["boxes"], row["material"]))
     return rows

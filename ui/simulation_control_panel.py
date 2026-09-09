@@ -24,10 +24,58 @@ from PySide6.QtWidgets import (
     QMessageBox,
     QProgressDialog,
 )
-from PySide6.QtCore import Qt, Signal, QTimer
+from PySide6.QtCore import Qt, QThread, Signal, QTimer
 import os
+import time
 from ui.styles import CollapsibleGroup, apply_button_variant
 from services.fds_naming import VIDEO_ROOT, simulation_suffix, video_path_for
+
+
+class _PredictionWorker(QThread):
+    """Run model loading and inference outside the Qt main loop."""
+
+    completed = Signal(object)
+    failed = Signal(str, str)
+
+    def __init__(self, kind, model=None, facility_name=None, heat_source=None):
+        super().__init__()
+        self.kind = kind
+        self.model = model
+        self.facility_name = facility_name
+        self.heat_source = dict(heat_source or {})
+
+    def run(self):
+        try:
+            from agent_damage.src.inference.split_model_predictor import (
+                load_split_model_predictor,
+            )
+            from services.damage_prediction import (
+                UnsupportedDamageFacility,
+                predict_current_model,
+                predict_facility_by_name,
+            )
+
+            predictor = load_split_model_predictor()
+            if self.kind == "current":
+                context = predict_current_model(self.model, predictor)
+            else:
+                context = predict_facility_by_name(
+                    self.facility_name,
+                    predictor,
+                    self.heat_source,
+                )
+            self.completed.emit(context)
+        except ImportError as exc:
+            self.failed.emit("error", f"无法加载预测模型依赖：{exc}")
+        except FileNotFoundError:
+            self.failed.emit("missing", "预测模型不存在。")
+        except UnsupportedDamageFacility as exc:
+            self.failed.emit("unsupported", str(exc))
+        except Exception as exc:
+            import traceback
+
+            traceback.print_exc()
+            self.failed.emit("error", f"生成特征或推理出错：{exc}")
 
 
 class SimulationControlPanel(QWidget):
@@ -91,6 +139,9 @@ class SimulationControlPanel(QWidget):
         self.heat_elevation_slider = QSlider(Qt.Horizontal)
         self.heat_elevation_slider.setRange(0, 3)
         self.heat_elevation_slider.setValue(0)
+        self.heat_elevation_slider.setToolTip(
+            "当前损伤模型训练覆盖 0°、30°、45°、60°；75°/90° 暂不外推"
+        )
         self.heat_elevation_slider.setTickPosition(QSlider.TicksBelow)
         self.heat_elevation_slider.setTickInterval(1)
         self.heat_elevation_slider.valueChanged.connect(self._on_elevation_changed)
@@ -173,7 +224,7 @@ class SimulationControlPanel(QWidget):
 
         action_row = QHBoxLayout()
         action_row.setSpacing(4)
-        self.predict_btn = _mkbtn("⚡ 预测", "warning", "工程快速预测(毁伤代理模型)")
+        self.predict_btn = _mkbtn("⚡ 预测", "warning", "工程快速预测(损伤代理模型)")
         self.predict_btn.clicked.connect(self.run_predict)
         action_row.addWidget(self.predict_btn)
 
@@ -259,6 +310,15 @@ class SimulationControlPanel(QWidget):
         self.heat_duration_spin.setCurrentIndex(idx)
 
     # ── 工况显示 ─────────────────────────────────
+    def current_heat_source(self) -> dict[str, float]:
+        """Return the current UI heat-source direction without needing a model."""
+        return {
+            "azimuth": self.heat_azimuth_slider.value(),
+            "elevation": self._current_elevation(),
+            "net_heat_flux": self.heat_flux_spin.value(),
+            "duration": self._current_duration(),
+        }
+
     def _facility_display_name(self) -> str:
         """Return the Chinese display name for the current facility selection."""
         pending = getattr(self, "_pending_trained_facility", None)
@@ -289,7 +349,7 @@ class SimulationControlPanel(QWidget):
                         return data.get("cn_name", stem) or stem
         except Exception:
             pass
-        return name or "未命名设施"
+        return name or ""
 
     def _condition_display(self) -> dict:
         """Build the condition info shown on the demo player dialog."""
@@ -334,21 +394,27 @@ class SimulationControlPanel(QWidget):
             QMessageBox.warning(
                 self.window(),
                 "演示视频",
-                "未加载设施，无法定位工况演示视频。",
+                "当前未加载设施。",
             )
             return
         if not os.path.isfile(expected):
-            available = (
-                sorted(f for f in os.listdir(VIDEO_ROOT) if f.lower().endswith(".mp4"))
-                if os.path.isdir(VIDEO_ROOT)
-                else []
-            )
-            hint = "\n".join(available) if available else "(目录为空)"
+            condition = self._condition_display()
+
+            def _value(value, suffix="", numeric=True):
+                if value is None:
+                    return "—"
+                return f"{float(value):g}{suffix}" if numeric else str(value)
+
             QMessageBox.warning(
                 self.window(),
-                "演示视频不存在",
-                f"当前工况不存在演示视频。\n\n期望路径:\n{expected}\n\n"
-                f"{VIDEO_ROOT}/ 下现有演示:\n{hint}",
+                "当前工况演示",
+                "当前工况演示文件不存在。\n\n"
+                f"设施：{condition.get('facility_name') or '—'}\n"
+                f"热通量：{_value(condition.get('heat_flux'), ' kW/m²')}\n"
+                f"方位角：{_value(condition.get('azimuth'), '°')}\n"
+                f"俯仰角：{_value(condition.get('elevation'), '°')}\n"
+                f"持续时间：{_value(condition.get('duration'), ' s')}\n"
+                f"模拟时间：{_value(condition.get('sim_time'), ' s')}",
             )
             return
         try:
@@ -419,16 +485,15 @@ class SimulationControlPanel(QWidget):
         """Toggle the predict button's busy state so the UI shows progress."""
         self.predict_btn.setEnabled(not busy)
         self.predict_btn.setText("⏳ 正在预测中…" if busy else "⚡ 预测")
-        self.result_label.setText(
-            "正在预测中，请稍候…" if busy else "就绪：选择设施后可进行工程快速预测"
-        )
-        QApplication.processEvents()
+        if not busy:
+            self.result_label.setText("就绪：选择设施后可进行工程快速预测")
 
     def _show_predict_progress(self):
-        """Show a modal busy dialog for first-load model initialization."""
+        """Show a non-blocking modal busy dialog with elapsed time."""
         self._close_predict_progress()
+        self._predict_started = time.monotonic()
         progress = QProgressDialog(
-            "正在加载毁伤模型和计算特征，首次加载可能需要数秒…",
+            "正在加载损伤模型并计算特征…\n已用时 0.0 s",
             None,
             0,
             0,
@@ -440,15 +505,101 @@ class SimulationControlPanel(QWidget):
         progress.setCancelButton(None)
         progress.setMinimumWidth(420)
         progress.show()
-        QApplication.processEvents()
         self._predict_progress = progress
+        self._predict_progress_timer = QTimer(self)
+        self._predict_progress_timer.setInterval(80)
+        self._predict_progress_timer.timeout.connect(
+            self._update_predict_progress
+        )
+        self._predict_progress_timer.start()
+
+    def _update_predict_progress(self):
+        progress = getattr(self, "_predict_progress", None)
+        if progress is None:
+            return
+        elapsed = time.monotonic() - getattr(self, "_predict_started", time.monotonic())
+        progress.setLabelText(
+            f"正在加载损伤模型并计算特征…\n已用时 {elapsed:.1f} s"
+        )
 
     def _close_predict_progress(self):
+        timer = getattr(self, "_predict_progress_timer", None)
+        if timer is not None:
+            timer.stop()
+            timer.deleteLater()
+        self._predict_progress_timer = None
         progress = getattr(self, "_predict_progress", None)
         if progress is not None:
             progress.close()
             progress.deleteLater()
         self._predict_progress = None
+
+    def _finish_prediction_after_progress(self, callback):
+        """Keep the busy indicator readable, then run the UI completion."""
+        elapsed = time.monotonic() - getattr(self, "_predict_started", time.monotonic())
+        delay_ms = max(0, int((1.2 - elapsed) * 1000))
+        QTimer.singleShot(delay_ms, callback)
+
+    def _cleanup_prediction_worker(self):
+        worker = getattr(self, "_predict_worker", None)
+        if worker is not None:
+            worker.wait()
+            worker.deleteLater()
+        self._predict_worker = None
+
+    def _start_prediction_worker(self, kind, model=None, facility_name=None, heat_source=None):
+        if getattr(self, "_predict_worker", None) is not None:
+            return
+        worker = _PredictionWorker(kind, model, facility_name, heat_source)
+        worker.completed.connect(self._on_prediction_completed)
+        worker.failed.connect(self._on_prediction_failed)
+        self._predict_worker = worker
+        worker.start()
+
+    def _on_prediction_completed(self, context):
+        worker = self.sender()
+
+        def show_result():
+            from ui.damage_result_dialog import ExperimentalDamageResultDialog
+
+            if worker is not None and worker.kind == "current":
+                hs = dict(getattr(worker.model, "heat_source", {}) or {})
+                heat_source = {
+                    "azimuth": float(hs.get("azimuth", 0)),
+                    "elevation": float(hs.get("elevation", 0)),
+                    "heat_flux": float(hs.get("net_heat_flux", 0)),
+                    "duration": float(hs.get("duration", 0)),
+                }
+            else:
+                heat_source = dict(getattr(worker, "heat_source", {}) or {})
+            self._close_predict_progress()
+            dialog = ExperimentalDamageResultDialog(
+                context=context,
+                heat_source=heat_source,
+                infer_time_ms=(
+                    time.monotonic() - getattr(self, "_predict_started", time.monotonic())
+                ) * 1000.0,
+                parent=self,
+            )
+            dialog.exec()
+            self._set_predicting(False)
+            self._cleanup_prediction_worker()
+
+        self._finish_prediction_after_progress(show_result)
+
+    def _on_prediction_failed(self, failure_kind, message):
+        def show_error():
+            self._close_predict_progress()
+            if failure_kind == "missing":
+                QMessageBox.warning(self.window(), "预测模型不存在", message)
+            elif failure_kind == "unsupported":
+                QMessageBox.warning(self.window(), "暂不支持该设施", message)
+            else:
+                QMessageBox.critical(self.window(), "预测失败", message)
+            self._set_predicting(False)
+            self._cleanup_prediction_worker()
+
+        self._finish_prediction_after_progress(show_error)
 
     def run_predict(self):
         """使用真实 FDS 工况训练的设施级 Dk 代理模型进行快速预测。"""
@@ -463,66 +614,9 @@ class SimulationControlPanel(QWidget):
             return
 
         self._set_predicting(True)
-        t0 = time.perf_counter()
         self._show_predict_progress()
-        try:
-            try:
-                from agent_damage.src.inference.split_model_predictor import (
-                    DEFAULT_SPLIT_MODEL_DIR,
-                    load_split_model_predictor,
-                )
-                from services.damage_prediction import (
-                    UnsupportedDamageFacility,
-                    predict_current_model,
-                )
-                from ui.damage_result_dialog import ExperimentalDamageResultDialog
-            except ImportError as exc:
-                QMessageBox.critical(
-                    self.window(),
-                    "预测失败",
-                    f"无法导入最新毁伤代理模型依赖：{exc}\n\n"
-                    "请执行 uv sync 安装 pandas 与 scikit-learn。",
-                )
-                return
-
-            try:
-                predictor = load_split_model_predictor()
-                context = predict_current_model(self.model, predictor)
-                infer_ms = (time.perf_counter() - t0) * 1000.0
-            except FileNotFoundError:
-                QMessageBox.warning(
-                    self.window(),
-                    "预测模型不存在",
-                    f"未找到逐设施模型目录：\n{DEFAULT_SPLIT_MODEL_DIR}\n\n"
-                    "请先运行 agent_damage/scripts/train_split_models.py 生成模型。",
-                )
-                return
-            except UnsupportedDamageFacility as exc:
-                QMessageBox.warning(self.window(), "暂不支持该设施", str(exc))
-                return
-            except Exception as exc:
-                import traceback
-
-                traceback.print_exc()
-                QMessageBox.critical(self.window(), "预测失败", f"生成特征或推理出错：{exc}")
-                return
-
-            hs = self.model.heat_source
-            dialog = ExperimentalDamageResultDialog(
-                context=context,
-                heat_source={
-                    "azimuth": float(hs.get("azimuth", 0)),
-                    "elevation": float(hs.get("elevation", 0)),
-                    "heat_flux": float(hs.get("net_heat_flux", 0)),
-                    "duration": float(hs.get("duration", 0)),
-                },
-                infer_time_ms=infer_ms,
-                parent=self,
-            )
-            dialog.exec()
-        finally:
-            self._close_predict_progress()
-            self._set_predicting(False)
+        self.sync_model_from_ui()
+        self._start_prediction_worker("current", model=self.model)
 
     def set_pending_trained_facility(self, facility_name: str):
         """Remember the selected trained-only facility for the 预测 button.
@@ -539,70 +633,19 @@ class SimulationControlPanel(QWidget):
         Uses the facility's own training-case FDS as the feature source and the
         current heat-source panel values as the condition.
         """
-        import time
-
         self._set_predicting(True)
-        t0 = time.perf_counter()
         self._show_predict_progress()
-        try:
-            try:
-                from agent_damage.src.inference.split_model_predictor import (
-                    DEFAULT_SPLIT_MODEL_DIR,
-                    load_split_model_predictor,
-                )
-                from services.damage_prediction import (
-                    UnsupportedDamageFacility,
-                    predict_facility_by_name,
-                )
-                from ui.damage_result_dialog import ExperimentalDamageResultDialog
-            except ImportError as exc:
-                QMessageBox.critical(
-                    self.window(),
-                    "预测失败",
-                    f"无法导入最新毁伤代理模型依赖：{exc}\n\n"
-                    "请执行 uv sync 安装 pandas 与 scikit-learn。",
-                )
-                return
-
-            hs = dict(getattr(self, "heat_source", None) or {})
-            if hasattr(self, "model") and self.model is not None:
-                hs = dict(getattr(self.model, "heat_source", {}) or {})
-            heat_source = {
-                "azimuth": float(hs.get("azimuth", 0)),
-                "elevation": float(hs.get("elevation", 0)),
-                "heat_flux": float(hs.get("heat_flux", hs.get("net_heat_flux", 1000))),
-                "duration": float(hs.get("duration", 1.36)),
-            }
-            try:
-                predictor = load_split_model_predictor()
-                context = predict_facility_by_name(facility_name, predictor, heat_source)
-                infer_ms = (time.perf_counter() - t0) * 1000.0
-            except FileNotFoundError:
-                QMessageBox.warning(
-                    self.window(),
-                    "预测模型不存在",
-                    f"未找到逐设施模型目录：\n{DEFAULT_SPLIT_MODEL_DIR}\n\n"
-                    "请先运行 agent_damage/scripts/train_split_models.py 生成模型。",
-                )
-                return
-            except UnsupportedDamageFacility as exc:
-                QMessageBox.warning(self.window(), "暂不支持该设施", str(exc))
-                return
-            except Exception as exc:
-                import traceback
-
-                traceback.print_exc()
-                QMessageBox.critical(self.window(), "预测失败", f"生成特征或推理出错：{exc}")
-                return
-
-            dialog = ExperimentalDamageResultDialog(
-                context=context,
-                heat_source=heat_source,
-                infer_time_ms=infer_ms,
-                parent=self,
-            )
-            dialog.exec()
-            self._pending_trained_facility = None
-        finally:
-            self._close_predict_progress()
-            self._set_predicting(False)
+        hs = dict(getattr(self, "heat_source", None) or {})
+        if hasattr(self, "model") and self.model is not None:
+            hs = dict(getattr(self.model, "heat_source", {}) or {})
+        heat_source = {
+            "azimuth": float(hs.get("azimuth", 0)),
+            "elevation": float(hs.get("elevation", 0)),
+            "heat_flux": float(hs.get("heat_flux", hs.get("net_heat_flux", 1000))),
+            "duration": float(hs.get("duration", 1.36)),
+        }
+        self._start_prediction_worker(
+            "facility",
+            facility_name=facility_name,
+            heat_source=heat_source,
+        )

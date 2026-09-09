@@ -29,12 +29,14 @@ _backup/
 # Demo videos and presentation renders (binary assets, too large for git)
 video/*
 !video/*.mp4
-presentation/
+presentation/__pycache__/
+presentation/rendered/
 
 # Simulation results
 results/
 
 *.md
+!presentation/README.md
 
 # Agent damage raw case data (too large for git)
 agent_damage/cases*/
@@ -46,7 +48,9 @@ agent_damage/data/
 agent_damage/output/*
 !agent_damage/output/split_model_evaluation.json
 agent_damage/raw_results/
-agent_damage/reports/
+agent_damage/reports/*
+!agent_damage/reports/*.md
+!agent_damage/reports/*.docx
 # Generated packaging staging is disposable; built artifacts stay out of git.
 packaging/debroot/
 

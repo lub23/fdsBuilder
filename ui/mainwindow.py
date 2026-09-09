@@ -9,7 +9,6 @@
 @Desc  : Defining constants and configurations for the GUI
 """
 
-import json
 # Qt GUI
 from pathlib import Path
 
@@ -30,7 +29,7 @@ from PySide6.QtWidgets import (
 from PySide6.QtCore import Qt, QTimer, QSettings
 from PySide6.QtGui import QAction, QKeySequence
 from models.building import BuildingGroup, Building
-from models.materials import MATERIAL_LIBRARY
+from models.materials import MATERIAL_LIBRARY, material_display_name
 from models.geometry import clear_layout_cache
 from generators.fds_generator import FDSGenerator, validate_fds
 
@@ -50,7 +49,7 @@ class MainWindow(QMainWindow):
 
     def __init__(self):
         super().__init__()
-        self.setWindowTitle("FDS建筑模型生成器")
+        self.setWindowTitle("设施火灾热辐射建模与损伤预测系统")
         self.setMinimumSize(1400, 900)
         self.showMaximized()
         self._settings = QSettings("fdsBuilder", "fdsBuilder")
@@ -182,7 +181,12 @@ class MainWindow(QMainWindow):
         """Dispatch 3D update by event kind; FDS text always refreshes."""
         self.update_preview()
         if kind == "heat_geom":
-            self.viewer_3d.update_heat_source(self.model)
+            if self._fds_preview is not None:
+                self.viewer_3d.update_fds_heat_source(
+                    self.simulation_control.current_heat_source()
+                )
+            else:
+                self.viewer_3d.update_heat_source(self.model)
         elif kind == "slice_device":
             self.viewer_3d.update_slices_devices(self.model)
         # "heat_flux" and "sim" do not touch 3D
@@ -197,18 +201,6 @@ class MainWindow(QMainWindow):
         new_action.setShortcut(QKeySequence.New)
         new_action.triggered.connect(self.new_project)
         file_menu.addAction(new_action)
-
-        open_action = QAction("打开配置(&O)", self)
-        open_action.setShortcut(QKeySequence.Open)
-        open_action.triggered.connect(self.open_config)
-        file_menu.addAction(open_action)
-
-        save_action = QAction("保存配置(&S)", self)
-        save_action.setShortcut(QKeySequence.Save)
-        save_action.triggered.connect(self.save_config)
-        file_menu.addAction(save_action)
-
-        file_menu.addSeparator()
 
         export_action = QAction("导出FDS文件(&E)", self)
         export_action.setShortcut("Ctrl+E")
@@ -310,38 +302,6 @@ class MainWindow(QMainWindow):
             self.refresh_3d()
             self.statusBar().showMessage("已创建新项目")
 
-    def open_config(self):
-        file_path, _ = QFileDialog.getOpenFileName(
-            self, "打开配置文件", "", "JSON文件 (*.json);;所有文件 (*)"
-        )
-        if file_path:
-            try:
-                self._clear_fds_preview()
-                with open(file_path, "r", encoding="utf-8") as f:
-                    data = json.load(f)
-                self.model = BuildingGroup.from_dict(data)
-                self.simulation_control.set_model(self.model)
-                self.fds_preview.set_model(self.model)
-                self._refresh_scene_list()
-                self.update_preview()
-                self.refresh_3d(True)
-                self.statusBar().showMessage(f"已加载: {file_path}")
-            except Exception as e:
-                QMessageBox.critical(self, "错误", f"无法加载配置文件:\n{str(e)}")
-
-    def save_config(self):
-        file_path, _ = QFileDialog.getSaveFileName(
-            self, "保存配置文件", "building_config.json", "JSON文件 (*.json)"
-        )
-        if file_path:
-            try:
-                data = {"building_group": self.model.to_dict()}
-                with open(file_path, "w", encoding="utf-8") as f:
-                    json.dump(data, f, indent=4, ensure_ascii=False)
-                self.statusBar().showMessage(f"已保存: {file_path}")
-            except Exception as e:
-                QMessageBox.critical(self, "错误", f"无法保存配置文件:\n{str(e)}")
-
     def export_fds(self):
         default_filename = default_fds_filename(self.model)
 
@@ -385,6 +345,7 @@ class MainWindow(QMainWindow):
     def _on_trained_facility_selected(self, facility_name: str):
         """Trained-only facility selected: remember for 预测 and preview its FDS."""
         self.simulation_control.set_pending_trained_facility(facility_name)
+        self.facility_panel.update_scene_list([])
         self._load_fds_preview(facility_name)
 
     def _clear_fds_preview(self):
@@ -408,21 +369,19 @@ class MainWindow(QMainWindow):
                 candidate = matches[0]
         if not candidate.is_file():
             cn = dict(TRAINED_NO_JSON_FACILITIES).get(facility_name, facility_name)
-            QMessageBox.warning(
-                self,
-                "预览失败",
-                f"未找到设施“{cn}”的FDS文件：\n{candidate}\n\n"
-                f"请将某一工况的FDS文件复制为 facilities/{facility_name}.fds。",
-            )
+            QMessageBox.warning(self, "预览失败", f"未找到 {cn} 的FDS文件。")
             return
         try:
             scene = load_fds_scene(candidate)
         except Exception as e:
-            QMessageBox.critical(self, "预览失败", f"解析FDS文件失败：\n{candidate}\n\n{e}")
+            QMessageBox.critical(self, "预览失败", f"解析FDS文件失败：\n{e}")
             return
 
         self._fds_preview = facility_name
-        self.viewer_3d.update_fds_scene(scene)
+        self.viewer_3d.update_fds_scene(
+            scene,
+            self.simulation_control.current_heat_source(),
+        )
         self.fds_preview.update_code(scene.raw_text)
         cn = dict(TRAINED_NO_JSON_FACILITIES).get(facility_name, facility_name)
         combustibles = scene.combustible_materials()
@@ -493,41 +452,66 @@ class MainWindow(QMainWindow):
         QMessageBox.about(
             self,
             "关于",
-            "<h2>FDS建筑模型生成器</h2>"
+            "<h2>设施火灾热辐射建模与损伤预测系统</h2>"
             "<p>版本: 1.0.0</p>"
-            "<p>一个用于生成FDS（Fire Dynamics Simulator）"
-            "建筑模型输入文件的可视化工具。</p>"
+            "<p>面向设施火灾热辐射工况的三维建模、FDS输入文件生成和"
+            "工程预测工具。</p>"
             "<p>特性:</p>"
             "<ul>"
-            "<li>可视化参数配置</li>"
-            "<li>3D模型预览</li>"
-            "<li>自动生成FDS代码</li>"
-            "<li>支持门窗开口</li>"
-            "<li>支持热源配置</li>"
+            "<li>三维设施模型与FDS几何预览</li>"
+            "<li>可燃物管理与材料参数库</li>"
+            "<li>设施级损伤工程预测</li>"
+            "<li>工况演示视频播放</li>"
             "</ul>",
         )
 
     def show_materials(self):
         dialog = QDialog(self)
         dialog.setWindowTitle("材料库")
-        dialog.setMinimumSize(600, 400)
+        dialog.setMinimumSize(980, 480)
 
         layout = QVBoxLayout(dialog)
 
         table = QTableWidget()
-        table.setColumnCount(5)
+        table.setColumnCount(9)
         table.setHorizontalHeaderLabels(
-            ["材料ID", "名称", "密度(kg/m³)", "导热系数(W/mK)", "比热(kJ/kgK)"]
+            [
+                "名称",
+                "密度(kg/m³)",
+                "导热系数(W/m·K)",
+                "比热(kJ/kg·K)",
+                "发射率",
+                "HOC(MJ/kg)",
+                "HRR(kW/m²)",
+                "点燃温度(°C)",
+                "厚度(m)",
+            ]
         )
-        table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
+        table.horizontalHeader().setSectionResizeMode(QHeaderView.Interactive)
+        table.horizontalHeader().setStretchLastSection(True)
+        table.setColumnWidth(0, 190)
+        for column in range(1, 9):
+            table.setColumnWidth(column, 84)
 
         table.setRowCount(len(MATERIAL_LIBRARY))
         for i, (mat_id, mat) in enumerate(MATERIAL_LIBRARY.items()):
-            table.setItem(i, 0, QTableWidgetItem(mat_id))
-            table.setItem(i, 1, QTableWidgetItem(mat["DESCRIPTION"]))
-            table.setItem(i, 2, QTableWidgetItem(str(mat["DENSITY"])))
-            table.setItem(i, 3, QTableWidgetItem(str(mat["CONDUCTIVITY"])))
-            table.setItem(i, 4, QTableWidgetItem(str(mat["SPECIFIC_HEAT"])))
+            hoc = mat.get("HEAT_OF_COMBUSTION")
+            values = [
+                material_display_name(mat_id),
+                mat.get("DENSITY"),
+                mat.get("CONDUCTIVITY"),
+                mat.get("SPECIFIC_HEAT"),
+                mat.get("EMISSIVITY"),
+                hoc / 1000.0 if hoc is not None else None,
+                mat.get("HRR"),
+                mat.get("IGNITION_TEMPERATURE"),
+                mat.get("THICKNESS"),
+            ]
+            for column, value in enumerate(values):
+                text = "—" if value is None else (
+                    f"{float(value):g}" if isinstance(value, (int, float)) else str(value)
+                )
+                table.setItem(i, column, QTableWidgetItem(text))
 
         layout.addWidget(table)
 

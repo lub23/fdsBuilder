@@ -9,6 +9,7 @@
 @Desc  : 3D viewer component for building model visualization
 """
 
+import math
 from dataclasses import dataclass, field
 
 # 3D可视化
@@ -24,6 +25,7 @@ except ImportError:
 from PySide6.QtWidgets import QWidget, QVBoxLayout, QLabel
 from PySide6.QtCore import Qt, QTimer
 from models.building import BuildingGroup
+from models.heat_source import source_orientation
 from models.geometry import detect_coplanar_openings, is_coplanar
 
 
@@ -130,6 +132,7 @@ class Viewer3D(QWidget):
         self._building_cache: dict = {}
         self._cache_max = 100
         self._fds_scene = None  # active FDS preview scene (or None)
+        self._fds_heat_source = None
         self._debounce_timer = None
         self._pending_update = False
         self.setup_ui()
@@ -317,7 +320,7 @@ class Viewer3D(QWidget):
         if bbox is None:
             return
 
-        self._render_heat_source_group(bg, bbox)
+        self._render_heat_source_group(bg)
         self._render_slices_devices_group(bg, bbox)
         self._render_origin(bg)
         self._finalize_camera(bbox)
@@ -327,14 +330,15 @@ class Viewer3D(QWidget):
         """Drop the FDS preview so building renders take over again."""
         self._fds_scene = None
 
-    def update_fds_scene(self, scene):
+    def update_fds_scene(self, scene, heat_source=None):
         """Render an FDS file's geometry (domain + obstruction boxes)."""
         self._fds_scene = scene
+        self._fds_heat_source = dict(heat_source or {})
         if not HAS_PYVISTA or scene is None:
             return
-        self._render_fds_scene(scene)
+        self._render_fds_scene(scene, self._fds_heat_source)
 
-    def _render_fds_scene(self, scene):
+    def _render_fds_scene(self, scene, heat_source=None):
         # Detach cached building actors (keeps meshes cached for later).
         for bundle in self._building_cache.values():
             if bundle.actors:
@@ -372,11 +376,15 @@ class Viewer3D(QWidget):
             )
             self._add_to_group("buildings", actor)
 
-        # No heat-source marker in FDS preview mode: the reference file's
-        # heat location does not correspond to the conditions configured in
-        # the right panel.
+        footprint = self._footprint_bounds(scene=scene)
+        self._draw_heat_direction_arrow(
+            scene.domain or (0, 10, 0, 10, 0, 1),
+            heat_source or self._fds_heat_source,
+            footprint,
+        )
         self._first_render = True
         self._finalize_camera((xmin, xmax, ymin, ymax, zmax))
+
 
     def _render_buildings_group(self, bg):
         """Render building bundles from cache; returns bbox tuple or None."""
@@ -826,9 +834,15 @@ class Viewer3D(QWidget):
                     pass
         self._building_cache.clear()
 
-    def _render_heat_source_group(self, bg, bbox):
+    def _render_heat_source_group(self, bg):
         self._clear_group("heat_source")
-        self._add_heat_source(bg, *bbox)
+        if not bg.buildings:
+            return
+        self._draw_heat_direction_arrow(
+            self._mesh_domain(bg),
+            bg.heat_source,
+            self._footprint_bounds(bg=bg),
+        )
 
     def _render_slices_devices_group(self, bg, bbox):
         self._clear_group("slices")
@@ -867,11 +881,108 @@ class Viewer3D(QWidget):
         self._bg = self._resolve_building_group(model)
         if not HAS_PYVISTA or model is None:
             return
-        bbox = self._compute_bbox_only()
-        if bbox is None:
+        if self._fds_scene is not None:
             return
-        self._render_heat_source_group(self._bg, bbox)
+        if self._bg is None or not self._bg.buildings:
+            return
+        self._render_heat_source_group(self._bg)
         self.plotter.render()
+
+    def update_fds_heat_source(self, heat_source):
+        """Update only the direction indicator in the active FDS preview."""
+        if not HAS_PYVISTA or self._fds_scene is None:
+            return
+        self._fds_heat_source = dict(heat_source or {})
+        self._clear_group("heat_source")
+        self._draw_heat_direction_arrow(
+            self._fds_scene.domain,
+            self._fds_heat_source,
+            self._footprint_bounds(scene=self._fds_scene),
+        )
+        self.plotter.render()
+
+    @staticmethod
+    def _footprint_bounds(bg=None, scene=None):
+        """Return the geometry footprint used to place the direction circle."""
+        if bg is not None and getattr(bg, "buildings", None):
+            xmin = min(b.offset_x for b in bg.buildings)
+            xmax = max(b.offset_x + b.length for b in bg.buildings)
+            ymin = min(b.offset_y for b in bg.buildings)
+            ymax = max(b.offset_y + b.width for b in bg.buildings)
+            zmin = 0.0
+            zmax = max(
+                max((s.z_bottom + s.height for s in b.stories), default=b.height)
+                for b in bg.buildings
+            )
+            return (xmin, xmax, ymin, ymax, zmin, zmax)
+        if scene is not None and getattr(scene, "obstacles", None):
+            return (
+                min(o.xmin for o in scene.obstacles),
+                max(o.xmax for o in scene.obstacles),
+                min(o.ymin for o in scene.obstacles),
+                max(o.ymax for o in scene.obstacles),
+                min(o.zmin for o in scene.obstacles),
+                max(o.zmax for o in scene.obstacles),
+            )
+        return None
+
+    def _draw_heat_direction_arrow(
+        self,
+        bounds,
+        heat_source,
+        footprint=None,
+    ):
+        """Draw the radiation arrow on a circular h/2 trajectory."""
+        if not bounds or not heat_source:
+            return
+        azimuth = float(heat_source.get("azimuth", 0.0))
+        elevation = float(heat_source.get("elevation", 0.0))
+        if float(heat_source.get("net_heat_flux", 0.0)) <= 0:
+            return
+        to_source = source_orientation(azimuth, elevation)
+        to_building = [-value for value in to_source]
+        vector_length = sum(value * value for value in to_building) ** 0.5
+        if vector_length <= 1e-9:
+            return
+        to_building = [value / vector_length for value in to_building]
+
+        x0, x1, y0, y1, z0, z1 = bounds
+        geometry = footprint or bounds
+        gx0, gx1, gy0, gy1, gz0, gz1 = geometry
+        geometry_size = max(gx1 - gx0, gy1 - gy0, gz1 - gz0)
+        arrow_length = geometry_size * 0.12
+        cx = (gx0 + gx1) / 2
+        cy = (gy0 + gy1) / 2
+        target_z = (gz0 + gz1) / 2
+        horizontal = (math.cos(math.radians(azimuth)), -math.sin(math.radians(azimuth)))
+        horizontal_length = math.hypot(*horizontal)
+        if horizontal_length <= 1e-9:
+            return
+        horizontal = [value / horizontal_length for value in horizontal]
+        support_radius = (
+            abs(horizontal[0]) * (gx1 - gx0) / 2
+            + abs(horizontal[1]) * (gy1 - gy0) / 2
+        )
+        radius = support_radius + arrow_length * 0.35
+        target = (
+            cx + horizontal[0] * radius,
+            cy + horizontal[1] * radius,
+            target_z,
+        )
+        start = [
+            target[index] - to_building[index] * arrow_length
+            for index in range(3)
+        ]
+        arrow = pv.Arrow(
+            start=start,
+            direction=to_building,
+            scale=arrow_length,
+            shaft_radius=0.028,
+            tip_radius=0.085,
+            tip_length=0.24,
+        )
+        actor = self.plotter.add_mesh(arrow, color="#ff6f3c")
+        self._add_to_group("heat_source", actor)
 
     def update_slices_devices(self, model):
         self.model = model
@@ -990,100 +1101,6 @@ class Viewer3D(QWidget):
 
         self.selected_opening = index
         self.plotter.render()
-
-    def _add_heat_source(self, bg, g_xmin, g_xmax, g_ymin, g_ymax, g_zmax):
-        """Render radiation panels on MESH boundary faces.
-
-        net_heat_flux stores the UI target q_avg (kW/m2).  The preview uses the
-        same calibrated q_set that FDS receives to scale panel opacity.  Side
-        panels are full-face; top panel is a 1 m strip on ZMAX above the
-        building (only when elevation > 0).
-        """
-        from models.heat_source import face_fluxes
-        from models.temp_flux_formula import compute_top_face_bounds
-        from models.window_flux_calibration import q_avg_to_q_set
-
-        hs = bg.heat_source or {}
-        azimuth = float(hs.get("azimuth", 0))
-        elevation = float(hs.get("elevation", 0))
-        q_avg_target = float(hs.get("net_heat_flux", 1000))
-        duration = float(hs.get("duration", 1.36))
-        q_set = q_avg_to_q_set(
-            q_avg_target,
-            duration,
-            facility=getattr(bg, "name", None),
-            azimuth=azimuth,
-        )
-
-        # Which walls are active (azimuth only — we handle elevation ourselves)
-        fluxes = face_fluxes(azimuth, 0.0, 1.0)
-        if not fluxes:
-            return
-
-        mx0, mx1, my0, my1, mz0, mz1 = self._mesh_domain(bg)
-        dx = mx1 - mx0
-        dy = my1 - my0
-        dz = mz1 - mz0
-
-        all_face_params = {
-            "XMIN": {"center": (mx0, (my0 + my1) / 2, (mz0 + mz1) / 2),
-                     "direction": (1, 0, 0), "i_size": dz, "j_size": dy},
-            "XMAX": {"center": (mx1, (my0 + my1) / 2, (mz0 + mz1) / 2),
-                     "direction": (1, 0, 0), "i_size": dz, "j_size": dy},
-            "YMIN": {"center": ((mx0 + mx1) / 2, my0, (mz0 + mz1) / 2),
-                     "direction": (0, 1, 0), "i_size": dz, "j_size": dx},
-            "YMAX": {"center": ((mx0 + mx1) / 2, my1, (mz0 + mz1) / 2),
-                     "direction": (0, 1, 0), "i_size": dz, "j_size": dx},
-            "ZMIN": {"center": ((mx0 + mx1) / 2, (my0 + my1) / 2, mz0),
-                     "direction": (0, 0, 1), "i_size": dx, "j_size": dy},
-            "ZMAX": {"center": ((mx0 + mx1) / 2, (my0 + my1) / 2, mz1),
-                     "direction": (0, 0, 1), "i_size": dx, "j_size": dy},
-        }
-
-        # Normalize opacity by calibrated source strength (brighter = stronger).
-        q_norm = min(max(q_set / 32000.0, 0.1), 1.0)
-
-        # Side panels (full domain faces)
-        for face_name in fluxes:
-            params = all_face_params[face_name]
-            opacity = max(0.15, 0.3 * q_norm)
-            plane = pv.Plane(**params)
-            actor = self.plotter.add_mesh(
-                plane,
-                color="#f97316",
-                opacity=opacity,
-                show_edges=True,
-                edge_color="#f97316",
-            )
-            self._add_to_group("heat_source", actor)
-
-        # Top panel: 1 m strip on ZMAX (only when elevation > 0)
-        if elevation > 0.0:
-            buildings = bg.buildings
-            xb_min = min(b.offset_x - b.wall_thickness / 2 for b in buildings)
-            xb_max = max(b.offset_x + b.length + b.wall_thickness / 2 for b in buildings)
-            yb_min = min(b.offset_y - b.wall_thickness / 2 for b in buildings)
-            yb_max = max(b.offset_y + b.width + b.wall_thickness / 2 for b in buildings)
-            tx1, tx2, ty1, ty2, _, _ = compute_top_face_bounds(
-                azimuth, (mx0, mx1, my0, my1, mz0, mz1),
-                xb_min, xb_max, yb_min, yb_max,
-            )
-            top_dx = tx2 - tx1
-            top_dy = ty2 - ty1
-            top_center = ((tx1 + tx2) / 2, (ty1 + ty2) / 2, mz1)
-            top_plane = pv.Plane(
-                center=top_center, direction=(0, 0, 1),
-                i_size=top_dx, j_size=top_dy,
-            )
-            top_opacity = max(0.15, 0.3 * q_norm)
-            top_actor = self.plotter.add_mesh(
-                top_plane,
-                color="#ef4444",
-                opacity=top_opacity,
-                show_edges=True,
-                edge_color="#ef4444",
-            )
-            self._add_to_group("heat_source", top_actor)
 
     @staticmethod
     def _mesh_domain(bg):

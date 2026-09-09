@@ -1,7 +1,8 @@
 [Desktop Entry]
 Type=Application
-Name=fdsBuilder
-Comment=FDS facility modeling and damage prediction
+Name=设施火灾热辐射建模与损伤预测系统
+GenericName=fdsBuilder
+Comment=FDS 设施建模与工程损伤预测
 Exec=/opt/fdsbuilder/fdsBuilder
 Icon=applications-science
 Terminal=false

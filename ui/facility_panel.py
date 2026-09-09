@@ -144,6 +144,16 @@ FACILITY_CATEGORIES: list[tuple[str, str, list[tuple[str, str, bool]]]] = [
     ),
 ]
 
+# Whole-facility footprint thresholds, converted from the per-building
+# dimensional ranges published in the category reports.  ``None`` means the
+# range remains open-ended at the small/large scale boundary.
+FACILITY_AREA_RANGES: dict[str, dict[int, tuple[int | None, int | None]]] = {
+    "aerospace": {0: (None, 36690), 1: (36690, 60763), 2: (60763, None)},
+    "airport_hangar": {0: (None, 6000), 1: (6000, 24000), 2: (24000, None)},
+    "machinery_manufacturing": {0: (None, 24000), 1: (24000, 43510), 2: (43510, None)},
+    "metallurgical_facilities": {0: (None, 10008), 1: (10008, 16280), 2: (16280, None)},
+}
+
 
 class _SizeRadioGroupFacade:
     """Compatibility facade exposing the old ``size_combo`` API over a dict of
@@ -452,8 +462,8 @@ class FacilityListPanel(QWidget):
                         )
                     cat_root.addChild(category_item)
                 else:
-                    # Trained-only facility (no JSON / no 3D geometry): Chinese
-                    # name only; prediction happens via the 预测 button.
+                    # FDS-only facility: geometry is previewed from FDS and
+                    # prediction uses the trained per-facility model.
                     item = QTreeWidgetItem([cn])
                     item.setData(
                         0,
@@ -496,7 +506,7 @@ class FacilityListPanel(QWidget):
             self.generate_category_btn.setEnabled(True)
             self._reset_generate_button_label()
             self.combustible_btn.setEnabled(True)
-            self.combustible_btn.setToolTip("查看或配置当前设施 / 建筑的可燃物")
+            self.combustible_btn.setToolTip("查看当前设施可燃物")
             self.normal_facility_selected.emit()
 
         elif node == "trained_only":
@@ -505,18 +515,16 @@ class FacilityListPanel(QWidget):
             # heat-source conditions are set in the right panel.
             self.selected_facility_data = data
             cn = dict(TRAINED_NO_JSON_FACILITIES).get(facility_name, facility_name)
-            self.desc_label.setText(
-                f"{cn} — 训练设施，无三维模板，可预览FDS几何并直接预测"
-            )
+            self.desc_label.setText(f"{cn} — 可预览FDS几何并直接预测")
             self.generate_category_btn.setEnabled(True)
             self.generate_category_btn.setIconSize(QSize(18, 18))
             self.generate_category_btn.setIcon(_eye_icon("#1e1e2e"))
             self.generate_category_btn.setText("预览设施")
             self.generate_category_btn.setToolTip(
-                "加载该设施的参考FDS文件并在3D视图预览几何（热源参数在右侧面板设置）"
+                "加载该设施的FDS几何并在3D视图预览"
             )
             self.combustible_btn.setEnabled(True)
-            self.combustible_btn.setToolTip("查看可燃材料概览（解析自参考FDS文件）")
+            self.combustible_btn.setToolTip("查看当前设施可燃物")
             self.size_combo.setEnabled(False)
             self._update_size_range_label(None)
 
@@ -526,7 +534,7 @@ class FacilityListPanel(QWidget):
             self.generate_category_btn.setEnabled(True)
             self._reset_generate_button_label()
             self.combustible_btn.setEnabled(True)
-            self.combustible_btn.setToolTip("查看或配置当前设施 / 建筑的可燃物")
+            self.combustible_btn.setToolTip("查看当前设施可燃物")
             self.normal_facility_selected.emit()
 
     def _reset_generate_button_label(self):
@@ -543,26 +551,22 @@ class FacilityListPanel(QWidget):
         if not fac_data:
             self._size_range_label.setText("")
             return
-        if fac_data.get("type") == "specialized":
-            self._size_range_label.setText("特异模型 — 尺寸随模型，不分小/中/大")
-            return
-        areas = {"small": 0.0, "medium": 0.0, "large": 0.0}
-        has_any = False
-        for b in fac_data.get("buildings", []):
-            for tier, dims in (b.get("scale_dimensions") or {}).items():
-                if tier not in areas or not isinstance(dims, dict):
-                    continue
-                length = float(dims.get("length", 0) or 0)
-                width = float(dims.get("width", 0) or 0)
-                if length and width:
-                    areas[tier] += length * width
-                    has_any = True
-        if not has_any:
+        area_ranges = FACILITY_AREA_RANGES.get(facility_name)
+        if not area_ranges:
             self._size_range_label.setText("")
             return
+
+        def _area_text(idx: int) -> str:
+            lower, upper = area_ranges[idx]
+            if lower is None and upper is not None:
+                return f"≤{upper:,.0f} m²"
+            if lower is not None and upper is None:
+                return f">{lower:,.0f} m²"
+            return f"{lower:,.0f}–{upper:,.0f} m²"
+
         self._size_range_label.setText(
-            f"建筑面积：小 {areas['small']:,.0f} m² · "
-            f"中 {areas['medium']:,.0f} m² · 大 {areas['large']:,.0f} m²"
+            "建筑面积范围：小 "
+            f"{_area_text(0)} · 中 {_area_text(1)} · 大 {_area_text(2)}"
         )
 
     # ==================================================
@@ -680,7 +684,7 @@ class FacilityListPanel(QWidget):
 
             # Description
             cn = bdata.get("cn_name", building_name)
-            self.desc_label.setText(f"{cn} (特异模型 - 参数只读)")
+            self.desc_label.setText(f"{cn} (参数只读)")
             self._update_size_range_label(facility_name)
         finally:
             self._syncing = False
@@ -710,9 +714,7 @@ class FacilityListPanel(QWidget):
                 spinbox = self._param_spinboxes["stories"]
                 spinbox.setEnabled(False)
                 self._range_labels["stories"].setVisible(False)
-                self.desc_label.setText(
-                    f"{cn_name} (特异模型) — 共 {len(buildings)} 个建筑"
-                )
+                self.desc_label.setText(f"{cn_name} — 共 {len(buildings)} 个建筑")
                 self._update_size_range_label(facility_name)
                 return
 
@@ -744,9 +746,7 @@ class FacilityListPanel(QWidget):
             self.size_combo.setCurrentText("中")
             self.size_combo.blockSignals(False)
 
-            self.desc_label.setText(
-                f"{cn_name} (等效模型) — 共 {len(buildings)} 个建筑"
-            )
+            self.desc_label.setText(f"{cn_name} — 共 {len(buildings)} 个建筑")
             self._update_size_range_label(facility_name)
             self.sp_N.setVisible(False)
             self.rng_N.setVisible(False)
@@ -890,12 +890,7 @@ class FacilityListPanel(QWidget):
         if not self.selected_facility_data:
             return
         node = self.selected_facility_data.get("node")
-        if node in ("trained_only", "facility"):
-            if node == "facility" and self.facility_manager.get_type(
-                self.selected_facility_data.get("facility", "")
-            ) != "specialized":
-                self._open_facility_combustible_dialog()
-                return
+        if node == "trained_only":
             self._open_fds_combustible_dialog()
         elif node == "facility":
             self._open_facility_combustible_dialog()
@@ -919,21 +914,18 @@ class FacilityListPanel(QWidget):
 
         fds_path = resolve_reference_fds(facility_name)
         if fds_path is None:
-            QMessageBox.warning(self, "提示", f"未找到 {cn} 的参考FDS文件")
+            QMessageBox.warning(self, "提示", f"未找到 {cn} 的FDS文件")
             return
         try:
             scene = load_fds_scene(fds_path)
         except Exception as exc:  # surfaced to the user, not fatal
-            QMessageBox.warning(self, "提示", f"解析FDS文件 {fds_path.name} 失败：\n{exc}")
+            QMessageBox.warning(self, "提示", f"解析FDS文件失败：\n{exc}")
             return
 
         rows = combustible_summary(scene)
-        combustible_boxes = sum(row["boxes"] for row in rows)
-        non_combustible_boxes = len(scene.obstacles) - combustible_boxes
-
         from ui.dialogs import FdsCombustibleOverviewDialog
 
-        dlg = FdsCombustibleOverviewDialog(self, cn, rows, non_combustible_boxes)
+        dlg = FdsCombustibleOverviewDialog(self, cn, rows)
         dlg.exec()
 
     def _open_combustible_dialog(self):

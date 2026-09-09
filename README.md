@@ -1,6 +1,6 @@
-# fdsBuilder
+# fdsBuilder（设施火灾热辐射建模与损伤预测系统）
 
-基于 PySide6、PyVista 和 FDS 的设施建模桌面程序。
+基于 PySide6、PyVista 和 FDS 的设施火灾热辐射建模与损伤预测桌面程序。
 
 ## 获取 Windows 单文件 EXE
 
@@ -18,7 +18,7 @@ build_windows.bat
 dist\fdsBuilder.exe
 ```
 
-该文件已经包含 Python、Qt、VTK、项目设施数据和毁伤预测模型，目标电脑不需要安装 Python。FDS/Smokeview 属于外部仿真软件，若使用“运行 FDS”或结果查看功能，仍需在程序设置中选择相应程序路径。
+该文件已经包含 Python、Qt、VTK、项目设施数据和损伤预测模型，目标电脑不需要安装 Python。FDS/Smokeview 属于外部仿真软件，若使用“运行 FDS”或结果查看功能，仍需在程序设置中选择相应程序路径。
 
 ### Ubuntu 安装包
 

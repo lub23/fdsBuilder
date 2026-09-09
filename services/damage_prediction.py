@@ -157,7 +157,7 @@ def resolve_damage_facility(
             return facility, scale
 
     raise UnsupportedDamageFacility(
-        f"设施“{raw_name or '未命名设施'}”不在当前代理模型的训练设施中。"
+        f"设施“{raw_name or '当前设施'}”不在当前代理模型的训练设施中。"
         "请从左侧设施库生成完整设施后再预测。"
     )
 

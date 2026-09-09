@@ -124,7 +124,7 @@ class DamageResultDialog(QDialog):
         layout.setSpacing(6)
 
         title = QLabel(
-            f"{palette['icon']}  整体毁伤等级：{palette['label']}"
+            f"{palette['icon']}  整体损伤等级：{palette['label']}"
         )
         title.setAlignment(Qt.AlignCenter)
         title.setStyleSheet(
@@ -195,7 +195,7 @@ class DamageResultDialog(QDialog):
 
     # ── buildings section ──────────────────────────────────────────
     def _build_buildings_title(self) -> QLabel:
-        title = QLabel(f"📍 单体建筑毁伤（{len(self._result.building_results)} 栋）")
+        title = QLabel(f"📍 单体建筑损伤（{len(self._result.building_results)} 栋）")
         title.setStyleSheet(
             f"color: {ACCENT_BLUE}; font-weight: bold; font-size: 14px;"
         )
@@ -369,7 +369,7 @@ class ExperimentalDamageResultDialog(QDialog):
         self._prediction = context.prediction
         self._heat_source = heat_source
         self._infer_time_ms = infer_time_ms
-        self.setWindowTitle("毁伤等级预测结果")
+        self.setWindowTitle("损伤等级预测结果")
         self.setMinimumSize(680, 390)
         self.setStyleSheet(f"QDialog {{ background: {BG_ROOT}; }}")
         self._setup_experimental_ui()
@@ -402,7 +402,7 @@ class ExperimentalDamageResultDialog(QDialog):
         root.addLayout(close_row)
 
     def _build_subtarget_title(self) -> QLabel:
-        title = QLabel(f"📍 各子目标毁伤等级（{len(self._prediction.subtarget_grades)} 个）")
+        title = QLabel(f"📍 各子目标损伤等级（{len(self._prediction.subtarget_grades)} 个）")
         title.setStyleSheet(
             f"color: {ACCENT_BLUE}; font-weight: bold; font-size: 14px;"
         )
@@ -479,14 +479,14 @@ class ExperimentalDamageResultDialog(QDialog):
         layout = QVBoxLayout(banner)
         layout.setContentsMargins(28, 22, 28, 22)
         title = QLabel(
-            f"{palette['icon']}  整体毁伤等级：{self._prediction.damage_grade_name}"
+            f"{palette['icon']}  整体损伤等级：{self._prediction.damage_grade_name}"
         )
         title.setAlignment(Qt.AlignCenter)
         title.setWordWrap(True)
         title.setStyleSheet("font-size: 24px; font-weight: 800;")
         layout.addWidget(title)
         subtitle_parts = []
-        subtitle_parts.append(f"模型加载和推理 {self._infer_time_ms / 1000.0:.2f} s")
+        subtitle_parts.append(f"模型预测用时:{self._infer_time_ms / 1000.0:.2f} s")
         result_source = (
             "权威工况结果"
             if self._prediction.used_observed_result
