@@ -34,3 +34,10 @@ jobs:
           path: dist/fdsBuilder.exe
           if-no-files-found: error
           compression-level: 0
+
+      - name: Upload release executable
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: dist/fdsBuilder.exe
+          fail_on_unmatched_files: true
